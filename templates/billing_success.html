@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Success — Competitor Analyzer{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-white border border-slate-200 shadow-xl rounded-2xl p-8 text-center">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 mb-6 animate-bounce">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-slate-900">Subscription Activated!</h1>
+    <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+        Thank you! Your 14-day free trial has been activated. We have triggered an immediate first scan of your competitors in the background.
+    </p>
+    <div class="mt-8">
+        <a href="/dashboard" class="inline-flex items-center justify-center bg-indigo-950 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-indigo-900 active:scale-95 transition-all duration-150 shadow-md text-sm">
+            Go to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
