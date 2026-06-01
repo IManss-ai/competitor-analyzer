@@ -1,0 +1,143 @@
+import unittest
+from unittest.mock import patch
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.db import Base
+from app.models import User, Competitor, Snapshot, ChangeEvent, ApprovedAction
+from app.pipeline.scanner import scan_competitor, scan_user_competitors
+
+class TestScanner(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        # Use an in-memory SQLite database for testing the scanner
+        self.engine = create_engine("sqlite:///:memory:")
+        Base.metadata.create_all(self.engine)
+        SessionLocal = sessionmaker(bind=self.engine)
+        self.db = SessionLocal()
+        
+        # Create a test user
+        self.user = User(email="test@example.com")
+        self.db.add(self.user)
+        self.db.commit()
+        
+        # Create a test competitor
+        self.competitor = Competitor(
+            user_id=self.user.id,
+            url="https://example.com/competitor",
+            name="Competitor 1"
+        )
+        self.db.add(self.competitor)
+        self.db.commit()
+
+    def tearDown(self):
+        self.db.close()
+        Base.metadata.drop_all(self.engine)
+
+    @patch("app.pipeline.scanner.fetch_page_text")
+    async def test_scan_competitor_first_scan(self, mock_fetch):
+        # Mock successful fetch with raw text
+        long_text = "A" * 250
+        mock_fetch.return_value = (long_text, None)
+        
+        result = await scan_competitor(str(self.competitor.id), self.db)
+        
+        self.assertTrue(result.get("first_scan"))
+        
+        # Check snapshot is created
+        snapshots = self.db.query(Snapshot).all()
+        self.assertEqual(len(snapshots), 1)
+        self.assertEqual(snapshots[0].raw_text, long_text)
+
+    @patch("app.pipeline.scanner.generate_actions_for_change")
+    @patch("app.pipeline.scanner.synthesize_brief")
+    @patch("app.pipeline.scanner.classify_change")
+    @patch("app.pipeline.scanner.fetch_page_text")
+    async def test_scan_competitor_subsequent_scans(self, mock_fetch, mock_classify, mock_synthesize, mock_actions):
+        # First scan
+        mock_fetch.return_value = ("A" * 250, None)
+        await scan_competitor(str(self.competitor.id), self.db)
+        
+        # Second scan (no meaningful change, same length)
+        mock_fetch.return_value = ("A" * 250, None)
+        res = await scan_competitor(str(self.competitor.id), self.db)
+        self.assertFalse(res.get("change_detected"))
+        
+        # Third scan (meaningful change, length + 110 chars)
+        mock_fetch.return_value = ("A" * 360, None)
+        mock_classify.return_value = "pricing_change"
+        mock_synthesize.return_value = "Competitor updated pricing terms."
+        mock_actions.return_value = [
+            ("retention_email", "Mock email content"),
+            ("pricing_copy", "Mock copy content"),
+        ]
+        
+        res = await scan_competitor(str(self.competitor.id), self.db)
+        self.assertTrue(res.get("change_detected"))
+        self.assertEqual(res.get("net_delta"), 110)
+        
+        # Check change event is created
+        events = self.db.query(ChangeEvent).all()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].net_char_delta, 110)
+        self.assertEqual(events[0].change_type, "pricing_change")
+        self.assertEqual(events[0].brief_text, "Competitor updated pricing terms.")
+        
+        # Check ApprovedAction rows are created
+        actions = self.db.query(ApprovedAction).all()
+        self.assertEqual(len(actions), 2)
+        self.assertEqual(actions[0].action_type, "retention_email")
+        self.assertEqual(actions[0].original_draft, "Mock email content")
+        self.assertIsNone(actions[0].edited_text)
+        self.assertIsNone(actions[0].approved_at)
+
+        self.assertEqual(actions[1].action_type, "pricing_copy")
+        self.assertEqual(actions[1].original_draft, "Mock copy content")
+        self.assertIsNone(actions[1].edited_text)
+        self.assertIsNone(actions[1].approved_at)
+        
+        mock_classify.assert_called_once()
+        mock_synthesize.assert_called_once()
+        mock_actions.assert_called_once()
+
+    @patch("app.pipeline.scanner.generate_actions_for_change")
+    @patch("app.pipeline.scanner.synthesize_brief")
+    @patch("app.pipeline.scanner.classify_change")
+    @patch("app.pipeline.scanner.fetch_page_text")
+    async def test_scan_competitor_minor_copy(self, mock_fetch, mock_classify, mock_synthesize, mock_actions):
+        # First scan
+        mock_fetch.return_value = ("A" * 250, None)
+        await scan_competitor(str(self.competitor.id), self.db)
+        
+        # Second scan (meaningful change > 100 chars, but classified as minor_copy)
+        mock_fetch.return_value = ("A" * 360, None)
+        mock_classify.return_value = "minor_copy"
+        
+        res = await scan_competitor(str(self.competitor.id), self.db)
+        self.assertTrue(res.get("change_detected"))
+        
+        # Check event
+        events = self.db.query(ChangeEvent).all()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].change_type, "minor_copy")
+        self.assertIsNone(events[0].brief_text)
+        
+        # Check no actions were created
+        actions = self.db.query(ApprovedAction).all()
+        self.assertEqual(len(actions), 0)
+        
+        mock_synthesize.assert_not_called()
+        mock_actions.assert_not_called()
+
+    @patch("app.pipeline.scanner.fetch_page_text")
+    async def test_scan_competitor_error(self, mock_fetch):
+        mock_fetch.return_value = ("", "HTTP 404: Not Found")
+        
+        res = await scan_competitor(str(self.competitor.id), self.db)
+        self.assertEqual(res.get("error"), "HTTP 404: Not Found")
+        
+        # Verify snapshot exists with error
+        snapshots = self.db.query(Snapshot).all()
+        self.assertEqual(len(snapshots), 1)
+        self.assertEqual(snapshots[0].fetch_error, "HTTP 404: Not Found")
+
+if __name__ == '__main__':
+    unittest.main()
