@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Settings — Competitor Analyzer{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    
+    <!-- Title Section -->
+    <div class="border-b border-slate-200 pb-5">
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Account Settings</h1>
+        <p class="text-slate-500 text-sm mt-1">Manage your account profile and monitor settings.</p>
+    </div>
+
+    <!-- Account Details Panel -->
+    <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 space-y-6">
+        
+        <!-- Profile Section -->
+        <div>
+            <h2 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Profile Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div class="text-slate-400 font-semibold uppercase tracking-wider text-xs self-center">Email Address</div>
+                <div class="md:col-span-2 text-slate-800 font-semibold">{{ user.email }}</div>
+            </div>
+        </div>
+
+        <!-- Subscription Section -->
+        <div>
+            <h2 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Billing &amp; Subscription</h2>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="text-slate-400 font-semibold uppercase tracking-wider text-xs self-center">Status</div>
+                    <div class="md:col-span-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full 
+                            {% if user.subscription_status == 'active' %}
+                                bg-emerald-50 text-emerald-700 border border-emerald-200
+                            {% elif user.subscription_status == 'trialing' %}
+                                bg-indigo-50 text-indigo-700 border border-indigo-200
+                            {% else %}
+                                bg-rose-50 text-rose-700 border border-rose-200
+                            {% endif %}">
+                            {{ user.subscription_status }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if user.subscription_status == 'trialing' and user.trial_ends_at %}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="text-slate-400 font-semibold uppercase tracking-wider text-xs self-center">Trial Ends At</div>
+                    <div class="md:col-span-2 text-slate-700">
+                        {{ user.trial_ends_at.strftime('%B %d, %Y') }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="pt-4">
+                    <button disabled
+                            class="opacity-60 cursor-not-allowed bg-slate-100 border border-slate-200 text-slate-400 font-semibold py-2 px-4 rounded-xl text-xs">
+                        Manage Billing (Stripe portal coming soon)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Directory Section -->
+        <div>
+            <h2 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Competitors Setup</h2>
+            <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                You can add or remove URLs of your competitors' web applications to scan and detect homepage copy changes.
+            </p>
+            <a href="/competitors" class="inline-flex items-center text-xs font-bold text-indigo-600 hover:text-indigo-500 transition duration-150">
+                Configure Monitored Competitors &rarr;
+            </a>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

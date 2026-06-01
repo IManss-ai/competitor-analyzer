@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Approval Queue — Competitor Analyzer{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    
+    <!-- Title Section -->
+    <div class="flex items-center justify-between border-b border-slate-200 pb-5">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                Approval Queue 
+                <span class="text-indigo-600 bg-indigo-50 text-xl font-bold px-3 py-1 rounded-full ml-2">
+                    {{ pending_actions|length }}
+                </span>
+            </h1>
+            <p class="text-slate-500 text-sm mt-1">Review, edit, and approve ready-made response drafts created by gstack.</p>
+        </div>
+    </div>
+
+    <!-- Actions List -->
+    {% if not pending_actions %}
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-12 text-center max-w-xl mx-auto my-10 animate-fade-in">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 mb-6">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900">You're all caught up!</h2>
+        <p class="text-slate-600 text-sm mt-2 max-w-md mx-auto">
+            No actions pending approval. We will notify you when a competitor update triggers new response assets.
+        </p>
+        <div class="mt-8">
+            <a href="/dashboard" class="inline-flex items-center justify-center bg-indigo-950 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-indigo-900 active:scale-95 transition-all duration-150 shadow-md text-sm">
+                Go to Dashboard
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="space-y-6">
+        {% for item in pending_actions %}
+            {% include "action_card.html" %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
