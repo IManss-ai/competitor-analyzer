@@ -1,22 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Checkout Success — Competitor Analyzer{% endblock %}
+{% block title %}Subscription Activated — Competitor Analyzer{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto my-12 bg-white border border-slate-200 shadow-xl rounded-2xl p-8 text-center">
-    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 mb-6 animate-bounce">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
-    </div>
-    <h1 class="text-2xl font-bold text-slate-900">Subscription Activated!</h1>
-    <p class="text-slate-600 text-sm mt-3 leading-relaxed">
-        Thank you! Your 14-day free trial has been activated. We have triggered an immediate first scan of your competitors in the background.
-    </p>
-    <div class="mt-8">
-        <a href="/dashboard" class="inline-flex items-center justify-center bg-indigo-950 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-indigo-900 active:scale-95 transition-all duration-150 shadow-md text-sm">
-            Go to Dashboard
-        </a>
+<div class="max-w-sm mx-auto py-16 text-center">
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-8">
+
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 mb-6">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+
+        <h1 class="font-display font-bold text-zinc-900 text-xl mb-2">Trial activated</h1>
+        <p class="text-sm text-zinc-500 leading-relaxed">
+            Your 14-day free trial has started. We've triggered an immediate first scan of your competitors in the background.
+        </p>
+
+        <div class="mt-7 pt-6 border-t border-zinc-100">
+            <a href="/dashboard"
+               class="inline-flex items-center justify-center bg-zinc-950 text-white text-sm font-medium
+                      py-2.5 px-6 rounded-lg hover:bg-zinc-800 active:scale-[0.98] transition-all duration-150">
+                Go to dashboard
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

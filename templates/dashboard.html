@@ -3,125 +3,134 @@
 {% block title %}Dashboard — Competitor Analyzer{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
-    
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-5 gap-4">
+<div class="space-y-7">
+
+    <!-- Page header -->
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">This Week's Brief</h1>
-            <p class="text-slate-500 text-sm mt-1">Here is what changed with your competitors and what you should do.</p>
+            <h1 class="font-display font-bold text-zinc-900 text-2xl tracking-tight">Weekly Brief</h1>
+            <p class="text-sm text-zinc-500 mt-1">What changed with your competitors and what to do about it.</p>
         </div>
-        
-        <div class="flex flex-wrap items-center gap-3 self-start md:self-center">
+
+        <div class="flex items-center gap-2.5 flex-shrink-0">
             <div id="scan-status"></div>
-            
-            <button hx-post="/scan/now" 
-                    hx-target="#scan-status" 
-                    hx-swap="innerHTML" 
-                    class="text-xs font-bold text-white bg-indigo-950 px-4 py-2 rounded-xl hover:bg-indigo-900 active:scale-95 transition-all duration-150 shadow-md">
-                Scan Now
+
+            <button hx-post="/scan/now"
+                    hx-target="#scan-status"
+                    hx-swap="innerHTML"
+                    class="inline-flex items-center gap-1.5 bg-zinc-950 text-white text-xs font-medium px-3.5 py-2 rounded-lg
+                           hover:bg-zinc-800 active:scale-[0.98] transition-all duration-150">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Scan now
             </button>
-            
-            <div class="text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
-                {% if last_scan %}
-                    Last scanned: <span class="text-slate-800">{{ last_scan.strftime('%b %d, %Y at %H:%M') }}</span>
-                {% else %}
-                    <span class="text-indigo-600 animate-pulse">Your first scan is running — check back in a few minutes.</span>
-                {% endif %}
+
+            {% if last_scan %}
+            <div class="text-xs text-zinc-400 font-mono whitespace-nowrap">
+                Last scan {{ last_scan.strftime('%b %d, %H:%M') }}
             </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- Alert / Queue Count Notification -->
+    <!-- Pending queue alert -->
     {% if pending_count > 0 %}
-    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex items-center justify-between shadow-sm animate-bounce-slow">
-        <div class="flex items-center space-x-3">
-            <div class="p-2 bg-indigo-100 text-indigo-600 rounded-xl">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+    <div class="flex items-center justify-between bg-white border border-zinc-200 rounded-xl px-5 py-4 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-zinc-700" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                 </svg>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-indigo-950">{{ pending_count }} action assets waiting in your queue</h3>
-                <p class="text-xs text-indigo-700 mt-0.5">Ready-made marketing and retention assets are ready for review.</p>
+                <p class="text-sm font-medium text-zinc-900">
+                    {{ pending_count }} response asset{{ 's' if pending_count != 1 }} ready for review
+                </p>
+                <p class="text-xs text-zinc-500 mt-0.5">AI-drafted emails and copy, ready to edit and approve.</p>
             </div>
         </div>
-        <a href="/queue" class="text-xs font-bold text-white bg-indigo-950 px-4 py-2 rounded-xl hover:bg-indigo-900 transition duration-150">
-            Open Queue
+        <a href="/queue"
+           class="text-xs font-medium bg-zinc-950 text-white px-3.5 py-2 rounded-lg hover:bg-zinc-800 transition-colors flex-shrink-0">
+            Open queue
         </a>
     </div>
     {% endif %}
 
-    <!-- Briefs List -->
+    <!-- Intelligence feed -->
     {% if not events %}
-    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-12 text-center max-w-xl mx-auto my-10">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-400 mb-6">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+    <!-- Empty state -->
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-12 text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 mb-5">
+            <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
         </div>
-        <h2 class="text-lg font-bold text-slate-900">Your first scan is running</h2>
-        <p class="text-slate-600 text-sm mt-2 max-w-md mx-auto">
-            We are fetching and analyzing your competitors' pages. Check back in a few minutes to see the weekly intelligence brief.
+        <h2 class="font-display font-semibold text-zinc-900 text-base mb-2">Your first scan is running</h2>
+        <p class="text-sm text-zinc-500 leading-relaxed max-w-sm mx-auto">
+            We're fetching and analyzing your competitors' pages. Check back in a few minutes to see your first intelligence brief.
         </p>
-        <div class="mt-8">
-            <a href="/competitors" class="inline-flex items-center justify-center bg-indigo-950 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-indigo-900 active:scale-95 transition-all duration-150 shadow-md text-sm">
-                Manage Competitors
+        <div class="mt-7">
+            <a href="/competitors"
+               class="inline-flex items-center bg-zinc-950 text-white text-sm font-medium py-2 px-4 rounded-lg
+                      hover:bg-zinc-800 transition-colors">
+                Manage competitors
             </a>
         </div>
     </div>
+
     {% else %}
-    <div class="space-y-6">
+    <!-- Intelligence events -->
+    <div class="space-y-4">
         {% for item in events %}
-        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-150">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-                <div class="flex items-center space-x-3">
-                    <span class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full 
-                        {% if item.event.change_type == 'pricing_change' %}
-                            bg-rose-50 text-rose-700 border border-rose-100
-                        {% elif item.event.change_type == 'feature_add' %}
-                            bg-emerald-50 text-emerald-700 border border-emerald-100
-                        {% elif item.event.change_type == 'repositioning' %}
-                            bg-amber-50 text-amber-700 border border-amber-100
-                        {% elif item.event.change_type == 'minor_copy' %}
-                            bg-slate-50 text-slate-700 border border-slate-200
-                        {% else %}
-                            bg-slate-50 text-slate-400 border border-slate-100
-                        {% endif %}">
+        <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-5 card-hover">
+
+            <!-- Event header -->
+            <div class="flex items-center justify-between mb-3.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <!-- Change type badge -->
+                    <span class="inline-block text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md border
+                        {% if item.event.change_type == 'pricing_change' %}badge-pricing
+                        {% elif item.event.change_type == 'feature_add' %}badge-feature
+                        {% elif item.event.change_type == 'repositioning' %}badge-repositioning
+                        {% else %}badge-copy{% endif %}">
                         {{ item.event.change_type | replace('_', ' ') }}
                     </span>
-                    <span class="text-sm font-bold text-slate-900">{{ item.competitor.name or item.competitor.url }}</span>
+                    <!-- Competitor name -->
+                    <span class="text-sm font-semibold text-zinc-900 truncate">
+                        {{ item.competitor.name or item.competitor.url }}
+                    </span>
                 </div>
-                <span class="text-xs text-slate-400 font-medium">{{ item.event.detected_at.strftime('%b %d, %Y') }}</span>
+                <span class="text-xs text-zinc-400 font-mono flex-shrink-0 ml-3">
+                    {{ item.event.detected_at.strftime('%b %d, %Y') }}
+                </span>
             </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Brief Overview</h3>
-                    <p class="text-slate-700 text-sm mt-1.5 leading-relaxed">
-                        {% if item.event.brief_text %}
-                            {{ item.event.brief_text }}
-                        {% else %}
-                            Minor copy update detected. No strategic action is required at this time.
-                        {% endif %}
-                    </p>
+
+            <!-- Brief text -->
+            {% if item.event.brief_text and item.event.change_type not in ('minor_copy', 'no_change') %}
+            <p class="brief-quote mb-3.5">{{ item.event.brief_text }}</p>
+            {% elif item.event.brief_text %}
+            <p class="text-sm text-zinc-500 leading-relaxed mb-3.5">{{ item.event.brief_text }}</p>
+            {% endif %}
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
+                <div class="text-xs text-zinc-400 font-mono">
+                    {{ item.event.net_char_delta }} chars changed
                 </div>
-                
-                <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 pt-3 mt-3">
-                    <div>
-                        Net characters changed: <strong class="text-slate-600">{{ item.event.net_char_delta }}</strong>
-                    </div>
-                    {% if item.event.change_type not in ('minor_copy', 'no_change') %}
-                    <a href="/queue" class="text-indigo-600 hover:text-indigo-500 font-semibold flex items-center space-x-1">
-                        <span>Review response drafts</span>
-                        <span>&rarr;</span>
-                    </a>
-                    {% endif %}
-                </div>
+                {% if item.event.change_type not in ('minor_copy', 'no_change') %}
+                <a href="/queue" class="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1">
+                    Review response drafts
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
     {% endif %}
+
 </div>
 {% endblock %}

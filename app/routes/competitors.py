@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 from app.db import get_session
-from app.models import Competitor
+from app.models import Competitor, User
 from app.session import require_current_user
 import uuid
 
@@ -18,10 +18,12 @@ async def list_competitors(request: Request, db=Depends(get_session), user_id=De
     competitors = db.execute(
         select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
     ).scalars().all()
+    user = db.get(User, user_uuid)
     return templates.TemplateResponse("competitors.html", {
         "request": request,
         "competitors": competitors,
         "at_limit": len(competitors) >= MAX_COMPETITORS,
+        "user": user,
     })
 
 @router.post("/add", response_class=HTMLResponse)

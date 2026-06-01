@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select, func
 from app.db import get_session
-from app.models import ChangeEvent, Competitor, ApprovedAction, Snapshot
+from app.models import ChangeEvent, Competitor, ApprovedAction, Snapshot, User
 from app.session import require_current_user
 import uuid
 
@@ -45,9 +45,12 @@ async def dashboard_page(request: Request, db=Depends(get_session), user_id=Depe
         .limit(1)
     ).scalar_one_or_none()
     
+    user = db.get(User, user_uuid)
+
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "events": events_data,
         "pending_count": pending_count,
         "last_scan": last_scan,
+        "user": user,
     })

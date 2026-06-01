@@ -92,14 +92,14 @@ class TestWebApp(unittest.IsolatedAsyncioTestCase):
     def test_login_page_renders(self):
         response = self.client.get("/auth/login")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Welcome Back", response.text)
+        self.assertIn("Welcome back", response.text)
 
     @patch("app.routes.auth.send_magic_link_email", new_callable=AsyncMock)
     def test_request_magic_link_flow(self, mock_email_send):
         # Successful form post
         response = self.client.post("/auth/login", data={"email": "founder@example.com"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Check your email", response.text)
+        self.assertIn("Check your inbox", response.text)
         
         # Verify user was fetched/created
         users = self.db.query(User).all()

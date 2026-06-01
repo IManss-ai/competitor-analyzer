@@ -1,73 +1,86 @@
-<div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 transition duration-200" id="action-{{ item.action.id }}">
-    
-    <!-- Card Header -->
-    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-        <div class="flex items-center space-x-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-indigo-900 bg-indigo-50 px-2.5 py-1 rounded-full">
-                {{ item.action.action_type | replace("_", " ") }}
+<div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-5 transition-shadow duration-150 hover:shadow-md"
+     id="action-{{ item.action.id }}">
+
+    <!-- Card header -->
+    <div class="flex items-center justify-between mb-4 pb-3.5 border-b border-zinc-100">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <span class="inline-block text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md border
+                {% if item.action.action_type == 'retention_email' %}badge-pricing
+                {% elif item.action.action_type == 'feature_announcement' %}badge-feature
+                {% elif item.action.action_type == 'positioning_update' %}badge-repositioning
+                {% else %}badge-copy{% endif %}">
+                {{ item.action.action_type | replace('_', ' ') }}
             </span>
-            <span class="text-xs text-slate-400 font-medium">{{ item.competitor.name or item.competitor.url }}</span>
+            <span class="text-sm font-medium text-zinc-700 truncate">
+                {{ item.competitor.name or item.competitor.url }}
+            </span>
         </div>
-        <span class="text-xs text-slate-400 font-medium">
-            {{ item.action.created_at.strftime("%b %d") }}
+        <span class="text-xs text-zinc-400 font-mono flex-shrink-0 ml-3">
+            {{ item.action.created_at.strftime('%b %d') }}
         </span>
     </div>
 
-    <!-- Brief description context -->
+    <!-- Change context quote -->
     {% if item.change_event.brief_text %}
-    <div class="bg-slate-50 border-l-2 border-slate-300 p-3 mb-4 rounded-r-xl">
-        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Detected Change Brief</p>
-        <p class="text-slate-600 text-sm mt-1 leading-relaxed italic">
-            {{ item.change_event.brief_text }}
-        </p>
+    <div class="brief-quote mb-4">
+        {{ item.change_event.brief_text }}
     </div>
     {% endif %}
 
-    <!-- Editor Form -->
+    <!-- Editor form -->
     <form hx-post="/queue/{{ item.action.id }}/approve"
           hx-target="#action-{{ item.action.id }}"
           hx-swap="outerHTML"
-          class="space-y-4">
-        
+          class="space-y-3.5">
+
         <div>
-            <label for="draft-{{ item.action.id }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Edit Response Asset</label>
-            <textarea name="edited_text" 
-                      id="draft-{{ item.action.id }}" 
-                      class="w-full text-sm text-slate-800 border border-slate-200 rounded-xl p-3 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition duration-150"
+            <label for="draft-{{ item.action.id }}"
+                   class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">
+                Response draft
+            </label>
+            <textarea name="edited_text"
+                      id="draft-{{ item.action.id }}"
+                      class="w-full text-sm text-zinc-800 bg-zinc-50 border border-zinc-200 rounded-lg p-3.5
+                             min-h-[120px] focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600
+                             transition-colors duration-150 leading-relaxed resize-y"
             >{{ item.action.original_draft }}</textarea>
         </div>
 
-        <!-- Buttons -->
-        <div class="flex items-center space-x-2">
-            
-            <!-- Copy button -->
+        <!-- Action buttons -->
+        <div class="flex items-center gap-2">
+
+            <!-- Copy -->
             <button type="button"
                     id="copy-btn-{{ item.action.id }}"
-                    onclick="navigator.clipboard.writeText(document.getElementById('draft-{{ item.action.id }}').value).then(() => {
-                        const originalText = this.textContent;
-                        this.textContent = 'Copied!';
-                        this.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-                        setTimeout(() => {
-                            this.textContent = originalText;
-                            this.classList.remove('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
-                        }, 2000);
-                    })"
-                    class="px-4 py-2 text-xs bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold rounded-xl transition duration-150">
+                    onclick="const ta = document.getElementById('draft-{{ item.action.id }}');
+                             navigator.clipboard.writeText(ta.value).then(() => {
+                               const btn = document.getElementById('copy-btn-{{ item.action.id }}');
+                               btn.textContent = 'Copied!';
+                               btn.classList.add('text-emerald-700', 'border-emerald-200', 'bg-emerald-50');
+                               setTimeout(() => {
+                                 btn.textContent = 'Copy';
+                                 btn.classList.remove('text-emerald-700', 'border-emerald-200', 'bg-emerald-50');
+                               }, 2000);
+                             })"
+                    class="text-xs font-medium text-zinc-600 border border-zinc-200 bg-white
+                           hover:bg-zinc-50 px-3.5 py-2 rounded-lg transition-all duration-150">
                 Copy
             </button>
 
-            <!-- Approve button -->
+            <!-- Approve -->
             <button type="submit"
-                    class="px-4 py-2 text-xs bg-indigo-950 text-white font-semibold rounded-xl hover:bg-indigo-900 transition duration-150 shadow-sm">
-                Approve &amp; Done
+                    class="text-xs font-medium bg-zinc-950 text-white px-3.5 py-2 rounded-lg
+                           hover:bg-zinc-800 active:scale-[0.98] transition-all duration-150">
+                Approve &amp; done
             </button>
 
-            <!-- Dismiss button -->
+            <!-- Dismiss -->
             <button type="button"
                     hx-post="/queue/{{ item.action.id }}/dismiss"
                     hx-target="#action-{{ item.action.id }}"
                     hx-swap="outerHTML"
-                    class="px-4 py-2 text-xs text-slate-400 hover:text-slate-600 hover:bg-slate-50 font-semibold rounded-xl transition duration-150">
+                    class="text-xs font-medium text-zinc-400 hover:text-zinc-600
+                           hover:bg-zinc-50 px-3 py-2 rounded-lg transition-all duration-150">
                 Dismiss
             </button>
         </div>

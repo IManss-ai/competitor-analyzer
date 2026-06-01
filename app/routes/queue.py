@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 from app.db import get_session
-from app.models import ApprovedAction, ChangeEvent, Competitor
+from app.models import ApprovedAction, ChangeEvent, Competitor, User
 from app.session import require_current_user
 from datetime import datetime, timezone
 import uuid
@@ -34,9 +34,12 @@ async def approval_queue(request: Request, db=Depends(get_session), user_id=Depe
             "competitor": competitor
         })
         
+    user = db.get(User, user_uuid)
+
     return templates.TemplateResponse("queue.html", {
         "request": request,
         "pending_actions": actions_data,
+        "user": user,
     })
 
 @router.post("/{action_id}/approve", response_class=HTMLResponse)

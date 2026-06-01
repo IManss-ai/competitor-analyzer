@@ -142,7 +142,7 @@ class TestQueueSettings(unittest.IsolatedAsyncioTestCase):
         self.client.cookies.set(SESSION_COOKIE_NAME, self.session_cookie)
         response = self.client.get("/settings/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Account Settings", response.text)
+        self.assertIn("Settings", response.text)
         self.assertIn("user@test.com", response.text)
         self.assertIn("trialing", response.text)
 
