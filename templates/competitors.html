@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Competitors — Competitor Analyzer{% endblock %}
+
+{% block content %}
+<div id="competitor-container" class="space-y-8">
+    
+    <!-- Title Section -->
+    <div class="border-b border-slate-200 pb-5">
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Competitor Directory</h1>
+        <p class="text-slate-500 text-sm mt-1">Track up to 7 competitor websites to monitor changes.</p>
+    </div>
+
+    <!-- Alert Messages (Errors or Notices) -->
+    {% if error %}
+    <div class="bg-rose-50 border border-rose-100 text-rose-800 rounded-xl p-4 text-sm flex items-start space-x-2 animate-pulse">
+        <svg class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Add Competitor Form Card -->
+        <div class="md:col-span-1">
+            <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 sticky top-6">
+                <h2 class="text-lg font-bold text-slate-900 mb-4">Add Competitor</h2>
+                
+                {% if at_limit %}
+                <div class="bg-amber-50 border border-amber-100 text-amber-800 rounded-xl p-4 text-xs">
+                    <p class="font-semibold">Maximum limit reached (7/7)</p>
+                    <p class="mt-1 text-slate-600">Remove an existing competitor to add a new one.</p>
+                </div>
+                {% else %}
+                <form hx-post="/competitors/add" hx-target="#competitor-container" hx-select="#competitor-container" hx-swap="outerHTML" class="space-y-4">
+                    <div>
+                        <label for="url" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Website URL</label>
+                        <input type="text" id="url" name="url" required placeholder="competitor.com" 
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm transition duration-150">
+                    </div>
+                    
+                    <div>
+                        <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Display Name (Optional)</label>
+                        <input type="text" id="name" name="name" placeholder="e.g. Acme Corp" 
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm transition duration-150">
+                    </div>
+                    
+                    <button type="submit" 
+                        class="w-full bg-indigo-950 text-white font-semibold py-2.5 px-4 rounded-xl hover:bg-indigo-900 active:scale-95 transition-all duration-150 text-sm shadow-md">
+                        Add Target
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Competitor List -->
+        <div class="md:col-span-2">
+            <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+                <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-4 mb-4">Monitored Websites</h2>
+                
+                {% if not competitors %}
+                <div class="text-center py-12">
+                    <p class="text-slate-400 text-sm">No competitors added yet.</p>
+                </div>
+                {% else %}
+                <div class="divide-y divide-slate-100">
+                    {% for competitor in competitors %}
+                    <div class="flex items-center justify-between py-4 {% if loop.first %}pt-0{% endif %} {% if loop.last %}pb-0{% endif %}">
+                        <div class="min-w-0 pr-4">
+                            <h3 class="font-bold text-slate-900 text-sm truncate">
+                                {{ competitor.name or competitor.url }}
+                            </h3>
+                            <a href="{{ competitor.url }}" target="_blank" class="text-xs text-indigo-600 hover:underline mt-0.5 inline-block truncate max-w-xs md:max-w-md">
+                                {{ competitor.url }}
+                            </a>
+                        </div>
+                        <button hx-post="/competitors/{{ competitor.id }}/remove" 
+                                hx-target="#competitor-container" 
+                                hx-select="#competitor-container" 
+                                hx-swap="outerHTML" 
+                                class="text-xs font-semibold text-rose-600 hover:text-rose-500 py-1.5 px-3 border border-rose-100 hover:bg-rose-50 rounded-xl transition duration-150">
+                            Remove
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

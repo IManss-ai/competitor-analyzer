@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Competitor Analyzer{% endblock %}</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <!-- HTMX CDN -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" href="/static/css/app.css">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-indigo-950 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-violet-200 bg-clip-text text-transparent">
+                        gstack <span class="font-light text-slate-300">| competitor analyzer</span>
+                    </span>
+                </div>
+                <!-- Navigation -->
+                {% block nav %}
+                <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="/dashboard" class="text-slate-300 hover:text-white transition-colors duration-150 py-2">Dashboard</a>
+                    <a href="/competitors" class="text-slate-300 hover:text-white transition-colors duration-150 py-2">Competitors</a>
+                    <a href="/settings" class="text-slate-300 hover:text-white transition-colors duration-150 py-2">Settings</a>
+                    <a href="/auth/logout" class="text-rose-300 hover:text-rose-200 transition-colors duration-150 py-2">Logout</a>
+                </nav>
+                {% endblock %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-10">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+            &copy; 2026 Competitor Analyzer. Powered by gstack.
+        </div>
+    </footer>
+
+</body>
+</html>
