@@ -46,16 +46,16 @@ class TestWebApp(unittest.IsolatedAsyncioTestCase):
         app.dependency_overrides.clear()
 
     def test_magic_link_token_flow(self):
-        # 1. Generate token
-        token = generate_magic_link_token(str(self.user.id), expires_minutes=10)
+        # 1. Generate token (persisted to DB)
+        token = generate_magic_link_token(str(self.user.id), self.db, expires_minutes=10)
         self.assertIsNotNone(token)
-        
+
         # 2. Verify token
-        user_id = verify_magic_link_token(token)
+        user_id = verify_magic_link_token(token, self.db)
         self.assertEqual(user_id, str(self.user.id))
-        
+
         # 3. Verify token is consumed (one-use)
-        second_attempt = verify_magic_link_token(token)
+        second_attempt = verify_magic_link_token(token, self.db)
         self.assertIsNone(second_attempt)
 
     def test_session_helpers(self):
@@ -111,7 +111,7 @@ class TestWebApp(unittest.IsolatedAsyncioTestCase):
         self.assertIn("/auth/verify?token=", sent_link)
 
     def test_verify_magic_link_route_success(self):
-        token = generate_magic_link_token(str(self.user.id))
+        token = generate_magic_link_token(str(self.user.id), self.db)
         response = self.client.get(f"/auth/verify?token={token}", follow_redirects=False)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers.get("Location"), "/dashboard")

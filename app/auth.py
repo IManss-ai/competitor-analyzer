@@ -1,31 +1,45 @@
 import secrets
 import hashlib
+import uuid
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
-from app.models import User
+from app.models import User, MagicLinkToken
 import httpx
 
-# Token store: token_hash -> {user_id, expires_at}
-_magic_link_tokens: dict[str, dict] = {}
 
-def generate_magic_link_token(user_id: str, expires_minutes: int = 30) -> str:
+def generate_magic_link_token(user_id: str, db: Session, expires_minutes: int = 30) -> str:
     token = secrets.token_urlsafe(32)
     token_hash = hashlib.sha256(token.encode()).hexdigest()
-    _magic_link_tokens[token_hash] = {
-        "user_id": user_id,
-        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=expires_minutes),
-    }
+    db_token = MagicLinkToken(
+        token_hash=token_hash,
+        user_id=uuid.UUID(user_id) if isinstance(user_id, str) else user_id,
+        expires_at=datetime.now(timezone.utc) + timedelta(minutes=expires_minutes),
+    )
+    db.add(db_token)
+    db.commit()
     return token
 
-def verify_magic_link_token(token: str) -> str | None:
-    """Returns user_id if token is valid and not expired. Consumes token (one-use)."""
+
+def verify_magic_link_token(token: str, db: Session) -> str | None:
+    """Returns user_id if valid and not expired. Consumes token (one-use)."""
     token_hash = hashlib.sha256(token.encode()).hexdigest()
-    entry = _magic_link_tokens.pop(token_hash, None)
-    if not entry:
+    now = datetime.now(timezone.utc)
+    db_token = (
+        db.query(MagicLinkToken)
+        .filter(MagicLinkToken.token_hash == token_hash)
+        .first()
+    )
+    if not db_token:
         return None
-    if datetime.now(timezone.utc) > entry["expires_at"]:
+    if now > db_token.expires_at.replace(tzinfo=timezone.utc) if db_token.expires_at.tzinfo is None else now > db_token.expires_at:
+        db.delete(db_token)
+        db.commit()
         return None
-    return entry["user_id"]
+    user_id = str(db_token.user_id)
+    db.delete(db_token)
+    db.commit()
+    return user_id
+
 
 def get_or_create_user(email: str, db: Session) -> User:
     user = db.query(User).filter(User.email == email).first()
@@ -36,8 +50,8 @@ def get_or_create_user(email: str, db: Session) -> User:
         db.refresh(user)
     return user
 
+
 async def send_magic_link_email(email: str, magic_link_url: str, mailgun_api_key: str, mailgun_domain: str):
-    # Print to console for dev environment/tests if config is dummy or empty
     if not mailgun_api_key or not mailgun_domain or "dummy" in mailgun_api_key.lower():
         print(f"\n--- [LOCAL DEV EMAIL] Magic link sent to {email}: {magic_link_url} ---\n")
         return

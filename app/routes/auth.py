@@ -16,7 +16,7 @@ async def login_page(request: Request):
 @router.post("/login")
 async def request_magic_link(request: Request, email: str = Form(...), db=Depends(get_session)):
     user = get_or_create_user(email, db)
-    token = generate_magic_link_token(str(user.id))
+    token = generate_magic_link_token(str(user.id), db)
     link = f"{APP_BASE_URL}/auth/verify?token={token}"
     try:
         await send_magic_link_email(email, link, MAILGUN_API_KEY, MAILGUN_DOMAIN)
@@ -30,7 +30,7 @@ async def request_magic_link(request: Request, email: str = Form(...), db=Depend
 
 @router.get("/verify")
 async def verify_magic_link(request: Request, token: str, db=Depends(get_session)):
-    user_id = verify_magic_link_token(token)
+    user_id = verify_magic_link_token(token, db)
     if not user_id:
         return templates.TemplateResponse("login.html", {
             "request": request,

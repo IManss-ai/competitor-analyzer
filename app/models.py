@@ -1,5 +1,5 @@
 from uuid import uuid4
-from sqlalchemy import Column, String, DateTime, Boolean, Integer, ForeignKey, Text, func, UUID
+from sqlalchemy import Column, String, DateTime, Boolean, Integer, ForeignKey, Text, func, UUID, Index
 from app.db import Base
 
 class User(Base):
@@ -41,6 +41,14 @@ class ChangeEvent(Base):
     change_type = Column(String, nullable=True)  # set by classifier in plan 01-02
     brief_text = Column(Text, nullable=True)      # set by synthesizer in plan 01-02
     week_label = Column(String, nullable=True)    # e.g. "2025-W23"
+
+class MagicLinkToken(Base):
+    __tablename__ = "magic_link_tokens"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    token_hash = Column(String, unique=True, nullable=False, index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime, default=func.now())
 
 class ApprovedAction(Base):
     __tablename__ = "approved_actions"
