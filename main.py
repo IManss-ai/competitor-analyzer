@@ -4,10 +4,12 @@ from fastapi.responses import RedirectResponse
 from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends
 from contextlib import asynccontextmanager
 from app.scheduler import start_scheduler
+from app.db import engine
+from app.models import Base
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Start APScheduler cron on startup
+    Base.metadata.create_all(engine)
     start_scheduler()
     yield
 
