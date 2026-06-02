@@ -4,6 +4,6 @@ builder = "nixpacks"
 [deploy]
 startCommand = "python -c 'from app.db import Base, engine; Base.metadata.create_all(engine)' && uvicorn main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
-healthcheckTimeout = 60
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
