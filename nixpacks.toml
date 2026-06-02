@@ -5,4 +5,4 @@ cmds = ["pip install -r requirements.txt"]
 cmds = ["echo 'Build complete'"]
 
 [start]
-cmd = "python -c 'from app.db import Base, engine; Base.metadata.create_all(engine)' && uvicorn main:app --host 0.0.0.0 --port $PORT"
+cmd = "uvicorn main:app --host 0.0.0.0 --port $PORT"
