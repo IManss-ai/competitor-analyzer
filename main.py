@@ -32,4 +32,4 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "v2-design"}
+    return {"status": "ok", "version": "v3-redesign"}
