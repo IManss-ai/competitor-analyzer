@@ -20,17 +20,12 @@
 
     <!-- Empty state -->
     {% if not pending_actions %}
-    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-12 text-center">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 mb-5">
-            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-        </div>
-        <h2 class="font-display font-semibold text-zinc-900 text-base mb-2">All caught up</h2>
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm px-8 py-10 text-center">
+        <h2 class="font-display font-semibold text-zinc-900 text-base mb-2">Queue is empty</h2>
         <p class="text-sm text-zinc-500 leading-relaxed max-w-sm mx-auto">
-            No assets pending review. We'll notify you when a competitor update generates new drafts.
+            No response assets pending review. New drafts appear here when a competitor scan detects a meaningful change.
         </p>
-        <div class="mt-7">
+        <div class="mt-6">
             <a href="/dashboard"
                class="inline-flex items-center bg-zinc-950 text-white text-sm font-medium py-2 px-4 rounded-lg
                       hover:bg-zinc-800 transition-colors">

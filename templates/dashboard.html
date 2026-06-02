@@ -66,21 +66,16 @@
     <!-- Intelligence feed -->
     {% if not events %}
     <!-- Empty state -->
-    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-12 text-center">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 mb-5">
-            <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-            </svg>
-        </div>
-        <h2 class="font-display font-semibold text-zinc-900 text-base mb-2">Your first scan is running</h2>
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm px-8 py-10 text-center">
+        <h2 class="font-display font-semibold text-zinc-900 text-base mb-2">No intelligence yet</h2>
         <p class="text-sm text-zinc-500 leading-relaxed max-w-sm mx-auto">
-            We're fetching and analyzing your competitors' pages. Check back in a few minutes to see your first intelligence brief.
+            Add competitors and run a scan. Your first brief will appear here once we've analyzed their pages.
         </p>
-        <div class="mt-7">
+        <div class="mt-6">
             <a href="/competitors"
                class="inline-flex items-center bg-zinc-950 text-white text-sm font-medium py-2 px-4 rounded-lg
                       hover:bg-zinc-800 transition-colors">
-                Manage competitors
+                Add competitors
             </a>
         </div>
     </div>
