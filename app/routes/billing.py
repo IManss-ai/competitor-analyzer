@@ -5,9 +5,9 @@ import stripe
 from app.db import get_session
 from app.models import User
 from app.session import require_current_user
-from app.billing import create_checkout_session
+from app.billing import create_checkout_session, create_portal_session
 from app.config import STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import uuid
 
 router = APIRouter(prefix="/billing")
@@ -50,6 +50,18 @@ async def billing_success(
     return templates.TemplateResponse("billing_success.html", {
         "request": request,
     })
+
+@router.get("/portal")
+async def billing_portal(request: Request, db=Depends(get_session), user_id=Depends(require_current_user)):
+    user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
+    user = db.get(User, user_uuid)
+    if not user or not user.stripe_customer_id:
+        return RedirectResponse(url="/billing/checkout")
+    try:
+        portal_url = await create_portal_session(user.stripe_customer_id)
+        return RedirectResponse(url=portal_url)
+    except Exception as e:
+        return RedirectResponse(url="/settings")
 
 @router.get("/cancel")
 async def billing_cancel(request: Request):
