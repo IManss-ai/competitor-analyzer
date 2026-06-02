@@ -18,12 +18,18 @@
             <button hx-post="/scan/now"
                     hx-target="#scan-status"
                     hx-swap="innerHTML"
+                    hx-on::after-request="if(event.detail.successful) window.notify('Scan started — results in ~1 minute', 'info')"
                     class="inline-flex items-center gap-1.5 bg-zinc-950 text-white text-xs font-medium px-3.5 py-2 rounded-lg
                            hover:bg-zinc-800 active:scale-[0.98] transition-all duration-150">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <!-- Spinner: visible only while request is in-flight -->
+                <svg class="request-spinner w-3.5 h-3.5 animate-spin-css" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                 </svg>
-                Scan now
+                <!-- Static icon + label: visible at rest -->
+                <svg class="request-label w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span class="request-label">Scan now</span>
             </button>
 
             {% if last_scan %}
@@ -83,7 +89,7 @@
     <!-- Intelligence events -->
     <div class="space-y-4">
         {% for item in events %}
-        <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-5 card-hover">
+        <div class="bg-white border border-zinc-200 rounded-xl shadow-sm p-5 card-hover animate-fade-in-up stagger-{{ loop.index if loop.index <= 5 else 5 }}">
 
             <!-- Event header -->
             <div class="flex items-center justify-between mb-3.5">

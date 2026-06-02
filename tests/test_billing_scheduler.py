@@ -214,7 +214,7 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
         self.client.cookies.set(SESSION_COOKIE_NAME, self.session_cookie)
         response = self.client.post("/scan/now")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Scan started", response.text)
+        self.assertIn("Scanning", response.text)
         
         # Verify scan task scheduled
         mock_run_background.assert_called_once_with(str(self.user.id))

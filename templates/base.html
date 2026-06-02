@@ -20,14 +20,14 @@
                         sans:    ['Inter', 'system-ui', 'sans-serif'],
                         display: ['"Plus Jakarta Sans"', 'sans-serif'],
                         mono:    ['"JetBrains Mono"', 'monospace'],
-                    },
-                    colors: {
-                        brand: '#09090B',
                     }
                 }
             }
         }
     </script>
+
+    <!-- Alpine.js (reactive components + transitions) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -37,10 +37,47 @@
     {% block head %}{% endblock %}
 </head>
 
-<body class="h-full bg-zinc-50 text-zinc-900 antialiased font-sans">
+<body class="h-full bg-zinc-50 text-zinc-900 antialiased font-sans"
+      x-data="toastManager()"
+      @show-toast.window="addToast($event.detail)">
+
+<!-- ── Toast notification overlay ─────────────────────────────── -->
+<div class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite">
+    <template x-for="t in toasts" :key="t.id">
+        <div x-transition:enter="transition ease-out duration-250"
+             x-transition:enter-start="opacity-0 translate-y-[-8px] scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-[-8px] scale-95"
+             :class="'toast-item toast-' + t.type"
+             class="toast-item">
+            <!-- Icon -->
+            <span x-show="t.type === 'success'" class="flex-shrink-0 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span x-show="t.type === 'info'" class="flex-shrink-0 text-blue-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01"/></svg>
+            </span>
+            <span x-show="t.type === 'error'" class="flex-shrink-0 text-red-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </span>
+            <span x-show="t.type === 'warning'" class="flex-shrink-0 text-amber-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </span>
+            <!-- Message -->
+            <span x-text="t.message" class="flex-1 leading-snug"></span>
+            <!-- Dismiss -->
+            <button @click="removeToast(t.id)" class="flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity ml-1 pointer-events-auto">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </template>
+</div>
+<!-- ── /Toast overlay ──────────────────────────────────────────── -->
 
 {% block full_layout %}
-<!-- ── Authenticated sidebar layout ────────────────────────────── -->
+<!-- ── Authenticated sidebar layout ───────────────────────────── -->
 <div class="flex h-full">
 
     <!-- ── Left Sidebar ──────────────────────────────────────────── -->
@@ -50,7 +87,6 @@
         <div class="h-14 flex items-center px-5 border-b border-zinc-200 flex-shrink-0">
             <a href="/dashboard" class="flex items-center space-x-2.5 group">
                 <div class="w-7 h-7 bg-zinc-950 rounded-md flex items-center justify-center flex-shrink-0 group-hover:bg-zinc-800 transition-colors duration-150">
-                    <!-- Radar / signal icon -->
                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="7.5" cy="7.5" r="6.5" stroke="white" stroke-width="1.25"/>
                         <circle cx="7.5" cy="7.5" r="3.5" stroke="white" stroke-width="1.25"/>
@@ -66,10 +102,8 @@
 
         <!-- Navigation -->
         <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-
             {% set path = request.url.path %}
 
-            <!-- Dashboard -->
             <a href="/dashboard"
                class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors duration-100
                       {% if path.startswith('/dashboard') %}nav-active{% else %}text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100{% endif %}">
@@ -79,7 +113,6 @@
                 <span>Dashboard</span>
             </a>
 
-            <!-- Competitors -->
             <a href="/competitors"
                class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors duration-100
                       {% if path.startswith('/competitors') %}nav-active{% else %}text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100{% endif %}">
@@ -89,7 +122,6 @@
                 <span>Competitors</span>
             </a>
 
-            <!-- Queue -->
             <a href="/queue"
                class="flex items-center justify-between px-2.5 py-2 rounded-lg text-sm transition-colors duration-100
                       {% if path.startswith('/queue') %}nav-active{% else %}text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100{% endif %}">
@@ -100,11 +132,10 @@
                     <span>Queue</span>
                 </span>
                 {% if pending_count is defined and pending_count > 0 %}
-                <span class="bg-zinc-900 text-white text-xs font-mono font-semibold rounded-full px-1.5 py-0.5 min-w-[20px] text-center leading-none">{{ pending_count }}</span>
+                <span class="bg-zinc-900 text-white text-xs font-mono font-semibold rounded-full px-1.5 py-0.5 min-w-[20px] text-center leading-none badge-pulse">{{ pending_count }}</span>
                 {% endif %}
             </a>
 
-            <!-- Settings -->
             <a href="/settings"
                class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors duration-100
                       {% if path.startswith('/settings') or path.startswith('/billing') %}nav-active{% else %}text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100{% endif %}">
@@ -114,7 +145,6 @@
                 </svg>
                 <span>Settings</span>
             </a>
-
         </nav>
 
         <!-- Account footer -->
@@ -138,18 +168,49 @@
         </div>
 
     </aside>
-    <!-- ── /Left Sidebar ─────────────────────────────────────────── -->
 
     <!-- ── Main content ──────────────────────────────────────────── -->
     <div class="content-offset flex flex-col flex-1 bg-zinc-50">
-        <main class="flex-1 w-full max-w-5xl mx-auto px-8 py-8">
+        <main class="flex-1 w-full max-w-5xl mx-auto px-8 py-8 animate-fade-in">
             {% block content %}{% endblock %}
         </main>
     </div>
-    <!-- ── /Main content ─────────────────────────────────────────── -->
 
 </div>
 {% endblock full_layout %}
+
+<!-- ── Global scripts ─────────────────────────────────────────── -->
+<script>
+    // Global toast helper — call from anywhere
+    window.notify = function(message, type = 'info') {
+        window.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message, type }
+        }));
+    };
+
+    // Toast manager Alpine component
+    function toastManager() {
+        return {
+            toasts: [],
+            addToast({ message, type = 'info' }) {
+                const id = Date.now() + Math.random();
+                this.toasts.push({ id, message, type });
+                setTimeout(() => this.removeToast(id), 4500);
+            },
+            removeToast(id) {
+                this.toasts = this.toasts.filter(t => t.id !== id);
+            }
+        }
+    }
+
+    // HTMX global error handler
+    document.addEventListener('htmx:responseError', function(e) {
+        window.notify('Something went wrong. Please try again.', 'error');
+    });
+    document.addEventListener('htmx:sendError', function(e) {
+        window.notify('Network error. Check your connection.', 'error');
+    });
+</script>
 
 </body>
 </html>

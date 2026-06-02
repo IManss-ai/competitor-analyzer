@@ -1,90 +1,158 @@
 /* Competitor Analyzer — App Styles */
 /* Design system: Clean/Editorial — Trusted Analyst */
 
-/* HTMX fade transitions */
-.htmx-settling { opacity: 1 !important; }
-.htmx-swapping { opacity: 0; transition: opacity 100ms ease-out; }
-.htmx-added { opacity: 0; }
-.htmx-added.htmx-settling { opacity: 1; transition: opacity 150ms ease-out; }
+/* ── Entrance animations ──────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); max-height: 400px; margin-bottom: 1rem; }
+  to   { opacity: 0; transform: translateX(24px); max-height: 0; margin-bottom: 0; }
+}
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-12px) translateX(0); }
+  to   { opacity: 1; transform: translateY(0) translateX(0); }
+}
+@keyframes slideOutUp {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(9, 9, 11, 0.4); }
+  70%  { box-shadow: 0 0 0 6px rgba(9, 9, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(9, 9, 11, 0); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
-/* Scrollbar styling */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #E4E4E7; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #A1A1AA; }
+/* ── Animation utility classes ───────────────────────────────── */
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out both;
+}
+.animate-slide-out {
+  animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 1, 1) both;
+  overflow: hidden;
+  pointer-events: none;
+}
+.animate-spin-css {
+  animation: spin 0.8s linear infinite;
+}
 
-/* Sidebar nav active state override */
+/* Staggered card entrances */
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 180ms; }
+.stagger-5 { animation-delay: 240ms; }
+
+/* ── HTMX request states ──────────────────────────────────────── */
+/* Buttons dim + disable cursor during HTMX requests */
+.htmx-request-target.htmx-request,
+button.htmx-request {
+  opacity: 0.7;
+  cursor: wait;
+  pointer-events: none;
+}
+/* Show spinner icon during request */
+.htmx-request .request-spinner { display: inline-block !important; }
+.htmx-request .request-label   { display: none !important; }
+/* Normal state */
+.request-spinner { display: none !important; }
+.request-label   { display: inline !important; }
+
+/* Smooth exit animation when HTMX swaps out an element (swap:Nms delay window) */
+.htmx-swapping {
+  animation: slideOutRight 0.25s cubic-bezier(0.4, 0, 1, 1) both;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ── Sidebar nav ─────────────────────────────────────────────── */
 .nav-active {
   background-color: #F4F4F5;
   color: #18181B;
   font-weight: 600;
 }
-
-/* Monospace for competitor data */
-.data-mono {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8125rem;
+.badge-pulse {
+  animation: pulseRing 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
 }
 
-/* Change type badge variants */
-.badge-pricing {
-  background: #FEF3C7;
-  color: #92400E;
-  border-color: #FDE68A;
-}
-.badge-feature {
-  background: #ECFDF5;
-  color: #065F46;
-  border-color: #A7F3D0;
-}
-.badge-repositioning {
-  background: #EFF6FF;
-  color: #1E40AF;
-  border-color: #BFDBFE;
-}
-.badge-copy {
-  background: #F4F4F5;
-  color: #52525B;
-  border-color: #E4E4E7;
-}
-
-/* Focus ring for accessibility */
-.focus-ring:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #2563EB33;
-  border-color: #2563EB;
-}
-
-/* Card hover lift */
+/* ── Cards ───────────────────────────────────────────────────── */
 .card-hover {
-  transition: box-shadow 150ms ease-out, transform 150ms ease-out;
+  transition: box-shadow 150ms ease-out;
 }
 .card-hover:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-/* Intelligence brief quote block */
+/* ── Change type badge variants ──────────────────────────────── */
+.badge-pricing     { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+.badge-feature     { background: #ECFDF5; color: #065F46; border-color: #A7F3D0; }
+.badge-repositioning { background: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+.badge-copy        { background: #F4F4F5; color: #52525B; border-color: #E4E4E7; }
+
+/* ── Brief quote block ───────────────────────────────────────── */
 .brief-quote {
   border-left: 2px solid #E4E4E7;
   padding-left: 14px;
   color: #52525B;
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.65;
   font-style: italic;
 }
 
-/* Sidebar fixed layout */
+/* ── Layout ──────────────────────────────────────────────────── */
 .sidebar-fixed {
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  top: 0; left: 0; bottom: 0;
   width: 240px;
   overflow-y: auto;
   z-index: 30;
 }
-
 .content-offset {
   margin-left: 240px;
   min-height: 100vh;
 }
+
+/* ── Monospace for competitor data ───────────────────────────── */
+.data-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #E4E4E7; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #A1A1AA; }
+
+/* ── Toast notifications ─────────────────────────────────────── */
+.toast-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+  min-width: 260px;
+  max-width: 380px;
+  pointer-events: auto;
+  cursor: default;
+}
+.toast-info    { background: #fff; border-color: #E4E4E7; color: #18181B; }
+.toast-success { background: #F0FDF4; border-color: #BBF7D0; color: #14532D; }
+.toast-error   { background: #FFF1F2; border-color: #FECDD3; color: #881337; }
+.toast-warning { background: #FFFBEB; border-color: #FDE68A; color: #78350F; }

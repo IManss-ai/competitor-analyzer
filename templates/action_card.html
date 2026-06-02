@@ -30,7 +30,8 @@
     <!-- Editor form -->
     <form hx-post="/queue/{{ item.action.id }}/approve"
           hx-target="#action-{{ item.action.id }}"
-          hx-swap="outerHTML"
+          hx-swap="outerHTML swap:280ms"
+          hx-on::after-request="if(event.detail.successful) window.notify('Asset approved — ready to use', 'success')"
           class="space-y-3.5">
 
         <div>
@@ -69,16 +70,20 @@
 
             <!-- Approve -->
             <button type="submit"
-                    class="text-xs font-medium bg-zinc-950 text-white px-3.5 py-2 rounded-lg
+                    class="inline-flex items-center gap-1.5 text-xs font-medium bg-zinc-950 text-white px-3.5 py-2 rounded-lg
                            hover:bg-zinc-800 active:scale-[0.98] transition-all duration-150">
-                Approve &amp; done
+                <svg class="request-spinner w-3 h-3 animate-spin-css" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span class="request-label">Approve &amp; done</span>
             </button>
 
             <!-- Dismiss -->
             <button type="button"
                     hx-post="/queue/{{ item.action.id }}/dismiss"
                     hx-target="#action-{{ item.action.id }}"
-                    hx-swap="outerHTML"
+                    hx-swap="outerHTML swap:280ms"
+                    hx-on::after-request="if(event.detail.successful) window.notify('Dismissed', 'info')"
                     class="text-xs font-medium text-zinc-400 hover:text-zinc-600
                            hover:bg-zinc-50 px-3 py-2 rounded-lg transition-all duration-150">
                 Dismiss

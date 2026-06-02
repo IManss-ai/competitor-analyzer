@@ -31,7 +31,5 @@ async def trigger_scan(
     """
     background_tasks.add_task(_run_scan_background, user_id)
     return HTMLResponse(
-        '<div class="bg-indigo-50 border border-indigo-100 text-indigo-800 px-4 py-3 rounded-xl text-xs font-semibold animate-pulse">'
-        'Scan started in background. Refresh dashboard in a minute to see results.'
-        '</div>'
+        '<span class="text-xs text-zinc-400 font-mono animate-fade-in">Scanning…</span>'
     )
