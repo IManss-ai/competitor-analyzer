@@ -3,16 +3,26 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends
 from contextlib import asynccontextmanager
+import asyncio
 from app.scheduler import start_scheduler
 from app.db import engine
 from app.models import Base
 
+async def _init_db():
+    try:
+        await asyncio.wait_for(
+            asyncio.to_thread(Base.metadata.create_all, engine),
+            timeout=30.0,
+        )
+        print("[startup] DB tables created/verified")
+    except asyncio.TimeoutError:
+        print("[startup] DB init timed out — tables may not exist yet")
+    except Exception as e:
+        print(f"[startup] DB init failed (non-fatal): {e}")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    try:
-        Base.metadata.create_all(engine)
-    except Exception as e:
-        print(f"[startup] create_all failed (non-fatal): {e}")
+    asyncio.create_task(_init_db())
     start_scheduler()
     yield
 
@@ -37,4 +47,4 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "v4-db-fix"}
+    return {"status": "ok", "version": "v5-bg-init"}
