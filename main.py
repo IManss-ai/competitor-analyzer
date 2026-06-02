@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
-from app.routes import auth, competitors, dashboard, queue, settings, billing, scan
+from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends
 from contextlib import asynccontextmanager
 from app.scheduler import start_scheduler
 
@@ -24,6 +24,7 @@ app.include_router(queue.router)
 app.include_router(settings.router)
 app.include_router(billing.router)
 app.include_router(scan.router)
+app.include_router(trends.router)
 
 @app.get("/")
 def root():

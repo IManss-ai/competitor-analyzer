@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% block title %}Trends — Competitor Analyzer{% endblock %}
+
+{% block head %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+    .heatmap-cell-0  { background: #f4f4f5; }
+    .heatmap-cell-1  { background: #e4e4e7; }
+    .heatmap-cell-2  { background: #a1a1aa; }
+    .heatmap-cell-3  { background: #52525b; }
+    .heatmap-cell-4  { background: #18181b; }
+    .heatmap-cell-0:hover { background: #e4e4e7; }
+    .heatmap-cell-1:hover { background: #d4d4d8; }
+    .heatmap-cell-2:hover { background: #71717a; }
+    .heatmap-cell-3:hover { background: #3f3f46; }
+    .heatmap-cell-4:hover { background: #09090b; }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #e4e4e7;
+        border-radius: 12px;
+        padding: 20px 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .chart-container {
+        background: white;
+        border: 1px solid #e4e4e7;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .type-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .tooltip-cell {
+        position: relative;
+    }
+    .tooltip-cell:hover .cell-tooltip {
+        display: block;
+    }
+    .cell-tooltip {
+        display: none;
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #18181b;
+        color: white;
+        font-size: 11px;
+        font-family: 'JetBrains Mono', monospace;
+        padding: 4px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 10;
+        pointer-events: none;
+    }
+    .cell-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 4px solid transparent;
+        border-top-color: #18181b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-7">
+
+    <!-- Page header -->
+    <div>
+        <h1 class="font-display font-bold text-zinc-900 text-2xl tracking-tight">Trends</h1>
+        <p class="text-sm text-zinc-500 mt-1">12-week view of competitor activity patterns.</p>
+    </div>
+
+    {% if not has_data %}
+    <!-- Empty state -->
+    <div class="chart-container text-center py-12">
+        <div class="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+        </div>
+        <h2 class="font-display font-semibold text-zinc-900 text-base mb-2">No data yet</h2>
+        <p class="text-sm text-zinc-500 max-w-xs mx-auto leading-relaxed">
+            Run your first scan to start seeing trends. Data accumulates weekly.
+        </p>
+        <div class="mt-6">
+            <a href="/dashboard" class="inline-flex items-center bg-zinc-950 text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-zinc-800 transition-colors">
+                Go to Dashboard
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+
+    <!-- ── Summary stats ──────────────────────────────────────────── -->
+    <div class="grid grid-cols-3 gap-4">
+
+        <div class="stat-card">
+            <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Total changes</div>
+            <div class="font-display font-bold text-zinc-900 text-3xl">{{ total_events }}</div>
+            <div class="text-xs text-zinc-400 mt-1">across last 12 weeks</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Significant changes</div>
+            <div class="font-display font-bold text-zinc-900 text-3xl">{{ significant_count }}</div>
+            <div class="text-xs text-zinc-400 mt-1">pricing · feature · repositioning</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Most active</div>
+            {% if most_active %}
+            <div class="font-display font-bold text-zinc-900 text-lg leading-tight truncate">{{ most_active.name }}</div>
+            <div class="text-xs text-zinc-400 mt-1">{{ most_active.total }} change{{ 's' if most_active.total != 1 }}</div>
+            {% else %}
+            <div class="text-sm text-zinc-400">—</div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- ── Weekly activity chart ──────────────────────────────────── -->
+    <div class="chart-container">
+        <div class="flex items-center justify-between mb-5">
+            <div>
+                <h2 class="font-display font-semibold text-zinc-900 text-base">Weekly activity</h2>
+                <p class="text-xs text-zinc-400 mt-0.5">Change events detected per week</p>
+            </div>
+        </div>
+        <div style="height: 220px;">
+            <canvas id="weeklyChart"></canvas>
+        </div>
+    </div>
+
+    <!-- ── Activity heatmap ───────────────────────────────────────── -->
+    <div class="chart-container">
+        <div class="mb-5">
+            <h2 class="font-display font-semibold text-zinc-900 text-base">Activity heatmap</h2>
+            <p class="text-xs text-zinc-400 mt-0.5">Changes per competitor per week — darker = more activity</p>
+        </div>
+
+        {% if competitors %}
+        <div class="overflow-x-auto">
+            <table class="w-full" style="border-collapse: separate; border-spacing: 3px;">
+                <thead>
+                    <tr>
+                        <th class="text-left pr-3 pb-2" style="min-width: 140px;">
+                            <span class="text-xs font-medium text-zinc-400">Competitor</span>
+                        </th>
+                        {% set week_labels = week_labels_json | tojson | replace('"', '') %}
+                        {% for i in range(12) %}
+                        <th class="pb-2" style="width: 36px; min-width: 36px;">
+                            <span class="text-[10px] font-mono text-zinc-300 block text-center" id="week-label-{{ i }}"></span>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="heatmap-body">
+                    <!-- Filled by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex items-center gap-2 mt-4">
+            <span class="text-xs text-zinc-400">Less</span>
+            <div class="w-5 h-5 rounded heatmap-cell-0" title="0"></div>
+            <div class="w-5 h-5 rounded heatmap-cell-1" title="1"></div>
+            <div class="w-5 h-5 rounded heatmap-cell-2" title="2"></div>
+            <div class="w-5 h-5 rounded heatmap-cell-3" title="3+"></div>
+            <div class="w-5 h-5 rounded heatmap-cell-4" title="4+"></div>
+            <span class="text-xs text-zinc-400">More</span>
+        </div>
+        {% else %}
+        <p class="text-sm text-zinc-400">No competitors tracked yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- ── Per-competitor breakdown ───────────────────────────────── -->
+    <div class="chart-container">
+        <div class="mb-5">
+            <h2 class="font-display font-semibold text-zinc-900 text-base">Change type breakdown</h2>
+            <p class="text-xs text-zinc-400 mt-0.5">Classification of all detected changes per competitor</p>
+        </div>
+
+        <div id="breakdown-rows" class="space-y-4">
+            <!-- Filled by JS -->
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+// ── Data from server ─────────────────────────────────────────────────
+const WEEK_LABELS     = {{ week_labels_json | safe }};
+const WEEKLY_TOTALS   = {{ weekly_totals_json | safe }};
+const COMPETITOR_DATA = {{ competitor_breakdown_json | safe }};
+const HEATMAP_DATA    = {{ heatmap_json | safe }};
+
+const TYPE_COLORS = {
+    pricing_change: { bg: '#fef3c7', text: '#92400e', dot: '#f59e0b' },
+    feature_add:    { bg: '#dbeafe', text: '#1e40af', dot: '#3b82f6' },
+    repositioning:  { bg: '#f3e8ff', text: '#6b21a8', dot: '#a855f7' },
+    minor_copy:     { bg: '#f4f4f5', text: '#52525b', dot: '#a1a1aa' },
+    no_change:      { bg: '#f4f4f5', text: '#71717a', dot: '#d4d4d8' },
+};
+const TYPE_LABELS = {
+    pricing_change: 'Pricing change',
+    feature_add:    'Feature add',
+    repositioning:  'Repositioning',
+    minor_copy:     'Minor copy',
+    no_change:      'No change',
+};
+
+// ── Short week label: "W22" ──────────────────────────────────────────
+function shortWeek(full) {
+    // "2026-W22" → "W22"
+    return full.split('-')[1];
+}
+
+// ── Weekly activity chart ────────────────────────────────────────────
+const ctx = document.getElementById('weeklyChart');
+if (ctx) {
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: WEEK_LABELS.map(shortWeek),
+            datasets: [{
+                label: 'Changes detected',
+                data: WEEKLY_TOTALS,
+                borderColor: '#18181b',
+                backgroundColor: 'rgba(24,24,27,0.06)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#18181b',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                tension: 0.3,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#18181b',
+                    titleColor: '#a1a1aa',
+                    bodyColor: '#fff',
+                    padding: 10,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        title: (items) => WEEK_LABELS[items[0].dataIndex],
+                        label: (item) => `${item.raw} change${item.raw !== 1 ? 's' : ''} detected`,
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: '#f4f4f5' },
+                    ticks: {
+                        font: { family: "'JetBrains Mono', monospace", size: 10 },
+                        color: '#a1a1aa',
+                        maxRotation: 0,
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        font: { family: "'JetBrains Mono', monospace", size: 10 },
+                        color: '#a1a1aa',
+                    },
+                    grid: { color: '#f4f4f5' },
+                }
+            }
+        }
+    });
+}
+
+// ── Heatmap ──────────────────────────────────────────────────────────
+(function buildHeatmap() {
+    // Fill week header labels
+    WEEK_LABELS.forEach((label, i) => {
+        const el = document.getElementById(`week-label-${i}`);
+        if (el) el.textContent = shortWeek(label);
+    });
+
+    const tbody = document.getElementById('heatmap-body');
+    if (!tbody) return;
+
+    function cellClass(count) {
+        if (count === 0) return 'heatmap-cell-0';
+        if (count === 1) return 'heatmap-cell-1';
+        if (count === 2) return 'heatmap-cell-2';
+        if (count === 3) return 'heatmap-cell-3';
+        return 'heatmap-cell-4';
+    }
+
+    Object.entries(HEATMAP_DATA).forEach(([compId, weekMap]) => {
+        const compInfo = COMPETITOR_DATA[compId];
+        if (!compInfo) return;
+
+        const tr = document.createElement('tr');
+
+        // Competitor name cell
+        const nameTd = document.createElement('td');
+        nameTd.className = 'pr-3 py-1';
+        nameTd.innerHTML = `<span class="text-xs font-medium text-zinc-700 truncate block" style="max-width:140px;" title="${compInfo.name}">${compInfo.name}</span>`;
+        tr.appendChild(nameTd);
+
+        // Week cells
+        WEEK_LABELS.forEach(label => {
+            const count = weekMap[label] || 0;
+            const td = document.createElement('td');
+            td.className = 'tooltip-cell';
+            td.innerHTML = `
+                <div class="w-8 h-8 rounded ${cellClass(count)} cursor-default transition-colors mx-auto" style="margin: 2px;"></div>
+                <div class="cell-tooltip">${count} change${count !== 1 ? 's' : ''}<br/>${label}</div>
+            `;
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+})();
+
+// ── Breakdown bars ───────────────────────────────────────────────────
+(function buildBreakdown() {
+    const container = document.getElementById('breakdown-rows');
+    if (!container) return;
+
+    const TYPES = ['pricing_change', 'feature_add', 'repositioning', 'minor_copy', 'no_change'];
+
+    Object.entries(COMPETITOR_DATA).forEach(([compId, data]) => {
+        const total = data.total || 1;  // avoid divide-by-zero
+
+        const el = document.createElement('div');
+        el.className = 'border border-zinc-100 rounded-xl p-4';
+
+        // Header
+        let html = `
+            <div class="flex items-center justify-between mb-3">
+                <div class="min-w-0">
+                    <div class="text-sm font-semibold text-zinc-900 truncate">${data.name}</div>
+                    <div class="text-xs text-zinc-400 font-mono truncate">${data.url}</div>
+                </div>
+                <span class="text-xs font-mono font-semibold text-zinc-500 ml-3 flex-shrink-0">${data.total} total</span>
+            </div>
+        `;
+
+        // Stacked bar
+        html += `<div class="flex rounded-md overflow-hidden h-3 mb-3 bg-zinc-100">`;
+        TYPES.forEach(type => {
+            const count = data[type] || 0;
+            const pct = Math.round((count / total) * 100);
+            if (pct > 0) {
+                const color = TYPE_COLORS[type]?.dot || '#a1a1aa';
+                html += `<div style="width:${pct}%;background:${color};" title="${TYPE_LABELS[type]}: ${count}"></div>`;
+            }
+        });
+        html += `</div>`;
+
+        // Legend items
+        html += `<div class="flex flex-wrap gap-x-4 gap-y-1.5">`;
+        TYPES.forEach(type => {
+            const count = data[type] || 0;
+            if (count === 0) return;
+            const c = TYPE_COLORS[type] || {};
+            html += `
+                <div class="flex items-center gap-1.5">
+                    <div class="type-dot" style="background:${c.dot};"></div>
+                    <span class="text-xs text-zinc-500">${TYPE_LABELS[type]}</span>
+                    <span class="text-xs font-mono font-semibold text-zinc-700">${count}</span>
+                </div>
+            `;
+        });
+        html += `</div>`;
+
+        el.innerHTML = html;
+        container.appendChild(el);
+    });
+
+    if (Object.keys(COMPETITOR_DATA).length === 0) {
+        container.innerHTML = '<p class="text-sm text-zinc-400">No competitors tracked yet.</p>';
+    }
+})();
+</script>
+{% endblock %}
