@@ -92,7 +92,7 @@ class TestWebApp(unittest.IsolatedAsyncioTestCase):
     def test_login_page_renders(self):
         response = self.client.get("/auth/login")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Welcome back", response.text)
+        self.assertIn("Sign in", response.text)
 
     @patch("app.routes.auth.send_magic_link_email", new_callable=AsyncMock)
     def test_request_magic_link_flow(self, mock_email_send):
