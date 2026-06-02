@@ -86,7 +86,7 @@ async def trends_page(
 
     # ── Heatmap: competitor × week ────────────────────────────────────
     # {competitor_id: {week_label: count}}
-    heatmap: dict[str, dict[str, int]] = {}
+    heatmap = {}  # {competitor_id: {week_label: count}}
     for comp in competitors:
         heatmap[str(comp.id)] = {label: 0 for label in week_labels}
 
