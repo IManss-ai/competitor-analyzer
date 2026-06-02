@@ -51,18 +51,18 @@ def get_or_create_user(email: str, db: Session) -> User:
     return user
 
 
-async def send_magic_link_email(email: str, magic_link_url: str, mailgun_api_key: str, mailgun_domain: str):
-    if not mailgun_api_key or not mailgun_domain or "dummy" in mailgun_api_key.lower():
-        print(f"\n--- [LOCAL DEV EMAIL] Magic link sent to {email}: {magic_link_url} ---\n")
+async def send_magic_link_email(email: str, magic_link_url: str, resend_api_key: str, from_email: str):
+    if not resend_api_key or "dummy" in resend_api_key.lower():
+        print(f"\n--- [LOCAL DEV EMAIL] Magic link → {email}: {magic_link_url} ---\n")
         return
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            f"https://api.mailgun.net/v3/{mailgun_domain}/messages",
-            auth=("api", mailgun_api_key),
-            data={
-                "from": f"Competitor Analyzer <noreply@{mailgun_domain}>",
-                "to": email,
+            "https://api.resend.com/emails",
+            headers={"Authorization": f"Bearer {resend_api_key}", "Content-Type": "application/json"},
+            json={
+                "from": f"Competitor Analyzer <{from_email}>",
+                "to": [email],
                 "subject": "Your login link — Competitor Analyzer",
                 "text": f"Click here to log in (link expires in 30 minutes):\n\n{magic_link_url}\n\nIf you didn't request this, ignore this email.",
             },

@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.db import get_session
 from app.auth import get_or_create_user, generate_magic_link_token, verify_magic_link_token, send_magic_link_email
-from app.config import APP_BASE_URL, MAILGUN_API_KEY, MAILGUN_DOMAIN
+from app.config import APP_BASE_URL, RESEND_API_KEY, FROM_EMAIL
 from app.session import set_session_user
 
 router = APIRouter(prefix="/auth")
@@ -19,7 +19,7 @@ async def request_magic_link(request: Request, email: str = Form(...), db=Depend
     token = generate_magic_link_token(str(user.id), db)
     link = f"{APP_BASE_URL}/auth/verify?token={token}"
     try:
-        await send_magic_link_email(email, link, MAILGUN_API_KEY, MAILGUN_DOMAIN)
+        await send_magic_link_email(email, link, RESEND_API_KEY, FROM_EMAIL)
     except Exception:
         pass  # Prevent email enumeration by hiding failures
     return templates.TemplateResponse("login.html", {
