@@ -27,11 +27,6 @@
         {% if sent %}
         <!-- Success state -->
         <div class="text-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 mb-5">
-                <svg class="w-5 h-5 text-zinc-700" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-            </div>
             <h1 class="font-display font-bold text-zinc-900 text-xl mb-2">Check your inbox</h1>
             <p class="text-sm text-zinc-500 leading-relaxed">
                 We sent a login link to <span class="font-medium text-zinc-900">{{ email }}</span>.<br>It expires in 30 minutes.
@@ -46,8 +41,8 @@
         {% else %}
         <!-- Login form -->
         <div class="mb-6">
-            <h1 class="font-display font-bold text-zinc-900 text-xl mb-1">Welcome back</h1>
-            <p class="text-sm text-zinc-500">Enter your email to receive a sign-in link.</p>
+            <h1 class="font-display font-bold text-zinc-900 text-xl mb-1">Sign in</h1>
+            <p class="text-sm text-zinc-500">Enter your email to receive a magic link.</p>
         </div>
 
         {% if error %}
