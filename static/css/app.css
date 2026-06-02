@@ -79,8 +79,8 @@ button.htmx-request {
 
 /* ── Sidebar nav ─────────────────────────────────────────────── */
 .nav-active {
-  background-color: #F4F4F5;
-  color: #18181B;
+  background-color: #27272A; /* zinc-800 */
+  color: #FFFFFF;
   font-weight: 600;
 }
 .badge-pulse {
