@@ -45,6 +45,10 @@ async def dashboard_page(request: Request, db=Depends(get_session), user_id=Depe
         .limit(1)
     ).scalar_one_or_none()
     
+    competitor_count = db.execute(
+        select(func.count(Competitor.id)).where(Competitor.user_id == user_uuid)
+    ).scalar() or 0
+
     user = db.get(User, user_uuid)
 
     return templates.TemplateResponse("dashboard.html", {
@@ -52,5 +56,6 @@ async def dashboard_page(request: Request, db=Depends(get_session), user_id=Depe
         "events": events_data,
         "pending_count": pending_count,
         "last_scan": last_scan,
+        "competitor_count": competitor_count,
         "user": user,
     })
