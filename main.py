@@ -9,7 +9,10 @@ from app.models import Base
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(engine)
+    try:
+        Base.metadata.create_all(engine)
+    except Exception as e:
+        print(f"[startup] create_all failed (non-fatal): {e}")
     start_scheduler()
     yield
 
@@ -34,4 +37,4 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "v3-redesign"}
+    return {"status": "ok", "version": "v4-db-fix"}
