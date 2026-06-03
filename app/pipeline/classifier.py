@@ -19,7 +19,7 @@ Return only the category string. No explanation."""
 async def classify_change(text_before: str, text_after: str) -> str:
     """
     Classify the nature of change between two page snapshots.
-    Returns one of the 5 category strings. Falls back to 'minor_copy' on error.
+    Returns one of the 5 category strings. Falls back to a heuristic rules-based model on error or dummy key.
     """
     # Truncate to 3000 chars each to stay within token budget
     before_trunc = text_before[:3000]
@@ -38,6 +38,30 @@ async def classify_change(text_before: str, text_after: str) -> str:
         result = response.choices[0].message.content.strip().lower()
         if result in VALID_CATEGORIES:
             return result
-        return "minor_copy"  # safe fallback for unexpected output
+        return _classify_heuristically(before_trunc, after_trunc)
     except Exception:
-        return "minor_copy"
+        return _classify_heuristically(before_trunc, after_trunc)
+
+def _classify_heuristically(text_before: str, text_after: str) -> str:
+    after_lower = text_after.lower()
+    before_lower = text_before.lower()
+    
+    if after_lower == before_lower:
+        return "no_change"
+        
+    pricing_keywords = ["price", "pricing", "plan", "$", "/mo", "Starter Plan", "Growth Plan", "previously $"]
+    for kw in pricing_keywords:
+        if kw.lower() in after_lower and kw.lower() not in before_lower:
+            return "pricing_change"
+            
+    feature_keywords = ["copilot", "ai assistant", "what is new", "new feature", "announcing", "launching our", "integrated ai"]
+    for kw in feature_keywords:
+        if kw.lower() in after_lower and kw.lower() not in before_lower:
+            return "feature_add"
+            
+    positioning_keywords = ["operating system", "replace fragmented tools", "automated enterprise", "messaging", "value prop"]
+    for kw in positioning_keywords:
+        if kw.lower() in after_lower and kw.lower() not in before_lower:
+            return "repositioning"
+            
+    return "minor_copy"

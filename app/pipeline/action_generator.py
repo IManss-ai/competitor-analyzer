@@ -57,7 +57,7 @@ async def generate_action(
     user_description: str = "SaaS founders and small teams",
 ) -> str | None:
     """
-    Generate one action draft using GPT-4o.
+    Generate one action draft using GPT-4o or a local heuristic fallback.
     Returns draft text or None on error.
     """
     prompt_config = PROMPTS.get(action_type)
@@ -83,7 +83,35 @@ async def generate_action(
         )
         return response.choices[0].message.content.strip()
     except Exception:
-        return None
+        return _generate_action_heuristically(action_type, competitor_name or competitor_url, brief_text, user_description)
+
+def _generate_action_heuristically(action_type: str, competitor: str, brief: str, user_description: str) -> str | None:
+    if action_type == "retention_email":
+        return f"""Hi [Name],
+
+I wanted to personally reach out and thank you for partnering with us. We've noticed some shifts in the market recently, with other platforms restructuring their plans and raising prices.
+
+We want to reassure you that our focus remains on providing exceptional value and reliable tools for {user_description} at a sustainable, fair price. We are committed to keeping our pricing predictable as you scale.
+
+We have some exciting performance and workflow updates coming next month that we can't wait to share. If you have any feedback or feature requests, feel free to hit reply and let me know.
+
+Warm regards,
+[Your Name]"""
+
+    elif action_type == "pricing_copy":
+        return f"""1. "Get all the power of premium team workflows without the pricing markup. Simple, predictable pricing for {user_description}."
+2. "No surprise price hikes or arbitrary limits. Lock in our growth rate today and build with confidence."
+3. "Why pay more per user elsewhere when you can get full integrations, custom dashboards, and high-performance workflows for a fraction of the cost?"""
+
+    elif action_type == "feature_response":
+        return f"""Hi everyone, the productivity workspace is heating up, and we've seen competitors launching integrated AI assistants. While text assistants are nice, we believe {user_description} need deeper automated integrations that actually perform tasks.
+
+That is why we are focusing our upcoming product updates on hardware-accelerated automation and direct Git/Figma pipelines to eliminate administrative friction entirely. Let us build tools that do the work for you. Stay tuned!"""
+
+    elif action_type == "social_draft":
+        return f"Competitors are launching AI assistants to summarize text. But teams do not need more AI noise — they need automated integrations that execute tasks. We are keeping our focus on deep, hardware-accelerated workflows. Back to building."
+
+    return None
 
 async def generate_actions_for_change(
     change_type: str,

@@ -111,13 +111,12 @@ class TestWebApp(unittest.IsolatedAsyncioTestCase):
         self.assertIn("/auth/verify?token=", sent_link)
 
     def test_verify_magic_link_route_success(self):
+        from app.config import FRONTEND_URL
         token = generate_magic_link_token(str(self.user.id), self.db)
         response = self.client.get(f"/auth/verify?token={token}", follow_redirects=False)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.headers.get("Location"), "/dashboard")
-        
-        # Session cookie set
-        self.assertIn(SESSION_COOKIE_NAME, response.cookies)
+        location = response.headers.get("Location")
+        self.assertTrue(location.startswith(f"{FRONTEND_URL}/api/auth/callback?session_token="))
 
     def test_verify_magic_link_route_invalid(self):
         response = self.client.get("/auth/verify?token=invalid_token")

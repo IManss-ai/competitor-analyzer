@@ -21,8 +21,14 @@ async def scan_competitor(competitor_id: str, db) -> dict:
     if not competitor or not competitor.active:
         return {"competitor_id": competitor_id, "skipped": True}
 
+    # Get existing snapshot count
+    from sqlalchemy import func
+    snapshot_count = db.execute(
+        select(func.count(Snapshot.id)).where(Snapshot.competitor_id == competitor.id)
+    ).scalar() or 0
+
     # Fetch current content
-    raw_text, error = await fetch_page_text(competitor.url)
+    raw_text, error = await fetch_page_text(competitor.url, snapshot_count=snapshot_count)
     main_content = extract_main_content(raw_text) if not error else ""
     char_count = len(main_content)
 

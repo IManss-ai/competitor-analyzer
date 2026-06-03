@@ -38,7 +38,8 @@ class TestActionGenerator(unittest.IsolatedAsyncioTestCase):
             competitor_url="https://x.com",
             brief_text="Brief text"
         )
-        self.assertIsNone(res)
+        self.assertIsNotNone(res)
+        self.assertIn("Competitors are launching AI assistants", res)
 
     @patch("app.pipeline.action_generator.generate_action")
     async def test_generate_actions_for_change_mappings(self, mock_generate):
