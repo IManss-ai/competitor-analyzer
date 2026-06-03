@@ -359,21 +359,18 @@ export default function LandingPage() {
                   title: "Pricing change",
                   description: "Stripe removed enterprise tier",
                   date: "2h ago",
-                  className: "-translate-x-8 translate-y-3 rotate-[-4deg]",
                 },
                 {
                   icon: <Sparkle weight="fill" />,
                   title: "New feature",
                   description: "Competitor launched SDK v4.1",
                   date: "1d ago",
-                  className: "translate-x-0 translate-y-0 rotate-[2deg]",
                 },
                 {
                   icon: <Sparkle weight="fill" />,
                   title: "Strategic signal",
                   description: "4 sales hires in EMEA",
                   date: "3d ago",
-                  className: "translate-x-8 -translate-y-3 rotate-[6deg]",
                 },
               ]}
             />

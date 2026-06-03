@@ -25,7 +25,7 @@ function DisplayCard({
   return (
     <div
       className={cn(
-        "relative flex h-36 w-[22rem] -skew-y-[8deg] select-none flex-col justify-between rounded-xl border border-white/[0.08] bg-white/[0.06] px-4 py-3 transition-all duration-700 hover:border-white/20 hover:-translate-y-1",
+        "relative flex h-36 w-[22rem] select-none flex-col justify-between rounded-xl border border-white/[0.08] bg-white/[0.06] px-4 py-3 transition-all duration-300 hover:border-white/20 hover:-translate-y-1",
         className
       )}
     >
@@ -75,35 +75,34 @@ const defaultCards: CardData[] = [
     title: "Pricing change",
     description: "Stripe removed enterprise tier",
     date: "2h ago",
-    className: "-translate-x-8 translate-y-3 rotate-[-4deg]",
   },
   {
     icon: <Sparkle weight="fill" />,
     title: "New feature",
     description: "Competitor launched SDK v4",
     date: "1d ago",
-    className: "translate-x-0 translate-y-0 rotate-[2deg]",
   },
   {
     icon: <Sparkle weight="fill" />,
     title: "Strategic signal",
     description: "4 new sales hires in EMEA",
     date: "3d ago",
-    className: "translate-x-8 -translate-y-3 rotate-[6deg]",
   },
 ];
 
 export default function DisplayCards({ cards = defaultCards }: DisplayCardsProps) {
   return (
-    <div className="flex min-h-[220px] items-center justify-center py-8">
-      <div className="relative flex items-center">
-        {cards.map((card, i) => (
-          <div key={i} className={cn("absolute", card.className)}>
-            <DisplayCard {...card} />
-          </div>
-        ))}
-        <div className="w-[22rem] h-36 opacity-0 pointer-events-none" />
-      </div>
+    <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center justify-center py-8 w-full max-w-5xl mx-auto">
+      {cards.map((card, i) => {
+        // Exclude parent classNames that have positioning transforms
+        return (
+          <DisplayCard
+            key={i}
+            {...card}
+            className="w-full md:w-[22rem] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-lg"
+          />
+        );
+      })}
     </div>
   );
 }
