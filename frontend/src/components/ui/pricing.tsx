@@ -79,20 +79,17 @@ export function Pricing({
         </p>
       </div>
 
-      <div className="flex justify-center mb-10">
-        <label className="relative inline-flex items-center cursor-pointer">
-          <Label>
-            <Switch
-              ref={switchRef as any}
-              checked={!isMonthly}
-              onCheckedChange={handleToggle}
-              className="relative"
-            />
-          </Label>
-        </label>
-        <span className="ml-2 font-semibold text-foreground">
+      <div className="flex justify-center items-center gap-2 mb-10">
+        <Switch
+          id="billing-switch"
+          ref={switchRef as any}
+          checked={!isMonthly}
+          onCheckedChange={handleToggle}
+          className="relative"
+        />
+        <Label htmlFor="billing-switch" className="font-semibold text-foreground cursor-pointer select-none">
           Annual billing <span className="text-primary">(Save 20%)</span>
-        </span>
+        </Label>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
