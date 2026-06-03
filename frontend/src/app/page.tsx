@@ -1,608 +1,396 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Crosshair,
-  ArrowDown,
-  CheckCircle,
-  XCircle,
-  TrendUp,
-  MapPin,
-  Buildings,
-  ChartLineUp,
-  Megaphone,
-} from '@phosphor-icons/react';
-import { motion, useScroll, Variants } from 'motion/react';
+import { Crosshair, ArrowRight, CheckCircle, CaretRight } from '@phosphor-icons/react';
+import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 
-// Reusable animated container for stagger
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
+const FEED = [
+  { company: 'Stripe', action: 'Removed enterprise pricing from public page', time: '2h ago', type: 'pricing' },
+  { company: 'PayPal', action: 'Launched new checkout SDK v4.1', time: '6h ago', type: 'feature' },
+  { company: 'Braintree', action: 'Updated developer docs navigation', time: '1d ago', type: 'copy' },
+  { company: 'Square', action: 'Changed hero from "fast" to "global payments"', time: '2d ago', type: 'messaging' },
+  { company: 'Adyen', action: 'Added 3 new enterprise case studies', time: '3d ago', type: 'content' },
+];
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+const TYPE_COLOR: Record<string, string> = {
+  pricing: 'text-amber-400',
+  feature: 'text-emerald-400',
+  copy: 'text-blue-400',
+  messaging: 'text-violet-400',
+  content: 'text-zinc-400',
 };
 
 export default function LandingPage() {
-  const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    return scrollY.on('change', (latest) => {
-      setScrolled(latest > 20);
-    });
-  }, [scrollY]);
+    const fn = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
 
   return (
-    <div className="min-h-[100dvh] bg-[#0a0a0a] text-white selection:bg-blue-500/30 font-sans overflow-x-hidden relative">
-      {/* 1. NAVIGATION */}
-      <nav
-        className={`fixed top-0 inset-x-0 h-16 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-[#0a0a0a]/80 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)]' : 'bg-transparent'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Crosshair size={18} weight="bold" className="text-white" />
-            </div>
-            <span className="text-sm font-bold tracking-tight">Competitor Analyzer</span>
+    <div className="min-h-[100dvh] bg-[#080808] text-white font-sans overflow-x-hidden">
+
+      {/* NAV */}
+      <nav className={`fixed top-0 inset-x-0 z-50 h-14 flex items-center justify-between px-6 lg:px-10 transition-all duration-200 ${scrolled ? 'bg-[#080808]/95 backdrop-blur-sm border-b border-white/[0.06]' : ''}`}>
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center flex-shrink-0">
+            <Crosshair size={13} weight="bold" className="text-white" />
           </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/auth/login"
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors hidden sm:block"
-            >
-              Sign in
-            </Link>
-            <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.96 }}>
-              <Link
-                href="/auth/login"
-                className="px-5 py-2.5 bg-white text-black text-sm font-bold rounded-full hover:bg-white/90 transition-colors shadow-sm"
-              >
-                Start free trial
-              </Link>
-            </motion.div>
-          </div>
+          <span className="text-sm font-semibold tracking-tight">Competitor Analyzer</span>
         </div>
-        <div className="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+        <div className="flex items-center gap-5">
+          <Link href="/auth/login" className="text-sm text-white/50 hover:text-white transition-colors hidden sm:block">Sign in</Link>
+          <Link href="/auth/login" className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded transition-colors">
+            Start free
+          </Link>
+        </div>
       </nav>
 
-      {/* 2. HERO SECTION */}
-      <section
-        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 lg:px-12 flex flex-col items-center min-h-[100dvh] justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      >
-        {/* Aurora Blobs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <motion.div
-            className="absolute top-[-10%] left-[-10%] w-[700px] h-[700px] bg-blue-500 rounded-full blur-[130px]"
-            animate={{
-              x: [0, 50, -50, 0],
-              y: [0, 50, -30, 0],
-              scale: [1, 1.1, 0.9, 1],
-              opacity: [0.32, 0.48, 0.32],
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="absolute top-[20%] right-[-10%] w-[700px] h-[700px] bg-indigo-500 rounded-full blur-[130px]"
-            animate={{
-              x: [0, -60, 40, 0],
-              y: [0, -40, 60, 0],
-              scale: [1, 1.2, 0.8, 1],
-              opacity: [0.22, 0.38, 0.22],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] bg-violet-500 rounded-full blur-[130px]"
-            animate={{
-              x: [0, 30, -30, 0],
-              y: [0, -50, 30, 0],
-              scale: [1, 0.9, 1.1, 1],
-              opacity: [0.18, 0.28, 0.18],
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </div>
+      {/* HERO */}
+      <section className="pt-32 pb-20 lg:pt-44 lg:pb-28 px-6 lg:px-10">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-        <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 relative z-10">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            className="flex-1 text-left"
-          >
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              <span className="text-[11px] font-medium text-white/70 uppercase tracking-widest">
-                Now tracking 847 competitors
-              </span>
+          {/* Left */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="inline-flex items-center gap-2 text-[11px] font-mono text-blue-400 uppercase tracking-widest mb-8 border border-blue-400/20 px-3 py-1 rounded-sm"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              Live competitive intelligence
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.05] mb-6">
-              Know every move<br />
-              your competitors make{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-300">
-                before it costs you.
-              </span>
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[52px] lg:text-[68px] font-bold leading-[1] tracking-[-0.03em] mb-6"
+            >
+              Your competitors<br />
+              are moving.<br />
+              <span className="text-blue-400">Are you watching?</span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-lg md:text-xl text-white/60 max-w-xl leading-relaxed mb-10 font-light">
-              Competitor Analyzer monitors pricing, reviews, job postings, and social. Then generates a weekly Battle Card with your exact action plan. 30x cheaper than Crayon.
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-white/50 text-lg leading-relaxed max-w-md mb-10"
+            >
+              We monitor pricing, reviews, job postings, and messaging for every competitor. Every week you get a Battle Card with exactly what changed and what to do about it.
             </motion.p>
 
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start gap-4 mb-6">
-              <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.96 }}>
-                <Link
-                  href="/auth/login"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-white text-black text-base font-bold rounded-full w-full sm:w-auto shadow-lg"
-                >
-                  Start free trial
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.96 }}>
-                <Link
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white text-base font-medium rounded-full w-full sm:w-auto hover:bg-white/10 transition-colors"
-                >
-                  See how it works
-                  <ArrowDown size={16} weight="bold" />
-                </Link>
-              </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              className="flex flex-col sm:flex-row items-start gap-3 mb-8"
+            >
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black text-sm font-bold rounded hover:bg-white/90 active:scale-[0.98] transition-all"
+              >
+                Start free trial
+                <ArrowRight size={15} weight="bold" />
+              </Link>
+              <Link
+                href="#battle-card"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/15 text-white/60 text-sm font-medium rounded hover:border-white/30 hover:text-white transition-all"
+              >
+                See a Battle Card
+              </Link>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4 text-[11px] text-white/40 font-mono">
-              <div className="flex items-center gap-1.5"><CheckCircle size={14} /> 14-day free trial</div>
-              <div className="flex items-center gap-1.5"><CheckCircle size={14} /> No credit card needed</div>
-              <div className="flex items-center gap-1.5"><CheckCircle size={14} /> Setup in 5 minutes</div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/25 font-mono"
+            >
+              <span>14-day free trial</span>
+              <span className="text-white/10">·</span>
+              <span>$49/mo SaaS · $19/mo local</span>
+              <span className="text-white/10">·</span>
+              <span>30x cheaper than Crayon</span>
             </motion.div>
-          </motion.div>
+          </div>
 
-          {/* Right side product preview */}
+          {/* Right: Live Intel Feed */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full lg:w-[45%]"
-            style={{ perspective: '1200px' }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="bg-[#0d0d0d] rounded-2xl border border-blue-500/40 p-6 shadow-[0_0_80px_rgba(37,99,235,0.3),0_0_30px_rgba(37,99,235,0.12)] relative overflow-hidden">
-              <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-              
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <span className="font-bold text-white text-sm">S</span>
+            <div className="border border-white/[0.08] rounded-sm bg-[#0d0d0d] overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-[#0a0a0a]">
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/[0.08]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/[0.08]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/[0.08]" />
+                  </div>
+                  <span className="text-[11px] font-mono text-white/25">competitor-feed</span>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-base font-semibold text-white">Stripe</span>
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  </div>
-                  <span className="text-xs text-white/40 font-mono">Battle Card</span>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <h4 className="text-xs font-semibold text-white/50 uppercase tracking-wide mb-3">3 changes this week</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 border border-white/5">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase">Pricing change</span>
-                    <span className="text-xs text-white/70 truncate">Updated enterprise pricing tier to custom only</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 border border-white/5">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase">New feature</span>
-                    <span className="text-xs text-white/70 truncate">Launched new checkout component</span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 border border-white/5">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase">Messaging update</span>
-                    <span className="text-xs text-white/70 truncate">Changed hero text to highlight global reach</span>
-                  </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-mono text-emerald-400/60">live</span>
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-xs font-semibold text-white/50 uppercase tracking-wide mb-3">Your action plan</h4>
-                <ul className="space-y-3">
-                  {[
-                    "Emphasize your monthly billing option in sales calls",
-                    "Update pricing page to highlight your flexibility",
-                    "Write a response blog post about their new feature"
-                  ].map((action, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              <div className="p-5 font-mono text-[12px]">
+                <div className="text-white/20 mb-5">$ monitoring 5 competitors &mdash; last scan 2h ago</div>
+                <div className="space-y-4">
+                  {FEED.map((item, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.6 + i * 0.1, duration: 0.4 }}
+                      className="flex items-start gap-3"
+                    >
+                      <span className="text-white/20 flex-shrink-0 mt-px">›</span>
+                      <div className="flex-1 min-w-0">
+                        <span className={`font-semibold ${TYPE_COLOR[item.type]}`}>{item.company}</span>
+                        <span className="text-white/50 ml-2 leading-snug">{item.action}</span>
                       </div>
-                      <span className="text-sm text-white/80 leading-snug">{action}</span>
+                      <span className="text-white/20 flex-shrink-0 pl-3">{item.time}</span>
+                    </motion.div>
+                  ))}
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/[0.06] text-blue-400">
+                  &#8594; 3 Battle Cards ready for review
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* STAT BAR */}
+      <div className="border-y border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4">
+          {[
+            { n: '30x', label: 'cheaper than Crayon' },
+            { n: '7', label: 'competitors tracked' },
+            { n: '5 min', label: 'to set up' },
+            { n: '14 days', label: 'free trial' },
+          ].map((s, i) => (
+            <div key={i} className={`py-7 text-center ${i < 3 ? 'border-r border-white/[0.06]' : ''}`}>
+              <div className="text-2xl font-bold tracking-tight">{s.n}</div>
+              <div className="text-xs text-white/35 mt-1 font-mono">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* BATTLE CARD */}
+      <section id="battle-card" className="py-24 px-6 lg:px-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-14">
+            <p className="text-[11px] font-mono text-blue-400 uppercase tracking-widest mb-4">The Battle Card</p>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-[1.05]">
+              Not just alerts.<br />A weekly playbook.
+            </h2>
+            <p className="text-white/45 mt-4 max-w-lg text-lg leading-relaxed">
+              Four sections per competitor. Delivered every Monday. Built to act on, not just read.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-px bg-white/[0.06]">
+            {[
+              {
+                num: '01',
+                label: 'What changed',
+                body: (
+                  <div className="space-y-3">
+                    {[
+                      { tag: 'pricing', tagColor: 'text-amber-400 bg-amber-400/10', text: 'Removed enterprise pricing from public page' },
+                      { tag: 'feature', tagColor: 'text-emerald-400 bg-emerald-400/10', text: 'Launched new checkout SDK with 3 new integrations' },
+                      { tag: 'copy', tagColor: 'text-blue-400 bg-blue-400/10', text: 'Hero changed from "fast payments" to "global payments"' },
+                    ].map((row, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-sm uppercase flex-shrink-0 mt-0.5 ${row.tagColor}`}>{row.tag}</span>
+                        <span className="text-sm text-white/65 leading-snug">{row.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                num: '02',
+                label: 'Customer complaints',
+                body: (
+                  <div className="space-y-4">
+                    <div className="border-l-2 border-red-400/30 pl-4">
+                      <p className="text-sm text-white/60 italic leading-relaxed">&ldquo;Support took 4 days to resolve our payout issue.&rdquo;</p>
+                      <p className="text-[10px] font-mono text-white/25 mt-1.5">Trustpilot · 1 star · 2 days ago</p>
+                    </div>
+                    <div className="border-l-2 border-amber-400/30 pl-4">
+                      <p className="text-sm text-white/60 italic leading-relaxed">&ldquo;Pricing is completely opaque after their latest change.&rdquo;</p>
+                      <p className="text-[10px] font-mono text-white/25 mt-1.5">G2 · 2 stars · 5 days ago</p>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                num: '03',
+                label: 'Strategic signal',
+                body: (
+                  <div className="space-y-4">
+                    {[
+                      { highlight: '4 Enterprise Sales roles', rest: ' posted in EMEA this week. Aggressive European expansion incoming.' },
+                      { highlight: 'Head of Partnerships', rest: ' hired. Channel strategy shift coming in 60-90 days.' },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <span className="text-white/20 font-mono flex-shrink-0 mt-0.5">›</span>
+                        <p className="text-sm text-white/60 leading-snug">
+                          <span className="text-white">{item.highlight}</span>{item.rest}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+              {
+                num: '04',
+                label: 'Your moves',
+                body: (
+                  <div className="space-y-4">
+                    {[
+                      'Lead EMEA sales calls with your local pricing advantage',
+                      'Add "24h support" to the hero section of your pricing page',
+                      'Write a comparison landing page targeting their dissatisfied customers',
+                    ].map((move, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <CheckCircle size={15} weight="fill" className="text-blue-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-white/75 leading-snug">{move}</span>
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07, duration: 0.5 }}
+                className="bg-[#080808] p-8"
+              >
+                <p className="text-[10px] font-mono text-white/25 uppercase tracking-widest mb-5">{card.num} — {card.label}</p>
+                {card.body}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="py-20 px-6 lg:px-10 border-t border-white/[0.06]">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold tracking-tight">Two segments. One platform.</h2>
+            <p className="text-white/40 mt-2 text-sm font-mono">Crayon charges $1,500/mo. We built the same thing for the people they ignore.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-px bg-white/[0.06]">
+            {[
+              {
+                label: 'For SaaS founders',
+                price: '$49',
+                desc: 'Bootstrapped or seed-stage. Competing for deals. Priced out of Crayon.',
+                items: ['Up to 7 competitors', 'Weekly Battle Cards', 'G2 + Trustpilot reviews', 'Job postings intelligence', 'AI action plans'],
+                accent: false,
+              },
+              {
+                label: 'For local businesses',
+                price: '$19',
+                desc: 'Salons, gyms, cafes, restaurants. Competing for local customers.',
+                items: ['Up to 5 competitors', 'Google Reviews tracking', 'Instagram + Facebook posts', 'Weekly Battle Card', 'AI action plan'],
+                accent: true,
+              },
+            ].map((tier, i) => (
+              <div key={i} className="bg-[#080808] p-10">
+                <p className="text-[11px] font-mono text-white/35 uppercase tracking-widest mb-6">{tier.label}</p>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-5xl font-bold tracking-tight">{tier.price}</span>
+                  <span className="text-white/35 font-mono">/month</span>
+                </div>
+                <p className="text-white/45 text-sm leading-relaxed mb-8 max-w-xs">{tier.desc}</p>
+                <ul className="space-y-3 mb-10">
+                  {tier.items.map((item, j) => (
+                    <li key={j} className="flex items-center gap-2.5 text-sm text-white/60">
+                      <CaretRight size={11} className={tier.accent ? 'text-blue-400' : 'text-white/30'} weight="bold" />
+                      {item}
                     </li>
                   ))}
                 </ul>
+                <Link
+                  href="/auth/login"
+                  className={`inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded active:scale-[0.98] transition-all ${
+                    tier.accent
+                      ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.3)]'
+                      : 'border border-white/15 text-white hover:bg-white hover:text-black'
+                  }`}
+                >
+                  Start free trial
+                  <ArrowRight size={14} weight="bold" />
+                </Link>
               </div>
-
-              <div className="mt-8 pt-4 border-t border-white/10">
-                <button className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-xl transition-colors border border-white/10">
-                  View full Battle Card
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 3. SOCIAL PROOF BAR */}
-      <section className="bg-[#0f0f0f] border-y border-white/5 py-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-sm font-medium text-white/40 mb-6">
-            Founders and business owners monitoring their competitors
-          </p>
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            variants={containerVariants}
-            className="flex flex-wrap justify-center items-center gap-3"
-          >
-            {["SaaS Startup", "Marketing Agency", "E-commerce", "Beauty Salon", "Restaurant", "Gym"].map((badge) => (
-              <motion.div
-                key={badge}
-                variants={itemVariants}
-                className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-white/60 font-medium"
-              >
-                {badge}
-              </motion.div>
             ))}
-          </motion.div>
-        </div>
-      </section>
+          </div>
 
-      {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-white text-[#0a0a0a] relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-semibold tracking-tight mb-4">From monitoring to action in minutes</h2>
-            <p className="text-[#525252] max-w-xl mx-auto">Every Monday: what changed, what it means, what to do about it. One per competitor. Zero manual work.</p>
-          </motion.div>
-
-          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="hidden md:block absolute top-7 left-[15%] right-[15%] h-[2px] bg-[#e5e5e5]" />
-            {[
-              {
-                num: "1",
-                title: "Add your competitors",
-                desc: "Paste the URLs of your top competitors. We instantly start monitoring their websites.",
-              },
-              {
-                num: "2",
-                title: "AI detects what changed",
-                desc: "Our engine catches pricing updates, feature launches, and subtle positioning shifts.",
-              },
-              {
-                num: "3",
-                title: "Get your Battle Card",
-                desc: "Receive weekly emails with draft responses and counter-moves to stay ahead.",
-              }
-            ].map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.15 }}
-                className="relative flex flex-col items-center text-center"
-              >
-                <div className="w-14 h-14 bg-blue-50 border-2 border-white rounded-full flex items-center justify-center text-xl font-bold text-blue-600 mb-6 relative z-10 shadow-sm">
-                  {step.num}
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
-                <p className="text-sm text-[#525252] leading-relaxed max-w-xs">{step.desc}</p>
-              </motion.div>
-            ))}
+          <div className="mt-6 text-center text-xs text-white/25 font-mono">
+            14-day free trial on both plans. No credit card required. Cancel anytime.
           </div>
         </div>
       </section>
 
-      {/* 5. BATTLE CARD FEATURE SECTION */}
-      <section className="py-24 bg-[#0a0a0a] relative overflow-hidden border-t border-white/5">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[100px] translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-16 relative z-10">
+      {/* FINAL CTA */}
+      <section className="py-28 px-6 lg:px-10 border-t border-white/[0.06]">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex-1 text-left"
+            transition={{ duration: 0.6 }}
           >
-            <div className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-bold uppercase tracking-widest mb-6">
-              The Battle Card
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 leading-[1.1]">
-              Not just data. <br />
-              <span className="text-white/50">A playbook.</span>
+            <p className="text-[11px] font-mono text-white/25 uppercase tracking-widest mb-8">14-day free trial · no credit card required</p>
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight mb-5">
+              Your competitors are<br />being watched right now.
             </h2>
-            <p className="text-lg text-white/60 mb-8 leading-relaxed">
-              Every week, for each competitor, you get four things: what they changed, what their customers are saying, what their hiring tells you about their strategy, and exactly what to do about it.
-            </p>
-
-            <ul className="space-y-4">
-              {[
-                "Pricing and feature changes, tracked automatically",
-                "G2 and Google Reviews, surfaced and summarized",
-                "Job postings, interpreted for strategic signal",
-                "AI action plan, 5 specific moves to outposition them"
-              ].map((item, idx) => (
-                <li key={idx} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  </div>
-                  <span className="text-base text-white/80">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <div className="flex-1 w-full max-w-lg" style={{ perspective: '1200px' }}>
-            <motion.div
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              variants={containerVariants}
-              className="bg-[#111] border border-white/10 rounded-2xl p-6 shadow-2xl relative"
+            <p className="text-white/40 mb-10 text-lg">The only question is whether you are the one watching.</p>
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white text-sm font-bold rounded hover:bg-blue-500 active:scale-[0.98] transition-all shadow-[0_0_40px_rgba(37,99,235,0.3)]"
             >
-              <div className="absolute top-0 inset-x-0 h-1 bg-blue-500 opacity-50 rounded-t-2xl" />
-              
-              <div className="border-b border-white/10 pb-4 mb-4">
-                <h3 className="text-lg font-bold">Stripe Weekly Battle Card</h3>
-                <p className="text-xs text-white/40 font-mono">Generated Oct 24</p>
-              </div>
-
-              {/* What changed */}
-              <motion.div variants={itemVariants} className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <TrendUp size={16} className="text-white/50" />
-                  <h4 className="text-sm font-semibold text-white/70 uppercase tracking-wide">What changed</h4>
-                </div>
-                <div className="space-y-2">
-                  <div className="bg-white/5 rounded-lg p-3 border border-white/5">
-                    <span className="inline-block text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase mb-1">Pricing</span>
-                    <p className="text-sm text-white/80">Removed public enterprise pricing grid.</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Complaints */}
-              <motion.div variants={itemVariants} className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Megaphone size={16} className="text-white/50" />
-                  <h4 className="text-sm font-semibold text-white/70 uppercase tracking-wide">Customer complaints</h4>
-                </div>
-                <div className="bg-white/5 rounded-lg p-3 border border-red-500/20 border-l-2 border-l-red-500">
-                  <p className="text-xs text-white/60 italic mb-1">"Support took 3 days to resolve our payout issue..."</p>
-                  <p className="text-[10px] text-white/40 font-mono">Trustpilot • 1 star</p>
-                </div>
-              </motion.div>
-
-              {/* Strategic Signal */}
-              <motion.div variants={itemVariants} className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <ChartLineUp size={16} className="text-white/50" />
-                  <h4 className="text-sm font-semibold text-white/70 uppercase tracking-wide">Strategic signal</h4>
-                </div>
-                <div className="bg-white/5 rounded-lg p-3 border border-white/5">
-                  <p className="text-sm text-white/80">Posted 4 new Enterprise Sales roles in EMEA. Expect heavy outbound motion in Europe.</p>
-                </div>
-              </motion.div>
-
-              {/* Your moves */}
-              <motion.div variants={itemVariants}>
-                <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle size={16} className="text-blue-400" />
-                  <h4 className="text-sm font-semibold text-blue-400 uppercase tracking-wide">Your moves</h4>
-                </div>
-                <div className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20">
-                  <ol className="list-decimal list-inside space-y-2 text-sm text-blue-100">
-                    <li>Highlight your 24/7 priority support on the pricing page.</li>
-                    <li>Create an EMEA-specific landing page for localized sales.</li>
-                  </ol>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+              Start free trial
+              <ArrowRight size={16} weight="bold" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* 6. TWO-TIER PRICING */}
-      <section className="py-24 bg-[#050505] relative border-t border-white/5">
-        <div className="max-w-5xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-semibold tracking-tight mb-4">Simple, transparent pricing</h2>
-            <p className="text-white/50">Choose the intelligence engine for your specific market.</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">
-            {/* SaaS Card */}
-            <motion.div
-              whileHover={{ y: -4 }}
-              className="bg-[#111] border border-white/10 rounded-2xl p-8 flex flex-col relative"
-            >
-              <div className="inline-block px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-wider mb-6 w-max">
-                For Startups
-              </div>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-bold tracking-tight">$49</span>
-                <span className="text-white/50 font-medium">/month</span>
-              </div>
-              <p className="text-sm text-white/50 mb-8 min-h-[40px]">Bootstrapped or seed-stage SaaS competing for market share</p>
-              
-              <ul className="space-y-4 mb-8 flex-1">
-                {[
-                  "Up to 7 competitors",
-                  "Weekly Battle Cards",
-                  "G2 + review tracking",
-                  "Job postings intelligence",
-                  "AI action plans",
-                  "Monday morning digest"
-                ].map((feat, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-white/80">
-                    <CheckCircle size={16} className="text-white" />
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-              
-              <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.96 }}>
-                <Link href="/auth/login" className="block w-full py-3.5 bg-white text-black text-center text-sm font-bold rounded-full shadow-lg">
-                  Start free trial
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            {/* Local Business Card */}
-            <motion.div
-              whileHover={{ y: -4 }}
-              className="bg-[#111] border border-blue-500/30 rounded-2xl p-8 flex flex-col relative overflow-hidden shadow-[0_0_30px_rgba(37,99,235,0.1)]"
-            >
-              <div className="absolute top-0 inset-x-0 h-1 bg-blue-500" />
-              <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider mb-6 w-max">
-                For Local Business
-              </div>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-bold tracking-tight">$19</span>
-                <span className="text-white/50 font-medium">/month</span>
-              </div>
-              <p className="text-sm text-white/50 mb-8 min-h-[40px]">Salons, gyms, cafes, restaurants competing for local customers</p>
-              
-              <ul className="space-y-4 mb-8 flex-1">
-                {[
-                  "Up to 5 local competitors",
-                  "Google Reviews tracking",
-                  "Instagram + Facebook monitoring",
-                  "Weekly Battle Card",
-                  "AI action plan"
-                ].map((feat, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-white/80">
-                    <CheckCircle size={16} className="text-blue-400" />
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-              
-              <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.96 }}>
-                <Link href="/auth/login" className="block w-full py-3.5 bg-blue-600 text-white text-center text-sm font-bold rounded-full shadow-lg">
-                  Start free trial
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          <div className="text-center space-y-4">
-            <p className="text-sm text-white/60">14-day free trial. No credit card required. Cancel anytime.</p>
-            <div className="inline-block bg-white/5 border border-white/10 rounded-lg p-4 text-sm text-white/50 max-w-2xl mx-auto">
-              Crayon charges $1,500/month for the enterprise version. We built the same intelligence for founders and local businesses.
+      {/* FOOTER */}
+      <footer className="border-t border-white/[0.06] py-8 px-6 lg:px-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 bg-white/[0.06] rounded flex items-center justify-center">
+              <Crosshair size={11} weight="bold" className="text-white/40" />
             </div>
+            <span className="text-sm text-white/35 font-medium">Competitor Analyzer</span>
           </div>
-        </div>
-      </section>
-
-      {/* 7. COMPARISON TABLE SECTION */}
-      <section className="py-24 bg-white text-[#0a0a0a] relative">
-        <div className="max-w-5xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-semibold tracking-tight mb-4">Everything Crayon offers. 30x cheaper.</h2>
-          </motion.div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] border-collapse">
-              <thead>
-                <tr>
-                  <th className="p-4 text-left font-medium text-[#525252] border-b border-[#e5e5e5] w-1/3"></th>
-                  <th className="p-4 text-center font-bold text-blue-600 border-b-2 border-blue-600 bg-blue-50/50 rounded-t-xl w-1/5">Us</th>
-                  <th className="p-4 text-center font-semibold text-[#0a0a0a] border-b border-[#e5e5e5] w-1/5">Manual tracking</th>
-                  <th className="p-4 text-center font-semibold text-[#0a0a0a] border-b border-[#e5e5e5] w-1/5">Crayon/Klue</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { label: "Price", us: "From $19/mo", manual: "Free (Your time)", crayon: "$800 - $1,500/mo" },
-                  { label: "Setup time", us: "5 minutes", manual: "Hours per week", crayon: "3-6 months" },
-                  { label: "Automated monitoring", us: true, manual: false, crayon: true },
-                  { label: "AI action plans", us: true, manual: false, crayon: false },
-                  { label: "Review tracking", us: true, manual: true, crayon: true },
-                  { label: "Job postings", us: true, manual: true, crayon: true },
-                  { label: "Contract required", us: false, manual: false, crayon: true }
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-[#f5f5f5] last:border-0 hover:bg-[#fafafa] transition-colors">
-                    <td className="p-4 text-sm font-medium text-[#525252]">{row.label}</td>
-                    <td className="p-4 text-center bg-blue-50/30">
-                      {typeof row.us === 'boolean' ? (
-                        row.us ? <CheckCircle size={20} className="text-blue-600 mx-auto" weight="fill" /> : <XCircle size={20} className="text-[#a3a3a3] mx-auto" />
-                      ) : (
-                        <span className="text-sm font-semibold text-blue-600">{row.us}</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-center">
-                      {typeof row.manual === 'boolean' ? (
-                        row.manual ? <CheckCircle size={20} className="text-[#525252] mx-auto" weight="fill" /> : <XCircle size={20} className="text-[#a3a3a3] mx-auto" />
-                      ) : (
-                        <span className="text-sm text-[#525252]">{row.manual}</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-center">
-                      {typeof row.crayon === 'boolean' ? (
-                        row.crayon ? <CheckCircle size={20} className="text-[#525252] mx-auto" weight="fill" /> : <XCircle size={20} className="text-[#a3a3a3] mx-auto" />
-                      ) : (
-                        <span className="text-sm text-[#525252]">{row.crayon}</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. FOOTER */}
-      <footer className="bg-[#0a0a0a] border-t border-white/10 py-16 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center">
-                <Crosshair size={12} weight="bold" className="text-white/50" />
-              </div>
-              <span className="text-sm font-bold text-white/50 tracking-tight">Competitor Analyzer</span>
-            </div>
-            <p className="text-xs text-white/40 mt-2 text-center md:text-left">
-              Built in public by a solo founder. Follow the journey on X and LinkedIn.
-            </p>
-          </div>
-          <div className="flex items-center gap-6 text-sm text-white/40">
-            <a href="#twitter" className="hover:text-white transition-colors">X (Twitter)</a>
-            <a href="#linkedin" className="hover:text-white transition-colors">LinkedIn</a>
+          <p className="text-xs text-white/20 font-mono">Built in public · $49/mo · 30x cheaper than Crayon</p>
+          <div className="flex items-center gap-5 text-sm text-white/25">
             <Link href="/auth/login" className="hover:text-white transition-colors">Sign in</Link>
+            <a href="#" className="hover:text-white transition-colors">X</a>
+            <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
           </div>
         </div>
       </footer>
