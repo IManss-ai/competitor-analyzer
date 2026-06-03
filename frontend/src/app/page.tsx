@@ -9,6 +9,7 @@ import {
 } from '@phosphor-icons/react';
 import DisplayCards from '@/components/ui/display-cards';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import { PricingBasic } from '@/components/ui/pricing-demo';
 
 const FEED = [
   { company: 'Stripe', action: 'Removed enterprise pricing from public page', time: '2h ago', type: 'pricing' },
@@ -547,76 +548,7 @@ export default function LandingPage() {
       {/* PRICING */}
       <section id="pricing" className="relative z-10 py-24 px-6 lg:px-10">
         <div className="max-w-7xl mx-auto">
-          <motion.div {...reveal()} className="mb-14 text-center">
-            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-3">Simple plans. Complete access.</h2>
-            <p className="text-white/40 text-sm">Competitor monitoring priced for growing teams.</p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {[
-              {
-                label: 'For SaaS founders',
-                price: '49',
-                desc: 'Bootstrapped or seed-stage. Competing for deals. Priced out of enterprise tools.',
-                items: ['Up to 7 competitors', 'Weekly Battle Cards', 'G2 + Trustpilot reviews', 'Job postings intelligence', 'AI action plans'],
-                featured: false,
-              },
-              {
-                label: 'For local businesses',
-                price: '19',
-                desc: 'Salons, gyms, cafes, restaurants. Competing for local customers.',
-                items: ['Up to 5 competitors', 'Google Reviews tracking', 'Instagram + Facebook posts', 'Weekly Battle Card', 'AI action plan'],
-                featured: true,
-              },
-            ].map((tier, i) => (
-              <motion.div
-                key={i}
-                {...reveal(i * 0.1)}
-                className="p-1 bg-white/[0.04] border border-white/10 rounded-[2rem] relative shadow-2xl group"
-              >
-                {tier.featured && (
-                  <div className="absolute top-0 inset-x-12 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-                )}
-                <div className="bg-[#0b0b0f] border border-white/5 rounded-[calc(2rem-0.25rem)] p-9 h-full flex flex-col justify-between">
-                  <div>
-                    <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest mb-6">{tier.label}</p>
-                    <div className="flex items-baseline gap-1.5 mb-3">
-                      <span className="text-white/30 text-2xl font-semibold">$</span>
-                      <span className={`text-6xl font-bold tracking-tight font-mono ${tier.featured ? 'text-blue-400' : 'text-white'}`}>{tier.price}</span>
-                      <span className="text-white/35 font-mono text-xs">/month</span>
-                    </div>
-                    <p className="text-white/45 text-sm leading-relaxed mb-8 max-w-xs">{tier.desc}</p>
-                    <ul className="space-y-3.5 mb-10">
-                      {tier.items.map((item, j) => (
-                        <li key={j} className="flex items-center gap-3 text-sm text-white/50">
-                          <CheckCircle size={15} weight="fill" className={tier.featured ? 'text-blue-400' : 'text-white/20'} />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <Link
-                    href="/auth/login"
-                    className={`w-full inline-flex items-center justify-between text-sm font-semibold pl-6 pr-2 py-2 rounded-full cursor-pointer transition-all ${
-                      tier.featured
-                        ? 'bg-blue-600 text-white hover:bg-blue-500 hover:shadow-md'
-                        : 'border border-white/10 text-white hover:bg-white/[0.04]'
-                    }`}
-                  >
-                    <span>Start free trial</span>
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center ${tier.featured ? 'bg-white/10' : 'bg-white/5'}`}>
-                      <ArrowRight size={14} weight="bold" />
-                    </span>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div {...reveal(0.2)} className="mt-7 text-center text-xs text-white/20 font-mono">
-            14-day free trial on both plans. Cancel anytime.
-          </motion.div>
+          <PricingBasic />
         </div>
       </section>
 
