@@ -29,10 +29,8 @@ Our platform provides drag-and-drop workflow builders, real-time activity feeds,
         
 {base_desc}
 
-Pricing and Plans:
-- Starter Plan: $29 per user per month (previously $19). Perfect for small teams of up to 10 members. Includes basic task management and 5GB storage.
-- Growth Plan: $59 per user per month (previously $49). Designed for scaling startups. Includes advanced analytics, unlimited integrations, and 50GB storage.
-- Enterprise Plan: Custom pricing. Designed for large scale organizations requiring single sign-on (SSO), dedicated account managers, and custom compliance controls.
+Pricing and Plans Update (Effective June 2026):
+We are announcing changes to our subscription pricing structures to support major performance upgrades. The Starter Plan is now priced at $29 per user per month (previously $19). This plan still supports up to 10 members and includes basic task management with an upgraded 10GB storage limit. The Growth Plan is now priced at $59 per user per month (previously $49) and includes unlimited integrations, advanced team metrics, and priority support. Enterprise plans remain custom. In addition, all users now receive premium storage allocations, unified search indexing across Slack and Git histories, and custom email notification triggers for team projects to streamline workflows.
 
 Features and Benefits:
 Our platform provides drag-and-drop workflow builders, real-time activity feeds, customizable workspace dashboards, and deep performance insights. Get started in minutes with our 14-day free trial. No credit card required.
@@ -43,7 +41,7 @@ Our platform provides drag-and-drop workflow builders, real-time activity feeds,
 {base_desc}
 
 What is New:
-Announcing {brand_name} AI Copilot! We are launching our fully integrated AI assistant that helps you write project specs, summarize chat threads, and automatically generate progress reports. Standard on all Growth and Enterprise accounts.
+Announcing {brand_name} AI Copilot! We are launching our fully integrated AI assistant that helps you write project specs, summarize chat threads, and automatically generate progress reports. Standard on all Growth and Enterprise accounts. We have spent the last six months engineering this language model integration to ensure that teams can automatically create documentation, execute workflow automations, and coordinate project management tasks directly from their workspace.
 
 Pricing and Plans:
 - Starter Plan: $29 per user per month. Perfect for small teams of up to 10 members. Includes basic task management and 5GB storage.

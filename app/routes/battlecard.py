@@ -9,18 +9,25 @@ import anthropic
 from app.db import get_session
 from app.models import Competitor, ChangeEvent
 
+import uuid as _uuid
+
 router = APIRouter(prefix="/api/v1/battlecards", tags=["battlecards"])
 
 @router.get("/generate/{competitor_id}")
 def generate_battlecard(competitor_id: str, db: Session = Depends(get_session)):
-    comp = db.execute(select(Competitor).where(Competitor.id == competitor_id)).scalar_one_or_none()
+    try:
+        comp_uuid = _uuid.UUID(competitor_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid competitor UUID format")
+
+    comp = db.execute(select(Competitor).where(Competitor.id == comp_uuid)).scalar_one_or_none()
     if not comp:
         raise HTTPException(status_code=404, detail="Competitor not found")
 
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
     changes = db.execute(
         select(ChangeEvent)
-        .where(ChangeEvent.competitor_id == competitor_id)
+        .where(ChangeEvent.competitor_id == comp_uuid)
         .where(ChangeEvent.detected_at >= seven_days_ago)
     ).scalars().all()
 

@@ -11,10 +11,16 @@ templates = Jinja2Templates(directory="templates")
 
 async def _run_scan_background(user_id: str):
     """Background task: scan + generate briefs + actions for one user."""
+    print(f"[background-scan] Starting scan for user: {user_id}")
     db = SessionLocal()
     try:
         user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
-        await scan_user_competitors(user_uuid, db)
+        results = await scan_user_competitors(user_uuid, db)
+        print(f"[background-scan] Finished scan. Results: {results}")
+    except Exception as e:
+        import traceback
+        print(f"[background-scan] Exception in background scan: {e}")
+        traceback.print_exc()
     finally:
         db.close()
 
