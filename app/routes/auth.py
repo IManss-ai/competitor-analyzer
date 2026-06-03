@@ -30,15 +30,25 @@ async def request_magic_link(request: Request, email: str = Form(...), db=Depend
 
 @router.get("/verify")
 async def verify_magic_link(request: Request, token: str, db=Depends(get_session)):
+    from app.config import FRONTEND_URL
+    from app.auth import generate_session_token
+
     user_id = verify_magic_link_token(token, db)
     if not user_id:
         return templates.TemplateResponse("login.html", {
             "request": request,
             "error": "Link expired or invalid. Please request a new one.",
         })
-    response = RedirectResponse(url="/dashboard", status_code=302)
-    set_session_user(response, user_id)
-    return response
+
+    # Fetch user email for the session token payload
+    from app.models import User
+    import uuid as _uuid
+    user = db.get(User, _uuid.UUID(user_id))
+    email = user.email if user else ""
+
+    session_token = generate_session_token(user_id, email)
+    callback_url = f"{FRONTEND_URL}/api/auth/callback?session_token={session_token}"
+    return RedirectResponse(url=callback_url, status_code=302)
 
 @router.get("/logout")
 async def logout(request: Request):
