@@ -51,7 +51,7 @@ Each action must be specific, actionable, and under 15 words."""
 
     try:
         response = client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-3-5-haiku-20241022",
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
