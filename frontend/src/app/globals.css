@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+:root {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-plus-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Change type badge colors */
+.badge-pricing_change {
+  background-color: #FEF3C7;
+  color: #92400E;
+  border-color: #FDE68A;
+}
+.badge-feature_add {
+  background-color: #ECFDF5;
+  color: #065F46;
+  border-color: #A7F3D0;
+}
+.badge-repositioning {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  border-color: #BFDBFE;
+}
+.badge-minor_copy {
+  background-color: #F4F4F5;
+  color: #52525B;
+  border-color: #E4E4E7;
+}
+.badge-no_change {
+  background-color: #F4F4F5;
+  color: #A1A1AA;
+  border-color: #E4E4E7;
+}
