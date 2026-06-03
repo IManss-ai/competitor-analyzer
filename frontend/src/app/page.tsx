@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Crosshair, ArrowRight, CheckCircle, CaretRight } from '@phosphor-icons/react';
+import { Crosshair, ArrowRight, CheckCircle, CaretRight, Sparkle } from '@phosphor-icons/react';
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
+import DisplayCards from '@/components/ui/display-cards';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import AnimatedHero from '@/components/ui/animated-hero';
 
 const FEED = [
   { company: 'Stripe', action: 'Removed enterprise pricing from public page', time: '2h ago', type: 'pricing' },
@@ -50,81 +53,18 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO */}
-      <section className="pt-32 pb-20 lg:pt-44 lg:pb-28 px-6 lg:px-10">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+      <section className="pt-32 pb-16 lg:pt-44 lg:pb-20 px-6 lg:px-10">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-16">
 
-          {/* Left */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 text-[11px] font-mono text-blue-400 uppercase tracking-widest mb-8 border border-blue-400/20 px-3 py-1 rounded-sm"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              Live competitive intelligence
-            </motion.div>
+          {/* Animated Hero */}
+          <AnimatedHero titles={["pricing changes", "new features", "job postings", "review shifts", "hiring moves"]} />
 
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[52px] lg:text-[68px] font-bold leading-[1] tracking-[-0.03em] mb-6"
-            >
-              Your competitors<br />
-              are moving.<br />
-              <span className="text-blue-400">Are you watching?</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-white/50 text-lg leading-relaxed max-w-md mb-10"
-            >
-              We monitor pricing, reviews, job postings, and messaging for every competitor. Every week you get a Battle Card with exactly what changed and what to do about it.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-start gap-3 mb-8"
-            >
-              <Link
-                href="/auth/login"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black text-sm font-bold rounded hover:bg-white/90 active:scale-[0.98] transition-all"
-              >
-                Start free trial
-                <ArrowRight size={15} weight="bold" />
-              </Link>
-              <Link
-                href="#battle-card"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-white/15 text-white/60 text-sm font-medium rounded hover:border-white/30 hover:text-white transition-all"
-              >
-                See a Battle Card
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/25 font-mono"
-            >
-              <span>14-day free trial</span>
-              <span className="text-white/10">·</span>
-              <span>$49/mo SaaS · $19/mo local</span>
-              <span className="text-white/10">·</span>
-              <span>30x cheaper than Crayon</span>
-            </motion.div>
-          </div>
-
-          {/* Right: Live Intel Feed */}
+          {/* Live Intel Feed */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full max-w-2xl"
           >
             <div className="border border-white/[0.08] rounded-sm bg-[#0d0d0d] overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-[#0a0a0a]">
@@ -143,7 +83,7 @@ export default function LandingPage() {
               </div>
 
               <div className="p-5 font-mono text-[12px]">
-                <div className="text-white/20 mb-5">$ monitoring 5 competitors &mdash; last scan 2h ago</div>
+                <div className="text-white/20 mb-5">$ monitoring 5 competitors -- last scan 2h ago</div>
                 <div className="space-y-4">
                   {FEED.map((item, i) => (
                     <motion.div
@@ -163,7 +103,7 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <div className="mt-6 pt-4 border-t border-white/[0.06] text-blue-400">
-                  &#8594; 3 Battle Cards ready for review
+                  -&gt; 3 Battle Cards ready for review
                 </div>
               </div>
             </div>
@@ -187,6 +127,38 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
+
+      {/* DISPLAY CARDS */}
+      <section className="py-20 px-6 lg:px-10">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-[11px] font-mono text-white/30 uppercase tracking-widest mb-10">Latest intelligence</p>
+          <DisplayCards
+            cards={[
+              {
+                icon: <Sparkle weight="fill" />,
+                title: "Pricing change",
+                description: "Stripe removed enterprise tier",
+                date: "2h ago",
+                className: "-translate-x-8 translate-y-3 rotate-[-4deg]",
+              },
+              {
+                icon: <Sparkle weight="fill" />,
+                title: "New feature",
+                description: "Competitor launched SDK v4.1",
+                date: "1d ago",
+                className: "translate-x-0 translate-y-0 rotate-[2deg]",
+              },
+              {
+                icon: <Sparkle weight="fill" />,
+                title: "Strategic signal",
+                description: "4 sales hires in EMEA",
+                date: "3d ago",
+                className: "translate-x-8 -translate-y-3 rotate-[6deg]",
+              },
+            ]}
+          />
+        </div>
+      </section>
 
       {/* BATTLE CARD */}
       <section id="battle-card" className="py-24 px-6 lg:px-10">
@@ -289,6 +261,63 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* CONTAINER SCROLL */}
+      <section className="py-10 px-6 lg:px-10 border-t border-white/[0.06]">
+        <ContainerScroll
+          titleComponent={
+            <div className="text-center mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.05] mb-3">
+                The complete picture, delivered weekly.
+              </h2>
+              <p className="text-white/40 text-lg font-mono">Every competitor. Every change. One playbook.</p>
+            </div>
+          }
+        >
+          <div className="h-full w-full p-4 font-mono text-[12px]">
+            <div className="grid grid-cols-2 gap-3 h-full">
+              {[
+                {
+                  num: '01',
+                  label: 'What changed',
+                  lines: ['pricing: enterprise tier removed', 'feature: SDK v4.1 launched', 'copy: hero rewrite detected'],
+                  accent: 'text-amber-400',
+                },
+                {
+                  num: '02',
+                  label: 'Customer complaints',
+                  lines: ['"Support took 4 days..." - 1 star', '"Pricing opaque since update"', '"API docs are confusing"'],
+                  accent: 'text-red-400',
+                },
+                {
+                  num: '03',
+                  label: 'Strategic signal',
+                  lines: ['4 EMEA sales roles posted', 'Head of Partnerships hired', 'Series B announced'],
+                  accent: 'text-violet-400',
+                },
+                {
+                  num: '04',
+                  label: 'Your moves',
+                  lines: ['Lead EMEA calls w/ local pricing', 'Add "24h support" to hero', 'Write comparison landing page'],
+                  accent: 'text-blue-400',
+                },
+              ].map((section, i) => (
+                <div key={i} className="border border-white/[0.08] rounded p-3 bg-[#0a0a0a]">
+                  <p className="text-[10px] text-white/25 uppercase tracking-widest mb-2">{section.num} -- {section.label}</p>
+                  <div className="space-y-1.5">
+                    {section.lines.map((line, j) => (
+                      <div key={j} className="flex items-start gap-2">
+                        <span className={`flex-shrink-0 mt-px ${section.accent}`}>›</span>
+                        <span className="text-white/60 leading-snug">{line}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ContainerScroll>
       </section>
 
       {/* PRICING */}
