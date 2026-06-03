@@ -62,10 +62,10 @@ export default async function SettingsPage() {
         {/* Left Navigation Sidebar */}
         <aside className="lg:w-48 flex-shrink-0">
           <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6">
-            <a href="#account" className="px-3 py-2 rounded-lg text-sm font-medium bg-[#f0f0f0] text-[#0a0a0a] whitespace-nowrap">Account</a>
-            <a href="#subscription" className="px-3 py-2 rounded-lg text-sm font-medium text-[#737373] hover:bg-[#fafafa] hover:text-[#0a0a0a] transition-colors whitespace-nowrap">Subscription</a>
-            <a href="#notifications" className="px-3 py-2 rounded-lg text-sm font-medium text-[#737373] hover:bg-[#fafafa] hover:text-[#0a0a0a] transition-colors whitespace-nowrap">Notifications</a>
-            <a href="#danger-zone" className="px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap">Danger Zone</a>
+            <a href="#account" className="px-3 py-2 rounded-lg text-sm font-medium bg-[#f0f0f0] text-[#0a0a0a] whitespace-nowrap transition-all duration-200">Account</a>
+            <a href="#subscription" className="px-3 py-2 rounded-lg text-sm font-medium text-[#737373] hover:bg-[#fafafa] hover:text-[#0a0a0a] hover:pl-4 transition-all duration-200 whitespace-nowrap">Subscription</a>
+            <a href="#notifications" className="px-3 py-2 rounded-lg text-sm font-medium text-[#737373] hover:bg-[#fafafa] hover:text-[#0a0a0a] hover:pl-4 transition-all duration-200 whitespace-nowrap">Notifications</a>
+            <a href="#danger-zone" className="px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 hover:pl-4 transition-all duration-200 whitespace-nowrap">Danger Zone</a>
           </nav>
         </aside>
 
@@ -137,8 +137,8 @@ export default async function SettingsPage() {
                 </div>
 
                 {/* Plan Card (Features) */}
-                <div className="bg-[#fafafa] border border-[#f0f0f0] rounded-lg p-5 mb-6">
-                  <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-4">Plan includes:</p>
+                <div className="bg-[#fafafa] border border-[#f0f0f0] rounded-lg p-5 mb-6 hover:shadow-[var(--shadow-card-hover)] hover:border-blue-200 hover:bg-white transition-all cursor-default group">
+                  <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-4 group-hover:text-blue-600 transition-colors">Plan includes:</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                     {[
                       "Track up to 7 competitors",

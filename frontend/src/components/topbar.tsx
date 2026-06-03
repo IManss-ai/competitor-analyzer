@@ -1,7 +1,4 @@
-'use client';
-
-import { ArrowsClockwise } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { ArrowsClockwise } from '@phosphor-icons/react/dist/ssr';
 
 interface TopbarProps {
   title: string;
@@ -9,26 +6,15 @@ interface TopbarProps {
   lastScan?: string | null;
 }
 
+function getRelativeTime(dateString: string) {
+  const diff = Date.now() - new Date(dateString).getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  return `${days} days ago`;
+}
+
 export default function Topbar({ title, subtitle, lastScan }: TopbarProps) {
-  const [scanning, setScanning] = useState(false);
-
-  const handleScan = async () => {
-    setScanning(true);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      await fetch(`${apiUrl}/api/v1/scan/now`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch {
-      // ignore
-    } finally {
-      setTimeout(() => setScanning(false), 3000);
-    }
-  };
-
   return (
     <header className="flex items-start justify-between mb-8">
       <div>
@@ -39,27 +25,22 @@ export default function Topbar({ title, subtitle, lastScan }: TopbarProps) {
           <p className="text-sm text-[#737373] mt-1.5 font-normal">{subtitle}</p>
         )}
       </div>
-      <div className="flex items-center gap-3 pt-0.5">
-        {lastScan && (
-          <span className="text-xs text-[#a3a3a3] font-mono">
-            {new Date(lastScan).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-            })}
+      <div className="flex items-center gap-6 pt-0.5">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
+          <span className="text-xs font-medium text-[#525252]">Monitoring active</span>
+        </div>
+        <div className="h-4 w-px bg-[#e5e5e5]"></div>
+        {lastScan ? (
+          <time className="text-xs text-[#a3a3a3] font-mono" dateTime={lastScan}>
+            Last scan: {getRelativeTime(lastScan)}
+          </time>
+        ) : (
+          <span className="text-xs text-[#a3a3a3] font-mono">No scans yet</span>
         )}
-        <button
-          onClick={handleScan}
-          disabled={scanning}
-          className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ArrowsClockwise
-            size={14}
-            weight="bold"
-            className={scanning ? 'animate-spin' : ''}
-          />
-          {scanning ? 'Scanning...' : 'Scan now'}
-        </button>
       </div>
     </header>
   );

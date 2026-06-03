@@ -8,7 +8,7 @@ import {
   ArrowSquareOut,
   Warning,
 } from '@phosphor-icons/react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
 import ChangeBadge from '@/components/change-badge';
 
@@ -101,13 +101,15 @@ export default function CompetitorManager({
       </div>
 
       {/* Add Form Panel */}
-      {showAdd && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }} 
-          animate={{ opacity: 1, height: 'auto' }} 
-          exit={{ opacity: 0, height: 0 }}
-          className="bg-white border border-[#e5e5e5] rounded-xl p-6 mb-8 shadow-sm"
-        >
+      <AnimatePresence>
+        {showAdd && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: 'auto' }} 
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mb-8"
+          >
+            <div className="bg-white border border-[#e5e5e5] rounded-xl p-6 shadow-sm">
           <h3 className="text-base font-semibold text-[#0a0a0a] mb-4">Add new competitor</h3>
           <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="w-full md:flex-1 space-y-1.5">
@@ -145,8 +147,10 @@ export default function CompetitorManager({
               {adding ? 'Adding...' : 'Add to watchlist'}
             </button>
           </form>
+          </div>
         </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Limit Indicator */}
       <div className="mb-6">
@@ -163,7 +167,7 @@ export default function CompetitorManager({
         </div>
         <div className="w-full h-1 bg-[#e5e5e5] rounded-full overflow-hidden">
           <div 
-            className="h-full bg-blue-600 transition-all duration-500" 
+            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500" 
             style={{ width: `${filledRatio}%` }}
           />
         </div>
@@ -171,17 +175,34 @@ export default function CompetitorManager({
 
       {/* Competitor Cards */}
       {competitors.length === 0 ? (
-        <div className="bg-white border border-[#e5e5e5] rounded-xl px-6 py-20 text-center">
-          <div className="w-12 h-12 rounded-full bg-[#f5f5f5] flex items-center justify-center mx-auto mb-4">
-            <Globe size={24} className="text-[#a3a3a3]" />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+          className="bg-white border border-[#e5e5e5] rounded-xl px-6 py-20 text-center flex flex-col items-center"
+        >
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            {[...Array(9)].map((_, i) => (
+              <div 
+                key={i} 
+                className="w-6 h-6 rounded-md bg-[#f0f0f0] opacity-50"
+                style={{ animation: `pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite ${i * 0.15}s` }}
+              />
+            ))}
           </div>
           <p className="text-lg font-semibold text-[#0a0a0a] mb-2 tracking-tight">
             No competitors yet
           </p>
-          <p className="text-sm text-[#525252] max-w-sm mx-auto">
+          <p className="text-sm text-[#525252] max-w-sm mx-auto mb-6">
             Add a competitor URL to start tracking their pricing, features, and messaging changes.
           </p>
-        </div>
+          <button
+            onClick={() => setShowAdd(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all"
+          >
+            Add your first competitor
+          </button>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {competitors.map((comp, index) => {
@@ -197,12 +218,25 @@ export default function CompetitorManager({
                 key={comp.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -2, boxShadow: 'var(--shadow-card-hover)' }}
+                whileTap={{ scale: 0.99 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-white border border-[#e5e5e5] rounded-xl p-5 hover:shadow-sm transition-all group relative"
+                className="bg-white border border-[#e5e5e5] rounded-xl p-5 transition-all group relative"
               >
+                {/* Top right status */}
+                <div className="absolute top-5 right-5 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                    Monitoring
+                  </span>
+                </div>
+
                 {/* Top row */}
-                <div className="flex items-start justify-between mb-5">
+                <div className="flex items-start justify-between mb-5 pr-20">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-white border border-[#f0f0f0] flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -236,7 +270,7 @@ export default function CompetitorManager({
                   <button
                     onClick={() => handleDelete(comp.id)}
                     disabled={deleting === comp.id}
-                    className="p-2 text-[#a3a3a3] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-40"
+                    className="absolute bottom-5 right-5 p-2 text-[#a3a3a3] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 disabled:opacity-40"
                     title="Remove competitor"
                   >
                     <Trash size={16} />
@@ -262,9 +296,17 @@ export default function CompetitorManager({
                 </div>
 
                 {/* Bottom row */}
-                <div>
+                <div className="pr-12">
                   <div className="text-[10px] text-[#a3a3a3] uppercase tracking-wide font-semibold mb-2">Recent activity</div>
-                  <div className="text-sm text-[#737373] italic">No changes detected yet</div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className={`flex items-center gap-2 ${i === 2 ? 'opacity-50' : ''} ${i === 3 ? 'opacity-20' : ''}`}>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#d4d4d4]" />
+                        <span className="text-[11px] text-[#a3a3a3] font-mono">Scan {i}</span>
+                        {i !== 3 && <div className="w-4 h-px bg-[#f0f0f0]" />}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             );

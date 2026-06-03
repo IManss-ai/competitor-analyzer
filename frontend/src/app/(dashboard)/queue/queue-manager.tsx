@@ -17,6 +17,8 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [approving, setApproving] = useState<string | null>(null);
+  const [approvedId, setApprovedId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -32,8 +34,12 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
         body: JSON.stringify({ edited_text: editedText }),
       });
       if (res.ok) {
-        setActions((prev) => prev.filter((a) => a.id !== id));
-        setEditingId(null);
+        setApprovedId(id);
+        setTimeout(() => {
+          setActions((prev) => prev.filter((a) => a.id !== id));
+          setEditingId(null);
+          setApprovedId(null);
+        }, 200);
       }
     } catch {
       // ignore
@@ -42,15 +48,29 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
     }
   };
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 1500);
   };
 
   if (actions.length === 0) {
     return (
       <div className="bg-white border border-[#e5e5e5] rounded-xl px-6 py-24 text-center shadow-sm">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-6">
-          <CheckCircle size={32} weight="fill" className="text-emerald-500" />
+        <div className="relative w-16 h-16 mx-auto mb-6">
+          <motion.div 
+            className="absolute inset-0 border border-emerald-200 rounded-full"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div 
+            className="absolute inset-2 border border-emerald-100 rounded-full"
+            animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <div className="absolute inset-0 rounded-full bg-emerald-50 flex items-center justify-center">
+            <CheckCircle size={32} weight="fill" className="text-emerald-500" />
+          </div>
         </div>
         <h3 className="text-xl font-semibold text-[#0a0a0a] tracking-tight mb-2">Queue is clear</h3>
         <p className="text-sm text-[#525252] max-w-sm mx-auto mb-8">
@@ -85,7 +105,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
               exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className={`bg-white border border-[#e5e5e5] border-l-[4px] ${borderColorClass} rounded-xl p-5 hover:shadow-sm transition-all flex flex-col`}>
+              <div className={`bg-white border border-[#e5e5e5] border-l-[4px] ${borderColorClass} rounded-xl p-5 hover:shadow-sm transition-all flex flex-col ${approvedId === action.id ? 'bg-emerald-50 border-emerald-200' : ''}`}>
                 
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -96,6 +116,11 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                   <span className="ml-auto inline-flex items-center text-[10px] uppercase font-bold tracking-wider text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
                     {action.action_type.replace(/_/g, ' ')}
                   </span>
+                  {action.change_event.detected_at && (
+                    <span className="text-[11px] text-[#a3a3a3] font-mono border border-[#e5e5e5] px-2 py-0.5 rounded bg-[#fafafa]">
+                      {new Date(action.change_event.detected_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                    </span>
+                  )}
                 </div>
 
                 {/* Trigger */}
@@ -124,30 +149,39 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       {action.edited_text || action.original_draft}
                     </p>
                     <button 
-                      onClick={() => handleCopy(action.edited_text || action.original_draft)}
+                      onClick={() => handleCopy(action.id, action.edited_text || action.original_draft)}
                       className="absolute top-2 right-2 p-1.5 text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded-md transition-colors opacity-0 group-hover:opacity-100"
                       title="Copy to clipboard"
                     >
-                      <ClipboardText size={16} />
+                      {copiedId === action.id ? (
+                        <Check size={16} className="text-emerald-400" />
+                      ) : (
+                        <ClipboardText size={16} />
+                      )}
                     </button>
                   </div>
                 )}
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-auto">
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
                     onClick={() =>
                       handleApprove(
                         action.id,
                         editingId === action.id ? editText : undefined
                       )
                     }
-                    disabled={approving === action.id}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-50"
+                    disabled={approving === action.id || approvedId === action.id}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-50"
                   >
-                    <Check size={16} weight="bold" />
+                    {approving === action.id ? (
+                      <ArrowsClockwise size={16} className="animate-spin" />
+                    ) : (
+                      <Check size={16} weight="bold" />
+                    )}
                     {approving === action.id ? 'Approving...' : 'Approve action'}
-                  </button>
+                  </motion.button>
 
                   {editingId === action.id ? (
                     <button

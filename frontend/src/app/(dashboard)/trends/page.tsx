@@ -8,6 +8,7 @@ import { clsx } from 'clsx';
 import TrendsChart from '@/components/trends-chart';
 import Link from 'next/link';
 import { ChartBar } from '@phosphor-icons/react/dist/ssr';
+import TrendsHeatmap from '@/components/trends-heatmap';
 
 export default async function TrendsPage() {
   const cookieStore = await cookies();
@@ -77,84 +78,7 @@ export default async function TrendsPage() {
           </div>
 
           {/* Bottom section: Heatmap */}
-          <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden shadow-sm">
-            <div className="px-6 py-5 border-b border-[#f0f0f0] flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
-                Activity density heatmap
-              </h2>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide">Less</span>
-                {[0, 1, 2, 3].map((level) => (
-                  <div
-                    key={level}
-                    className={clsx(
-                      'w-3.5 h-3.5 rounded-sm',
-                      heatClasses[level].split(' ')[0]
-                    )}
-                  />
-                ))}
-                <span className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide">More</span>
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#f5f5f5]">
-                    <th className="text-left text-[11px] font-medium text-[#737373] uppercase tracking-wide px-6 py-4 sticky left-0 bg-white w-[180px]">
-                      Competitor
-                    </th>
-                    {data.weeks.map((week) => (
-                      <th
-                        key={week}
-                        className="text-center text-[10px] font-medium text-[#a3a3a3] px-2 py-4 font-mono whitespace-nowrap"
-                      >
-                        {week.replace(/^\d{4}-/, '')}
-                      </th>
-                    ))}
-                    <th className="text-right text-[11px] font-medium text-[#737373] uppercase tracking-wide px-6 py-4">
-                      Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.competitors.map((comp) => {
-                    const total = comp.counts.reduce((a, b) => a + b, 0);
-                    return (
-                      <tr
-                        key={comp.id}
-                        className="border-b border-[#f5f5f5] last:border-0 hover:bg-[#fafafa] transition-colors"
-                      >
-                        <td className="px-6 py-4 sticky left-0 bg-white group-hover:bg-[#fafafa] transition-colors">
-                          <span className="text-sm font-medium text-[#0a0a0a] truncate block max-w-[160px]">
-                            {comp.name || comp.url}
-                          </span>
-                        </td>
-                        {comp.counts.map((count, i) => (
-                          <td key={i} className="px-2 py-4 text-center">
-                            <div
-                              title={`${count} change${count !== 1 ? 's' : ''} in week of ${data.weeks[i]}`}
-                              className={clsx(
-                                'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono transition-transform hover:scale-110 cursor-default',
-                                heatClasses[heatLevel(count)]
-                              )}
-                            >
-                              {count > 0 ? count : ''}
-                            </div>
-                          </td>
-                        ))}
-                        <td className="px-6 py-4 text-right">
-                          <span className="text-sm font-semibold text-[#0a0a0a] font-mono">
-                            {total}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <TrendsHeatmap competitors={data.competitors} weeks={data.weeks} maxCount={maxCount} />
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import {
   ArrowRight,
   CheckCircle,
 } from '@phosphor-icons/react';
+import { motion } from 'motion/react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -52,10 +53,27 @@ export default function LoginPage() {
             backgroundSize: '40px 40px',
           }}
         />
-        {/* Glow */}
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl pointer-events-none" />
-
-        {/* Logo */}
+        {/* Aurora Glows */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div 
+            className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[100px]"
+            animate={{ 
+              x: [0, 50, 0], 
+              y: [0, -30, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+          />
+          <motion.div 
+            className="absolute bottom-[-10%] right-[-20%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[100px]"
+            animate={{ 
+              x: [0, -40, 0], 
+              y: [0, 40, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          />
+        </div>
         <div className="relative flex items-center gap-2.5 z-10">
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
             <Crosshair size={14} weight="bold" className="text-white" />
@@ -82,18 +100,33 @@ export default function LoginPage() {
           </p>
 
           {/* Feature list */}
-          <ul className="mt-8 space-y-2.5">
+          <motion.ul 
+            className="mt-8 space-y-2.5"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+            }}
+          >
             {[
               'Tracks up to 7 competitor websites',
               'AI-generated action drafts per change',
               'Monday morning digest in your inbox',
             ].map((item) => (
-              <li key={item} className="flex items-center gap-2.5 text-sm text-white/50">
+              <motion.li 
+                key={item} 
+                className="flex items-center gap-2.5 text-sm text-white/50"
+                variants={{
+                  hidden: { opacity: 0, x: -10 },
+                  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+                }}
+              >
                 <span className="w-1 h-1 rounded-full bg-blue-500 flex-shrink-0" />
                 {item}
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         </div>
 
         <p className="relative z-10 text-[11px] text-white/20 font-mono">

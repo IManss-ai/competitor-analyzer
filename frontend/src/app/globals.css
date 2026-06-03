@@ -94,3 +94,8 @@ pre,
   color: #a3a3a3;
   border-color: #e5e5e5;
 }
+
+@keyframes glint {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
