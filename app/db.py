@@ -2,7 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.config import DATABASE_URL
 
-engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 10})
+if "sqlite" in DATABASE_URL:
+    engine = create_engine(DATABASE_URL, connect_args={"timeout": 10})
+else:
+    engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 10})
+    
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 class Base(DeclarativeBase):
