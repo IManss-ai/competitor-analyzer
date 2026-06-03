@@ -1,24 +1,7 @@
 import type { Metadata } from 'next';
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import './globals.css';
-
-const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: '--font-plus-jakarta',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-jetbrains',
-  subsets: ['latin'],
-  weight: ['400', '500'],
-});
 
 export const metadata: Metadata = {
   title: 'Competitor Analyzer',
@@ -33,9 +16,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-zinc-50">{children}</body>
+      <body className="min-h-full bg-[#f5f5f5] font-sans">{children}</body>
     </html>
   );
 }

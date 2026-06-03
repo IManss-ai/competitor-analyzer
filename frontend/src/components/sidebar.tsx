@@ -4,25 +4,24 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import {
-  LayoutDashboard,
+  SquaresFour,
   Users,
-  ListChecks,
-  TrendingUp,
-  Settings,
-  CreditCard,
-  Activity,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-import { useState } from 'react';
+  CheckSquare,
+  TrendUp,
+  GearSix,
+  SignOut,
+  CaretLeft,
+  CaretRight,
+  Crosshair,
+} from '@phosphor-icons/react';
+import { useState, useEffect } from 'react';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/competitors', label: 'Competitors', icon: Users },
-  { href: '/queue', label: 'Action Queue', icon: ListChecks },
-  { href: '/trends', label: 'Trends', icon: TrendingUp },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/dashboard', label: 'Dashboard', Icon: SquaresFour },
+  { href: '/competitors', label: 'Competitors', Icon: Users },
+  { href: '/queue', label: 'Action Queue', Icon: CheckSquare },
+  { href: '/trends', label: 'Trends', Icon: TrendUp },
+  { href: '/settings', label: 'Settings', Icon: GearSix },
 ];
 
 interface SidebarProps {
@@ -34,75 +33,117 @@ export default function Sidebar({ email, pendingCount }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--sidebar-width',
+      collapsed ? '4rem' : '15rem'
+    );
+  }, [collapsed]);
+
   return (
     <aside
       className={clsx(
-        'fixed top-0 left-0 h-full bg-white border-r border-zinc-200 flex flex-col z-40 transition-all duration-150 ease-out',
+        'fixed top-0 left-0 h-full flex flex-col z-40 transition-all duration-200 ease-out',
+        'bg-[#0a0a0a] border-r border-white/[0.06]',
         collapsed ? 'w-16' : 'w-60'
       )}
     >
-      {/* Logo block */}
-      <div className="h-14 flex items-center justify-between px-4 border-b border-zinc-200">
+      {/* Logo */}
+      <div
+        className={clsx(
+          'h-14 flex items-center border-b border-white/[0.06] flex-shrink-0',
+          collapsed ? 'justify-center px-0' : 'justify-between px-4'
+        )}
+      >
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-zinc-900" />
-            <span className="font-heading font-bold text-zinc-900 text-sm tracking-tight">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <Crosshair size={13} weight="bold" className="text-white" />
+            </div>
+            <span className="text-sm font-semibold text-white tracking-tight truncate">
               Competitor Analyzer
             </span>
           </div>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1 rounded-md hover:bg-zinc-100 text-zinc-500 transition-colors"
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
+        {collapsed && (
+          <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
+            <Crosshair size={14} weight="bold" className="text-white" />
+          </div>
+        )}
+        {!collapsed && (
+          <button
+            onClick={() => setCollapsed(true)}
+            className="p-1 rounded-md text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors flex-shrink-0"
+            title="Collapse sidebar"
+          >
+            <CaretLeft size={14} />
+          </button>
+        )}
       </div>
 
-      {/* Navigation */}
+      {/* Nav */}
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-          const Icon = item.icon;
+        {navItems.map(({ href, label, Icon }) => {
+          const isActive = pathname === href || pathname.startsWith(href + '/');
+          const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
+
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={href}
+              href={href}
+              title={collapsed ? label : undefined}
               className={clsx(
-                'flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-150',
+                'flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-100 relative',
                 isActive
-                  ? 'bg-zinc-100 text-zinc-900 font-semibold'
-                  : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
+                  ? 'bg-white/[0.1] text-white'
+                  : 'text-white/40 hover:bg-white/[0.05] hover:text-white/70'
               )}
-              title={collapsed ? item.label : undefined}
             >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-              {!collapsed && item.href === '/queue' && pendingCount && pendingCount > 0 ? (
-                <span className="ml-auto bg-blue-600 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+              {isActive && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-blue-500 rounded-r-full" />
+              )}
+              <Icon
+                size={16}
+                weight={isActive ? 'bold' : 'regular'}
+                className="flex-shrink-0"
+              />
+              {!collapsed && <span className="truncate">{label}</span>}
+              {!collapsed && hasBadge && (
+                <span className="ml-auto bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none py-[3px]">
                   {pendingCount}
                 </span>
-              ) : null}
+              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Account footer */}
-      <div className="border-t border-zinc-200 p-3">
+      {/* Footer */}
+      <div className="border-t border-white/[0.06] p-2 flex-shrink-0">
+        {collapsed && (
+          <button
+            onClick={() => setCollapsed(false)}
+            className="w-full flex items-center justify-center p-2 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors mb-1"
+            title="Expand sidebar"
+          >
+            <CaretRight size={14} />
+          </button>
+        )}
         {!collapsed && (
-          <p className="text-xs text-zinc-400 truncate mb-2 px-1">{email}</p>
+          <p className="text-[11px] text-white/25 truncate px-2.5 pb-1 pt-0.5 font-mono">
+            {email}
+          </p>
         )}
         <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className={clsx(
-              'flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 transition-colors',
-            )}
             title="Sign out"
+            className={clsx(
+              'flex items-center gap-3 w-full px-2.5 py-2 rounded-lg text-sm text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors',
+              collapsed && 'justify-center'
+            )}
           >
-            <LogOut className="w-4 h-4 flex-shrink-0" />
+            <SignOut size={15} className="flex-shrink-0" />
             {!collapsed && <span>Sign out</span>}
           </button>
         </form>

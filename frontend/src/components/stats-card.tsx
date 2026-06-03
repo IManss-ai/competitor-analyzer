@@ -1,25 +1,41 @@
-import { LucideIcon } from 'lucide-react';
+import { clsx } from 'clsx';
 
 interface StatsCardProps {
   title: string;
   value: string | number;
-  icon: LucideIcon;
   subtitle?: string;
+  accent?: 'blue' | 'amber' | 'emerald' | 'neutral';
 }
 
-export default function StatsCard({ title, value, icon: Icon, subtitle }: StatsCardProps) {
+const accentMap = {
+  blue: 'bg-blue-500',
+  amber: 'bg-amber-400',
+  emerald: 'bg-emerald-500',
+  neutral: 'bg-zinc-300',
+};
+
+export default function StatsCard({
+  title,
+  value,
+  subtitle,
+  accent = 'neutral',
+}: StatsCardProps) {
   return (
-    <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-shadow duration-150">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-zinc-500">{title}</p>
-          <p className="text-2xl font-bold text-zinc-900 mt-1 font-heading">{value}</p>
-          {subtitle && <p className="text-xs text-zinc-400 mt-1">{subtitle}</p>}
-        </div>
-        <div className="p-2 bg-zinc-50 rounded-lg">
-          <Icon className="w-5 h-5 text-zinc-500" />
-        </div>
+    <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 hover:border-[#d4d4d4] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-150">
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-xs font-medium text-[#737373] uppercase tracking-wide">
+          {title}
+        </p>
+        <span
+          className={clsx('w-1.5 h-1.5 rounded-full mt-1', accentMap[accent])}
+        />
       </div>
+      <p className="text-3xl font-semibold text-[#0a0a0a] leading-none tracking-tight">
+        {value}
+      </p>
+      {subtitle && (
+        <p className="text-xs text-[#a3a3a3] mt-2 font-mono">{subtitle}</p>
+      )}
     </div>
   );
 }

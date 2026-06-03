@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCw } from 'lucide-react';
+import { ArrowsClockwise } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 interface TopbarProps {
@@ -15,7 +15,13 @@ export default function Topbar({ title, subtitle, lastScan }: TopbarProps) {
   const handleScan = async () => {
     setScanning(true);
     try {
-      await fetch('/api/scan', { method: 'POST' });
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      await fetch(`${apiUrl}/api/v1/scan/now`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     } catch {
       // ignore
     } finally {
@@ -24,24 +30,35 @@ export default function Topbar({ title, subtitle, lastScan }: TopbarProps) {
   };
 
   return (
-    <header className="flex items-center justify-between pb-6">
+    <header className="flex items-start justify-between mb-8">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 font-heading">{title}</h1>
-        {subtitle && <p className="text-sm text-zinc-500 mt-0.5">{subtitle}</p>}
+        <h1 className="text-[22px] font-semibold text-[#0a0a0a] tracking-tight leading-none">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="text-sm text-[#737373] mt-1.5 font-normal">{subtitle}</p>
+        )}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 pt-0.5">
         {lastScan && (
-          <span className="text-xs text-zinc-400">
-            Last scan: {new Date(lastScan).toLocaleDateString()}
+          <span className="text-xs text-[#a3a3a3] font-mono">
+            {new Date(lastScan).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+            })}
           </span>
         )}
         <button
           onClick={handleScan}
           disabled={scanning}
-          className="inline-flex items-center gap-2 px-3.5 py-2 bg-zinc-950 text-white text-sm font-medium rounded-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <RefreshCw className={`w-4 h-4 ${scanning ? 'animate-spin' : ''}`} />
-          {scanning ? 'Scanning...' : 'Scan Now'}
+          <ArrowsClockwise
+            size={14}
+            weight="bold"
+            className={scanning ? 'animate-spin' : ''}
+          />
+          {scanning ? 'Scanning...' : 'Scan now'}
         </button>
       </div>
     </header>

@@ -1,46 +1,79 @@
 @import 'tailwindcss';
 
 :root {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-plus-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Sidebar */
+  --sidebar-width: 15rem;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --border: #e5e5e5;
+  --border-subtle: #f0f0f0;
+
+  /* Text */
+  --text-primary: #0a0a0a;
+  --text-secondary: #525252;
+  --text-muted: #a3a3a3;
+
+  /* Accent */
+  --accent: #2563eb;
+  --accent-subtle: #eff6ff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   font-family: var(--font-sans);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-}
-
-code, pre, .font-mono {
+code,
+pre,
+.font-mono {
   font-family: var(--font-mono);
 }
 
-/* Change type badge colors */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Change type badges */
 .badge-pricing_change {
-  background-color: #FEF3C7;
-  color: #92400E;
-  border-color: #FDE68A;
+  background-color: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
 }
 .badge-feature_add {
-  background-color: #ECFDF5;
-  color: #065F46;
-  border-color: #A7F3D0;
+  background-color: #f0fdf4;
+  color: #14532d;
+  border-color: #bbf7d0;
 }
 .badge-repositioning {
-  background-color: #EFF6FF;
-  color: #1E40AF;
-  border-color: #BFDBFE;
+  background-color: #eff6ff;
+  color: #1e3a8a;
+  border-color: #bfdbfe;
 }
 .badge-minor_copy {
-  background-color: #F4F4F5;
-  color: #52525B;
-  border-color: #E4E4E7;
+  background-color: #fafafa;
+  color: #525252;
+  border-color: #e5e5e5;
 }
 .badge-no_change {
-  background-color: #F4F4F5;
-  color: #A1A1AA;
-  border-color: #E4E4E7;
+  background-color: #fafafa;
+  color: #a3a3a3;
+  border-color: #e5e5e5;
 }

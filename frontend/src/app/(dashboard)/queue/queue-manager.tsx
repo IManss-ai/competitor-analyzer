@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Edit3, ListChecks } from 'lucide-react';
+import { Check, PencilSimple, X, ClipboardText } from '@phosphor-icons/react';
 import ChangeBadge from '@/components/change-badge';
 import type { QueueAction } from '@/lib/types';
 
@@ -40,84 +40,100 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
     }
   };
 
+  if (actions.length === 0) {
+    return (
+      <div className="bg-white border border-[#e5e5e5] rounded-xl px-6 py-16 text-center">
+        <div className="w-10 h-10 rounded-full bg-[#f5f5f5] flex items-center justify-center mx-auto mb-4">
+          <ClipboardText size={18} className="text-[#a3a3a3]" />
+        </div>
+        <p className="text-sm font-medium text-[#525252] mb-1">Queue is clear</p>
+        <p className="text-xs text-[#a3a3a3]">
+          Actions appear here after a scan detects changes.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white border border-zinc-200 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-      {actions.length === 0 ? (
-        <div className="px-6 py-12 text-center">
-          <ListChecks className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
-          <p className="text-sm text-zinc-500">No pending actions.</p>
-          <p className="text-xs text-zinc-400 mt-1">Actions will appear here after a scan detects changes.</p>
-        </div>
-      ) : (
-        <div className="divide-y divide-zinc-100">
-          {actions.map((action) => (
-            <div key={action.id} className="px-6 py-5">
-              {/* Header */}
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-medium text-zinc-900">{action.competitor.name}</span>
-                <ChangeBadge type={action.change_event.change_type} />
-                <span className="text-xs text-zinc-400 ml-auto">
-                  {action.action_type.replace(/_/g, ' ')}
-                </span>
-              </div>
+    <div className="space-y-3">
+      {actions.map((action) => (
+        <div
+          key={action.id}
+          className="bg-white border border-[#e5e5e5] rounded-xl p-5 hover:border-[#d4d4d4] transition-colors"
+        >
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <span className="text-sm font-semibold text-[#0a0a0a]">
+              {action.competitor.name}
+            </span>
+            <ChangeBadge type={action.change_event.change_type} />
+            <span className="ml-auto text-[11px] font-mono text-[#a3a3a3] capitalize">
+              {action.action_type.replace(/_/g, ' ')}
+            </span>
+          </div>
 
-              {/* Change context */}
-              <p className="text-xs text-zinc-500 mb-3">
-                Triggered by: {action.change_event.brief_text}
-              </p>
+          {/* Trigger */}
+          <p className="text-xs text-[#737373] mb-3 leading-relaxed">
+            {action.change_event.brief_text}
+          </p>
 
-              {/* Draft text */}
-              {editingId === action.id ? (
-                <div className="mb-3">
-                  <textarea
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    rows={4}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 resize-y"
-                  />
-                </div>
-              ) : (
-                <div className="bg-zinc-50 border border-zinc-200 rounded-lg px-4 py-3 mb-3">
-                  <p className="text-sm text-zinc-700 whitespace-pre-wrap">
-                    {action.edited_text || action.original_draft}
-                  </p>
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleApprove(action.id, editingId === action.id ? editText : undefined)}
-                  disabled={approving === action.id}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-950 text-white text-xs font-medium rounded-lg hover:opacity-90 disabled:opacity-50"
-                >
-                  <Check className="w-3.5 h-3.5" />
-                  {approving === action.id ? 'Approving...' : 'Approve'}
-                </button>
-                {editingId === action.id ? (
-                  <button
-                    onClick={() => setEditingId(null)}
-                    className="px-3 py-1.5 border border-zinc-200 text-xs font-medium rounded-lg hover:bg-zinc-50"
-                  >
-                    Cancel
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setEditingId(action.id);
-                      setEditText(action.edited_text || action.original_draft);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-zinc-200 text-xs font-medium rounded-lg hover:bg-zinc-50"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    Edit
-                  </button>
-                )}
-              </div>
+          {/* Draft text */}
+          {editingId === action.id ? (
+            <div className="mb-3">
+              <textarea
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                rows={5}
+                className="w-full bg-[#fafafa] border border-[#e5e5e5] rounded-lg px-4 py-3 text-sm text-[#0a0a0a] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 resize-y transition-all font-mono leading-relaxed"
+              />
             </div>
-          ))}
+          ) : (
+            <div className="bg-[#fafafa] border border-[#f0f0f0] rounded-lg px-4 py-3 mb-3">
+              <p className="text-sm text-[#525252] whitespace-pre-wrap leading-relaxed font-mono">
+                {action.edited_text || action.original_draft}
+              </p>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                handleApprove(
+                  action.id,
+                  editingId === action.id ? editText : undefined
+                )
+              }
+              disabled={approving === action.id}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0a0a0a] text-white text-xs font-semibold rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-50"
+            >
+              <Check size={12} weight="bold" />
+              {approving === action.id ? 'Approving...' : 'Approve'}
+            </button>
+
+            {editingId === action.id ? (
+              <button
+                onClick={() => setEditingId(null)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 border border-[#e5e5e5] text-xs font-medium rounded-lg text-[#525252] hover:bg-[#fafafa] transition-colors"
+              >
+                <X size={12} />
+                Cancel
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setEditingId(action.id);
+                  setEditText(action.edited_text || action.original_draft);
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 border border-[#e5e5e5] text-xs font-medium rounded-lg text-[#525252] hover:bg-[#fafafa] transition-colors"
+              >
+                <PencilSimple size={12} />
+                Edit draft
+              </button>
+            )}
+          </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }

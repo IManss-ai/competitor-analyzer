@@ -5,6 +5,7 @@ import { sessionOptions } from '@/lib/session';
 import { SessionUser } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
 import Sidebar from '@/components/sidebar';
+import MainContent from '@/components/main-content';
 
 export default async function DashboardLayout({
   children,
@@ -18,22 +19,19 @@ export default async function DashboardLayout({
     redirect('/auth/login');
   }
 
-  // Fetch pending count for sidebar badge
   let pendingCount = 0;
   try {
     const api = createApiClient(session.user.user_id);
     const dashboard = await api.getDashboard();
     pendingCount = dashboard.pending_count;
   } catch {
-    // Non-fatal — sidebar just won't show badge
+    // Non-fatal
   }
 
   return (
     <div className="flex min-h-screen">
       <Sidebar email={session.user.email} pendingCount={pendingCount} />
-      <main className="flex-1 ml-60 p-8 max-w-[1120px]">
-        {children}
-      </main>
+      <MainContent>{children}</MainContent>
     </div>
   );
 }

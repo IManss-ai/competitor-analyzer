@@ -6,7 +6,7 @@ import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import StatsCard from '@/components/stats-card';
 import ChangeBadge from '@/components/change-badge';
-import { Users, ListChecks, Activity, TrendingUp } from 'lucide-react';
+import DashboardAnimator from './dashboard-animator';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -15,60 +15,115 @@ export default async function DashboardPage() {
   const data = await api.getDashboard();
 
   return (
-    <div>
+    <DashboardAnimator>
       <Topbar
         title="Dashboard"
         subtitle="Your competitive intelligence overview"
         lastScan={data.last_scan}
       />
 
-      {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatsCard title="Competitors" value={data.competitor_count} icon={Users} />
-        <StatsCard title="Changes Detected" value={data.events.length} icon={Activity} />
-        <StatsCard title="Pending Actions" value={data.pending_count} icon={ListChecks} />
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatsCard
-          title="Latest Activity"
-          value={data.events.length > 0 ? '↑ Active' : '— Quiet'}
-          icon={TrendingUp}
-          subtitle={data.last_scan ? `Since ${new Date(data.last_scan).toLocaleDateString()}` : 'No scans yet'}
+          title="Competitors"
+          value={data.competitor_count}
+          accent="neutral"
+          subtitle="being tracked"
+        />
+        <StatsCard
+          title="Changes"
+          value={data.events.length}
+          accent="blue"
+          subtitle="detected total"
+        />
+        <StatsCard
+          title="Pending"
+          value={data.pending_count}
+          accent="amber"
+          subtitle="actions to review"
+        />
+        <StatsCard
+          title="Status"
+          value={data.events.length > 0 ? 'Active' : 'Quiet'}
+          accent="emerald"
+          subtitle={
+            data.last_scan
+              ? new Date(data.last_scan).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })
+              : 'No scans yet'
+          }
         />
       </div>
 
       {/* Event feed */}
-      <div className="bg-white border border-zinc-200 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-        <div className="px-6 py-4 border-b border-zinc-200">
-          <h2 className="text-base font-semibold text-zinc-900 font-heading">Recent Changes</h2>
+      <div className="bg-white rounded-xl border border-[#e5e5e5] overflow-hidden">
+        <div className="px-6 py-4 border-b border-[#f0f0f0] flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
+            Recent Changes
+          </h2>
+          {data.events.length > 0 && (
+            <span className="text-xs font-mono text-[#a3a3a3]">
+              {data.events.length} events
+            </span>
+          )}
         </div>
+
         {data.events.length === 0 ? (
-          <div className="px-6 py-12 text-center">
-            <Activity className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
-            <p className="text-sm text-zinc-500">No changes detected yet.</p>
-            <p className="text-xs text-zinc-400 mt-1">Add competitors and run a scan to get started.</p>
+          <div className="px-6 py-16 text-center">
+            <div className="w-10 h-10 rounded-full bg-[#f5f5f5] flex items-center justify-center mx-auto mb-4">
+              <span className="text-lg">📡</span>
+            </div>
+            <p className="text-sm font-medium text-[#525252] mb-1">
+              No changes detected yet
+            </p>
+            <p className="text-xs text-[#a3a3a3]">
+              Add competitors and run a scan to get started.
+            </p>
           </div>
         ) : (
-          <div className="divide-y divide-zinc-100">
+          <div className="divide-y divide-[#f5f5f5]">
             {data.events.slice(0, 20).map((event) => (
-              <div key={event.id} className="px-6 py-4 hover:bg-zinc-50/50 transition-colors">
+              <div
+                key={event.id}
+                className="px-6 py-4 hover:bg-[#fafafa] transition-colors"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-zinc-900">{event.competitor_name}</span>
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className="text-sm font-medium text-[#0a0a0a]">
+                        {event.competitor_name}
+                      </span>
                       <ChangeBadge type={event.change_type} />
                     </div>
-                    <p className="text-sm text-zinc-600 line-clamp-2">{event.brief_text}</p>
+                    <p className="text-sm text-[#525252] leading-relaxed line-clamp-2">
+                      {event.brief_text}
+                    </p>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs text-zinc-400 font-mono">{event.competitor_url}</span>
+                      <span className="text-[11px] text-[#a3a3a3] font-mono truncate max-w-[200px]">
+                        {event.competitor_url}
+                      </span>
                       {event.detected_at && (
-                        <span className="text-xs text-zinc-400">
-                          {new Date(event.detected_at).toLocaleDateString()}
+                        <span className="text-[11px] text-[#a3a3a3]">
+                          {new Date(event.detected_at).toLocaleDateString(
+                            'en-US',
+                            { month: 'short', day: 'numeric' }
+                          )}
                         </span>
                       )}
                     </div>
                   </div>
                   {event.net_char_delta !== 0 && (
-                    <span className="text-xs font-mono text-zinc-400 whitespace-nowrap">
-                      {event.net_char_delta > 0 ? '+' : ''}{event.net_char_delta} chars
+                    <span
+                      className={`text-xs font-mono whitespace-nowrap pt-0.5 ${
+                        event.net_char_delta > 0
+                          ? 'text-emerald-600'
+                          : 'text-red-500'
+                      }`}
+                    >
+                      {event.net_char_delta > 0 ? '+' : ''}
+                      {event.net_char_delta}
                     </span>
                   )}
                 </div>
@@ -77,6 +132,6 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
-    </div>
+    </DashboardAnimator>
   );
 }

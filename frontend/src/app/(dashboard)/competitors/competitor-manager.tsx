@@ -1,7 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Globe, Trash2, Plus, ExternalLink } from 'lucide-react';
+import {
+  Globe,
+  Trash,
+  Plus,
+  ArrowSquareOut,
+  Warning,
+} from '@phosphor-icons/react';
 import type { Competitor } from '@/lib/types';
 
 interface CompetitorManagerProps {
@@ -10,7 +16,11 @@ interface CompetitorManagerProps {
   userId: string;
 }
 
-export default function CompetitorManager({ initialCompetitors, initialAtLimit, userId }: CompetitorManagerProps) {
+export default function CompetitorManager({
+  initialCompetitors,
+  initialAtLimit,
+  userId,
+}: CompetitorManagerProps) {
   const [competitors, setCompetitors] = useState(initialCompetitors);
   const [atLimit, setAtLimit] = useState(initialAtLimit);
   const [showAdd, setShowAdd] = useState(false);
@@ -35,7 +45,10 @@ export default function CompetitorManager({ initialCompetitors, initialAtLimit, 
       });
       if (res.ok) {
         const newComp = await res.json();
-        setCompetitors((prev) => [...prev, { ...newComp, active: true, created_at: new Date().toISOString() }]);
+        setCompetitors((prev) => [
+          ...prev,
+          { ...newComp, active: true, created_at: new Date().toISOString() },
+        ]);
         setUrl('');
         setName('');
         setShowAdd(false);
@@ -68,21 +81,35 @@ export default function CompetitorManager({ initialCompetitors, initialAtLimit, 
 
   return (
     <div>
-      {/* Add button */}
-      <div className="flex justify-end mb-4">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono text-[#a3a3a3]">
+            {competitors.length} / 7
+          </span>
+          {atLimit && (
+            <span className="inline-flex items-center gap-1 text-[11px] text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+              <Warning size={11} weight="fill" />
+              Limit reached
+            </span>
+          )}
+        </div>
         <button
           onClick={() => setShowAdd(!showAdd)}
           disabled={atLimit}
-          className="inline-flex items-center gap-2 px-3.5 py-2 bg-zinc-950 text-white text-sm font-medium rounded-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Plus className="w-4 h-4" />
+          <Plus size={14} weight="bold" />
           Add Competitor
         </button>
       </div>
 
       {/* Add form */}
       {showAdd && (
-        <div className="bg-white border border-zinc-200 rounded-xl p-5 mb-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-[#e5e5e5] rounded-xl p-5 mb-4">
+          <p className="text-xs font-medium text-[#737373] uppercase tracking-wide mb-3">
+            New competitor
+          </p>
           <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">
             <input
               type="url"
@@ -90,19 +117,19 @@ export default function CompetitorManager({ initialCompetitors, initialAtLimit, 
               placeholder="https://competitor.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+              className="flex-1 bg-[#fafafa] border border-[#e5e5e5] rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition-all placeholder:text-[#a3a3a3]"
             />
             <input
               type="text"
               placeholder="Display name (optional)"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="sm:w-48 bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+              className="sm:w-44 bg-[#fafafa] border border-[#e5e5e5] rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition-all placeholder:text-[#a3a3a3]"
             />
             <button
               type="submit"
               disabled={adding}
-              className="px-4 py-2.5 bg-zinc-950 text-white text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50"
+              className="px-4 py-2.5 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {adding ? 'Adding...' : 'Add'}
             </button>
@@ -111,53 +138,78 @@ export default function CompetitorManager({ initialCompetitors, initialAtLimit, 
       )}
 
       {/* Competitor list */}
-      <div className="bg-white border border-zinc-200 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.04)] divide-y divide-zinc-100">
+      <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden">
         {competitors.length === 0 ? (
-          <div className="px-6 py-12 text-center">
-            <Globe className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
-            <p className="text-sm text-zinc-500">No competitors added yet.</p>
-            <p className="text-xs text-zinc-400 mt-1">Click &quot;Add Competitor&quot; to start tracking.</p>
+          <div className="px-6 py-16 text-center">
+            <div className="w-10 h-10 rounded-full bg-[#f5f5f5] flex items-center justify-center mx-auto mb-4">
+              <Globe size={18} className="text-[#a3a3a3]" />
+            </div>
+            <p className="text-sm font-medium text-[#525252] mb-1">
+              No competitors yet
+            </p>
+            <p className="text-xs text-[#a3a3a3]">
+              Add a competitor URL to start tracking changes.
+            </p>
           </div>
         ) : (
-          competitors.map((comp) => (
-            <div key={comp.id} className="px-6 py-4 flex items-center justify-between hover:bg-zinc-50/50 transition-colors">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Globe className="w-4 h-4 text-zinc-500" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-zinc-900 truncate">
-                    {comp.name || new URL(comp.url).hostname}
-                  </p>
-                  <a
-                    href={comp.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-600 hover:text-blue-700 font-mono flex items-center gap-1 truncate"
+          <div className="divide-y divide-[#f5f5f5]">
+            {competitors.map((comp) => {
+              let hostname = comp.url;
+              try {
+                hostname = new URL(comp.url).hostname;
+              } catch {
+                // keep raw url
+              }
+
+              return (
+                <div
+                  key={comp.id}
+                  className="px-5 py-4 flex items-center justify-between hover:bg-[#fafafa] transition-colors group"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-[#f5f5f5] flex items-center justify-center flex-shrink-0">
+                      {/* favicon attempt */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
+                        alt=""
+                        width={16}
+                        height={16}
+                        className="rounded-sm"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-[#0a0a0a] truncate">
+                        {comp.name || hostname}
+                      </p>
+                      <a
+                        href={comp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] text-[#a3a3a3] hover:text-blue-600 font-mono transition-colors truncate max-w-[260px]"
+                      >
+                        {comp.url}
+                        <ArrowSquareOut size={10} className="flex-shrink-0" />
+                      </a>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDelete(comp.id)}
+                    disabled={deleting === comp.id}
+                    className="p-2 text-[#d4d4d4] hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-40"
+                    title="Remove"
                   >
-                    {comp.url}
-                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                  </a>
+                    <Trash size={15} />
+                  </button>
                 </div>
-              </div>
-              <button
-                onClick={() => handleDelete(comp.id)}
-                disabled={deleting === comp.id}
-                className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                title="Remove competitor"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))
+              );
+            })}
+          </div>
         )}
       </div>
-
-      {atLimit && (
-        <p className="text-xs text-zinc-400 mt-3 text-center">
-          Maximum of 7 competitors reached. Remove one to add another.
-        </p>
-      )}
     </div>
   );
 }
