@@ -8,6 +8,7 @@ import {
 } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
+import BattleCard from '@/components/battle-card';
 
 interface CompetitorManagerProps {
   initialCompetitors: Competitor[];
@@ -295,17 +296,25 @@ export default function CompetitorManager({
                 </div>
 
                 {/* Bottom row */}
-                <div className="pr-12">
-                  <div className="text-[10px] text-[#a3a3a3] uppercase tracking-wide font-semibold mb-2">Recent activity</div>
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className={`flex items-center gap-2 ${i === 2 ? 'opacity-50' : ''} ${i === 3 ? 'opacity-20' : ''}`}>
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#d4d4d4]" />
-                        <span className="text-[11px] text-[#a3a3a3] font-mono">Scan {i}</span>
-                        {i !== 3 && <div className="w-4 h-px bg-[#f0f0f0]" />}
-                      </div>
-                    ))}
+                <div className="pr-12 flex items-end justify-between">
+                  <div>
+                    <div className="text-[10px] text-[#a3a3a3] uppercase tracking-wide font-semibold mb-2">Recent activity</div>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className={`flex items-center gap-2 ${i === 2 ? 'opacity-50' : ''} ${i === 3 ? 'opacity-20' : ''}`}>
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#d4d4d4]" />
+                          <span className="text-[11px] text-[#a3a3a3] font-mono">Scan {i}</span>
+                          {i !== 3 && <div className="w-4 h-px bg-[#f0f0f0]" />}
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                  
+                  <BattleCard 
+                    competitorId={comp.id} 
+                    competitorName={comp.name || hostname} 
+                    userId={userId} 
+                  />
                 </div>
               </motion.div>
             );

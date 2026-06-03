@@ -5,7 +5,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 async def create_checkout_session(user_email: str, user_id: str, success_url: str = None, cancel_url: str = None) -> str:
     """
-    Create a Stripe Checkout session for $99/mo with 14-day free trial.
+    Create a Stripe Checkout session for $49/mo with 14-day free trial.
     Returns the checkout URL.
     """
     session = stripe.checkout.Session.create(

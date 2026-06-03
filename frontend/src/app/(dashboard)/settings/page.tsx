@@ -111,7 +111,7 @@ export default async function SettingsPage() {
                   <div>
                     <h3 className="text-base font-semibold text-[#0a0a0a] mb-2">Competitor Analyzer Pro</h3>
                     <div className="flex items-center gap-3">
-                      <span className="text-lg font-semibold text-[#0a0a0a]">$99<span className="text-sm text-[#737373] font-normal">/mo</span></span>
+                      <span className="text-lg font-semibold text-[#0a0a0a]">$49<span className="text-sm text-[#737373] font-normal">/mo</span></span>
                       <span
                         className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[11px] uppercase tracking-wide font-semibold ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}
                       >
