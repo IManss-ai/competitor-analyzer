@@ -44,7 +44,7 @@ export default function LandingPage() {
               Know what your competitors changed. Before your customers do.
             </h1>
             <p className="text-lg text-white/50 max-w-xl leading-relaxed mb-8">
-              Weekly AI monitoring across your competitive landscape. Pricing, features, messaging — all surfaced as ready-to-use actions.
+              Weekly AI monitoring across your competitive landscape. Pricing, features, messaging - all surfaced as ready-to-use actions.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
               <Link href="/auth/login" className="w-full sm:w-auto px-6 py-3.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors text-center">
