@@ -5,6 +5,9 @@ import { createApiClient } from '@/lib/api';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import { clsx } from 'clsx';
+import TrendsChart from '@/components/trends-chart';
+import Link from 'next/link';
+import { ChartBar } from '@phosphor-icons/react/dist/ssr';
 
 export default async function TrendsPage() {
   const cookieStore = await cookies();
@@ -29,96 +32,128 @@ export default async function TrendsPage() {
     'bg-blue-600 text-white',
   ];
 
+  // Transform data for line chart
+  const chartData = data.weeks.map((week, weekIndex) => {
+    const dataPoint: any = { week: week.replace(/^\d{4}-/, '') };
+    data.competitors.forEach(comp => {
+      dataPoint[comp.name || comp.url] = comp.counts[weekIndex] || 0;
+    });
+    return dataPoint;
+  });
+
   return (
     <div>
-      <Topbar title="Trends" subtitle="12-week activity heatmap" />
+      <Topbar title="Trends" subtitle="Activity overview across your landscape" />
 
       {data.competitors.length === 0 ? (
-        <div className="bg-white border border-[#e5e5e5] rounded-xl px-6 py-16 text-center">
-          <p className="text-sm font-medium text-[#525252] mb-1">No trend data yet</p>
-          <p className="text-xs text-[#a3a3a3]">
-            Add competitors and run a scan to see activity over time.
+        <div className="bg-white border border-[#e5e5e5] rounded-xl px-6 py-24 text-center shadow-sm">
+          {/* Rich Empty State */}
+          <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-[#f5f5f5] border border-[#e5e5e5]">
+            <div className="w-2.5 h-[30%] bg-zinc-200 rounded-sm"></div>
+            <div className="w-2.5 h-[70%] bg-zinc-300 rounded-sm"></div>
+            <div className="w-2.5 h-[50%] bg-zinc-200 rounded-sm"></div>
+            <div className="w-2.5 h-[90%] bg-zinc-300 rounded-sm"></div>
+          </div>
+          
+          <h3 className="text-xl font-semibold text-[#0a0a0a] tracking-tight mb-2">No data to show yet</h3>
+          <p className="text-sm text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
+            Trends will appear here once you add competitors and we complete the first weekly scan.
           </p>
+          <Link 
+            href="/competitors" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all"
+          >
+            Add competitors
+          </Link>
         </div>
       ) : (
-        <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden">
-          {/* Legend */}
-          <div className="px-6 py-4 border-b border-[#f0f0f0] flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
-              Change activity by week
+        <div className="space-y-6">
+          {/* Top section: Line chart */}
+          <div className="bg-white border border-[#e5e5e5] rounded-xl p-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight mb-6">
+              Change activity over 12 weeks
             </h2>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-[#a3a3a3]">Less</span>
-              {[0, 1, 2, 3].map((level) => (
-                <div
-                  key={level}
-                  className={clsx(
-                    'w-3 h-3 rounded-sm',
-                    heatClasses[level].split(' ')[0]
-                  )}
-                />
-              ))}
-              <span className="text-[11px] text-[#a3a3a3]">More</span>
-            </div>
+            <TrendsChart data={chartData} competitors={data.competitors} />
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#f5f5f5]">
-                  <th className="text-left text-[11px] font-medium text-[#a3a3a3] px-6 py-2.5 sticky left-0 bg-white w-[180px]">
-                    Competitor
-                  </th>
-                  {data.weeks.map((week) => (
-                    <th
-                      key={week}
-                      className="text-center text-[10px] font-medium text-[#a3a3a3] px-1.5 py-2.5 font-mono whitespace-nowrap"
-                    >
-                      {week.replace(/^\d{4}-/, '')}
+          {/* Bottom section: Heatmap */}
+          <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden shadow-sm">
+            <div className="px-6 py-5 border-b border-[#f0f0f0] flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
+                Activity density heatmap
+              </h2>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide">Less</span>
+                {[0, 1, 2, 3].map((level) => (
+                  <div
+                    key={level}
+                    className={clsx(
+                      'w-3.5 h-3.5 rounded-sm',
+                      heatClasses[level].split(' ')[0]
+                    )}
+                  />
+                ))}
+                <span className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide">More</span>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#f5f5f5]">
+                    <th className="text-left text-[11px] font-medium text-[#737373] uppercase tracking-wide px-6 py-4 sticky left-0 bg-white w-[180px]">
+                      Competitor
                     </th>
-                  ))}
-                  <th className="text-right text-[11px] font-medium text-[#a3a3a3] px-6 py-2.5">
-                    Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.competitors.map((comp) => {
-                  const total = comp.counts.reduce((a, b) => a + b, 0);
-                  return (
-                    <tr
-                      key={comp.id}
-                      className="border-b border-[#f5f5f5] last:border-0 hover:bg-[#fafafa] transition-colors"
-                    >
-                      <td className="px-6 py-3 sticky left-0 bg-white">
-                        <span className="text-sm font-medium text-[#0a0a0a] truncate block max-w-[160px]">
-                          {comp.name || comp.url}
-                        </span>
-                      </td>
-                      {comp.counts.map((count, i) => (
-                        <td key={i} className="px-1.5 py-3 text-center">
-                          <div
-                            title={`${count} change${count !== 1 ? 's' : ''}`}
-                            className={clsx(
-                              'w-6 h-6 rounded-[4px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono',
-                              heatClasses[heatLevel(count)]
-                            )}
-                          >
-                            {count > 0 ? count : ''}
-                          </div>
+                    {data.weeks.map((week) => (
+                      <th
+                        key={week}
+                        className="text-center text-[10px] font-medium text-[#a3a3a3] px-2 py-4 font-mono whitespace-nowrap"
+                      >
+                        {week.replace(/^\d{4}-/, '')}
+                      </th>
+                    ))}
+                    <th className="text-right text-[11px] font-medium text-[#737373] uppercase tracking-wide px-6 py-4">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.competitors.map((comp) => {
+                    const total = comp.counts.reduce((a, b) => a + b, 0);
+                    return (
+                      <tr
+                        key={comp.id}
+                        className="border-b border-[#f5f5f5] last:border-0 hover:bg-[#fafafa] transition-colors"
+                      >
+                        <td className="px-6 py-4 sticky left-0 bg-white group-hover:bg-[#fafafa] transition-colors">
+                          <span className="text-sm font-medium text-[#0a0a0a] truncate block max-w-[160px]">
+                            {comp.name || comp.url}
+                          </span>
                         </td>
-                      ))}
-                      <td className="px-6 py-3 text-right">
-                        <span className="text-sm font-semibold text-[#0a0a0a] font-mono">
-                          {total}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {comp.counts.map((count, i) => (
+                          <td key={i} className="px-2 py-4 text-center">
+                            <div
+                              title={`${count} change${count !== 1 ? 's' : ''} in week of ${data.weeks[i]}`}
+                              className={clsx(
+                                'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono transition-transform hover:scale-110 cursor-default',
+                                heatClasses[heatLevel(count)]
+                              )}
+                            >
+                              {count > 0 ? count : ''}
+                            </div>
+                          </td>
+                        ))}
+                        <td className="px-6 py-4 text-right">
+                          <span className="text-sm font-semibold text-[#0a0a0a] font-mono">
+                            {total}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

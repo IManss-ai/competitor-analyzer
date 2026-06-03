@@ -4,7 +4,7 @@ import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
-import { ArrowSquareOut } from '@phosphor-icons/react/dist/ssr';
+import { ArrowSquareOut, LockKey, EnvelopeSimple, Check, WarningCircle } from '@phosphor-icons/react/dist/ssr';
 
 const statusConfig: Record<
   string,
@@ -56,84 +56,159 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <Topbar title="Settings" subtitle="Account and subscription" />
+      <Topbar title="Settings" subtitle="Manage your account preferences" />
 
-      <div className="max-w-[600px] space-y-4">
-        {/* Account */}
-        <section className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#f0f0f0]">
-            <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
-              Account
-            </h2>
-          </div>
-          <div className="px-6 py-5 space-y-4">
-            <div>
-              <p className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide mb-1">
-                Email
-              </p>
-              <p className="text-sm text-[#0a0a0a]">{data.email}</p>
-            </div>
-            <div>
-              <p className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide mb-1">
-                User ID
-              </p>
-              <p className="text-sm text-[#525252] font-mono truncate">{data.id}</p>
-            </div>
-          </div>
-        </section>
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pb-12">
+        {/* Left Navigation Sidebar */}
+        <aside className="lg:w-48 flex-shrink-0">
+          <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6">
+            <a href="#account" className="px-3 py-2 rounded-lg text-sm font-medium bg-[#f0f0f0] text-[#0a0a0a] whitespace-nowrap">Account</a>
+            <a href="#subscription" className="px-3 py-2 rounded-lg text-sm font-medium text-[#737373] hover:bg-[#fafafa] hover:text-[#0a0a0a] transition-colors whitespace-nowrap">Subscription</a>
+            <a href="#notifications" className="px-3 py-2 rounded-lg text-sm font-medium text-[#737373] hover:bg-[#fafafa] hover:text-[#0a0a0a] transition-colors whitespace-nowrap">Notifications</a>
+            <a href="#danger-zone" className="px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap">Danger Zone</a>
+          </nav>
+        </aside>
 
-        {/* Subscription */}
-        <section className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#f0f0f0]">
-            <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
-              Subscription
-            </h2>
-          </div>
-          <div className="px-6 py-5 space-y-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide mb-1.5">
-                  Status
-                </p>
-                <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
-                  {statusCfg.label}
-                </span>
-              </div>
-              {data.trial_ends_at && (
-                <div className="text-right">
-                  <p className="text-[11px] font-medium text-[#a3a3a3] uppercase tracking-wide mb-1.5">
-                    Trial ends
+        {/* Right Content Area */}
+        <div className="flex-1 max-w-2xl space-y-10">
+          
+          {/* Account Section */}
+          <section id="account" className="scroll-mt-6">
+            <h2 className="text-lg font-semibold text-[#0a0a0a] mb-4">Account</h2>
+            <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden shadow-sm">
+              <div className="p-6 space-y-6">
+                <div>
+                  <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-1.5">
+                    Email address
                   </p>
-                  <p className="text-sm font-mono text-[#0a0a0a]">
-                    {new Date(data.trial_ends_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </p>
+                  <p className="text-sm font-medium text-[#0a0a0a]">{data.email}</p>
                 </div>
-              )}
-            </div>
-
-            {data.stripe_customer_id && (
-              <div className="pt-2 border-t border-[#f0f0f0]">
-                <p className="text-xs text-[#737373] mb-3">
-                  Manage your plan, payment methods, and view invoices.
-                </p>
-                <a
-                  href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/billing/portal-url`}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all"
-                >
-                  Manage billing
-                  <ArrowSquareOut size={13} />
-                </a>
+                <div>
+                  <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-1.5">
+                    User ID
+                  </p>
+                  <p className="text-sm text-[#525252] font-mono">{data.id}</p>
+                </div>
               </div>
-            )}
-          </div>
-        </section>
+              <div className="px-6 py-4 bg-[#fafafa] border-t border-[#e5e5e5] flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white border border-[#e5e5e5] flex items-center justify-center flex-shrink-0">
+                  <LockKey size={16} className="text-[#525252]" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-[#0a0a0a]">Authentication method: Magic link</p>
+                  <p className="text-xs text-[#737373]">No password required. We email you a secure link to sign in.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Subscription Section */}
+          <section id="subscription" className="scroll-mt-6">
+            <h2 className="text-lg font-semibold text-[#0a0a0a] mb-4">Subscription</h2>
+            <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden shadow-sm">
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-8">
+                  <div>
+                    <h3 className="text-base font-semibold text-[#0a0a0a] mb-2">Competitor Analyzer Pro</h3>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-semibold text-[#0a0a0a]">$99<span className="text-sm text-[#737373] font-normal">/mo</span></span>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[11px] uppercase tracking-wide font-semibold ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}
+                      >
+                        <span className={`w-1 h-1 rounded-full ${statusCfg.dot}`} />
+                        {statusCfg.label}
+                      </span>
+                    </div>
+                  </div>
+                  {data.trial_ends_at && (
+                    <div className="text-right">
+                      <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-1">
+                        Trial ends
+                      </p>
+                      <p className="text-sm font-mono font-medium text-[#0a0a0a]">
+                        {new Date(data.trial_ends_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Plan Card (Features) */}
+                <div className="bg-[#fafafa] border border-[#f0f0f0] rounded-lg p-5 mb-6">
+                  <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-4">Plan includes:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+                    {[
+                      "Track up to 7 competitors",
+                      "Weekly intelligence digest",
+                      "AI-generated counter actions",
+                      "12-week historical trends",
+                      "Priority email support"
+                    ].map((feat, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <Check size={14} className="text-[#0a0a0a] mt-0.5 flex-shrink-0" weight="bold" />
+                        <span className="text-sm text-[#525252]">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {data.stripe_customer_id && (
+                  <div>
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/billing/portal-url`}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all"
+                    >
+                      Manage billing
+                      <ArrowSquareOut size={14} />
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* Notifications Section */}
+          <section id="notifications" className="scroll-mt-6">
+            <h2 className="text-lg font-semibold text-[#0a0a0a] mb-4">Notifications</h2>
+            <div className="bg-white border border-[#e5e5e5] rounded-xl p-6 shadow-sm flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <EnvelopeSimple size={20} className="text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-[#0a0a0a] mb-1">Email delivery: Monday 8am UTC</h3>
+                <p className="text-sm text-[#525252] leading-relaxed max-w-lg">
+                  You receive a weekly intelligence digest every Monday morning with all detected changes and AI-generated action drafts.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Danger Zone */}
+          <section id="danger-zone" className="scroll-mt-6">
+            <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-base font-semibold text-red-900 mb-1">Delete account</h3>
+                  <p className="text-sm text-red-700/80 mb-4 max-w-sm">
+                    Permanently delete your account and all associated competitor tracking data. This action cannot be undone.
+                  </p>
+                  <p className="text-xs text-red-700/60 font-medium">To delete your account, contact support.</p>
+                </div>
+                <button 
+                  disabled
+                  className="px-4 py-2 bg-red-600/50 text-white text-sm font-medium rounded-lg cursor-not-allowed flex-shrink-0 opacity-70"
+                >
+                  Delete account
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
       </div>
     </div>
   );

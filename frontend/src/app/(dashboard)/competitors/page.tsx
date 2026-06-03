@@ -10,11 +10,13 @@ export default async function CompetitorsPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id);
+  
+  // We need to fetch competitors and their latest events for the richer cards
   const data = await api.getCompetitors();
-
+  
   return (
     <div>
-      <Topbar title="Competitors" subtitle="Track up to 7 competitor websites" />
+      <Topbar title="Competitors" subtitle="Manage your tracked websites" />
       <CompetitorManager
         initialCompetitors={data.competitors}
         initialAtLimit={data.at_limit}
