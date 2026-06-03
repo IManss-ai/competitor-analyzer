@@ -1,6 +1,6 @@
 # Next.js Frontend Rewrite Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Rewrite all Jinja2 UI pages into a Next.js 15 App Router app in `frontend/`, deployed on Vercel, backed by new `/api/v1/*` JSON endpoints on the existing FastAPI/Railway backend.
 
@@ -56,7 +56,7 @@ Add `generate_session_token` and `verify_session_token` using itsdangerous (alre
 **Files:**
 - Modify: `app/auth.py`
 
-- [ ] **Step 1: Open `app/auth.py` and add at the bottom**
+- [x] **Step 1: Open `app/auth.py` and add at the bottom**
 
 ```python
 # --- Session token for Next.js frontend handoff ---
@@ -77,7 +77,7 @@ def verify_session_token(token: str) -> dict | None:
         return None
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -92,13 +92,13 @@ git commit -m "feat(api): add session token utilities for Next.js handoff"
 **Files:**
 - Modify: `app/config.py`
 
-- [ ] **Step 1: Add FRONTEND_URL to the end of `app/config.py`**
+- [x] **Step 1: Add FRONTEND_URL to the end of `app/config.py`**
 
 ```python
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add app/config.py
@@ -114,7 +114,7 @@ After verifying the magic link, FastAPI now redirects to the Next.js callback UR
 **Files:**
 - Modify: `app/routes/auth.py`
 
-- [ ] **Step 1: Update the `verify_magic_link` function in `app/routes/auth.py`**
+- [x] **Step 1: Update the `verify_magic_link` function in `app/routes/auth.py`**
 
 Replace the existing `verify_magic_link` function:
 
@@ -148,7 +148,7 @@ Also add the import at the top of the file if not present:
 from app.auth import get_or_create_user, generate_magic_link_token, verify_magic_link_token, send_magic_link_email, generate_session_token
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add app/routes/auth.py
@@ -164,7 +164,7 @@ All `/api/v1/*` endpoints in one file. `require_api_user` reads `Authorization: 
 **Files:**
 - Create: `app/routes/api_v1.py`
 
-- [ ] **Step 1: Create `app/routes/api_v1.py`**
+- [x] **Step 1: Create `app/routes/api_v1.py`**
 
 ```python
 from fastapi import APIRouter, Depends, Header, HTTPException
@@ -475,7 +475,7 @@ async def api_billing_portal_url(user_id: str = Depends(require_api_user), db: S
     return {"url": url}
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add app/routes/api_v1.py
@@ -489,7 +489,7 @@ git commit -m "feat(api): add /api/v1 JSON router with all endpoints"
 **Files:**
 - Modify: `main.py`
 
-- [ ] **Step 1: Update `main.py` — add CORS and register the new router**
+- [x] **Step 1: Update `main.py` — add CORS and register the new router**
 
 Add these imports at the top of `main.py` (after existing imports):
 ```python
@@ -513,7 +513,7 @@ app.add_middleware(
 app.include_router(api_v1.router)
 ```
 
-- [ ] **Step 2: Verify app still starts**
+- [x] **Step 2: Verify app still starts**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -521,7 +521,7 @@ cd /var/www/html/competitor-analyzer
 ```
 Expected output: `OK`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add main.py
@@ -535,7 +535,7 @@ git commit -m "feat(api): register api_v1 router and CORS middleware"
 **Files:**
 - Create: `tests/test_api_v1.py`
 
-- [ ] **Step 1: Create `tests/test_api_v1.py`**
+- [x] **Step 1: Create `tests/test_api_v1.py`**
 
 ```python
 import unittest
@@ -640,7 +640,7 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] **Step 2: Run tests**
+- [x] **Step 2: Run tests**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -648,7 +648,7 @@ cd /var/www/html/competitor-analyzer
 ```
 Expected: All 8 tests PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add tests/test_api_v1.py
@@ -659,21 +659,21 @@ git commit -m "test(api): add tests for /api/v1 endpoints"
 
 ## Task 7: Push Backend Changes to Railway
 
-- [ ] **Step 1: Push to GitHub**
+- [x] **Step 1: Push to GitHub**
 
 ```bash
 cd /var/www/html/competitor-analyzer
 git push origin main
 ```
 
-- [ ] **Step 2: Wait for Railway auto-deploy and verify**
+- [x] **Step 2: Wait for Railway auto-deploy and verify**
 
 ```bash
 curl https://competitor-analyzer-production-62ee.up.railway.app/health
 ```
 Expected: `{"status":"ok","version":"v5-bg-init"}` (or newer)
 
-- [ ] **Step 3: Set FRONTEND_URL on Railway**
+- [x] **Step 3: Set FRONTEND_URL on Railway**
 
 In the Railway dashboard → competitor-analyzer service → Variables → add:
 ```
@@ -688,7 +688,7 @@ FRONTEND_URL=https://<your-vercel-app>.vercel.app
 **Files:**
 - Create: `frontend/` directory with full Next.js project
 
-- [ ] **Step 1: Scaffold the app**
+- [x] **Step 1: Scaffold the app**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -702,7 +702,7 @@ npx create-next-app@latest frontend \
   --yes
 ```
 
-- [ ] **Step 2: Install additional dependencies**
+- [x] **Step 2: Install additional dependencies**
 
 ```bash
 cd frontend
@@ -712,13 +712,13 @@ npx shadcn@latest init --yes --base-color zinc --css-variables
 
 When shadcn asks questions, select: Style = Default, Base color = Zinc, CSS variables = yes.
 
-- [ ] **Step 3: Install shadcn components we'll use**
+- [x] **Step 3: Install shadcn components we'll use**
 
 ```bash
 npx shadcn@latest add button input label badge card separator
 ```
 
-- [ ] **Step 4: Commit the scaffold**
+- [x] **Step 4: Commit the scaffold**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -735,7 +735,7 @@ git commit -m "feat(frontend): scaffold Next.js 15 app with shadcn/ui"
 - Create: `frontend/lib/session.ts`
 - Create: `frontend/lib/api.ts`
 
-- [ ] **Step 1: Create `frontend/lib/types.ts`**
+- [x] **Step 1: Create `frontend/lib/types.ts`**
 
 ```typescript
 export interface SessionUser {
@@ -804,7 +804,7 @@ export interface UserSettings {
 }
 ```
 
-- [ ] **Step 2: Create `frontend/lib/session.ts`**
+- [x] **Step 2: Create `frontend/lib/session.ts`**
 
 ```typescript
 import { getIronSession, IronSessionOptions } from 'iron-session'
@@ -827,7 +827,7 @@ export async function getSession() {
 }
 ```
 
-- [ ] **Step 3: Create `frontend/lib/api.ts`**
+- [x] **Step 3: Create `frontend/lib/api.ts`**
 
 ```typescript
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
@@ -870,7 +870,7 @@ export async function apiPublic<T>(path: string, body: unknown): Promise<T> {
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -887,7 +887,7 @@ This Route Handler is the landing point after FastAPI redirects with a short-liv
 **Files:**
 - Create: `frontend/app/api/auth/callback/route.ts`
 
-- [ ] **Step 1: Create `frontend/app/api/auth/callback/route.ts`**
+- [x] **Step 1: Create `frontend/app/api/auth/callback/route.ts`**
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server'
@@ -924,7 +924,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -940,7 +940,7 @@ git commit -m "feat(frontend): add auth callback route handler"
 - Create: `frontend/app/(auth)/layout.tsx`
 - Create: `frontend/app/(auth)/auth/login/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(auth)/layout.tsx`** (minimal layout — no sidebar)
+- [x] **Step 1: Create `frontend/app/(auth)/layout.tsx`** (minimal layout — no sidebar)
 
 ```typescript
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -952,7 +952,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(auth)/auth/login/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(auth)/auth/login/page.tsx`**
 
 ```typescript
 'use client'
@@ -1035,7 +1035,7 @@ export default function LoginPage() {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1051,7 +1051,7 @@ git commit -m "feat(frontend): add login page with magic link form"
 - Modify: `frontend/app/layout.tsx`
 - Modify: `frontend/app/globals.css`
 
-- [ ] **Step 1: Replace `frontend/app/layout.tsx`**
+- [x] **Step 1: Replace `frontend/app/layout.tsx`**
 
 ```typescript
 import type { Metadata } from 'next'
@@ -1071,7 +1071,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 2: Replace `frontend/app/globals.css`**
+- [x] **Step 2: Replace `frontend/app/globals.css`**
 
 ```css
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -1096,7 +1096,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-- [ ] **Step 3: Update `frontend/tailwind.config.ts`** to extend fonts:
+- [x] **Step 3: Update `frontend/tailwind.config.ts`** to extend fonts:
 
 ```typescript
 import type { Config } from 'tailwindcss'
@@ -1122,7 +1122,7 @@ const config: Config = {
 export default config
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1137,7 +1137,7 @@ git commit -m "feat(frontend): configure root layout and design system"
 **Files:**
 - Create: `frontend/components/sidebar.tsx`
 
-- [ ] **Step 1: Create `frontend/components/sidebar.tsx`**
+- [x] **Step 1: Create `frontend/components/sidebar.tsx`**
 
 ```typescript
 'use client'
@@ -1266,7 +1266,7 @@ export default function Sidebar({ email, pendingCount }: SidebarProps) {
 }
 ```
 
-- [ ] **Step 2: Create logout Route Handler `frontend/app/api/auth/logout/route.ts`**
+- [x] **Step 2: Create logout Route Handler `frontend/app/api/auth/logout/route.ts`**
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server'
@@ -1279,7 +1279,7 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1294,7 +1294,7 @@ git commit -m "feat(frontend): add sidebar component and logout handler"
 **Files:**
 - Create: `frontend/app/(dashboard)/layout.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(dashboard)/layout.tsx`**
+- [x] **Step 1: Create `frontend/app/(dashboard)/layout.tsx`**
 
 ```typescript
 import { redirect } from 'next/navigation'
@@ -1332,7 +1332,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1347,7 +1347,7 @@ git commit -m "feat(frontend): add protected dashboard layout with session guard
 **Files:**
 - Create: `frontend/app/(dashboard)/dashboard/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(dashboard)/dashboard/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(dashboard)/dashboard/page.tsx`**
 
 ```typescript
 import { getSession } from '@/lib/session'
@@ -1471,7 +1471,7 @@ export default async function DashboardPage() {
 
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1486,7 +1486,7 @@ git commit -m "feat(frontend): add dashboard page"
 **Files:**
 - Create: `frontend/app/(dashboard)/competitors/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(dashboard)/competitors/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(dashboard)/competitors/page.tsx`**
 
 ```typescript
 import { getSession } from '@/lib/session'
@@ -1576,7 +1576,7 @@ export default async function CompetitorsPage() {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1591,7 +1591,7 @@ git commit -m "feat(frontend): add competitors page"
 **Files:**
 - Create: `frontend/app/(dashboard)/queue/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(dashboard)/queue/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(dashboard)/queue/page.tsx`**
 
 ```typescript
 import { getSession } from '@/lib/session'
@@ -1666,7 +1666,7 @@ export default async function QueuePage() {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1681,7 +1681,7 @@ git commit -m "feat(frontend): add queue page"
 **Files:**
 - Create: `frontend/app/(dashboard)/trends/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(dashboard)/trends/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(dashboard)/trends/page.tsx`**
 
 ```typescript
 import { getSession } from '@/lib/session'
@@ -1746,7 +1746,7 @@ export default async function TrendsPage() {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1762,7 +1762,7 @@ git commit -m "feat(frontend): add trends page"
 - Create: `frontend/app/(dashboard)/settings/page.tsx`
 - Create: `frontend/app/(dashboard)/billing/success/page.tsx`
 
-- [ ] **Step 1: Create `frontend/app/(dashboard)/settings/page.tsx`**
+- [x] **Step 1: Create `frontend/app/(dashboard)/settings/page.tsx`**
 
 ```typescript
 import { getSession } from '@/lib/session'
@@ -1845,7 +1845,7 @@ export default async function SettingsPage() {
 }
 ```
 
-- [ ] **Step 2: Create `frontend/app/(dashboard)/billing/success/page.tsx`**
+- [x] **Step 2: Create `frontend/app/(dashboard)/billing/success/page.tsx`**
 
 ```typescript
 import Link from 'next/link'
@@ -1870,7 +1870,7 @@ export default function BillingSuccessPage() {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1887,7 +1887,7 @@ git commit -m "feat(frontend): add settings and billing success pages"
 - Create: `frontend/vercel.json`
 - Create: `frontend/.env.example`
 
-- [ ] **Step 1: Replace `frontend/next.config.ts`**
+- [x] **Step 1: Replace `frontend/next.config.ts`**
 
 ```typescript
 import type { NextConfig } from 'next'
@@ -1902,7 +1902,7 @@ const nextConfig: NextConfig = {
 export default nextConfig
 ```
 
-- [ ] **Step 2: Create `frontend/vercel.json`**
+- [x] **Step 2: Create `frontend/vercel.json`**
 
 ```json
 {
@@ -1912,7 +1912,7 @@ export default nextConfig
 }
 ```
 
-- [ ] **Step 3: Create `frontend/.env.example`**
+- [x] **Step 3: Create `frontend/.env.example`**
 
 ```bash
 NEXT_PUBLIC_API_URL=https://competitor-analyzer-production-62ee.up.railway.app
@@ -1920,7 +1920,7 @@ IRON_SESSION_PASSWORD=change-me-to-a-32-plus-character-random-string
 NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
 ```
 
-- [ ] **Step 4: Create `frontend/.env.local` (local dev, gitignored)**
+- [x] **Step 4: Create `frontend/.env.local` (local dev, gitignored)**
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -1928,7 +1928,7 @@ IRON_SESSION_PASSWORD=local-dev-password-at-least-32-chars-long
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-- [ ] **Step 5: Verify Next.js builds locally**
+- [x] **Step 5: Verify Next.js builds locally**
 
 ```bash
 cd /var/www/html/competitor-analyzer/frontend
@@ -1936,7 +1936,7 @@ npm run build
 ```
 Expected: Build succeeds with no errors.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /var/www/html/competitor-analyzer
@@ -1948,21 +1948,21 @@ git commit -m "feat(frontend): add Vercel config and environment examples"
 
 ## Task 21: Deploy to Vercel
 
-- [ ] **Step 1: Push all commits to GitHub**
+- [x] **Step 1: Push all commits to GitHub**
 
 ```bash
 cd /var/www/html/competitor-analyzer
 git push origin main
 ```
 
-- [ ] **Step 2: Connect Vercel**
+- [x] **Step 2: Connect Vercel**
 
 1. Go to https://vercel.com/new
 2. Import the `competitor-analyzer` GitHub repo
 3. Set **Root Directory** to `frontend`
 4. Framework preset: Next.js (auto-detected)
 
-- [ ] **Step 3: Set environment variables in Vercel dashboard**
+- [x] **Step 3: Set environment variables in Vercel dashboard**
 
 In Vercel → Project → Settings → Environment Variables, add:
 ```
@@ -1971,11 +1971,11 @@ IRON_SESSION_PASSWORD = <generate a 32+ char random string, e.g. openssl rand -b
 NEXT_PUBLIC_APP_URL = https://<your-app>.vercel.app
 ```
 
-- [ ] **Step 4: Trigger deploy and get the Vercel URL**
+- [x] **Step 4: Trigger deploy and get the Vercel URL**
 
 Vercel will auto-deploy from the push. Note the URL (e.g. `https://competitor-analyzer-frontend.vercel.app`).
 
-- [ ] **Step 5: Update FRONTEND_URL on Railway**
+- [x] **Step 5: Update FRONTEND_URL on Railway**
 
 In Railway dashboard → competitor-analyzer service → Variables:
 ```
@@ -1983,7 +1983,7 @@ FRONTEND_URL = https://<your-actual-vercel-url>.vercel.app
 ```
 Trigger a Railway redeploy after setting this.
 
-- [ ] **Step 6: Test the full auth flow**
+- [x] **Step 6: Test the full auth flow**
 
 ```
 1. Visit https://<vercel-url>/auth/login
@@ -2005,7 +2005,7 @@ The repo root (`/`) on Railway still redirects to `/auth/login`. Add a Vercel re
 **Files:**
 - Modify: `frontend/app/page.tsx`
 
-- [ ] **Step 1: Replace `frontend/app/page.tsx`**
+- [x] **Step 1: Replace `frontend/app/page.tsx`**
 
 ```typescript
 import { redirect } from 'next/navigation'
@@ -2020,7 +2020,7 @@ export default async function RootPage() {
 }
 ```
 
-- [ ] **Step 2: Commit and push**
+- [x] **Step 2: Commit and push**
 
 ```bash
 cd /var/www/html/competitor-analyzer
