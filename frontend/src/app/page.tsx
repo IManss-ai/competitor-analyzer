@@ -69,7 +69,7 @@ export default function LandingPage() {
           <TypewriterHeading />
           
           <p className="text-lg md:text-xl text-white/50 max-w-2xl leading-relaxed mb-10 font-light tracking-wide">
-            Weekly AI monitoring across your competitive landscape. Pricing shifts, feature launches, and messaging changes—surfaced as ready-to-use actions.
+            Weekly AI monitoring across your competitive landscape. Pricing shifts, feature launches, and messaging changes - all surfaced as ready-to-use actions.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -78,7 +78,7 @@ export default function LandingPage() {
               className="relative group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-black text-sm font-semibold rounded-full overflow-hidden transition-transform hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-[glint_1.5s_ease-in-out_infinite]" />
-              Start tracking — $99/mo
+              Start tracking - $99/mo
               <ArrowRight size={16} weight="bold" />
             </Link>
           </div>
