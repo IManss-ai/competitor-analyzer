@@ -162,7 +162,7 @@ export default function LandingPage() {
               className="text-5xl sm:text-6xl lg:text-[76px] font-bold leading-[0.92] tracking-tight mb-8 text-balance"
             >
               Your competitors are <span className="text-white/40">making moves.</span><br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-white">
+              <span className="text-blue-500">
                 Are you watching?
               </span>
             </motion.h1>
@@ -177,7 +177,7 @@ export default function LandingPage() {
             <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-8">
               <Link
                 href="/auth/login"
-                className="inline-flex items-center justify-between gap-4 bg-white text-black font-semibold pl-6 pr-2 py-2 rounded-full cursor-pointer hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] active:scale-[0.98] transition-all"
+                className="inline-flex items-center justify-between gap-4 bg-white text-black font-semibold pl-6 pr-2 py-2 rounded-full cursor-pointer hover:shadow-md active:scale-[0.98] transition-all"
               >
                 <span>Start free trial</span>
                 <span className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center">
@@ -514,7 +514,7 @@ export default function LandingPage() {
             <div className="text-center mb-6">
               <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.0] mb-3">
                 The complete picture,<br />
-                <span className="bg-gradient-to-r from-blue-400 via-blue-200 to-white bg-clip-text text-transparent">
+                <span className="text-blue-500 font-semibold">
                   delivered weekly.
                 </span>
               </h2>
@@ -603,7 +603,7 @@ export default function LandingPage() {
                     href="/auth/login"
                     className={`w-full inline-flex items-center justify-between text-sm font-semibold pl-6 pr-2 py-2 rounded-full cursor-pointer transition-all ${
                       tier.featured
-                        ? 'bg-blue-600 text-white hover:bg-blue-500 hover:shadow-[0_8px_30px_rgba(37,99,235,0.4)]'
+                        ? 'bg-blue-600 text-white hover:bg-blue-500 hover:shadow-md'
                         : 'border border-white/10 text-white hover:bg-white/[0.04]'
                     }`}
                   >
@@ -628,14 +628,14 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <motion.div {...reveal()}>
             <h2 className="text-4xl sm:text-6xl font-bold tracking-tight leading-[0.96] mb-6 text-balance">
-              Your competitors are being <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">watched right now.</span>
+              Your competitors are being <span className="text-blue-500">watched right now.</span>
             </h2>
             <p className="text-white/40 mb-10 text-base max-w-sm mx-auto">
               The only question is whether you are the one watching them.
             </p>
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-4 bg-white text-black font-semibold pl-6 pr-2 py-2 rounded-full cursor-pointer hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] active:scale-[0.98] transition-all"
+              className="inline-flex items-center gap-4 bg-white text-black font-semibold pl-6 pr-2 py-2 rounded-full cursor-pointer hover:shadow-md active:scale-[0.98] transition-all"
             >
               <span>Start free trial</span>
               <span className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center">

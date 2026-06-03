@@ -64,12 +64,11 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           >
-            {/* Double-Bezel Overlay Frame */}
             <motion.div
               initial={{ scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-white/[0.04] border border-white/10 rounded-[2rem] w-full max-w-lg shadow-[0_0_50px_rgba(37,99,235,0.15)] relative"
+              className="p-1 bg-white/[0.04] border border-white/10 rounded-[2rem] w-full max-w-lg shadow-2xl relative"
             >
               {/* Inner Core */}
               <div className="bg-[#08080c] border border-white/5 rounded-[calc(2rem-0.25rem)] overflow-hidden">
