@@ -75,38 +75,44 @@ export default function LandingPage() {
       </nav>
 
       {/* 2. HERO SECTION */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 lg:px-12 flex flex-col items-center min-h-[100dvh] justify-center overflow-hidden">
+      <section
+        className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 lg:px-12 flex flex-col items-center min-h-[100dvh] justify-center overflow-hidden"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      >
         {/* Aurora Blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div
-            className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-gradient-to-br from-blue-500 to-transparent rounded-full blur-[120px] opacity-30"
+            className="absolute top-[-10%] left-[-10%] w-[700px] h-[700px] bg-blue-500 rounded-full blur-[130px]"
             animate={{
               x: [0, 50, -50, 0],
               y: [0, 50, -30, 0],
               scale: [1, 1.1, 0.9, 1],
-              opacity: [0.25, 0.45, 0.25],
+              opacity: [0.32, 0.48, 0.32],
             }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute top-[20%] right-[-10%] w-[700px] h-[700px] bg-gradient-to-bl from-indigo-500 to-transparent rounded-full blur-[120px] opacity-20"
+            className="absolute top-[20%] right-[-10%] w-[700px] h-[700px] bg-indigo-500 rounded-full blur-[130px]"
             animate={{
               x: [0, -60, 40, 0],
               y: [0, -40, 60, 0],
               scale: [1, 1.2, 0.8, 1],
-              opacity: [0.2, 0.4, 0.2],
+              opacity: [0.22, 0.38, 0.22],
             }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] bg-gradient-to-t from-violet-500 to-transparent rounded-full blur-[120px] opacity-15"
+            className="absolute bottom-[-20%] left-[20%] w-[600px] h-[600px] bg-violet-500 rounded-full blur-[130px]"
             animate={{
               x: [0, 30, -30, 0],
               y: [0, -50, 30, 0],
               scale: [1, 0.9, 1.1, 1],
-              opacity: [0.25, 0.35, 0.25],
+              opacity: [0.18, 0.28, 0.18],
             }}
-            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
 
@@ -125,11 +131,11 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.05] mb-6">
-              Know what your competitors <br className="hidden md:block" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-300 to-cyan-300">
-                did
+              Know every move<br />
+              your competitors make{' '}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-300">
+                before it costs you.
               </span>
-              , and what to do next.
             </motion.h1>
 
             <motion.p variants={itemVariants} className="text-lg md:text-xl text-white/60 max-w-xl leading-relaxed mb-10 font-light">
@@ -168,10 +174,11 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full lg:w-[45%] perspective-1000"
+            className="w-full lg:w-[45%]"
+            style={{ perspective: '1200px' }}
           >
-            <div className="bg-[#0a0a0a] rounded-2xl border border-blue-500/30 p-6 shadow-[0_0_40px_rgba(37,99,235,0.15)] relative overflow-hidden transform lg:rotate-y-[-5deg]">
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 opacity-50" />
+            <div className="bg-[#0d0d0d] rounded-2xl border border-blue-500/40 p-6 shadow-[0_0_80px_rgba(37,99,235,0.3),0_0_30px_rgba(37,99,235,0.12)] relative overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
               
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
@@ -347,7 +354,7 @@ export default function LandingPage() {
             </ul>
           </motion.div>
 
-          <div className="flex-1 w-full max-w-lg perspective-1000">
+          <div className="flex-1 w-full max-w-lg" style={{ perspective: '1200px' }}>
             <motion.div
               initial="hidden"
               whileInView="show"
