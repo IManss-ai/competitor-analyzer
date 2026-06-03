@@ -37,7 +37,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
       const data = await res.json();
       setActions(data.actions || []);
-    } catch (err) {
+    } catch {
       setError('Could not generate Battle Card. Make sure Anthropic API Key is set.');
     } finally {
       setLoading(false);
@@ -46,13 +46,15 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
   return (
     <>
-      <button
+      <motion.button
+        whileHover={{ scale: 1.03, y: -0.5 }}
+        whileTap={{ scale: 0.97 }}
         onClick={generateCard}
-        className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border border-blue-200"
+        className="px-3.5 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100/80 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border border-blue-200/60 cursor-pointer"
       >
-        <Lightning weight="bold" />
-        Battle Card
-      </button>
+        <Lightning weight="fill" size={13} className="text-blue-500" />
+        <span>Battle Card</span>
+      </motion.button>
 
       <AnimatePresence>
         {isOpen && (
@@ -62,63 +64,66 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           >
+            {/* Double-Bezel Overlay Frame */}
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              initial={{ scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-[#111] border border-blue-500/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(37,99,235,0.15)] overflow-hidden relative"
+              exit={{ scale: 0.96, opacity: 0, y: 15 }}
+              className="p-1 bg-white/[0.04] border border-white/10 rounded-[2rem] w-full max-w-lg shadow-[0_0_50px_rgba(37,99,235,0.15)] relative"
             >
-              {/* Header */}
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 opacity-50" />
-              <div className="p-6 border-b border-white/10 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Lightning className="text-blue-400" weight="fill" />
-                    {competitorName} Battle Card
-                  </h3>
-                  <p className="text-xs text-white/40 mt-1 font-mono">Generated weekly via Claude AI</p>
-                </div>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 min-h-[200px] flex flex-col">
-                {loading ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-white/50 space-y-4">
-                    <Spinner size={32} className="animate-spin text-blue-500" />
-                    <p className="text-sm font-medium animate-pulse">Analyzing competitor changes...</p>
-                  </div>
-                ) : error ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-red-400/80 space-y-2">
-                    <X size={32} />
-                    <p className="text-sm">{error}</p>
-                  </div>
-                ) : (
+              {/* Inner Core */}
+              <div className="bg-[#08080c] border border-white/5 rounded-[calc(2rem-0.25rem)] overflow-hidden">
+                {/* Header */}
+                <div className="p-6 border-b border-white/[0.06] bg-black/40 flex items-center justify-between">
                   <div>
-                    <h4 className="text-xs font-semibold text-blue-400 uppercase tracking-wide mb-4">
-                      Your Action Plan
-                    </h4>
-                    <ul className="space-y-4">
-                      {actions.map((action, i) => (
-                        <motion.li
-                          key={i}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="flex items-start gap-3 bg-blue-500/5 p-3 rounded-xl border border-blue-500/10"
-                        >
-                          <CheckCircle size={18} weight="fill" className="text-blue-500 shrink-0 mt-0.5" />
-                          <span className="text-sm text-white/90 leading-snug">{action}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
+                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                      <Lightning className="text-blue-400" weight="fill" size={18} />
+                      {competitorName} Battle Card
+                    </h3>
+                    <p className="text-[10px] text-white/30 mt-1 font-mono uppercase tracking-wider">generated via Claude AI</p>
                   </div>
-                )}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors cursor-pointer"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 min-h-[200px] flex flex-col justify-center">
+                  {loading ? (
+                    <div className="flex-1 flex flex-col items-center justify-center text-white/50 space-y-4 py-8">
+                      <Spinner size={28} className="animate-spin text-blue-500" />
+                      <p className="text-xs font-mono uppercase tracking-wider animate-pulse">Analyzing competitor moves...</p>
+                    </div>
+                  ) : error ? (
+                    <div className="flex-1 flex flex-col items-center justify-center text-red-400/80 space-y-2 py-8 text-center">
+                      <X size={28} className="text-red-500" />
+                      <p className="text-sm font-medium">{error}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <h4 className="text-[10px] font-mono text-blue-400 uppercase tracking-wider mb-5">
+                        Your Action Plan
+                      </h4>
+                      <ul className="space-y-4">
+                        {actions.map((action, i) => (
+                          <motion.li
+                            key={i}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                            className="flex items-start gap-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10"
+                          >
+                            <CheckCircle size={16} weight="fill" className="text-blue-500 shrink-0 mt-0.5" />
+                            <span className="text-sm text-white/80 leading-relaxed">{action}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           </motion.div>
