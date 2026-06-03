@@ -46,6 +46,25 @@ export default async function SettingsPage() {
   const api = createApiClient(session.user!.user_id);
   const data = await api.getSettings();
 
+  let checkoutUrl = '';
+  let portalUrl = '';
+  
+  if (data.stripe_customer_id) {
+    try {
+      const res = await api.getPortalUrl();
+      portalUrl = res.url;
+    } catch (e) {
+      console.error('Failed to fetch portal url:', e);
+    }
+  } else {
+    try {
+      const res = await api.getCheckoutUrl();
+      checkoutUrl = res.url;
+    } catch (e) {
+      console.error('Failed to fetch checkout url:', e);
+    }
+  }
+
   const statusCfg = statusConfig[data.subscription_status] ?? {
     label: data.subscription_status,
     dot: 'bg-zinc-400',
@@ -155,13 +174,25 @@ export default async function SettingsPage() {
                   </div>
                 </div>
 
-                {data.stripe_customer_id && (
+                {data.stripe_customer_id && portalUrl && (
                   <div>
                     <a
-                      href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/billing/portal-url`}
+                      href={portalUrl}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all"
                     >
                       Manage billing
+                      <ArrowSquareOut size={14} />
+                    </a>
+                  </div>
+                )}
+
+                {!data.stripe_customer_id && checkoutUrl && (
+                  <div>
+                    <a
+                      href={checkoutUrl}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg active:scale-[0.98] transition-all"
+                    >
+                      Upgrade to Pro
                       <ArrowSquareOut size={14} />
                     </a>
                   </div>
