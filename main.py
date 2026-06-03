@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
-from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends
+from fastapi.middleware.cors import CORSMiddleware
+from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends, api_v1
 from contextlib import asynccontextmanager
 import asyncio
 from app.scheduler import start_scheduler
 from app.db import engine
 from app.models import Base
+from app.config import FRONTEND_URL
 
 async def _init_db():
     try:
@@ -28,6 +30,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Competitor Analyzer", lifespan=lifespan)
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[FRONTEND_URL, "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Mount static files folder
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -40,6 +51,7 @@ app.include_router(settings.router)
 app.include_router(billing.router)
 app.include_router(scan.router)
 app.include_router(trends.router)
+app.include_router(api_v1.router)
 
 @app.get("/")
 def root():
