@@ -4,7 +4,7 @@ import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
-import { ArrowSquareOut, LockKey, EnvelopeSimple, Check, WarningCircle } from '@phosphor-icons/react/dist/ssr';
+import { ArrowSquareOut, LockKey, EnvelopeSimple, Check } from '@phosphor-icons/react/dist/ssr';
 
 const statusConfig: Record<
   string,

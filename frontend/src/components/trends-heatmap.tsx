@@ -3,8 +3,15 @@
 import { motion } from 'motion/react';
 import { clsx } from 'clsx';
 
+interface HeatmapCompetitor {
+  id: string;
+  name: string;
+  url: string;
+  counts: number[];
+}
+
 interface TrendsHeatmapProps {
-  competitors: any[];
+  competitors: HeatmapCompetitor[];
   weeks: string[];
   maxCount: number;
 }

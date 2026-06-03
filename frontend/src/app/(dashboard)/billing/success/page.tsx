@@ -8,9 +8,9 @@ export default function BillingSuccessPage() {
         <div className="mx-auto w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-6">
           <CheckCircle size={36} weight="fill" className="text-emerald-500" />
         </div>
-        <h1 className="text-2xl font-semibold text-[#0a0a0a] tracking-tight mb-3">You're all set!</h1>
+        <h1 className="text-2xl font-semibold text-[#0a0a0a] tracking-tight mb-3">You&apos;re all set!</h1>
         <p className="text-sm text-[#525252] mb-8 leading-relaxed">
-          Your 14-day trial has started. You'll receive your first intelligence digest next Monday. Welcome to Competitor Analyzer Pro.
+          Your 14-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Competitor Analyzer Pro.
         </p>
         <Link
           href="/dashboard"

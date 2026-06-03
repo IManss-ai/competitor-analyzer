@@ -34,9 +34,7 @@ export default function StatsCard({
   accent = 'neutral',
   trend,
 }: StatsCardProps) {
-  const [displayValue, setDisplayValue] = useState(
-    typeof value === 'number' ? 0 : value
-  );
+  const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
     if (typeof value === 'number') {
@@ -46,10 +44,10 @@ export default function StatsCard({
         onUpdate: (val) => setDisplayValue(Math.round(val)),
       });
       return controls.stop;
-    } else {
-      setDisplayValue(value);
     }
   }, [value]);
+
+  const renderedValue = typeof value === 'number' ? displayValue : value;
 
   return (
     <motion.div
@@ -72,7 +70,7 @@ export default function StatsCard({
       </div>
       <div className="flex items-end justify-between">
         <p className="text-3xl font-semibold text-[#0a0a0a] leading-none tracking-tight">
-          {displayValue}
+          {renderedValue}
         </p>
         {trend && (
           <div

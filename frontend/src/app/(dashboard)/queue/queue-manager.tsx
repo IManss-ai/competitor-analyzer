@@ -5,7 +5,6 @@ import { Check, PencilSimple, X, ClipboardText, CheckCircle, ArrowsClockwise } f
 import ChangeBadge from '@/components/change-badge';
 import type { QueueAction } from '@/lib/types';
 import { motion, AnimatePresence } from 'motion/react';
-import Link from 'next/link';
 
 interface QueueManagerProps {
   initialActions: QueueAction[];
@@ -74,7 +73,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
         </div>
         <h3 className="text-xl font-semibold text-[#0a0a0a] tracking-tight mb-2">Queue is clear</h3>
         <p className="text-sm text-[#525252] max-w-sm mx-auto mb-8">
-          All action drafts have been reviewed. You're up to date with your competitors' moves.
+          All action drafts have been reviewed. You&apos;re up to date with your competitors&apos; moves.
         </p>
         <button 
           onClick={() => window.location.reload()}
@@ -165,6 +164,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-auto">
                   <motion.button
+                    whileHover={{ scale: 1.02, boxShadow: '0 0 0 3px rgba(37,99,235,0.15), 0 4px 12px rgba(0,0,0,0.1)' }}
                     whileTap={{ scale: 0.96 }}
                     onClick={() =>
                       handleApprove(
@@ -173,7 +173,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       )
                     }
                     disabled={approving === action.id || approvedId === action.id}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-50 cursor-pointer"
                   >
                     {approving === action.id ? (
                       <ArrowsClockwise size={16} className="animate-spin" />

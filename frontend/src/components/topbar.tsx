@@ -1,4 +1,3 @@
-import { ArrowsClockwise } from '@phosphor-icons/react/dist/ssr';
 
 interface TopbarProps {
   title: string;

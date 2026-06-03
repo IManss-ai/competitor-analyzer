@@ -56,22 +56,22 @@ export default function LoginPage() {
         {/* Aurora Glows */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div 
-            className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[100px]"
+            className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600 opacity-[0.18] rounded-full blur-[100px]"
             animate={{ 
               x: [0, 50, 0], 
               y: [0, -30, 0],
               scale: [1, 1.1, 1],
             }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div 
-            className="absolute bottom-[-10%] right-[-20%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[100px]"
+            className="absolute bottom-[-10%] right-[-20%] w-[500px] h-[500px] bg-indigo-500 opacity-[0.15] rounded-full blur-[100px]"
             animate={{ 
               x: [0, -40, 0], 
               y: [0, 40, 0],
               scale: [1, 1.2, 1],
             }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
         <div className="relative flex items-center gap-2.5 z-10">
@@ -209,14 +209,16 @@ export default function LoginPage() {
                     />
                   </div>
                 </div>
-                <button
+                <motion.button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-sm font-medium py-2.5 px-4 rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(10,10,10,0.3)' }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-sm font-medium py-2.5 px-4 rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {loading ? 'Sending...' : 'Continue with email'}
                   {!loading && <ArrowRight size={14} weight="bold" />}
-                </button>
+                </motion.button>
               </form>
 
               <p className="mt-6 text-[11px] text-center text-[#a3a3a3]">

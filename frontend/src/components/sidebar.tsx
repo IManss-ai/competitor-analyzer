@@ -113,7 +113,7 @@ export default function Sidebar({ email, pendingCount }: SidebarProps) {
                 />
               )}
               {isActive && (
-                <span className="absolute inset-0 rounded-lg bg-white/[0.1] pointer-events-none" />
+                <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600/10 to-transparent pointer-events-none" />
               )}
               <Icon
                 size={16}

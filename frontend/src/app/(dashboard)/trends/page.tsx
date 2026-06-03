@@ -4,10 +4,8 @@ import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
-import { clsx } from 'clsx';
 import TrendsChart from '@/components/trends-chart';
 import Link from 'next/link';
-import { ChartBar } from '@phosphor-icons/react/dist/ssr';
 import TrendsHeatmap from '@/components/trends-heatmap';
 
 export default async function TrendsPage() {
@@ -18,24 +16,9 @@ export default async function TrendsPage() {
 
   const maxCount = Math.max(1, ...data.competitors.flatMap((c) => c.counts));
 
-  function heatLevel(count: number): 0 | 1 | 2 | 3 {
-    if (count === 0) return 0;
-    const ratio = count / maxCount;
-    if (ratio < 0.25) return 1;
-    if (ratio < 0.6) return 2;
-    return 3;
-  }
-
-  const heatClasses = [
-    'bg-[#f5f5f5] text-[#a3a3a3]',
-    'bg-blue-100 text-blue-600',
-    'bg-blue-400 text-white',
-    'bg-blue-600 text-white',
-  ];
-
   // Transform data for line chart
   const chartData = data.weeks.map((week, weekIndex) => {
-    const dataPoint: any = { week: week.replace(/^\d{4}-/, '') };
+    const dataPoint: Record<string, string | number> = { week: week.replace(/^\d{4}-/, '') };
     data.competitors.forEach(comp => {
       dataPoint[comp.name || comp.url] = comp.counts[weekIndex] || 0;
     });

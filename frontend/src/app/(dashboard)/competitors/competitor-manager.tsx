@@ -2,15 +2,12 @@
 
 import { useState } from 'react';
 import {
-  Globe,
   Trash,
   Plus,
   ArrowSquareOut,
-  Warning,
 } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
-import ChangeBadge from '@/components/change-badge';
 
 interface CompetitorManagerProps {
   initialCompetitors: Competitor[];
@@ -90,14 +87,16 @@ export default function CompetitorManager({
         <p className="text-sm text-[#525252] leading-relaxed max-w-xl">
           Track up to 7 competitor websites. We check for pricing changes, feature launches, and messaging shifts every week.
         </p>
-        <button
+        <motion.button
           onClick={() => setShowAdd(!showAdd)}
           disabled={atLimit}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+          whileHover={{ scale: 1.03, y: -1, boxShadow: '0 8px 25px rgba(0,0,0,0.15)' }}
+          whileTap={{ scale: 0.96 }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 cursor-pointer"
         >
           <Plus size={16} weight="bold" />
           Add Competitor
-        </button>
+        </motion.button>
       </div>
 
       {/* Add Form Panel */}

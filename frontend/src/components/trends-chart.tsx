@@ -1,8 +1,13 @@
 'use client';
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
+interface ChartCompetitor {
+  id: string;
+  name: string;
+  url: string;
+}
 
-export default function TrendsChart({ data, competitors }: { data: any[], competitors: any[] }) {
+export default function TrendsChart({ data, competitors }: { data: Record<string, string | number>[], competitors: ChartCompetitor[] }) {
   const colors = ["#2563eb", "#16a34a", "#d97706", "#dc2626", "#7c3aed", "#0891b2", "#be185d"];
 
   return (

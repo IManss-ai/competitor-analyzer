@@ -57,8 +57,8 @@ export function ActionLink({ href, children, className }: { href: string, childr
     <MotionLink
       href={href}
       className={className}
-      whileHover={{ y: -2, scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -3, scale: 1.01 }}
+      whileTap={{ scale: 0.97 }}
     >
       {children}
     </MotionLink>
