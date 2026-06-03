@@ -68,3 +68,21 @@ async def send_magic_link_email(email: str, magic_link_url: str, resend_api_key:
             },
         )
         resp.raise_for_status()
+
+
+# --- Session token for Next.js frontend handoff ---
+from itsdangerous import URLSafeTimedSerializer as _USTS
+from app.config import APP_SECRET_KEY as _SK
+
+_session_serializer = _USTS(_SK, salt="nextjs-session-handoff")
+
+def generate_session_token(user_id: str, email: str) -> str:
+    """Short-lived token (5 min) passed to Next.js after magic link verify."""
+    return _session_serializer.dumps({"user_id": user_id, "email": email})
+
+def verify_session_token(token: str) -> dict | None:
+    """Returns {user_id, email} or None if expired/invalid."""
+    try:
+        return _session_serializer.loads(token, max_age=300)  # 5 minutes
+    except Exception:
+        return None
