@@ -1,0 +1,11 @@
+{
+  "id": "EleutherAI/pile",
+  "description": "The Pile is a large-scale English text dataset for training language models.",
+  "tags": ["text", "language-modeling", "nlp"],
+  "cardData": {
+    "license": "mit",
+    "size_categories": ["100B<n<1T"],
+    "task_categories": ["text-generation"],
+    "annotations_creators": ["no-annotation"]
+  }
+}
