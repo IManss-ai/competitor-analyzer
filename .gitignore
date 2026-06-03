@@ -32,3 +32,9 @@ htmlcov/
 
 # Alembic
 # (keep alembic/ tracked, but not compiled cache)
+
+# Node / Next.js (frontend/)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local

@@ -1,19 +1,25 @@
 'use client';
 
-import { ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-export default function MiniActivityChart({ data }: { data: { value: number, active?: boolean }[] }) {
+export default function MiniActivityChart({ data }: { data: Array<{ value: number; active?: boolean }> }) {
   return (
-    <div className="h-12 w-32">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
-          <Bar dataKey="value" radius={[2, 2, 2, 2]}>
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.active ? '#2563eb' : '#e4e4e7'} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width={120} height={48}>
+      <BarChart data={data} barSize={8} barGap={2}>
+        <Bar dataKey="value" radius={[3, 3, 0, 0]}>
+          {data.map((entry, i) => (
+            <Cell key={i} fill={entry.active ? '#2563eb' : '#e5e5e5'} />
+          ))}
+        </Bar>
+        <Tooltip
+          content={({ active, payload }) => active && payload?.length ? (
+            <div className="bg-[#0a0a0a] text-white text-[10px] px-2 py-1 rounded font-mono">
+              {payload[0].value} changes
+            </div>
+          ) : null}
+          cursor={{ fill: '#fafafa' }}
+        />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }
