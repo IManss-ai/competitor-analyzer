@@ -51,46 +51,48 @@ export default function StatsCard({
 
   return (
     <motion.div
-      whileHover={{ y: -1, boxShadow: 'var(--shadow-card-hover)' }}
-      className="bg-white rounded-xl border border-[#e5e5e5] p-5 transition-all duration-150 relative overflow-hidden group"
+      whileHover={{ y: -1 }}
+      className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl transition-all duration-150 group"
     >
-      <div
-        className={clsx(
-          'absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300 ease-out group-hover:w-full',
-          borderAccentMap[accent]
-        )}
-      />
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-xs font-medium text-[#737373] uppercase tracking-wide">
-          {title}
-        </p>
-        <span
-          className={clsx('w-1.5 h-1.5 rounded-full mt-1', accentMap[accent])}
+      <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-4.5 relative overflow-hidden shadow-sm">
+        <div
+          className={clsx(
+            'absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300 ease-out group-hover:w-full',
+            borderAccentMap[accent]
+          )}
         />
-      </div>
-      <div className="flex items-end justify-between">
-        <p className="text-3xl font-semibold text-[#0a0a0a] leading-none tracking-tight">
-          {renderedValue}
-        </p>
-        {trend && (
-          <div
-            className={clsx(
-              'flex items-center gap-1 text-[11px] font-medium px-1.5 py-0.5 rounded-md border',
-              trend === 'up' && 'text-emerald-700 bg-emerald-50 border-emerald-200',
-              trend === 'down' && 'text-red-700 bg-red-50 border-red-200',
-              trend === 'flat' && 'text-zinc-600 bg-zinc-100 border-zinc-200'
-            )}
-          >
-            {trend === 'up' && <ArrowUp size={10} weight="bold" />}
-            {trend === 'down' && <ArrowDown size={10} weight="bold" />}
-            {trend === 'flat' && <Minus size={10} weight="bold" />}
-            <span className="uppercase tracking-wide">{trend}</span>
-          </div>
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-[10px] font-mono text-[#737373] uppercase tracking-wider">
+            {title}
+          </p>
+          <span
+            className={clsx('w-1.5 h-1.5 rounded-full mt-1', accentMap[accent])}
+          />
+        </div>
+        <div className="flex items-end justify-between">
+          <p className="text-3xl font-semibold text-[#0a0a0a] leading-none tracking-tight font-mono">
+            {renderedValue}
+          </p>
+          {trend && (
+            <div
+              className={clsx(
+                'flex items-center gap-1 text-[9px] font-mono px-1.5 py-0.5 rounded-md border',
+                trend === 'up' && 'text-emerald-700 bg-emerald-50 border-emerald-200',
+                trend === 'down' && 'text-red-700 bg-red-50 border-red-200',
+                trend === 'flat' && 'text-zinc-600 bg-zinc-100 border-zinc-200'
+              )}
+            >
+              {trend === 'up' && <ArrowUp size={9} weight="bold" />}
+              {trend === 'down' && <ArrowDown size={9} weight="bold" />}
+              {trend === 'flat' && <Minus size={9} weight="bold" />}
+              <span className="uppercase tracking-wider">{trend}</span>
+            </div>
+          )}
+        </div>
+        {subtitle && (
+          <p className="text-[10.5px] text-[#a3a3a3] mt-2 font-mono">{subtitle}</p>
         )}
       </div>
-      {subtitle && (
-        <p className="text-xs text-[#a3a3a3] mt-2 font-mono">{subtitle}</p>
-      )}
     </motion.div>
   );
 }
