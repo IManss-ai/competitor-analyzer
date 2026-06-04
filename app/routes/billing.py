@@ -16,14 +16,14 @@ templates = Jinja2Templates(directory="templates")
 stripe.api_key = STRIPE_SECRET_KEY
 
 @router.get("/checkout")
-async def billing_checkout(request: Request, db=Depends(get_session), user_id=Depends(require_current_user)):
+async def billing_checkout(request: Request, plan: str = "saas", db=Depends(get_session), user_id=Depends(require_current_user)):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
     user = db.get(User, user_uuid)
     if not user:
         return RedirectResponse(url="/auth/login")
         
     try:
-        checkout_url = await create_checkout_session(user.email, str(user.id))
+        checkout_url = await create_checkout_session(user.email, str(user.id), plan_type=plan)
         return RedirectResponse(url=checkout_url)
     except Exception as e:
         return templates.TemplateResponse("settings.html", {

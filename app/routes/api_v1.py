@@ -311,6 +311,7 @@ def api_settings(user_id: str = Depends(require_api_user), db: Session = Depends
         "subscription_status": user.subscription_status,
         "trial_ends_at": user.trial_ends_at.isoformat() if user.trial_ends_at else None,
         "stripe_customer_id": user.stripe_customer_id,
+        "business_type": getattr(user, "business_type", None) or "saas",
     }
 
 
@@ -352,7 +353,11 @@ async def api_scan_reviews(user_id: str = Depends(require_api_user)):
 # ── Billing ───────────────────────────────────────────────────────────────────
 
 @router.get("/billing/checkout-url")
-async def api_billing_checkout_url(user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+async def api_billing_checkout_url(
+    plan: str = "saas",
+    user_id: str = Depends(require_api_user),
+    db: Session = Depends(get_session)
+):
     from app.billing import create_checkout_session
     from app.config import FRONTEND_URL
     user_uuid = uuid.UUID(user_id)
@@ -362,6 +367,7 @@ async def api_billing_checkout_url(user_id: str = Depends(require_api_user), db:
     url = await create_checkout_session(
         user.email,
         str(user.id),
+        plan_type=plan,
         success_url=f"{FRONTEND_URL}/billing/success",
         cancel_url=f"{FRONTEND_URL}/settings",
     )
