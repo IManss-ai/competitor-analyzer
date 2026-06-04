@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Lightning, 
   Warning, 
@@ -87,7 +87,6 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         }
       });
       if (res.ok) {
-        alert("Scan started in the background! Refreshing detail page data...");
         // Reload detail data
         const reloadRes = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}/detail`, {
           headers: { Authorization: `Bearer ${userId}` }
@@ -260,20 +259,20 @@ ${card.win_conditions && card.win_conditions.length > 0
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="bg-white/[0.02] border border-white/[0.08] text-white rounded-lg px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="bg-white/[0.02] border border-white/[0.08] text-white rounded-lg px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                     placeholder="Name"
                   />
                   <input
                     type="text"
                     value={editUrl}
                     onChange={(e) => setEditUrl(e.target.value)}
-                    className="bg-white/[0.02] border border-white/[0.08] text-white rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="bg-white/[0.02] border border-white/[0.08] text-white rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                     placeholder="URL"
                   />
                   <button 
                     onClick={saveCompetitorSettings}
                     disabled={savingSettings}
-                    className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-semibold transition-colors"
+                    className="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold transition-colors"
                   >
                     {savingSettings ? 'Saving...' : 'Save'}
                   </button>
@@ -311,7 +310,7 @@ ${card.win_conditions && card.win_conditions.length > 0
             >
               {scanning ? (
                 <>
-                  <ArrowsClockwise size={16} className="animate-spin text-purple-400" />
+                  <ArrowsClockwise size={16} className="animate-spin text-sky-400" />
                   Scanning...
                 </>
               ) : (
@@ -353,9 +352,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                     const isExpanded = expandedEventId === event.id;
                     const changeTypeStyles: Record<string, string> = {
                       pricing_change: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-                      new_feature: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-                      positioning_shift: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-                      review_trend: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                      new_feature: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                      positioning_shift: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+                      review_trend: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
                       minor_copy: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
                     };
                     
@@ -370,7 +369,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       <div key={event.id} className="relative">
                         {/* Timeline Bullet */}
                         <div className="absolute -left-[31px] top-1.5 bg-[#0a0715] p-0.5 rounded-full">
-                          <Circle size={10} weight="fill" className="text-purple-500" />
+                          <Circle size={10} weight="fill" className="text-sky-500" />
                         </div>
 
                         <div className="bg-[#0a0718]/45 border border-white/[0.06] rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
@@ -475,7 +474,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         </td>
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs font-semibold">
                           {scan.changes_detected > 0 ? (
-                            <span className="text-purple-400 inline-flex items-center gap-1">
+                            <span className="text-sky-400 inline-flex items-center gap-1">
                               <Lightning size={12} weight="fill" /> {scan.changes_detected} found
                             </span>
                           ) : (
@@ -500,7 +499,7 @@ ${card.win_conditions && card.win_conditions.length > 0
         {/* RIGHT COLUMN: Battle Card & Review Analytics (1/3 width) */}
         <div className="space-y-6">
           {/* C) BATTLE CARD */}
-          <div className="bg-[#0b0819]/50 border border-white/[0.06] border-l-4 border-l-purple-500 shadow-lg rounded-2xl backdrop-blur-md p-5 relative">
+          <div className="bg-[#0b0819]/50 border border-white/[0.06] border-l-4 border-l-sky-500 shadow-lg rounded-2xl backdrop-blur-md p-5 relative">
             {detail.battlecard ? (
               <div className="space-y-5">
                 {/* Header */}
@@ -539,7 +538,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Lightning size={14} className="text-purple-400" /> Recent Changes
+                        <Lightning size={14} className="text-sky-400" /> Recent Changes
                       </span>
                       {cardOpenSections.changes ? <CaretUp size={12} /> : <CaretDown size={12} />}
                     </button>
@@ -683,7 +682,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   >
                     {regenerating ? (
                       <>
-                        <ArrowsClockwise size={12} className="animate-spin text-purple-400" />
+                        <ArrowsClockwise size={12} className="animate-spin text-sky-400" />
                         Regenerating...
                       </>
                     ) : (
@@ -703,7 +702,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                 <button
                   onClick={handleRegenerateBattlecard}
                   disabled={regenerating}
-                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+                  className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
                 >
                   {regenerating ? <ArrowsClockwise size={12} className="animate-spin" /> : null}
                   Generate Battle Card
