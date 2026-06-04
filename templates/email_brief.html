@@ -3,73 +3,108 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Battle Card Report</title>
+    <title>Weekly Intel Report</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FAFAFA; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #18181B;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAFAFA; padding: 32px 16px;">
+<body style="margin: 0; padding: 0; background-color: #f6f9fc; font-family: system-ui, -apple-system, sans-serif; color: #171717;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f6f9fc; padding: 32px 16px;">
         <tr>
             <td align="center">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
                     <!-- Header -->
                     <tr>
-                        <td style="background-color: #0a0a0a; padding: 24px; text-align: center;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: bold;">Competitor Analyzer</h1>
-                            <p style="margin: 4px 0 0 0; color: #a1a1aa; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">Battle Card</p>
+                        <td style="background-color: #2563eb; padding: 32px 24px; text-align: left;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Weekly Intel Report</h1>
+                            <p style="margin: 4px 0 0 0; color: #93c5fd; font-size: 13px; font-weight: 500;">{{ date_range }}</p>
                         </td>
                     </tr>
                     
-                    <!-- Body -->
+                    <!-- Summary Box -->
                     <tr>
-                        <td style="padding: 24px;">
-                            {% if not change_summaries %}
-                            <p style="margin: 0; font-size: 16px; color: #52525b; text-align: center;">
-                                No changes detected this week &mdash; your competitors stayed quiet.
-                            </p>
+                        <td style="padding: 24px 24px 12px 24px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #fafafa; border-radius: 8px; border: 1px solid #e5e5e5; padding: 16px; text-align: center;">
+                                <tr>
+                                    <td width="33%">
+                                        <div style="font-size: 20px; font-weight: 700; color: #171717;">{{ competitors_tracked }}</div>
+                                        <div style="font-size: 11px; color: #737373; margin-top: 4px; text-transform: uppercase; font-weight: 500;">Competitors</div>
+                                    </td>
+                                    <td width="33%" style="border-left: 1px solid #e5e5e5; border-right: 1px solid #e5e5e5;">
+                                        <div style="font-size: 20px; font-weight: 700; color: #2563eb;">{{ changes_detected }}</div>
+                                        <div style="font-size: 11px; color: #737373; margin-top: 4px; text-transform: uppercase; font-weight: 500;">Changes</div>
+                                    </td>
+                                    <td width="33%">
+                                        <div style="font-size: 20px; font-weight: 700; color: #171717;">{{ new_reviews }}</div>
+                                        <div style="font-size: 11px; color: #737373; margin-top: 4px; text-transform: uppercase; font-weight: 500;">New Reviews</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Body Content -->
+                    <tr>
+                        <td style="padding: 12px 24px 24px 24px;">
+                            {% if not competitor_updates %}
+                            <div style="text-align: center; padding: 32px 16px; border: 1px dashed #e5e5e5; border-radius: 8px; margin-top: 12px;">
+                                <p style="margin: 0; font-size: 14px; color: #737373; line-height: 1.5;">
+                                    All quiet this week &mdash; your competitors made no significant changes. We'll keep watching.
+                                </p>
+                            </div>
                             {% else %}
-                                {% set grouped = {} %}
-                                {% for item in change_summaries %}
-                                    {% set c_name = item.competitor_name or item.url %}
-                                    {% if c_name not in grouped %}
-                                        {% set _ = grouped.update({c_name: []}) %}
-                                    {% endif %}
-                                    {% set _ = grouped[c_name].append(item) %}
-                                {% endfor %}
-
-                                {% for c_name, changes in grouped.items() %}
-                                <div style="margin-bottom: 24px; border: 1px solid #e4e4e7; border-radius: 8px; padding: 16px;">
-                                    <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #18181b;">
-                                        {{ c_name }} <span style="font-size: 14px; font-weight: normal; color: #71717a;">({{ changes|length }} change{% if changes|length != 1 %}s{% endif %})</span>
-                                    </h2>
-                                    {% for item in changes %}
-                                    <div style="margin-bottom: {% if loop.last %}0{% else %}12px{% endif %};">
-                                        <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #52525b; text-transform: uppercase;">
-                                            {{ item.change_type | replace('_', ' ') | title }}
-                                        </p>
-                                        <p style="margin: 0; font-size: 14px; color: #3f3f46;">
-                                            {{ item.brief_text or "Updated site — no significant text change detected." }}
-                                        </p>
+                                {% for update in competitor_updates %}
+                                <div style="margin-bottom: 24px; border: 1px solid #e5e5e5; border-radius: 10px; padding: 20px; background-color: #ffffff;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 12px;">
+                                        <tr>
+                                            {% if update.favicon %}
+                                            <td width="28" style="vertical-align: middle;">
+                                                <img src="{{ update.favicon }}" width="18" height="18" style="border-radius: 3px; display: block;" alt="" />
+                                            </td>
+                                            {% endif %}
+                                            <td style="vertical-align: middle;">
+                                                <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #171717;">{{ update.name }}</h2>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <!-- Changes list -->
+                                    <ul style="margin: 0 0 16px 0; padding-left: 20px; font-size: 13px; color: #171717; line-height: 1.6;">
+                                        {% for change in update.changes %}
+                                        <li style="margin-bottom: 6px;">{{ change }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    
+                                    <!-- Key Talking Point -->
+                                    {% if update.key_talking_point %}
+                                    <div style="background-color: #eff6ff; border-left: 3px solid #2563eb; padding: 12px 16px; border-radius: 0 6px 6px 0; margin-bottom: 16px;">
+                                        <div style="font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Key Talking Point</div>
+                                        <p style="margin: 0; font-size: 13px; color: #1e3a8a; line-height: 1.5; font-style: italic;">&ldquo;{{ update.key_talking_point }}&rdquo;</p>
                                     </div>
-                                    {% endfor %}
+                                    {% endif %}
+                                    
+                                    <!-- Button -->
+                                    <table border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td>
+                                                <a href="{{ update.detail_url }}" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px;">
+                                                    View full battle card &rarr;
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                                 {% endfor %}
                             {% endif %}
                         </td>
                     </tr>
                     
-                    <!-- CTA -->
-                    <tr>
-                        <td style="padding: 0 24px 24px; text-align: center;">
-                            <a href="{{ app_base_url }}/dashboard" style="display: inline-block; background-color: #2563EB; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 16px;">
-                                View Full Battle Card
-                            </a>
-                        </td>
-                    </tr>
-                    
                     <!-- Footer -->
                     <tr>
-                        <td style="padding: 24px; background-color: #fafafa; text-align: center; border-top: 1px solid #e4e4e7;">
-                            <p style="margin: 0; font-size: 12px; color: #71717a;">
-                                You're receiving this because you track competitors on Competitor Analyzer. Manage your settings at <a href="{{ app_base_url }}/settings" style="color: #71717a; text-decoration: underline;">{{ app_base_url }}/settings</a>
+                        <td style="padding: 24px; background-color: #fafafa; text-align: center; border-top: 1px solid #e5e5e5;">
+                            <p style="margin: 0 0 8px 0; font-size: 11px; color: #737373; font-weight: 500;">
+                                Powered by Competitor Analyzer
+                            </p>
+                            <p style="margin: 0; font-size: 11px; color: #a3a3a3; line-height: 1.5;">
+                                You're receiving this because you track competitors on Competitor Analyzer. <br/>
+                                <a href="{{ app_base_url }}/settings" style="color: #737373; text-decoration: underline;">Unsubscribe or manage settings</a>
                             </p>
                         </td>
                     </tr>

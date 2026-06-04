@@ -1,4 +1,4 @@
-import { DashboardData, CompetitorListData, QueueData, TrendsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData } from './types';
+import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, TrendsMetricsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -9,7 +9,7 @@ class ApiClient {
     this.userId = userId;
   }
 
-  private async fetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+  public async fetch<T>(path: string, options: RequestInit = {}): Promise<T> {
     const url = `${API_BASE}/api/v1${path}`;
     const res = await fetch(url, {
       ...options,
@@ -33,14 +33,22 @@ class ApiClient {
   }
 
   // Competitors
-  async getCompetitors(): Promise<CompetitorListData> {
-    return this.fetch<CompetitorListData>('/competitors');
+  async getCompetitors(includeInactive: boolean = false): Promise<CompetitorListData> {
+    const query = includeInactive ? '?include_inactive=true' : '';
+    return this.fetch<CompetitorListData>(`/competitors${query}`);
   }
 
   async addCompetitor(url: string, name?: string): Promise<{ id: string; url: string; name: string }> {
     return this.fetch('/competitors', {
       method: 'POST',
       body: JSON.stringify({ url, name }),
+    });
+  }
+
+  async updateCompetitor(id: string, payload: Partial<Competitor>): Promise<Competitor> {
+    return this.fetch<Competitor>(`/competitors/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
     });
   }
 
@@ -63,6 +71,10 @@ class ApiClient {
   // Trends
   async getTrends(): Promise<TrendsData> {
     return this.fetch<TrendsData>('/trends');
+  }
+
+  async getTrendsMetrics(): Promise<TrendsMetricsData> {
+    return this.fetch<TrendsMetricsData>('/trends/metrics');
   }
 
   // Settings
@@ -88,6 +100,12 @@ class ApiClient {
   async getCompetitorReviews(competitorId: string): Promise<CompetitorReviewsData> {
     return this.fetch<CompetitorReviewsData>(`/competitors/${competitorId}/reviews`);
   }
+
+  // Competitor Detail
+  async getCompetitorDetail(competitorId: string): Promise<any> {
+    return this.fetch<any>(`/competitors/${competitorId}/detail`);
+  }
+
 
   // Local Business
   async setBusinessType(businessType: 'saas' | 'local'): Promise<void> {

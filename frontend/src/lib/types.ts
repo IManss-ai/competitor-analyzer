@@ -5,7 +5,22 @@ export interface DashboardData {
   pending_count: number;
   last_scan: string | null;
   competitor_count: number;
+  changes_this_week: number;
+  avg_review_score: number | null;
+  competitors_health: CompetitorHealth[];
 }
+
+export interface CompetitorHealth {
+  id: string;
+  name: string;
+  url: string;
+  last_scanned: string | null;
+  total_changes: number;
+  avg_rating: number | null;
+  trend: number[];
+  status: 'Active' | 'No changes' | 'Error';
+}
+
 
 export interface ChangeEvent {
   id: string;
@@ -67,6 +82,35 @@ export interface TrendsData {
     url: string;
     counts: number[];
   }[];
+}
+
+export interface TypeBreakdownPoint {
+  week: string;
+  pricing_change: number;
+  new_feature: number;
+  positioning_shift: number;
+  minor_copy: number;
+}
+
+export interface ReviewTrend {
+  id: string;
+  name: string;
+  history: {
+    date: string | null;
+    avg_rating: number | null;
+  }[];
+}
+
+export interface TrendsMetricsData {
+  weeks: string[];
+  weekly_changes: {
+    id: string;
+    name: string;
+    url: string;
+    counts: number[];
+  }[];
+  type_breakdown: TypeBreakdownPoint[];
+  review_trends: ReviewTrend[];
 }
 
 export interface SettingsData {

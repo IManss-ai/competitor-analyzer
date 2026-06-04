@@ -31,7 +31,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar email={session.user.email} pendingCount={pendingCount} />
+      <Sidebar email={session.user.email} userId={session.user.user_id} pendingCount={pendingCount} />
       <MainContent>{children}</MainContent>
       <OnboardingModal />
     </div>

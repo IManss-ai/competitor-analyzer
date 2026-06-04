@@ -9,30 +9,107 @@ async def send_weekly_brief(
     change_summaries: list[dict],
     pending_action_count: int,
 ) -> bool:
-    if not change_summaries:
-        subject = "Your Battle Card is ready — 0 competitor moves this week"
-        text_body = "No changes detected this week — your competitors stayed quiet.\n\n"
-    else:
-        subject = f"Your Battle Card is ready — {len(change_summaries)} competitor moves this week"
-        
-        grouped = {}
-        for s in change_summaries:
-            name = s.get("competitor_name") or s.get("url", "Unknown")
-            grouped.setdefault(name, []).append(s)
-            
-        lines = []
-        for name, changes in grouped.items():
-            lines.append(f"## {name} ({len(changes)} changes)")
-            for c in changes:
-                c_type = c.get("change_type", "").replace("_", " ").title()
-                brief = c.get("brief_text") or "Updated site — no significant text change detected."
-                lines.append(f"- [{c_type}] {brief}")
-            lines.append("")
-        
-        lines.append(f"View Full Battle Card: {APP_BASE_URL}/dashboard")
-        text_body = "\n".join(lines)
+    import uuid
+    from datetime import datetime, timezone, timedelta
+    from app.db import SessionLocal
+    from app.models import Competitor, Review
+    from app.routes.battlecard import generate_battlecard
+    from sqlalchemy import select, func
 
-    text_body += f"\n\n---\nYou're receiving this because you track competitors on Competitor Analyzer. Manage your settings at {APP_BASE_URL}/settings"
+    db = SessionLocal()
+    try:
+        try:
+            user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
+        except ValueError:
+            user_uuid = None
+            
+        # 1. Date range
+        end_date = datetime.now(timezone.utc)
+        start_date = end_date - timedelta(days=7)
+        date_range_str = f"{start_date.strftime('%b %d')} - {end_date.strftime('%b %d, %Y')}"
+        
+        if user_uuid:
+            # 2. Competitors tracked
+            competitors_tracked = db.execute(
+                select(func.count(Competitor.id)).where(Competitor.user_id == user_uuid, Competitor.active == True)
+            ).scalar() or 0
+            
+            # 3. New reviews this week
+            new_reviews = db.execute(
+                select(func.count(Review.id))
+                .join(Competitor, Review.competitor_id == Competitor.id)
+                .where(Competitor.user_id == user_uuid)
+                .where(Review.fetched_at >= start_date)
+            ).scalar() or 0
+            
+            # Get active competitors for this user
+            competitors = db.execute(
+                select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
+            ).scalars().all()
+        else:
+            competitors_tracked = 0
+            new_reviews = 0
+            competitors = []
+            
+        # 4. Group change summaries by competitor
+        grouped_changes = {}
+        for item in change_summaries:
+            comp_name = item.get("competitor_name") or item.get("url") or "Unknown"
+            grouped_changes.setdefault(comp_name, []).append(item)
+            
+        competitor_updates = []
+        
+        for comp in competitors:
+            comp_name = comp.name or comp.url
+            changes_list = grouped_changes.get(comp_name, [])
+            if not changes_list and comp.url in grouped_changes:
+                changes_list = grouped_changes[comp.url]
+                
+            # Only include if has changes
+            if changes_list:
+                # Fetch key talking point (first item from battlecard)
+                try:
+                    battlecard = generate_battlecard(str(comp.id), db)
+                    talking_points = battlecard.get("talking_points", [])
+                    key_talking_point = talking_points[0] if talking_points else None
+                except Exception:
+                    key_talking_point = None
+                    
+                competitor_updates.append({
+                    "name": comp_name,
+                    "url": comp.url,
+                    "favicon": f"https://www.google.com/s2/favicons?domain={comp.url.split('://')[-1].split('/')[0]}&sz=32" if comp.url else None,
+                    "changes": [c.get("brief_text") or "Updated website" for c in changes_list],
+                    "key_talking_point": key_talking_point,
+                    "detail_url": f"{APP_BASE_URL}/competitors/{comp.id}"
+                })
+                
+        # Subject line
+        changes_detected = len(change_summaries)
+        subject = f"🎯 {changes_detected} competitor changes this week — your battle cards are ready"
+        
+        # Fallback text email body
+        text_body_lines = [
+            "Weekly Intel Report",
+            f"Date Range: {date_range_str}",
+            f"{competitors_tracked} competitors tracked, {changes_detected} changes detected, {new_reviews} new reviews.",
+            ""
+        ]
+        if not competitor_updates:
+            text_body_lines.append("All quiet this week — your competitors made no significant changes. We'll keep watching.")
+        else:
+            for up in competitor_updates:
+                text_body_lines.append(f"## {up['name']}")
+                for ch in up["changes"]:
+                    text_body_lines.append(f"- {ch}")
+                if up["key_talking_point"]:
+                    text_body_lines.append(f"Key Talking Point: {up['key_talking_point']}")
+                text_body_lines.append(f"View Full Battle Card: {up['detail_url']}")
+                text_body_lines.append("")
+                
+        text_body = "\n".join(text_body_lines)
+    finally:
+        db.close()
 
     import os
     from jinja2 import Environment, FileSystemLoader
@@ -42,12 +119,16 @@ async def send_weekly_brief(
         env = Environment(loader=FileSystemLoader(templates_dir))
         template = env.get_template("email_brief.html")
         html_body = template.render(
-            change_summaries=change_summaries,
-            pending_action_count=pending_action_count,
+            date_range=date_range_str,
+            competitors_tracked=competitors_tracked,
+            changes_detected=changes_detected,
+            new_reviews=new_reviews,
+            competitor_updates=competitor_updates,
             app_base_url=APP_BASE_URL,
         )
     except Exception as e:
         print(f"Failed to render HTML email brief: {e}")
+
 
     if not RESEND_API_KEY or "dummy" in RESEND_API_KEY.lower():
         print(f"\n--- [LOCAL DEV EMAIL] Battle Card → {user_email}\nSubject: {subject}\n{text_body}\n---\n")

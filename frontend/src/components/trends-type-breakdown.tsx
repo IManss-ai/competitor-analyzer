@@ -1,20 +1,18 @@
 'use client';
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
+import { TypeBreakdownPoint } from '@/lib/types';
 
-interface ChartCompetitor {
-  id: string;
-  name: string;
-  url: string;
-}
-
-export default function TrendsChart({ data, competitors }: { data: Record<string, string | number>[], competitors: ChartCompetitor[] }) {
-  const colors = ["#3b82f6", "#10b981", "#f59e0b", "#f43f5e", "#6366f1", "#06b6d4", "#8b5cf6"];
+export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint[] }) {
+  const formattedData = data.map((d) => ({
+    ...d,
+    week: d.week.replace(/^\d{4}-/, ''),
+  }));
 
   return (
-    <div className="h-[220px] w-full group">
+    <div className="h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
+        <BarChart data={formattedData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f2" />
           <XAxis 
             dataKey="week" 
@@ -31,21 +29,14 @@ export default function TrendsChart({ data, competitors }: { data: Record<string
           <Tooltip 
             contentStyle={{ backgroundColor: '#0a0a0f', color: '#ffffff', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 12px 30px rgba(0,0,0,0.15)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
             itemStyle={{ color: '#ffffff', padding: '2px 0' }}
-            cursor={{ stroke: '#e5e5e7', strokeWidth: 1, strokeDasharray: '4 4' }}
+            cursor={{ fill: 'rgba(0,0,0,0.02)' }}
           />
           <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: '#8a8a8a' }} />
-          {competitors.map((comp, idx) => (
-            <Line 
-              key={comp.id}
-              type="monotone" 
-              dataKey={comp.name || comp.url} 
-              stroke={colors[idx % colors.length]} 
-              strokeWidth={2}
-              dot={{ r: 3, strokeWidth: 0 }}
-              activeDot={{ r: 5 }}
-            />
-          ))}
-        </LineChart>
+          <Bar dataKey="pricing_change" name="Pricing Change" stackId="a" fill="#ef4444" />
+          <Bar dataKey="new_feature" name="New Feature" stackId="a" fill="#3b82f6" />
+          <Bar dataKey="positioning_shift" name="Positioning Shift" stackId="a" fill="#8b5cf6" />
+          <Bar dataKey="minor_copy" name="Minor Copy" stackId="a" fill="#d1d5db" radius={[4, 4, 0, 0]} />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

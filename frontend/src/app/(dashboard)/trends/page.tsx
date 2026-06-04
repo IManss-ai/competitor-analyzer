@@ -5,34 +5,42 @@ import { createApiClient } from '@/lib/api';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import TrendsChart from '@/components/trends-chart';
-import Link from 'next/link';
+import TrendsTypeBreakdown from '@/components/trends-type-breakdown';
+import TrendsReviews from '@/components/trends-reviews';
 import TrendsHeatmap from '@/components/trends-heatmap';
+import Link from 'next/link';
 
 export default async function TrendsPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id);
-  const data = await api.getTrends();
 
-  const maxCount = Math.max(1, ...data.competitors.flatMap((c) => c.counts));
+  // Fetch both datasets concurrently
+  const [trendsData, metricsData] = await Promise.all([
+    api.getTrends(),
+    api.getTrendsMetrics()
+  ]);
 
-  // Transform data for line chart
-  const chartData = data.weeks.map((week, weekIndex) => {
+  const maxCount = Math.max(1, ...trendsData.competitors.flatMap((c) => c.counts));
+
+  // Transform data for change frequency line chart
+  const changeFrequencyChartData = metricsData.weeks.map((week, weekIndex) => {
     const dataPoint: Record<string, string | number> = { week: week.replace(/^\d{4}-/, '') };
-    data.competitors.forEach(comp => {
+    metricsData.weekly_changes.forEach(comp => {
       dataPoint[comp.name || comp.url] = comp.counts[weekIndex] || 0;
     });
     return dataPoint;
   });
 
+  const hasCompetitors = trendsData.competitors.length > 0;
+
   return (
     <div>
       <Topbar title="Trends" subtitle="Activity overview across your landscape" />
 
-      {data.competitors.length === 0 ? (
+      {!hasCompetitors ? (
         <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
           <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] px-6 py-24 text-center">
-            {/* Rich Empty State */}
             <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-zinc-50 border border-zinc-200/50">
               <div className="w-2.5 h-[30%] bg-zinc-200 rounded-sm"></div>
               <div className="w-2.5 h-[70%] bg-zinc-300 rounded-sm"></div>
@@ -46,7 +54,7 @@ export default async function TrendsPage() {
             </p>
             <Link 
               href="/competitors" 
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#2563eb] text-white text-sm font-medium rounded-lg hover:bg-[#1d4ed8] transition-all cursor-pointer"
             >
               Add competitors
             </Link>
@@ -54,18 +62,44 @@ export default async function TrendsPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Top section: Line chart (Double-Bezel Design) */}
-          <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
-            <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
-              <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
-                Change activity over 12 weeks
-              </h2>
-              <TrendsChart data={chartData} competitors={data.competitors} />
+          {/* Top row: 2 charts side by side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* A) Change Frequency Chart */}
+            <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
+              <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
+                <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
+                  Change frequency (Past 12 Weeks — Top 5)
+                </h2>
+                <TrendsChart data={changeFrequencyChartData} competitors={metricsData.weekly_changes} />
+              </div>
+            </div>
+
+            {/* B) Change Type Breakdown Stacked Bar Chart */}
+            <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
+              <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
+                <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
+                  Change type breakdown (Past 8 Weeks)
+                </h2>
+                <TrendsTypeBreakdown data={metricsData.type_breakdown} />
+              </div>
             </div>
           </div>
 
-          {/* Bottom section: Heatmap */}
-          <TrendsHeatmap competitors={data.competitors} weeks={data.weeks} maxCount={maxCount} />
+          {/* Bottom row: Review trends & Density heatmap */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* C) Review Score Trends */}
+            <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
+              <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
+                <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
+                  Review score trends
+                </h2>
+                <TrendsReviews trends={metricsData.review_trends} />
+              </div>
+            </div>
+
+            {/* D) Alert Heatmap */}
+            <TrendsHeatmap competitors={trendsData.competitors} weeks={trendsData.weeks} maxCount={maxCount} />
+          </div>
         </div>
       )}
     </div>

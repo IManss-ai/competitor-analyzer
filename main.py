@@ -39,6 +39,9 @@ def _apply_column_guards():
     stmts = [
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS scan_schedule VARCHAR DEFAULT 'weekly'",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT 1",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS digest_email VARCHAR",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS google_maps_url VARCHAR",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS instagram_handle VARCHAR",

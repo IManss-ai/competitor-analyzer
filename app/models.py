@@ -13,6 +13,10 @@ class User(Base):
     trial_ends_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())
     business_type = Column(String, default="saas")  # "saas" | "local"
+    scan_schedule = Column(String, default="weekly")  # "weekly" | "biweekly"
+    email_notifications = Column(Boolean, default=True)
+    digest_email = Column(String, nullable=True)
+
 
 class Competitor(Base):
     __tablename__ = "competitors"
