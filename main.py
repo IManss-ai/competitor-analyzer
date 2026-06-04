@@ -10,6 +10,8 @@ from app.db import engine
 from app.models import Base
 from app.config import FRONTEND_URL
 
+_STALE_REVISIONS = {None, "001", "001_initial", "002"}
+
 def _run_migrations():
     try:
         from alembic.config import Config
@@ -17,13 +19,14 @@ def _run_migrations():
         from alembic.runtime.migration import MigrationContext
         import os
         cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
-        # Check current DB version — if none, stamp to 003 (tables already exist)
         with engine.connect() as conn:
             ctx = MigrationContext.configure(conn)
             current = ctx.get_current_revision()
-        if current is None:
-            print("[startup] No alembic version found, stamping to 003")
-            command.stamp(cfg, "003")
+        if current in _STALE_REVISIONS:
+            # Tables already exist from manual setup or column guards — stamp to head
+            # so future migrations run from the correct baseline.
+            print(f"[startup] Stale revision ({current!r}), stamping to head")
+            command.stamp(cfg, "head")
         command.upgrade(cfg, "head")
         print("[startup] Alembic migrations applied")
     except Exception as e:
