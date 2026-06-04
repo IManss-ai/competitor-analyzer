@@ -14,8 +14,16 @@ def _run_migrations():
     try:
         from alembic.config import Config
         from alembic import command
+        from alembic.runtime.migration import MigrationContext
         import os
         cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+        # Check current DB version — if none, stamp to 003 (tables already exist)
+        with engine.connect() as conn:
+            ctx = MigrationContext.configure(conn)
+            current = ctx.get_current_revision()
+        if current is None:
+            print("[startup] No alembic version found, stamping to 003")
+            command.stamp(cfg, "003")
         command.upgrade(cfg, "head")
         print("[startup] Alembic migrations applied")
     except Exception as e:
