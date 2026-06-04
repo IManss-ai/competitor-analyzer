@@ -4,6 +4,7 @@ from sqlalchemy import select
 from app.db import SessionLocal
 from app.models import User, Competitor, ChangeEvent, ApprovedAction
 from app.pipeline.scanner import scan_user_competitors
+from app.pipeline.review_scraper import scrape_competitor_reviews
 from app.mailer import send_weekly_brief
 from datetime import datetime, timezone
 
@@ -29,6 +30,14 @@ async def run_weekly_scan_and_brief():
             try:
                 # 1. Run competitor scans (saves snapshots, changes, and action drafts)
                 await scan_user_competitors(str(user.id), db)
+                
+                # For each active competitor of this user, scrape reviews
+                competitors = db.execute(select(Competitor).where(Competitor.user_id == user.id, Competitor.active == True)).scalars().all()
+                for comp in competitors:
+                    try:
+                        await scrape_competitor_reviews(str(comp.id), comp.url, db)
+                    except Exception:
+                        pass
 
                 # 2. Gather this week's change events
                 week_label = datetime.now(timezone.utc).strftime("%Y-W%V")

@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from app.db import get_session
-from app.models import User, Competitor, ChangeEvent, Snapshot, ApprovedAction
+from app.models import User, Competitor, ChangeEvent, Snapshot, ApprovedAction, ReviewSnapshot, Review
 from app.auth import generate_session_token, verify_session_token, get_or_create_user, generate_magic_link_token, send_magic_link_email
+import json as _json
 from app.config import RESEND_API_KEY, FROM_EMAIL, APP_BASE_URL
 from datetime import datetime, timezone
 import uuid
@@ -160,6 +161,56 @@ def api_delete_competitor(competitor_id: str, user_id: str = Depends(require_api
 
 # ── Queue ────────────────────────────────────────────────────────────────────
 
+@router.get("/competitors/{competitor_id}/reviews")
+def api_competitor_reviews(competitor_id: str, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+    user_uuid = uuid.UUID(user_id)
+    comp = db.execute(
+        select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
+    ).scalar_one_or_none()
+    if not comp:
+        raise HTTPException(status_code=404, detail="Not found")
+        
+    snapshots = db.execute(
+        select(ReviewSnapshot)
+        .where(ReviewSnapshot.competitor_id == comp.id)
+        .order_by(ReviewSnapshot.snapshot_at.desc())
+    ).scalars().all()
+    
+    # keep only latest per platform
+    latest_snapshots = {}
+    for snap in snapshots:
+        if snap.platform not in latest_snapshots:
+            latest_snapshots[snap.platform] = {
+                "platform": snap.platform,
+                "avg_rating": snap.avg_rating,
+                "total_reviews": snap.total_reviews,
+                "complaint_count": snap.complaint_count,
+                "top_complaints": _json.loads(snap.top_complaints) if snap.top_complaints else [],
+                "snapshot_at": snap.snapshot_at.isoformat() if snap.snapshot_at else None
+            }
+            
+    recent_complaints = db.execute(
+        select(Review)
+        .where(Review.competitor_id == comp.id, Review.is_complaint == True)
+        .order_by(Review.published_at.desc())
+        .limit(10)
+    ).scalars().all()
+    
+    return {
+        "snapshots": list(latest_snapshots.values()),
+        "recent_complaints": [
+            {
+                "platform": r.platform,
+                "rating": r.rating,
+                "title": r.title,
+                "body": r.body,
+                "published_at": r.published_at.isoformat() if r.published_at else None
+            }
+            for r in recent_complaints
+        ]
+    }
+
+
 @router.get("/queue")
 def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
@@ -271,6 +322,31 @@ async def api_scan_now(user_id: str = Depends(require_api_user)):
     import asyncio
     asyncio.create_task(_run_scan_background(user_id))
     return {"ok": True, "message": "Scan started"}
+
+
+@router.post("/scan/reviews")
+async def api_scan_reviews(user_id: str = Depends(require_api_user)):
+    from app.pipeline.review_scraper import scrape_competitor_reviews
+    from app.db import SessionLocal
+    import asyncio
+    
+    async def _run_review_scan(uid: str):
+        db = SessionLocal()
+        try:
+            user_uuid = uuid.UUID(uid)
+            competitors = db.execute(
+                select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
+            ).scalars().all()
+            for comp in competitors:
+                try:
+                    await scrape_competitor_reviews(str(comp.id), comp.url, db)
+                except Exception:
+                    pass
+        finally:
+            db.close()
+            
+    asyncio.create_task(_run_review_scan(user_id))
+    return {"ok": True, "message": "Review scan started"}
 
 
 # ── Billing ───────────────────────────────────────────────────────────────────

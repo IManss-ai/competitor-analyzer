@@ -10,11 +10,11 @@ async def send_weekly_brief(
     pending_action_count: int,
 ) -> bool:
     if not change_summaries:
-        subject = "This week: no meaningful competitor changes detected"
+        subject = "Your Battle Card is ready — 0 competitor moves this week"
     else:
-        subject = f"This week: {len(change_summaries)} competitor update{'s' if len(change_summaries) != 1 else ''}"
+        subject = f"Your Battle Card is ready — {len(change_summaries)} competitor move{'s' if len(change_summaries) != 1 else ''} this week"
 
-    lines = ["Your Competitor Brief — Week of Monday\n"]
+    lines = ["Your Battle Card — Week of Monday\n"]
     for s in change_summaries:
         name = s.get("competitor_name") or s.get("url", "Unknown")
         change_type = s.get("change_type", "").replace("_", " ").title()
@@ -50,7 +50,7 @@ async def send_weekly_brief(
         print(f"Failed to render HTML email brief: {e}")
 
     if not RESEND_API_KEY or "dummy" in RESEND_API_KEY.lower():
-        print(f"\n--- [LOCAL DEV EMAIL] Weekly Brief → {user_email}\nSubject: {subject}\n{text_body}\n---\n")
+        print(f"\n--- [LOCAL DEV EMAIL] Battle Card → {user_email}\nSubject: {subject}\n{text_body}\n---\n")
         return True
 
     try:

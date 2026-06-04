@@ -45,6 +45,21 @@ def generate_battlecard(competitor_id: str, db: Session = Depends(get_session)):
     if is_dummy:
         return _generate_battlecard_heuristically(comp.name or comp.url, change_list_texts)
 
+    from app.models import ReviewSnapshot
+    latest_snapshots = db.execute(
+        select(ReviewSnapshot)
+        .where(ReviewSnapshot.competitor_id == comp_uuid)
+        .order_by(ReviewSnapshot.snapshot_at.desc())
+        .limit(3)
+    ).scalars().all()
+
+    complaints_text = ""
+    for snap in latest_snapshots:
+        if snap.top_complaints:
+            import json as _json
+            complaints = _json.loads(snap.top_complaints)
+            complaints_text += f"\n{snap.platform} top complaints: {', '.join(complaints)}"
+
     client = anthropic.Anthropic(api_key=api_key)
 
     prompt = f"""You are a competitive intelligence strategist. Based on these competitor changes 
@@ -53,6 +68,7 @@ from the past 7 days, generate a 5-item action plan for the founder.
 Competitor: {comp.name or comp.url}
 Changes detected: 
 {change_list_str}
+{complaints_text}
 
 Return ONLY valid JSON in the exact format below, with no other text or explanation. 
 {{"actions": ["action1", "action2", "action3", "action4", "action5"]}}
@@ -60,7 +76,7 @@ Each action must be specific, actionable, and under 15 words."""
 
     try:
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",
+            model="claude-3-5-sonnet-20241022",
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7

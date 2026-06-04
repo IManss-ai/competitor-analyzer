@@ -77,3 +77,29 @@ export interface SessionUser {
   user_id: string;
   email: string;
 }
+
+export interface BattleCardData {
+  actions: string[];
+}
+
+export interface ReviewSnapshot {
+  platform: string;
+  avg_rating: number | null;
+  total_reviews: number | null;
+  complaint_count: number;
+  top_complaints: string[];
+  snapshot_at: string | null;
+}
+
+export interface Complaint {
+  platform: string;
+  rating: number | null;
+  title: string | null;
+  body: string;
+  published_at: string | null;
+}
+
+export interface CompetitorReviewsData {
+  snapshots: ReviewSnapshot[];
+  recent_complaints: Complaint[];
+}

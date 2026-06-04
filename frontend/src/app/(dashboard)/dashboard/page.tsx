@@ -9,13 +9,31 @@ import ChangeBadge from '@/components/change-badge';
 import DashboardAnimator, { DashboardSection, AnimatedRow, ActionLink } from './dashboard-animator';
 import MiniActivityChart from '@/components/mini-activity-chart';
 import Link from 'next/link';
-import { Plus, CheckSquare, TrendUp, ArrowRight, Clock } from '@phosphor-icons/react/dist/ssr';
+import { Plus, CheckSquare, TrendUp, ArrowRight, Clock, Lightning } from '@phosphor-icons/react/dist/ssr';
+import ReviewIntelligence from '@/components/review-intelligence';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id);
-  const data = await api.getDashboard();
+  const [dashboardData, compData] = await Promise.all([
+    api.getDashboard(),
+    api.getCompetitors()
+  ]);
+  const data = dashboardData;
+  const competitors = compData.competitors;
+
+  const battlecardPromises = competitors.map(c => 
+    api.getBattlecard(c.id).catch(() => ({ actions: [] }))
+  );
+  const reviewsPromises = competitors.map(c => 
+    api.getCompetitorReviews(c.id).catch(() => ({ snapshots: [], recent_complaints: [] }))
+  );
+
+  const [battlecards, reviewsData] = await Promise.all([
+    Promise.all(battlecardPromises),
+    Promise.all(reviewsPromises)
+  ]);
 
   const daysSinceScan = data.last_scan
     ? Math.floor((new Date().getTime() - new Date(data.last_scan).getTime()) / (1000 * 3600 * 24))
@@ -219,6 +237,52 @@ export default async function DashboardPage() {
             })}
           </div>
         )}
+      </DashboardSection>
+
+      {/* Battle Cards */}
+      <DashboardSection className="bg-white rounded-xl border border-[#e5e5e5] overflow-hidden mb-6 shadow-sm">
+        <div className="px-6 py-4 border-b border-[#f0f0f0] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Lightning size={18} className="text-[#0a0a0a]" weight="bold" />
+            <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
+              Battle Cards
+            </h2>
+          </div>
+        </div>
+
+        {competitors.length === 0 || data.events.length === 0 ? (
+          <div className="px-6 py-12 text-center">
+            <p className="text-sm text-[#525252]">Run a scan to generate your first battle card</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-[#f5f5f5]">
+            {competitors.map((comp, index) => {
+              const actions = battlecards[index]?.actions || [];
+              if (actions.length === 0) return null;
+
+              return (
+                <div key={comp.id} className="px-6 py-5">
+                  <h3 className="text-sm font-semibold text-[#0a0a0a] mb-3">{comp.name || comp.url}</h3>
+                  <div className="space-y-3">
+                    {actions.map((action, aIdx) => (
+                      <div key={aIdx} className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
+                          {aIdx + 1}
+                        </div>
+                        <p className="text-sm text-[#525252] leading-relaxed">{action}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </DashboardSection>
+
+      {/* Review Intelligence */}
+      <DashboardSection>
+        <ReviewIntelligence competitors={competitors} reviewsData={reviewsData} />
       </DashboardSection>
 
       {/* Quick Actions Strip */}

@@ -1,4 +1,4 @@
-import { DashboardData, CompetitorListData, QueueData, TrendsData, SettingsData } from './types';
+import { DashboardData, CompetitorListData, QueueData, TrendsData, SettingsData, BattleCardData, CompetitorReviewsData } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -73,6 +73,20 @@ class ApiClient {
   // Scan
   async triggerScan(): Promise<{ ok: boolean; message: string }> {
     return this.fetch('/scan/now', { method: 'POST' });
+  }
+
+  async triggerReviewScan(): Promise<{ ok: boolean; message: string }> {
+    return this.fetch('/scan/reviews', { method: 'POST' });
+  }
+
+  // Battle Cards
+  async getBattlecard(competitorId: string): Promise<BattleCardData> {
+    return this.fetch<BattleCardData>(`/battlecards/generate/${competitorId}`);
+  }
+
+  // Reviews
+  async getCompetitorReviews(competitorId: string): Promise<CompetitorReviewsData> {
+    return this.fetch<CompetitorReviewsData>(`/competitors/${competitorId}/reviews`);
   }
 
   // Billing

@@ -1,5 +1,5 @@
 from uuid import uuid4
-from sqlalchemy import Column, String, DateTime, Boolean, Integer, ForeignKey, Text, func, UUID, Index
+from sqlalchemy import Column, String, DateTime, Boolean, Integer, Float, ForeignKey, Text, func, UUID, Index
 from app.db import Base
 
 class User(Base):
@@ -60,3 +60,29 @@ class ApprovedAction(Base):
     edited_text = Column(Text, nullable=True)      # founder's edited version (null = approved as-is)
     approved_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())
+
+class Review(Base):
+    __tablename__ = "reviews"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    platform = Column(String, nullable=False)          # "g2" | "trustpilot" | "capterra"
+    review_id = Column(String, nullable=False)         # platform's own ID (for dedup)
+    author = Column(String, nullable=True)
+    rating = Column(Integer, nullable=True)            # 1-5
+    title = Column(String, nullable=True)
+    body = Column(Text, nullable=False)
+    published_at = Column(DateTime, nullable=True)
+    fetched_at = Column(DateTime, default=func.now())
+    sentiment = Column(String, nullable=True)          # "positive" | "negative" | "neutral"
+    is_complaint = Column(Boolean, default=False)      # flagged by AI as a complaint
+
+class ReviewSnapshot(Base):
+    __tablename__ = "review_snapshots"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    platform = Column(String, nullable=False)
+    snapshot_at = Column(DateTime, default=func.now())
+    avg_rating = Column(Float, nullable=True)          # Float from sqlalchemy
+    total_reviews = Column(Integer, nullable=True)
+    complaint_count = Column(Integer, default=0)
+    top_complaints = Column(Text, nullable=True)       # JSON string: list of 3 complaint summaries
