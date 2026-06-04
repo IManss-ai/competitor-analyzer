@@ -24,7 +24,9 @@ from app.db import Base
 from app.models import User, Competitor, Snapshot, ChangeEvent, ApprovedAction
 target_metadata = Base.metadata
 
-from app.config import DATABASE_URL
+from app.config import DATABASE_URL as _RAW_DATABASE_URL
+
+DATABASE_URL = _RAW_DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://", 1)
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
