@@ -11,6 +11,7 @@ class User(Base):
     subscription_status = Column(String, default="trialing")  # trialing/active/canceled/past_due
     trial_ends_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())
+    business_type = Column(String, default="saas")  # "saas" | "local"
 
 class Competitor(Base):
     __tablename__ = "competitors"
@@ -20,6 +21,10 @@ class Competitor(Base):
     name = Column(String, nullable=True)  # optional display name
     active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=func.now())
+    business_type = Column(String, default="saas")  # "saas" | "local"
+    google_maps_url = Column(String, nullable=True)   # for local: full Google Maps URL
+    instagram_handle = Column(String, nullable=True)  # e.g. "starbucks" (no @)
+    facebook_page = Column(String, nullable=True)     # e.g. "starbucks"
 
 class Snapshot(Base):
     __tablename__ = "snapshots"
@@ -86,3 +91,15 @@ class ReviewSnapshot(Base):
     total_reviews = Column(Integer, nullable=True)
     complaint_count = Column(Integer, default=0)
     top_complaints = Column(Text, nullable=True)       # JSON string: list of 3 complaint summaries
+
+class SocialPost(Base):
+    __tablename__ = "social_posts"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    platform = Column(String, nullable=False)         # "instagram" | "facebook"
+    post_id = Column(String, nullable=False)          # dedup key (url or hash)
+    content = Column(Text, nullable=False)
+    posted_at = Column(DateTime, nullable=True)
+    fetched_at = Column(DateTime, default=func.now())
+    sentiment = Column(String, nullable=True)         # "positive" | "negative" | "neutral"
+    engagement_hint = Column(String, nullable=True)   # likes/comments count if extractable

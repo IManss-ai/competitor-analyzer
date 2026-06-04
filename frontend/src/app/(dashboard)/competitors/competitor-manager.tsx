@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Trash,
   Plus,
   ArrowSquareOut,
+  CaretDown,
+  Storefront,
 } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
@@ -29,6 +31,18 @@ export default function CompetitorManager({
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
 
+  // Local business fields
+  const [isLocalBusiness, setIsLocalBusiness] = useState(false);
+  const [showLocalFields, setShowLocalFields] = useState(false);
+  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
+  const [instagramHandle, setInstagramHandle] = useState('');
+  const [facebookPage, setFacebookPage] = useState('');
+
+  useEffect(() => {
+    const bt = localStorage.getItem('business_type');
+    setIsLocalBusiness(bt === 'local');
+  }, []);
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -45,12 +59,37 @@ export default function CompetitorManager({
       });
       if (res.ok) {
         const newComp = await res.json();
+
+        // If local business fields are filled, PATCH them
+        if (isLocalBusiness && (googleMapsUrl || instagramHandle || facebookPage)) {
+          try {
+            await fetch(`${apiUrl}/api/v1/local/competitors/${newComp.id}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${userId}`,
+              },
+              body: JSON.stringify({
+                ...(googleMapsUrl && { google_maps_url: googleMapsUrl }),
+                ...(instagramHandle && { instagram_handle: instagramHandle }),
+                ...(facebookPage && { facebook_page: facebookPage }),
+              }),
+            });
+          } catch {
+            // Non-fatal
+          }
+        }
+
         setCompetitors((prev) => [
           ...prev,
           { ...newComp, active: true, created_at: new Date().toISOString() },
         ]);
         setUrl('');
         setName('');
+        setGoogleMapsUrl('');
+        setInstagramHandle('');
+        setFacebookPage('');
+        setShowLocalFields(false);
         setShowAdd(false);
         if (competitors.length + 1 >= 7) setAtLimit(true);
       }
@@ -148,6 +187,80 @@ export default function CompetitorManager({
                     {adding ? 'Adding...' : 'Add to watchlist'}
                   </button>
                 </form>
+
+                {/* Local Business Details (collapsible) */}
+                {isLocalBusiness && (
+                  <div className="mt-5 pt-5 border-t border-zinc-100">
+                    <button
+                      type="button"
+                      onClick={() => setShowLocalFields(!showLocalFields)}
+                      className="flex items-center gap-2 text-sm font-medium text-[#0a0a0a] hover:text-blue-600 transition-colors cursor-pointer mb-4"
+                    >
+                      <Storefront size={16} weight="duotone" />
+                      Local Business Details
+                      <CaretDown
+                        size={14}
+                        className={`text-[#a3a3a3] transition-transform ${showLocalFields ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {showLocalFields && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-1.5">
+                              <label htmlFor="google-maps-url" className="block text-[10px] font-mono text-[#737373] uppercase tracking-wider">
+                                Google Maps URL
+                              </label>
+                              <input
+                                id="google-maps-url"
+                                type="url"
+                                placeholder="https://maps.google.com/..."
+                                value={googleMapsUrl}
+                                onChange={(e) => setGoogleMapsUrl(e.target.value)}
+                                className="w-full bg-[#fafafa] border border-zinc-200/60 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-[#a3a3a3]"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label htmlFor="instagram-handle" className="block text-[10px] font-mono text-[#737373] uppercase tracking-wider">
+                                Instagram handle
+                              </label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#a3a3a3]">@</span>
+                                <input
+                                  id="instagram-handle"
+                                  type="text"
+                                  placeholder="starbucks"
+                                  value={instagramHandle}
+                                  onChange={(e) => setInstagramHandle(e.target.value)}
+                                  className="w-full bg-[#fafafa] border border-zinc-200/60 rounded-lg pl-7 pr-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-[#a3a3a3]"
+                                />
+                              </div>
+                            </div>
+                            <div className="space-y-1.5">
+                              <label htmlFor="facebook-page" className="block text-[10px] font-mono text-[#737373] uppercase tracking-wider">
+                                Facebook page
+                              </label>
+                              <input
+                                id="facebook-page"
+                                type="text"
+                                placeholder="starbucks"
+                                value={facebookPage}
+                                onChange={(e) => setFacebookPage(e.target.value)}
+                                className="w-full bg-[#fafafa] border border-zinc-200/60 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-[#a3a3a3]"
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

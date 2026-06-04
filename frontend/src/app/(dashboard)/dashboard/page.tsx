@@ -12,17 +12,20 @@ import Link from 'next/link';
 import { Plus, CheckSquare, TrendUp, ArrowRight, Clock, Lightning } from '@phosphor-icons/react/dist/ssr';
 import ReviewIntelligence from '@/components/review-intelligence';
 import ScanNowButton from '@/components/scan-now-button';
+import LocalBusinessSection from '@/components/local-business-section';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id);
-  const [dashboardData, compData] = await Promise.all([
+  const [dashboardData, compData, settings] = await Promise.all([
     api.getDashboard(),
-    api.getCompetitors()
+    api.getCompetitors(),
+    api.getSettings().catch(() => ({ business_type: 'saas' as const }))
   ]);
   const data = dashboardData;
   const competitors = compData.competitors;
+  const isLocalBusiness = settings.business_type === 'local';
 
   const battlecardPromises = competitors.map(c => 
     api.getBattlecard(c.id).catch(() => ({ actions: [] }))
@@ -297,6 +300,15 @@ export default async function DashboardPage() {
       {/* Review Intelligence */}
       <DashboardSection>
         <ReviewIntelligence competitors={competitors} reviewsData={reviewsData} />
+      </DashboardSection>
+
+      {/* Local Business Section */}
+      <DashboardSection>
+        <LocalBusinessSection
+          competitors={competitors}
+          isLocalBusiness={isLocalBusiness}
+          userId={session.user!.user_id}
+        />
       </DashboardSection>
 
       {/* Quick Actions Strip */}

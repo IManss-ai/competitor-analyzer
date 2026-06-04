@@ -6,6 +6,7 @@ import { SessionUser } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
 import Sidebar from '@/components/sidebar';
 import MainContent from '@/components/main-content';
+import OnboardingModal from '@/components/onboarding-modal';
 
 export default async function DashboardLayout({
   children,
@@ -32,6 +33,7 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen">
       <Sidebar email={session.user.email} pendingCount={pendingCount} />
       <MainContent>{children}</MainContent>
+      <OnboardingModal />
     </div>
   );
 }

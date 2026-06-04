@@ -5,6 +5,8 @@ from app.db import SessionLocal
 from app.models import User, Competitor, ChangeEvent, ApprovedAction
 from app.pipeline.scanner import scan_user_competitors
 from app.pipeline.review_scraper import scrape_competitor_reviews
+from app.pipeline.google_reviews_scraper import scrape_google_reviews
+from app.pipeline.social_tracker import scrape_social_posts
 from app.mailer import send_weekly_brief
 from datetime import datetime, timezone
 
@@ -38,6 +40,19 @@ async def run_weekly_scan_and_brief():
                         await scrape_competitor_reviews(str(comp.id), comp.url, db)
                     except Exception:
                         pass
+
+                    # Only for local business competitors
+                    if comp.business_type == "local":
+                        if comp.google_maps_url:
+                            try:
+                                await scrape_google_reviews(str(comp.id), comp.google_maps_url, db)
+                            except Exception:
+                                pass
+                        if comp.instagram_handle or comp.facebook_page:
+                            try:
+                                await scrape_social_posts(str(comp.id), comp.instagram_handle, comp.facebook_page, db)
+                            except Exception:
+                                pass
 
                 # 2. Gather this week's change events
                 week_label = datetime.now(timezone.utc).strftime("%Y-W%V")

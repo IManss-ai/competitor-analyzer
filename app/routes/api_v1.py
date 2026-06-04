@@ -120,7 +120,17 @@ def api_list_competitors(user_id: str = Depends(require_api_user), db: Session =
     ).scalars().all()
     return {
         "competitors": [
-            {"id": str(c.id), "url": c.url, "name": c.name, "active": c.active, "created_at": c.created_at.isoformat() if c.created_at else None}
+            {
+                "id": str(c.id),
+                "url": c.url,
+                "name": c.name,
+                "active": c.active,
+                "created_at": c.created_at.isoformat() if c.created_at else None,
+                "business_type": c.business_type,
+                "google_maps_url": c.google_maps_url,
+                "instagram_handle": c.instagram_handle,
+                "facebook_page": c.facebook_page,
+            }
             for c in rows
         ],
         "at_limit": len(rows) >= MAX_COMPETITORS,

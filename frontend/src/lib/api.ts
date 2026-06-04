@@ -1,4 +1,4 @@
-import { DashboardData, CompetitorListData, QueueData, TrendsData, SettingsData, BattleCardData, CompetitorReviewsData } from './types';
+import { DashboardData, CompetitorListData, QueueData, TrendsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -89,9 +89,32 @@ class ApiClient {
     return this.fetch<CompetitorReviewsData>(`/competitors/${competitorId}/reviews`);
   }
 
+  // Local Business
+  async setBusinessType(businessType: 'saas' | 'local'): Promise<void> {
+    await this.fetch('/onboarding/business-type', {
+      method: 'POST',
+      body: JSON.stringify({ business_type: businessType }),
+    });
+  }
+
+  async updateLocalCompetitor(competitorId: string, data: Partial<LocalCompetitorData>): Promise<void> {
+    await this.fetch(`/local/competitors/${competitorId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getLocalSocialPosts(competitorId: string): Promise<{ posts: SocialPost[] }> {
+    return this.fetch<{ posts: SocialPost[] }>(`/local/competitors/${competitorId}/social-posts`);
+  }
+
+  async triggerLocalScan(competitorId: string): Promise<void> {
+    await this.fetch(`/local/scan/${competitorId}`, { method: 'POST' });
+  }
+
   // Billing
-  async getCheckoutUrl(): Promise<{ url: string }> {
-    return this.fetch('/billing/checkout-url');
+  async getCheckoutUrl(plan: 'saas' | 'local' = 'saas'): Promise<{ url: string }> {
+    return this.fetch(`/billing/checkout-url?plan=${plan}`);
   }
 
   async getPortalUrl(): Promise<{ url: string }> {

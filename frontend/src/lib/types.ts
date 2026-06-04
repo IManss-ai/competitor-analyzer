@@ -25,6 +25,10 @@ export interface Competitor {
   name: string | null;
   active: boolean;
   created_at: string | null;
+  business_type?: BusinessType;
+  google_maps_url?: string | null;
+  instagram_handle?: string | null;
+  facebook_page?: string | null;
 }
 
 export interface CompetitorListData {
@@ -71,11 +75,15 @@ export interface SettingsData {
   subscription_status: string;
   trial_ends_at: string | null;
   stripe_customer_id: string | null;
+  business_type?: BusinessType;
 }
+
+export type BusinessType = 'saas' | 'local';
 
 export interface SessionUser {
   user_id: string;
   email: string;
+  business_type?: BusinessType;
 }
 
 export interface BattleCardData {
@@ -102,4 +110,20 @@ export interface Complaint {
 export interface CompetitorReviewsData {
   snapshots: ReviewSnapshot[];
   recent_complaints: Complaint[];
+}
+
+export interface SocialPost {
+  id: string;
+  platform: 'instagram' | 'facebook';
+  content: string;
+  posted_at: string | null;
+  sentiment: string | null;
+  engagement_hint: string | null;
+}
+
+export interface LocalCompetitorData {
+  competitor_id: string;
+  google_maps_url: string | null;
+  instagram_handle: string | null;
+  facebook_page: string | null;
 }
