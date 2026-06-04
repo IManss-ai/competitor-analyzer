@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import {
   House,
   Buildings,
@@ -13,8 +13,8 @@ import {
   CheckSquare,
   Gear,
   SignOut,
-  Plus,
-  ArrowsClockwise
+  ArrowsClockwise,
+  ArrowRight,
 } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 
@@ -28,6 +28,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const pathname = usePathname();
   const [settings, setSettings] = useState<any>(null);
   const [scanning, setScanning] = useState(false);
+  const [scanDone, setScanDone] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -52,6 +53,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const handleScanAll = async () => {
     if (scanning) return;
     setScanning(true);
+    setScanDone(false);
     try {
       const res = await fetch(`${apiUrl}/api/v1/scan/now`, {
         method: 'POST',
@@ -61,7 +63,8 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         }
       });
       if (res.ok) {
-        alert("Full landscape scan triggered in the background!");
+        setScanDone(true);
+        setTimeout(() => setScanDone(false), 3000);
       }
     } catch (e) {
       console.error(e);
@@ -71,10 +74,8 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   };
 
   const getTrialDaysLeft = () => {
-    if (!settings || !settings.trial_ends_at) return 0;
-    const ends = new Date(settings.trial_ends_at);
-    const now = new Date();
-    const diff = ends.getTime() - now.getTime();
+    if (!settings?.trial_ends_at) return 0;
+    const diff = new Date(settings.trial_ends_at).getTime() - Date.now();
     return Math.max(0, Math.ceil(diff / (1000 * 3600 * 24)));
   };
 
@@ -87,39 +88,49 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
   const trialDays = getTrialDaysLeft();
   const planBadge = getPlanBadge();
+  const isOnTrial = settings?.subscription_status === 'trialing';
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard', Icon: House },
-    { href: '/competitors', label: 'Competitors', Icon: Buildings },
-    { href: '/dashboard#feed', label: 'Intel Feed', Icon: Newspaper },
+    { href: '/dashboard',           label: 'Dashboard',    Icon: House },
+    { href: '/competitors',         label: 'Competitors',  Icon: Buildings },
+    { href: '/dashboard#feed',      label: 'Intel Feed',   Icon: Newspaper },
     { href: '/dashboard#battlecards', label: 'Battle Cards', Icon: Shield },
-    { href: '/trends', label: 'Trends', Icon: TrendUp },
-    { href: '/queue', label: 'Action Queue', Icon: CheckSquare },
-    { href: '/settings', label: 'Settings', Icon: Gear },
+    { href: '/trends',              label: 'Trends',       Icon: TrendUp },
+    { href: '/queue',               label: 'Action Queue', Icon: CheckSquare },
+    { href: '/settings',            label: 'Settings',     Icon: Gear },
   ];
+
   return (
-    <aside className="fixed top-0 left-0 h-full w-60 flex flex-col z-40 bg-[#090614] border-r border-white/[0.06] font-sans">
-      {/* Top section: Wordmark + Profile */}
-      <div className="p-5 border-b border-white/[0.06] space-y-3">
-        <div>
-          <span className="text-base font-bold text-white tracking-tight">Intel</span>
-          <span className="text-xs text-purple-400 ml-1.5 font-medium tracking-wide">analyzer</span>
-        </div>
-        
-        <div className="flex items-center justify-between gap-2 bg-white/[0.02] border border-white/[0.06] rounded-lg p-2.5">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-zinc-200 truncate" title={email}>
-              {email}
-            </p>
+    <aside className="fixed top-0 left-0 h-full w-[220px] flex flex-col z-40 bg-[#06030c] border-r border-white/[0.055]">
+
+      {/* ── Brand ─────────────────────────────────────────────────────────── */}
+      <div className="px-4 pt-5 pb-4 border-b border-white/[0.055]">
+        <div className="flex items-center gap-2.5 mb-4">
+          {/* Lettermark */}
+          <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center flex-shrink-0">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 2h6M6 2v8M3 10h6" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-wide">
+          <div className="leading-none">
+            <span className="text-[13px] font-bold text-white tracking-tight">Intel</span>
+            <span className="text-[11px] text-sky-400 ml-1 font-medium tracking-wide">analyzer</span>
+          </div>
+        </div>
+
+        {/* User profile */}
+        <div className="flex items-center justify-between gap-2 rounded-lg px-2.5 py-2 bg-white/[0.025] border border-white/[0.055]">
+          <p className="text-[11px] font-medium text-zinc-300 truncate min-w-0" title={email}>
+            {email}
+          </p>
+          <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 uppercase tracking-wide">
             {planBadge}
           </span>
         </div>
       </div>
 
-      {/* Navigation list */}
-      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+      {/* ── Nav ───────────────────────────────────────────────────────────── */}
+      <nav className="flex-1 py-3 px-2.5 space-y-0.5 overflow-y-auto">
         {navItems.map(({ href, label, Icon }) => {
           const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
           const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
@@ -129,20 +140,27 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               key={href}
               href={href}
               className={clsx(
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all relative border-l-2',
+                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all relative',
                 isActive
-                  ? 'bg-purple-950/20 text-purple-400 border-purple-500 font-semibold'
-                  : 'text-zinc-400 border-transparent hover:bg-white/[0.02] hover:text-white'
+                  ? 'bg-sky-500/8 text-sky-400'
+                  : 'text-zinc-500 hover:bg-white/[0.025] hover:text-zinc-200'
               )}
             >
+              {isActive && (
+                <motion.div
+                  layoutId="activeNavIndicator"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-sky-400 rounded-full"
+                  transition={{ type: 'spring', stiffness: 500, damping: 36 }}
+                />
+              )}
               <Icon
-                size={16}
-                weight={isActive ? 'bold' : 'regular'}
+                size={15}
+                weight={isActive ? 'fill' : 'regular'}
                 className="flex-shrink-0"
               />
-              <span className="truncate flex-1">{label}</span>
+              <span className="flex-1 truncate">{label}</span>
               {hasBadge && (
-                <span className="bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="bg-sky-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
                   {pendingCount}
                 </span>
               )}
@@ -151,56 +169,73 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         })}
       </nav>
 
-      {/* Bottom section */}
-      <div className="p-4 border-t border-white/[0.06] space-y-3 bg-white/[0.01]">
-        {/* Scan all now button */}
+      {/* ── Bottom ────────────────────────────────────────────────────────── */}
+      <div className="px-3 pb-4 pt-3 border-t border-white/[0.055] space-y-2">
+
+        {/* Scan button */}
         <button
           onClick={handleScanAll}
           disabled={scanning}
-          className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 py-2.5 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
+          className={clsx(
+            'w-full py-2 rounded-lg text-[12px] font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60',
+            scanDone
+              ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+              : 'bg-sky-600 hover:bg-sky-500 text-white border border-sky-500/30'
+          )}
         >
           {scanning ? (
             <>
-              <ArrowsClockwise size={14} className="animate-spin" />
+              <ArrowsClockwise size={13} className="animate-spin" />
               Scanning...
             </>
+          ) : scanDone ? (
+            <>Scan queued!</>
           ) : (
             <>
-              <ArrowsClockwise size={14} />
+              <ArrowsClockwise size={13} />
               Scan all now
             </>
           )}
         </button>
 
-        {/* Add competitor link */}
+        {/* Add competitor */}
         <Link
           href="/competitors"
-          className="w-full border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 text-zinc-300 py-2 rounded-lg text-xs font-semibold text-center block transition-all"
+          className="w-full border border-white/[0.07] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] text-zinc-400 hover:text-zinc-200 py-2 rounded-lg text-[12px] font-medium text-center flex items-center justify-center gap-1.5 transition-all"
         >
           Add competitor
+          <ArrowRight size={11} />
         </Link>
 
-        {/* Upgrade prompt if on trial */}
-        {settings && settings.subscription_status === 'trialing' && (
-          <div className="border border-white/10 rounded-lg p-2.5 bg-white/[0.02] text-center space-y-2 mt-2">
-            <p className="text-[10px] text-zinc-400 font-medium leading-normal">
-              {trialDays} days left in trial
-            </p>
+        {/* Trial upgrade banner */}
+        {isOnTrial && (
+          <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-2.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-zinc-500 font-medium">{trialDays} days left in trial</span>
+              <span className="text-[9px] font-mono text-zinc-600">Trial</span>
+            </div>
+            <div className="w-full h-0.5 bg-white/[0.04] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-sky-500/40 rounded-full transition-all"
+                style={{ width: `${Math.min(100, ((14 - trialDays) / 14) * 100)}%` }}
+              />
+            </div>
             <Link
               href="/settings"
-              className="w-full bg-purple-600 hover:bg-purple-500 text-white py-1.5 rounded-md text-[10px] font-bold text-center block transition-colors"
+              className="w-full bg-sky-600 hover:bg-sky-500 text-white py-1.5 rounded-md text-[10px] font-semibold text-center block transition-colors"
             >
-              Upgrade
+              Upgrade to Pro
             </Link>
           </div>
         )}
 
-        <form action="/api/auth/logout" method="POST" className="pt-1">
+        {/* Sign out */}
+        <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-xs text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-[11px] text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
-            <SignOut size={14} />
+            <SignOut size={13} />
             <span>Sign out</span>
           </button>
         </form>
