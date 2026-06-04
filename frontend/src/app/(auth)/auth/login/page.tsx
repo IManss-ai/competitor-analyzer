@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   Crosshair,
   EnvelopeSimple,
@@ -141,14 +142,14 @@ export default function LoginPage() {
           />
         </div>
         
-        <div className="relative flex items-center gap-2.5 z-10">
+        <Link href="/" className="relative flex items-center gap-2.5 z-10 hover:opacity-85 transition-opacity max-w-fit">
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
             <Crosshair size={14} weight="bold" className="text-white" />
           </div>
           <span className="text-sm font-semibold tracking-tight">
             Competitor Analyzer
           </span>
-        </div>
+        </Link>
 
         {/* Headline */}
         <div className="relative z-10">
@@ -204,14 +205,14 @@ export default function LoginPage() {
         <div className="w-full max-w-[360px]">
           
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2.5 mb-8">
+          <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 hover:opacity-85 transition-opacity max-w-fit">
             <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
               <Crosshair size={14} weight="bold" className="text-white" />
             </div>
             <span className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
               Competitor Analyzer
             </span>
-          </div>
+          </Link>
 
           {sent ? (
             <div className="text-center">
@@ -238,6 +239,12 @@ export default function LoginPage() {
             </div>
           ) : (
             <>
+              {/* Back to Home Navigation Link */}
+              <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-950 font-semibold mb-6 transition-colors group">
+                <span className="group-hover:-translate-x-0.5 transition-transform">←</span>
+                <span>Back to home</span>
+              </Link>
+
               <h1 className="text-2xl font-bold text-[#0a0a0a] mb-1 tracking-tight">
                 Welcome back
               </h1>

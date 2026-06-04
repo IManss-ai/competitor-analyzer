@@ -38,13 +38,13 @@ const tiers: PricingTier[] = [
     ],
     cta: "Start free trial →",
     href: "/auth/login?plan=saas",
-    borderClass: "border border-purple-500/20",
-    accentClass: "text-purple-400",
+    borderClass: "border border-sky-500/20",
+    accentClass: "text-sky-400",
   },
   {
     name: "Local Business",
     badge: "Local",
-    badgeClass: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
+    badgeClass: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
     price: "$19",
     target: "For salons, cafes, gyms, and local shops",
     features: [
@@ -56,8 +56,8 @@ const tiers: PricingTier[] = [
     ],
     cta: "Start free trial →",
     href: "/auth/login?plan=local",
-    borderClass: "border border-indigo-500/20",
-    accentClass: "text-indigo-400",
+    borderClass: "border border-cyan-500/20",
+    accentClass: "text-cyan-400",
   },
 ];
 
