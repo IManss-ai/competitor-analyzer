@@ -19,7 +19,26 @@ def _run_migrations():
         command.upgrade(cfg, "head")
         print("[startup] Alembic migrations applied")
     except Exception as e:
-        print(f"[startup] Alembic migration failed (non-fatal): {e}")
+        print(f"[startup] Alembic failed ({e}), applying manual column guards")
+        _apply_column_guards()
+
+def _apply_column_guards():
+    """Idempotent ALTER TABLE statements for columns alembic can't add."""
+    stmts = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
+        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
+        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS google_maps_url VARCHAR",
+        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS instagram_handle VARCHAR",
+        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS facebook_page VARCHAR",
+    ]
+    try:
+        with engine.connect() as conn:
+            for stmt in stmts:
+                conn.execute(__import__("sqlalchemy").text(stmt))
+            conn.commit()
+        print("[startup] Column guards applied")
+    except Exception as e:
+        print(f"[startup] Column guards failed (non-fatal): {e}")
 
 async def _init_db():
     try:
