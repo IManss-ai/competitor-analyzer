@@ -2,12 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.config import DATABASE_URL
 
-if "sqlite" in DATABASE_URL:
-    engine = create_engine(DATABASE_URL, connect_args={"timeout": 10})
-elif "asyncpg" in DATABASE_URL:
-    engine = create_engine(DATABASE_URL, connect_args={"timeout": 10})
+db_url = DATABASE_URL
+if db_url.startswith("postgresql+asyncpg://"):
+    db_url = db_url.replace("postgresql+asyncpg://", "postgresql://", 1)
+
+if "sqlite" in db_url:
+    engine = create_engine(db_url, connect_args={"timeout": 10})
 else:
-    engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 10})
+    engine = create_engine(db_url, connect_args={"connect_timeout": 10})
     
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
