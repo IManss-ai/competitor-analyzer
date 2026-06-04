@@ -10,7 +10,27 @@ from app.db import engine
 from app.models import Base
 from app.config import FRONTEND_URL
 
+def _run_migrations():
+    try:
+        from alembic.config import Config
+        from alembic import command
+        import os
+        cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+        command.upgrade(cfg, "head")
+        print("[startup] Alembic migrations applied")
+    except Exception as e:
+        print(f"[startup] Alembic migration failed (non-fatal): {e}")
+
 async def _init_db():
+    try:
+        await asyncio.wait_for(
+            asyncio.to_thread(_run_migrations),
+            timeout=60.0,
+        )
+    except asyncio.TimeoutError:
+        print("[startup] Migration timed out")
+    except Exception as e:
+        print(f"[startup] Migration error (non-fatal): {e}")
     try:
         await asyncio.wait_for(
             asyncio.to_thread(Base.metadata.create_all, engine),
