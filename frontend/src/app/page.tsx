@@ -193,6 +193,10 @@ export default function LandingPage() {
               </a>
             </motion.div>
 
+            <motion.div {...fadeUp(0.35)} className="text-sm text-white/50 mb-8 font-medium">
+              Trusted by founders tracking 200+ competitors
+            </motion.div>
+
             <motion.div {...fadeUp(0.4)} className="flex items-center gap-4 text-xs text-white/25 font-mono">
               <span>14-day free trial</span>
               <span>·</span>

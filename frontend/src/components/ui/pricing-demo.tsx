@@ -17,7 +17,7 @@ const demoPlans = [
     ],
     description: "Perfect for individuals and small projects",
     buttonText: "Start Free Trial",
-    href: "/sign-up",
+    href: "/auth/login",
     isPopular: false,
   },
   {
@@ -36,7 +36,7 @@ const demoPlans = [
     ],
     description: "Ideal for growing teams and businesses",
     buttonText: "Get Started",
-    href: "/sign-up",
+    href: "/auth/login",
     isPopular: true,
   },
   {
@@ -56,7 +56,7 @@ const demoPlans = [
     ],
     description: "For large organizations with specific needs",
     buttonText: "Contact Sales",
-    href: "/contact",
+    href: "/auth/login",
     isPopular: false,
   },
 ];
