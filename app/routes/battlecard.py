@@ -160,3 +160,22 @@ Provide 3-5 specific, high-impact talking points and 2-3 win conditions. Each po
         "generated_at": datetime.now().isoformat(),
         "actions": talking_points
     }
+
+
+@router.get("/public/{competitor_id}")
+def generate_public_battlecard(competitor_id: str, db: Session = Depends(get_session)):
+    try:
+        comp_uuid = _uuid.UUID(competitor_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid competitor UUID format")
+
+    comp = db.execute(select(Competitor).where(Competitor.id == comp_uuid)).scalar_one_or_none()
+    if not comp:
+        raise HTTPException(status_code=404, detail="Competitor not found")
+    if not comp.active:
+        raise HTTPException(status_code=403, detail="Competitor is inactive")
+
+    res = generate_battlecard(competitor_id, db)
+    res["competitor_name"] = comp.name or comp.url
+    res["competitor_url"] = comp.url
+    return res
