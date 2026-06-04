@@ -38,13 +38,13 @@ const tiers: PricingTier[] = [
     ],
     cta: "Start free trial →",
     href: "/auth/login?plan=saas",
-    borderClass: "border border-white/10",
-    accentClass: "text-blue-400",
+    borderClass: "border border-purple-500/20",
+    accentClass: "text-purple-400",
   },
   {
     name: "Local Business",
     badge: "Local",
-    badgeClass: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
+    badgeClass: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
     price: "$19",
     target: "For salons, cafes, gyms, and local shops",
     features: [
@@ -56,8 +56,8 @@ const tiers: PricingTier[] = [
     ],
     cta: "Start free trial →",
     href: "/auth/login?plan=local",
-    borderClass: "border border-emerald-500/40",
-    accentClass: "text-emerald-400",
+    borderClass: "border border-indigo-500/20",
+    accentClass: "text-indigo-400",
   },
 ];
 
@@ -65,11 +65,11 @@ function PricingBasic() {
   return (
     <div className="text-center">
       <motion.div {...reveal()}>
-        <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-[1.0] mb-4">
+        <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-[1.0] mb-4 text-white">
           Simple pricing.<br />
-          <span className="text-white/40">No surprises.</span>
+          <span className="text-zinc-500">No surprises.</span>
         </h2>
-        <p className="text-white/45 max-w-md mx-auto text-base leading-relaxed mb-14">
+        <p className="text-zinc-400 max-w-md mx-auto text-base leading-relaxed mb-14">
           Pick the plan that fits your business. Both include a 14-day free trial, no credit card required.
         </p>
       </motion.div>
@@ -79,7 +79,7 @@ function PricingBasic() {
           <motion.div
             key={tier.name}
             {...reveal(i * 0.12)}
-            className={`relative bg-white/[0.03] ${tier.borderClass} rounded-2xl p-8 text-left hover:bg-white/[0.05] transition-colors`}
+            className={`relative bg-[#0b0819]/50 border border-white/[0.06] backdrop-blur-md rounded-2xl p-8 text-left hover:border-purple-500/30 transition-all duration-300 shadow-xl`}
           >
             {/* Badge */}
             {tier.badge && (
@@ -90,18 +90,18 @@ function PricingBasic() {
 
             {/* Header */}
             <h3 className="text-lg font-semibold text-white mb-1">{tier.name}</h3>
-            <p className="text-sm text-white/40 mb-6">{tier.target}</p>
+            <p className="text-sm text-zinc-500 mb-6">{tier.target}</p>
 
             {/* Price */}
             <div className="flex items-baseline gap-1 mb-8">
               <span className={`text-5xl font-bold tracking-tight ${tier.accentClass}`}>{tier.price}</span>
-              <span className="text-white/30 text-sm font-medium">/mo</span>
+              <span className="text-zinc-500 text-sm font-medium">/mo</span>
             </div>
 
             {/* Features */}
             <ul className="space-y-3 mb-8">
               {tier.features.map((feat) => (
-                <li key={feat} className="flex items-start gap-2.5 text-sm text-white/55">
+                <li key={feat} className="flex items-start gap-2.5 text-sm text-zinc-300">
                   <CheckCircle size={16} weight="fill" className={`flex-shrink-0 mt-0.5 ${tier.accentClass}`} />
                   <span>{feat}</span>
                 </li>
@@ -111,7 +111,7 @@ function PricingBasic() {
             {/* CTA */}
             <Link
               href={tier.href}
-              className="inline-flex items-center justify-between w-full gap-4 bg-white text-black font-semibold pl-5 pr-2 py-2.5 rounded-full cursor-pointer hover:shadow-[0_4px_24px_rgba(255,255,255,0.12)] active:scale-[0.98] transition-all"
+              className="inline-flex items-center justify-between w-full gap-4 bg-white text-black font-semibold pl-5 pr-2 py-2.5 rounded-full cursor-pointer hover:scale-[1.01] hover:shadow-[0_4px_24px_rgba(255,255,255,0.15)] active:scale-[0.98] transition-all"
             >
               <span className="text-sm">{tier.cta}</span>
               <span className="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center">
@@ -120,7 +120,7 @@ function PricingBasic() {
             </Link>
 
             {/* Trial note */}
-            <p className="text-[11px] text-white/25 font-mono mt-4 text-center">
+            <p className="text-[11px] text-zinc-500 font-mono mt-4 text-center">
               14-day free trial, no credit card required
             </p>
           </motion.div>

@@ -139,13 +139,51 @@ export default function LandingPage() {
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
   return (
-    <div className="min-h-[100dvh] bg-[#070709] text-zinc-100 font-sans overflow-x-hidden selection:bg-blue-500/30 antialiased">
+    <div className="min-h-[100dvh] bg-[#020105] text-zinc-100 font-sans overflow-x-hidden selection:bg-purple-500/30 antialiased relative">
       
-      {/* Ambient background glow - smooth, fixed, and performance optimized */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute top-[-20%] right-[-10%] w-[80vw] h-[80vh] rounded-full bg-blue-600/[0.04] blur-[150px]" />
-        <div className="absolute top-[35%] left-[-15%] w-[60vw] h-[60vh] rounded-full bg-indigo-900/[0.05] blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[70vw] h-[50vh] rounded-full bg-blue-800/[0.03] blur-[130px]" />
+      {/* Inline styles for animated flow curves */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes flowLine {
+          to {
+            stroke-dashoffset: -20;
+          }
+        }
+        .animate-flow-line {
+          stroke-dasharray: 6 6;
+          animation: flowLine 2s linear infinite;
+        }
+      `}} />
+
+      {/* Grid Pattern Background */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 opacity-15"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(139, 92, 246, 0.15) 1px, transparent 0)',
+          backgroundSize: '24px 24px'
+        }}
+      />
+
+      {/* Elegant Fluid Ribbon Wave at the top (Fluxor style) */}
+      <div className="absolute top-0 inset-x-0 h-[480px] overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-25%] left-1/2 -translate-x-1/2 w-[140%] h-[120%] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-600/25 via-fuchsia-950/10 to-transparent blur-[90px]" />
+        
+        {/* Glowing fluid paths */}
+        <svg className="absolute top-0 left-1/2 -translate-x-1/2 w-full min-w-[1200px] h-[380px] opacity-35 mix-blend-screen" viewBox="0 0 1440 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 80C350 200 680 -40 980 120C1280 280 1350 160 1440 100V0H0V80Z" fill="url(#paint0_linear_hero)" />
+          <path d="M0 120C450 240 750 30 1050 180C1250 280 1380 200 1440 140V0H0V120Z" fill="url(#paint1_linear_hero)" />
+          <defs>
+            <linearGradient id="paint0_linear_hero" x1="0" y1="0" x2="1440" y2="280" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#a78bfa" stopOpacity="0.4" />
+              <stop offset="0.5" stopColor="#f472b6" stopOpacity="0.15" />
+              <stop offset="1" stopColor="#6366f1" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="paint1_linear_hero" x1="1440" y1="0" x2="0" y2="320" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#4f46e5" stopOpacity="0.3" />
+              <stop offset="0.5" stopColor="#d946ef" stopOpacity="0.1" />
+              <stop offset="1" stopColor="#a78bfa" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
 
       {/* FLOATING HEADER */}
@@ -154,32 +192,32 @@ export default function LandingPage() {
           initial={{ y: -28, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as any }}
-          className={`w-full max-w-5xl rounded-full border border-white/[0.06] bg-zinc-950/40 backdrop-blur-md px-6 py-3 flex items-center justify-between transition-all duration-300 ${
-            scrolled ? 'bg-zinc-950/80 border-white/[0.12] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.8)]' : ''
+          className={`w-full max-w-5xl rounded-full border border-white/[0.04] bg-[#0c0819]/40 backdrop-blur-md px-6 py-3 flex items-center justify-between transition-all duration-300 ${
+            scrolled ? 'bg-[#06030c]/85 border-purple-500/20 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.9)]' : ''
           }`}
         >
           <div className="flex items-center gap-2.5">
             <Link href="#" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(37,99,235,0.4)] group-hover:scale-105 transition-transform duration-300">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(139,92,246,0.35)] group-hover:scale-105 transition-transform duration-300">
                 <Crosshair size={15} weight="bold" className="text-white" />
               </div>
-              <span className="text-sm font-semibold tracking-tight text-white group-hover:text-blue-400 transition-colors">Competitor Analyzer</span>
+              <span className="text-sm font-semibold tracking-tight text-white group-hover:text-purple-300 transition-colors">Competitor Analyzer</span>
             </Link>
           </div>
 
-          <div className="hidden md:flex items-center gap-8 text-xs font-medium tracking-wide text-zinc-400">
+          <div className="hidden md:flex items-center gap-8 text-[10px] font-mono tracking-wider text-zinc-400">
             <a href="#how-it-works" className="hover:text-white transition-colors duration-200">HOW IT WORKS</a>
+            <a href="#pipeline" className="hover:text-white transition-colors duration-200">INTELLIGENCE FLOW</a>
             <a href="#dashboard-showcase" className="hover:text-white transition-colors duration-200">COMMAND CENTER</a>
             <a href="#features" className="hover:text-white transition-colors duration-200">FEATURES</a>
             <a href="#battle-card" className="hover:text-white transition-colors duration-200">BATTLE CARDS</a>
-            <a href="#pricing" className="hover:text-white transition-colors duration-200">PRICING</a>
           </div>
 
           <div className="flex items-center gap-3">
             <Link href="/auth/login" className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors hidden sm:block px-3 py-1">Sign in</Link>
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-1.5 text-[11px] font-bold bg-white text-black pl-4 pr-2.5 py-1.5 rounded-full hover:scale-[1.025] hover:shadow-[0_4px_20px_rgba(255,255,255,0.25)] active:scale-[0.975] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black pl-4 pr-3 py-1.5 rounded-full hover:scale-[1.025] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-[0.975] transition-all cursor-pointer"
             >
               <span>Get started</span>
               <ArrowRight size={10} weight="bold" />
@@ -210,6 +248,7 @@ export default function LandingPage() {
             <div className="flex flex-col gap-6 text-2xl font-bold tracking-tight">
               {[
                 { name: 'How it works', href: '#how-it-works' },
+                { name: 'Intelligence Flow', href: '#pipeline' },
                 { name: 'Command Center', href: '#dashboard-showcase' },
                 { name: 'Features', href: '#features' },
                 { name: 'Battle Card Preview', href: '#battle-card' },
@@ -237,244 +276,184 @@ export default function LandingPage() {
       </AnimatePresence>
 
       {/* HERO SECTION */}
-      <section className="relative z-10 pt-32 pb-16 lg:pt-48 lg:pb-24 px-6 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-[55%_45%] gap-12 items-center">
-          
-          {/* Hero Copy */}
-          <div>
-            <motion.div
-              {...fadeUp(0)}
-              className="inline-flex items-center gap-2 text-[10px] font-mono text-emerald-400 uppercase tracking-wider mb-6 border border-emerald-500/25 bg-emerald-500/5 px-3 py-1 rounded-full"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Live Competitor Monitoring
-            </motion.div>
-
-            <motion.h1
-              {...fadeUp(0.08)}
-              className="text-4xl sm:text-5xl lg:text-[68px] font-bold leading-[1.02] tracking-tight mb-6 text-white"
-            >
-              Turn competitor changes into <span className="text-blue-500">your sales pipeline.</span>
-            </motion.h1>
-
-            <motion.p
-              {...fadeUp(0.16)}
-              className="text-zinc-400 text-base leading-relaxed max-w-lg mb-8"
-            >
-              We crawl competitor landing pages, pricing grids, and public reviews 24/7. When a competitor shifts pricing or drops support, get an automated AI playbook detailing exactly how to win their customers.
-            </motion.p>
-
-            <motion.div {...fadeUp(0.24)} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10">
-              <Link
-                href="/auth/login"
-                className="inline-flex items-center justify-center gap-3 bg-white text-black font-semibold px-6 py-3 rounded-full hover:scale-[1.025] hover:shadow-[0_4px_24px_rgba(255,255,255,0.18)] active:scale-[0.985] transition-all duration-300 text-sm cursor-pointer"
-              >
-                <span>Start 14-day free trial</span>
-                <ArrowRight size={13} weight="bold" />
-              </Link>
-              <a
-                href="#dashboard-showcase"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-white/10 text-zinc-300 text-sm font-medium rounded-full hover:border-white/30 hover:text-white hover:bg-white/[0.02] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300"
-              >
-                Watch Command Center
-              </a>
-            </motion.div>
-
-            <motion.div {...fadeUp(0.32)} className="flex items-center gap-6 text-xs text-zinc-500 font-mono">
-              <span className="flex items-center gap-1.5"><CheckCircle size={14} weight="fill" className="text-blue-500" /> No credit card</span>
-              <span>·</span>
-              <span className="flex items-center gap-1.5"><CheckCircle size={14} weight="fill" className="text-blue-500" /> Cancel anytime</span>
-              <span>·</span>
-              <span className="flex items-center gap-1.5"><CheckCircle size={14} weight="fill" className="text-blue-500" /> 5 min setup</span>
-            </motion.div>
+      <section className="relative z-10 pt-36 pb-20 lg:pt-44 lg:pb-24 px-6 max-w-7xl mx-auto text-center">
+        {/* Centered Pill Badge (Fluxor style) */}
+        <motion.div
+          {...fadeUp(0)}
+          className="inline-flex items-center gap-2.5 bg-[#100b21]/80 border border-purple-500/20 px-3.5 py-1.5 rounded-full text-xs font-medium text-purple-300 backdrop-blur-md mb-8 hover:border-purple-500/40 transition-colors shadow-lg shadow-purple-950/20 cursor-default"
+        >
+          <div className="flex -space-x-1.5 overflow-hidden">
+            <img className="inline-block h-4 w-4 rounded-full ring-1 ring-[#020105]" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=96&h=96&q=80" alt="avatar 1" />
+            <img className="inline-block h-4 w-4 rounded-full ring-1 ring-[#020105]" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=96&h=96&q=80" alt="avatar 2" />
+            <img className="inline-block h-4 w-4 rounded-full ring-1 ring-[#020105]" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=96&h=96&q=80" alt="avatar 3" />
           </div>
+          <span className="text-[10px] font-mono tracking-tight uppercase">Live Competitor Monitoring Active</span>
+        </motion.div>
 
-          {/* Hero Live Feed Mockup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] as any }}
-            className="relative"
+        {/* Serif Italic Styled Heading (spaceedu/Earth style) */}
+        <motion.h1
+          {...fadeUp(0.08)}
+          className="text-5xl sm:text-6xl lg:text-[76px] font-bold leading-[1.04] tracking-tight mb-8 text-white max-w-5xl mx-auto"
+        >
+          Turn competitor changes <br className="hidden md:inline" />
+          into <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-300 to-indigo-300 shadow-sm">your sales playbook.</span>
+        </motion.h1>
+
+        {/* Centered Subtitle */}
+        <motion.p
+          {...fadeUp(0.16)}
+          className="text-zinc-400 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-10"
+        >
+          We crawl competitor landing pages, pricing grids, and public reviews 24/7. When a competitor shifts pricing or drops support, get an automated AI playbook detailing exactly how to win their customers.
+        </motion.p>
+
+        {/* Centered Buttons */}
+        <motion.div {...fadeUp(0.24)} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center justify-center gap-3 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:scale-[1.025] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-[0.985] transition-all duration-300 text-sm cursor-pointer"
           >
-            {/* Outer shadow card container */}
-            <div className="p-2 bg-white/[0.03] border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden group hover:border-white/20 hover:scale-[1.008] transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-transparent opacity-40 pointer-events-none" />
+            <span>Start 14-day free trial</span>
+            <ArrowRight size={13} weight="bold" />
+          </Link>
+          <a
+            href="#dashboard-showcase"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-white/10 text-zinc-300 text-sm font-semibold rounded-full hover:border-purple-500/40 hover:text-white hover:bg-purple-950/[0.1] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 backdrop-blur-sm"
+          >
+            Watch Command Center
+          </a>
+        </motion.div>
 
-              {/* Inner bezel */}
-              <div className="relative bg-zinc-950 border border-white/5 rounded-xl overflow-hidden">
-                {/* Traffic buttons / Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.04] bg-zinc-900/50">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]/80" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]/80" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]/80" />
+        {/* Trust Badges */}
+        <motion.div {...fadeUp(0.3)} className="flex items-center justify-center gap-6 sm:gap-8 text-xs text-zinc-500 font-mono mb-16">
+          <span className="flex items-center gap-1.5"><CheckCircle size={14} weight="fill" className="text-purple-500" /> No credit card</span>
+          <span>·</span>
+          <span className="flex items-center gap-1.5"><CheckCircle size={14} weight="fill" className="text-purple-500" /> Cancel anytime</span>
+          <span>·</span>
+          <span className="flex items-center gap-1.5"><CheckCircle size={14} weight="fill" className="text-purple-500" /> 5 min setup</span>
+        </motion.div>
+
+        {/* Centered Stream Detector Widget (as a gorgeous floating window) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] as any }}
+          className="relative max-w-4xl mx-auto"
+        >
+          {/* Neon outer glow */}
+          <div className="absolute inset-[-1px] bg-gradient-to-r from-purple-500/20 via-indigo-500/10 to-fuchsia-500/20 rounded-2xl blur-xl opacity-60 z-0" />
+          
+          <div className="p-2 bg-[#0d0a21]/30 border border-purple-500/10 rounded-2xl shadow-3xl relative overflow-hidden group hover:border-purple-500/30 transition-all duration-500 z-10 backdrop-blur-md">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-transparent opacity-40 pointer-events-none" />
+
+            {/* Inner bezel */}
+            <div className="relative bg-[#05030c] border border-white/[0.04] rounded-xl overflow-hidden text-left">
+              {/* Traffic buttons / Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.04] bg-[#090614]">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-500 tracking-wider ml-1">stream_detector.log</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                  <span className="text-[9px] font-mono text-purple-400 font-semibold tracking-wider">MONITORING LIVE FEED</span>
+                </div>
+              </div>
+
+              {/* Log Stream */}
+              <div className="p-5 font-mono text-xs space-y-4">
+                <div className="text-zinc-500 text-[10px] border-b border-white/[0.03] pb-2 flex justify-between">
+                  <span>$ init: tracking 5 competitor domains -- scan loop interval 10s</span>
+                  <span className="text-purple-400/80">HTTPS connection encrypted</span>
+                </div>
+                <div className="space-y-3">
+                  {FEED.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-3 border-b border-white/[0.01] pb-2.5 last:border-0 hover:bg-white/[0.02] p-2 rounded transition-all duration-200 cursor-default"
+                    >
+                      <span className={`text-[9px] px-2 py-0.5 rounded font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || 'bg-purple-400/10 text-purple-400 border border-purple-400/20'}`}>
+                        {item.type}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <span className="font-semibold text-zinc-200">{item.company}</span>
+                        <span className="text-zinc-400 ml-1.5 leading-snug">{item.action}</span>
+                      </div>
+                      <span className="text-zinc-500 text-[10px] whitespace-nowrap pl-2">{item.time}</span>
                     </div>
-                    <span className="text-[10px] font-mono text-zinc-500 tracking-wider ml-1">stream_detector.log</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] font-mono text-emerald-400 font-semibold tracking-wider">MONITORING</span>
-                  </div>
+                  ))}
                 </div>
 
-                {/* Log Stream */}
-                <div className="p-4 font-mono text-xs space-y-3.5">
-                  <div className="text-zinc-500 text-[10px] border-b border-white/[0.03] pb-1.5">
-                    $ init: tracking 5 competitor domains -- scan loop interval 10s
-                  </div>
-                  <div className="space-y-3">
-                    {FEED.map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-2.5 border-b border-white/[0.02] pb-2 last:border-0 hover:bg-white/[0.02] hover:scale-[1.015] p-1.5 rounded transition-all duration-200 cursor-default"
-                      >
-                        <span className={`text-[9px] px-2 py-0.5 rounded font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type]}`}>
-                          {item.type}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <span className="font-semibold text-zinc-200">{item.company}</span>
-                          <span className="text-zinc-400 ml-1.5 leading-snug">{item.action}</span>
-                        </div>
-                        <span className="text-zinc-600 text-[10px] whitespace-nowrap pl-2">{item.time}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-blue-400 flex items-center gap-1.5">
-                      <Sparkle weight="fill" size={11} className="text-blue-400" />
-                      Auto-playbook generated
-                    </span>
-                    <span className="text-zinc-500">Live UTC</span>
-                  </div>
+                <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-center justify-between font-mono text-[10px]">
+                  <span className="text-purple-400 flex items-center gap-1.5">
+                    <Sparkle weight="fill" size={11} className="text-purple-400 animate-spin" style={{ animationDuration: '4s' }} />
+                    Auto-playbook generated
+                  </span>
+                  <span className="text-zinc-500">Live UTC</span>
                 </div>
               </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* TRUST / METRICS BAR */}
-      <div className="relative z-10 border-y border-white/[0.05] bg-zinc-950/20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/[0.05] text-center">
-          {[
-            { metric: '30x cheaper', label: 'vs manual consultant fees' },
-            { metric: '100% Legal', label: 'uses public page archives' },
-            { metric: '5 min', label: 'average setup time' },
-            { metric: '14 days', label: 'free trial duration' },
-          ].map((s, i) => (
-            <motion.div
-              key={i}
-              {...fadeUp(i * 0.05)}
-              className="py-6 px-4 group hover:bg-white/[0.01] hover:scale-[1.02] transition-all duration-300"
-            >
-              <div className="text-2xl font-bold font-mono text-white tracking-tight">{s.metric}</div>
-              <div className="text-[10px] text-zinc-500 mt-1 font-mono uppercase tracking-wider">{s.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* WHY COMPETITOR ANALYZER: Chaos vs Clarity */}
-      <section className="relative z-10 py-24 px-6 bg-zinc-950/30 border-b border-white/[0.05]">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <motion.div {...fadeUp(0)}>
-              <span className="text-[9px] font-mono text-red-400 uppercase tracking-widest border border-red-500/20 bg-red-500/5 px-3 py-1 rounded-full mb-4 inline-block">
-                The Status Quo
+      {/* TRUSTED BY LOGOS (Sleek monochrome row) */}
+      <section className="relative z-10 py-10 border-y border-white/[0.04] bg-[#04020a]/70 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-6 text-center">
+            Trusted by hyper-growth teams at
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-40">
+            {['Acme Corp', 'Echo Valley', 'Celestial', 'Quantum Labs', 'Apex Data', 'Pulse Flow'].map((logo) => (
+              <span key={logo} className="text-xs font-semibold tracking-widest text-zinc-400 font-mono hover:text-white transition-colors duration-200 cursor-default">
+                {logo.toUpperCase()}
               </span>
-              <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-white leading-[1.05] mb-6">
-                Manual competitor tracking is broken.<br />
-                <span className="text-zinc-500 font-normal">We automated the workflow.</span>
-              </h2>
-            </motion.div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 mt-12">
-            
-            {/* The Old Way */}
-            <motion.div
-              {...fadeUp(0.1)}
-              className="bg-zinc-950 border border-red-500/10 p-8 rounded-2xl group hover:border-red-500/20 hover:scale-[1.01] transition-all duration-300"
-            >
-              <h3 className="text-base font-bold text-red-400 font-mono mb-6 uppercase tracking-wider">THE MANUAL CHAOS (BEFORE)</h3>
-              <ul className="space-y-4 text-sm text-zinc-400">
-                <li className="flex items-start gap-2.5">
-                  <span className="text-red-500 text-lg leading-none mt-0.5">✕</span>
-                  <span><strong>Refreshing pages:</strong> Manually checking pricing pages weekly. Tedious and unreliable.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-red-500 text-lg leading-none mt-0.5">✕</span>
-                  <span><strong>Surprise sales objections:</strong> Finding out a competitor changed pricing only when a prospect tells you.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-red-500 text-lg leading-none mt-0.5">✕</span>
-                  <span><strong>Untracked reviews:</strong> Missing angry user complaints on G2 where users are ready to churn to you.</span>
-                </li>
-              </ul>
-            </motion.div>
-
-            {/* The Analyzer Way */}
-            <motion.div
-              {...fadeUp(0.2)}
-              className="bg-zinc-950 border border-blue-500/20 p-8 rounded-2xl group hover:border-blue-500/40 hover:scale-[1.01] transition-all duration-300 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-xl pointer-events-none" />
-              <h3 className="text-base font-bold text-blue-400 font-mono mb-6 uppercase tracking-wider">THE COMPETITOR ANALYZER WAY (AFTER)</h3>
-              <ul className="space-y-4 text-sm text-zinc-400">
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 text-lg leading-none mt-0.5">✓</span>
-                  <span><strong>Automated daily crawls:</strong> Instant triggers flag code, tag, and asset changes.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 text-lg leading-none mt-0.5">✓</span>
-                  <span><strong>AI counter-playbooks:</strong> Get custom-crafted email sequences to pitch competitor users.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-emerald-400 text-lg leading-none mt-0.5">✓</span>
-                  <span><strong>Review intelligence:</strong> Instantly notifies sales teams when competitor rating averages drop.</span>
-                </li>
-              </ul>
-            </motion.div>
-
+            ))}
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section id="how-it-works" className="relative z-10 py-24 px-6 max-w-7xl mx-auto border-b border-white/[0.05]">
-        <div className="grid lg:grid-cols-[40%_60%] gap-12 items-start">
-          
-          <div className="lg:sticky lg:top-28">
-            <span className="text-[9px] font-mono text-blue-400 uppercase tracking-widest border border-blue-500/20 bg-blue-500/5 px-3 py-1 rounded-full mb-4 inline-block">
+      {/* HOW IT WORKS TIMELINE (Fluxor style) */}
+      <section id="how-it-works" className="relative z-10 py-24 px-6 max-w-6xl mx-auto border-b border-white/[0.04]">
+        <div className="text-center mb-16">
+          <motion.div {...fadeUp(0)}>
+            <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest border border-purple-500/20 bg-purple-500/5 px-3 py-1 rounded-full mb-4 inline-block">
               Automation flow
             </span>
-            <h2 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
-              Continuous scans.<br />
-              <span className="text-zinc-500">Actionable plays.</span>
+            <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+              Continuous scans. <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-300 font-normal">Actionable plays.</span>
             </h2>
-            <p className="text-zinc-400 text-sm leading-relaxed max-w-sm">
+            <p className="text-zinc-400 text-sm max-w-md mx-auto">
               We monitor their public interfaces every day. No complicated SDK integrations, code changes, or permissions required.
             </p>
-          </div>
+          </motion.div>
+        </div>
 
-          <div className="space-y-5">
+        {/* Timeline block */}
+        <div className="relative mt-20 max-w-5xl mx-auto">
+          {/* Horizontal Line for Desktop */}
+          <div className="absolute top-6 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-transparent via-purple-500/45 to-transparent hidden md:block z-0" />
+
+          <div className="grid md:grid-cols-3 gap-8 relative z-10">
             {[
               {
-                step: '01',
+                step: 'Step 01',
                 title: 'Register competitor URLs',
                 body: 'Add the domains of up to 7 competitors. We automatically scan their homepages, pricing grids, developer docs, and social feeds.',
                 icon: <Eye size={18} weight="bold" />
               },
               {
-                step: '02',
+                step: 'Step 02',
                 title: 'AI analyzes modifications',
-                body: 'Our engine parses changes daily. When a pricing tier is tweaked or support complains pile up, AI formats it into clean insights.',
+                body: 'Our engine parses changes daily. When a pricing tier is tweaked or support complaints pile up, AI formats it into clean insights.',
                 icon: <MagnifyingGlass size={18} weight="bold" />
               },
               {
-                step: '03',
+                step: 'Step 03',
                 title: 'Get your sales playbook',
                 body: 'Every Monday, receive a clean executive brief outlining their modifications, friction points, and your exact response script.',
                 icon: <Lightning size={18} weight="bold" />
@@ -483,131 +462,249 @@ export default function LandingPage() {
               <motion.div
                 key={i}
                 {...fadeUp(i * 0.1)}
-                className="p-0.5 bg-white/[0.02] border border-white/[0.06] hover:border-blue-500/25 hover:scale-[1.01] transition-all duration-300 rounded-xl group cursor-default"
+                className="flex flex-col items-center group text-center md:text-left"
               >
-                <div className="bg-[#0b0b0f] p-5 rounded-[10px] flex gap-4 items-start">
-                  <div className="w-9 h-9 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-600/25 transition-all">
+                {/* Step badge */}
+                <div className="px-3 py-1 bg-purple-950/40 border border-purple-500/40 rounded-full text-purple-300 font-mono text-[10px] tracking-wide mb-6 shadow-[0_0_15px_rgba(139,92,246,0.25)] z-10 group-hover:scale-105 transition-all">
+                  {s.step}
+                </div>
+
+                {/* Card */}
+                <div className="bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/20 backdrop-blur-md p-6 rounded-2xl transition-all duration-300 shadow-xl w-full min-h-[220px]">
+                  <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 mx-auto md:mx-0">
                     {s.icon}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-sm font-semibold text-white">{s.title}</h3>
-                      <span className="text-[10px] font-mono text-zinc-600">{s.step}</span>
-                    </div>
-                    <p className="text-xs text-zinc-400 leading-relaxed">{s.body}</p>
-                  </div>
+                  <h3 className="text-sm font-semibold text-white mb-2">{s.title}</h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{s.body}</p>
                 </div>
               </motion.div>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* DASHBOARD SHOWCASE (Replaces the broken 3D scrolling component) */}
-      <section id="dashboard-showcase" className="relative z-10 py-24 px-6 border-b border-white/[0.05] bg-zinc-950/20">
+      {/* SCHEMA PIPELINE (Fluxor curved-bezier pipeline flow diagram) */}
+      <section id="pipeline" className="relative z-10 py-24 px-6 bg-[#030107] border-b border-white/[0.04]">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <motion.div {...fadeUp(0)}>
+              <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest border border-purple-500/20 bg-purple-500/5 px-3 py-1 rounded-full mb-4 inline-block">
+                High-Performance Engine
+              </span>
+              <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+                Continuous, automated intelligence flows
+              </h2>
+              <p className="text-zinc-400 text-sm max-w-md mx-auto">
+                Watch how our system ingests external data points, routes them through classification hubs, and synthesizes sales playbooks.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Desktop flow diagram */}
+          <div className="hidden lg:grid grid-cols-[1fr_220px_1fr] items-center gap-6 max-w-4xl mx-auto relative h-[360px] mt-12">
+            
+            {/* Column 1: Left Boxes (Ingestion Sources) */}
+            <div className="flex flex-col justify-between h-[340px] pr-6">
+              {[
+                { title: 'Pricing API Targets', text: 'Scans HTML structures for discount modifications' },
+                { title: 'Landing Page HTML', text: 'Tracks hero copy, header elements, and positioning shifts' },
+                { title: 'Trustpilot & G2 Reviews', text: 'Aggregates feature timeouts and SLA service complaints' },
+                { title: 'Social Activity Logs', text: 'Gathers hiring patterns and regional marketing campaigns' },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  {...fadeUp(idx * 0.05)}
+                  className="bg-[#090614]/75 border border-white/[0.04] rounded-xl px-4 py-2.5 text-left backdrop-blur-sm relative z-20 group hover:border-purple-500/30 transition-all duration-300"
+                >
+                  <h4 className="text-xs font-bold text-purple-300">{item.title}</h4>
+                  <p className="text-[10px] text-zinc-500 leading-snug mt-0.5">{item.text}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Column 2: Center Hub & SVG Lines */}
+            <div className="relative w-[220px] h-[340px] flex items-center justify-center">
+              {/* Core Hub */}
+              <div className="w-14 h-14 rounded-2xl bg-[#0e0a24]/80 border border-purple-500/50 flex items-center justify-center shadow-[0_0_35px_rgba(168,85,247,0.45)] text-purple-400 z-20">
+                <Globe size={24} className="animate-spin" style={{ animationDuration: '15s' }} />
+              </div>
+              {/* Outer decorative dashed spinning rings */}
+              <div className="absolute w-20 h-20 rounded-full border border-dashed border-purple-500/30 animate-[spin_8s_linear_infinite] z-10" />
+              <div className="absolute w-28 h-28 rounded-full border border-dashed border-indigo-500/10 animate-[spin_12s_linear_infinite_reverse] z-10" />
+
+              {/* Connecting bezier lines */}
+              <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 220 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Left to Hub paths */}
+                <path d="M 0 35 C 100 35, 60 170, 110 170" stroke="url(#lineGradLeft)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+                <path d="M 0 130 C 100 130, 60 170, 110 170" stroke="url(#lineGradLeft)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+                <path d="M 0 220 C 100 220, 60 170, 110 170" stroke="url(#lineGradLeft)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+                <path d="M 0 310 C 100 310, 60 170, 110 170" stroke="url(#lineGradLeft)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+
+                {/* Hub to Right paths */}
+                <path d="M 110 170 C 160 170, 120 35, 220 35" stroke="url(#lineGradRight)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+                <path d="M 110 170 C 160 170, 120 130, 220 130" stroke="url(#lineGradRight)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+                <path d="M 110 170 C 160 170, 120 220, 220 220" stroke="url(#lineGradRight)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+                <path d="M 110 170 C 160 170, 120 310, 220 310" stroke="url(#lineGradRight)" strokeWidth="1.5" className="opacity-70 animate-flow-line" />
+
+                <defs>
+                  <linearGradient id="lineGradLeft" x1="0" y1="170" x2="110" y2="170" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#c084fc" stopOpacity="0" />
+                    <stop offset="0.8" stopColor="#c084fc" stopOpacity="0.8" />
+                  </linearGradient>
+                  <linearGradient id="lineGradRight" x1="110" y1="170" x2="220" y2="170" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#a78bfa" stopOpacity="0.8" />
+                    <stop offset="1" stopColor="#a78bfa" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+
+            {/* Column 3: Right Boxes (Analyzed Playbooks & Synthesis) */}
+            <div className="flex flex-col justify-between h-[340px] pl-6">
+              {[
+                { title: 'AI Change Classifier', text: 'Isolates and indexes modified values' },
+                { title: 'Battle Card Synthesizer', text: 'Summarizes competitor reports into 4 key quadrants' },
+                { title: 'Sales Playbook Dispatcher', text: 'Builds customized phone/email outreach script drafts' },
+                { title: 'Slack & Email Push Alerts', text: 'Dispatches real-time summaries to growth teams' },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  {...fadeUp(idx * 0.05 + 0.1)}
+                  className="bg-[#090614]/75 border border-white/[0.04] rounded-xl px-4 py-2.5 text-left backdrop-blur-sm relative z-20 group hover:border-purple-500/30 transition-all duration-300"
+                >
+                  <h4 className="text-xs font-bold text-indigo-300">{item.title}</h4>
+                  <p className="text-[10px] text-zinc-500 leading-snug mt-0.5">{item.text}</p>
+                </motion.div>
+              ))}
+            </div>
+
+          </div>
+
+          {/* Fallback layout for mobile screens */}
+          <div className="grid sm:grid-cols-2 gap-4 lg:hidden mt-8">
+            {[
+              { title: 'Pricing API Targets', text: 'Scans HTML structures for discount modifications' },
+              { title: 'Landing Page HTML', text: 'Tracks positioning shifts' },
+              { title: 'Trustpilot & G2 Reviews', text: 'Aggregates SLA complaints' },
+              { title: 'Social Activity Logs', text: 'Gathers recruitment patterns' },
+              { title: 'AI Change Classifier', text: 'Isolates modified values' },
+              { title: 'Battle Card Synthesizer', text: 'Generates quad reports' },
+              { title: 'Sales Playbook Dispatcher', text: 'Builds target outreach scripts' },
+              { title: 'Slack & Email Alerts', text: 'Sends updates immediately' },
+            ].map((item, idx) => (
+              <div key={idx} className="bg-[#090614]/60 border border-white/[0.04] rounded-xl p-4 text-left">
+                <h4 className="text-xs font-semibold text-purple-300">{item.title}</h4>
+                <p className="text-[10px] text-zinc-400 mt-1">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DASHBOARD SHOWCASE (Command Center Demo) */}
+      <section id="dashboard-showcase" className="relative z-10 py-24 px-6 border-b border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
           
           <div className="text-center mb-14">
             <motion.div {...fadeUp(0)}>
-              <span className="text-[9px] font-mono text-blue-400 uppercase tracking-widest border border-blue-500/20 bg-blue-500/5 px-3 py-1 rounded-full mb-4 inline-block">
+              <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest border border-purple-500/20 bg-purple-500/5 px-3 py-1 rounded-full mb-4 inline-block">
                 PRODUCT PREVIEW
               </span>
               <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-white leading-none mb-4">
                 The Intelligence Command Center
               </h2>
               <p className="text-zinc-400 text-sm max-w-md mx-auto">
-                No flying 3D visuals. Just a clean, highly convenient dashboard detailing every competitor movement.
+                No complex AI layout grids. Just a clean, highly convenient dashboard detailing every competitor movement.
               </p>
             </motion.div>
           </div>
 
-          {/* Gorgeous Dashboard Mockup Container */}
+          {/* Dashboard Glass Mockup Container */}
           <motion.div
             {...fadeUp(0.1)}
-            className="p-2 bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-3xl overflow-hidden max-w-5xl mx-auto"
+            className="p-2 bg-purple-950/[0.02] border border-purple-500/10 rounded-2xl shadow-3xl overflow-hidden max-w-5xl mx-auto backdrop-blur-sm"
           >
-            <div className="bg-zinc-950 border border-white/5 rounded-xl overflow-hidden grid md:grid-cols-[200px_1fr] min-h-[480px]">
+            <div className="bg-[#090614] border border-white/[0.04] rounded-xl overflow-hidden grid md:grid-cols-[220px_1fr] min-h-[480px]">
               
-              {/* Mockup Sidebar */}
-              <div className="border-r border-white/[0.05] bg-zinc-900/10 p-4 space-y-6">
+              {/* Sidebar */}
+              <div className="border-r border-white/[0.04] bg-white/[0.01] p-4 space-y-6">
                 <div>
-                  <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-3">TRACKED COMPANIES</div>
+                  <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-3">TRACKED COMPANIES</div>
                   <div className="space-y-1">
                     {(['stripe', 'paypal', 'square', 'adyen'] as const).map((comp) => (
                       <button
                         key={comp}
                         onClick={() => setSelectedDashboardComp(comp)}
-                        className={`w-full text-left text-xs px-3 py-2 rounded-lg font-medium flex items-center justify-between transition-all duration-200 cursor-pointer ${
+                        className={`w-full text-left text-xs px-3 py-2.5 rounded-lg font-semibold flex items-center justify-between transition-all duration-200 cursor-pointer ${
                           selectedDashboardComp === comp
-                            ? 'bg-blue-600/10 border border-blue-500/20 text-white'
+                            ? 'bg-purple-500/10 border border-purple-500/20 text-white shadow-[0_0_15px_rgba(139,92,246,0.15)]'
                             : 'text-zinc-400 hover:bg-white/[0.02] hover:text-white border border-transparent'
                         }`}
                       >
                         <span className="capitalize">{comp}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/[0.03] space-y-2">
-                  <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">CRAWL FREQUENCY</div>
-                  <div className="text-xs text-white/70 font-semibold px-3 py-1 bg-white/[0.03] rounded-md inline-block font-mono">
+                <div className="pt-4 border-t border-white/[0.04] space-y-2">
+                  <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider">CRAWL FREQUENCY</div>
+                  <div className="text-[10px] text-purple-300 font-semibold px-2.5 py-1 bg-purple-500/10 border border-purple-500/20 rounded-md inline-block font-mono">
                     1 scan / 4 hours
                   </div>
                 </div>
               </div>
 
-              {/* Mockup Core Dashboard Panel */}
+              {/* Main Panel */}
               <div className="p-6 flex flex-col justify-between">
                 <div>
                   
-                  {/* Panel Top bar */}
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-white/[0.05] pb-4 mb-5">
+                  {/* Top bar */}
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-white/[0.04] pb-4 mb-5">
                     <div>
                       <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <TrendUp size={16} className="text-blue-500" />
-                        <span>Intel Feed &mdash; <span className="capitalize text-blue-400 font-semibold">{selectedDashboardComp}</span></span>
+                        <TrendUp size={16} className="text-purple-400" />
+                        <span>Intel Feed &mdash; <span className="capitalize text-purple-300 font-semibold">{selectedDashboardComp}</span></span>
                       </h3>
-                      <p className="text-[10px] font-mono text-zinc-500">Live monitoring active · last scan 12 minutes ago</p>
+                      <p className="text-[9px] font-mono text-zinc-500">Live monitoring active · last scan 12 minutes ago</p>
                     </div>
 
                     <div className="flex gap-2">
-                      <span className="text-[10px] font-mono bg-zinc-900 border border-white/5 text-zinc-300 px-2.5 py-1 rounded-md">
+                      <span className="text-[9px] font-mono bg-[#05030c] border border-white/5 text-zinc-400 px-2.5 py-1 rounded-md">
                         Feed type: ALL
                       </span>
                     </div>
                   </div>
 
-                  {/* Dynamic Alert View based on sidebar selection */}
+                  {/* Panel Details */}
                   <div className="space-y-4">
                     
-                    {/* Stat Cards Grid */}
+                    {/* Stats */}
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-white/[0.02] border border-white/5 p-3 rounded-lg text-left">
-                        <div className="text-[10px] font-mono text-zinc-500">MONITORED PAGES</div>
-                        <div className="text-base font-bold font-mono text-white mt-1">4 targets</div>
+                      <div className="bg-[#05030c] border border-white/[0.03] p-3 rounded-lg text-left">
+                        <div className="text-[9px] font-mono text-zinc-500">MONITORED TARGETS</div>
+                        <div className="text-sm font-bold font-mono text-white mt-1">4 targets</div>
                       </div>
-                      <div className="bg-white/[0.02] border border-white/5 p-3 rounded-lg text-left">
-                        <div className="text-[10px] font-mono text-zinc-500">ALERT DENSITY</div>
-                        <div className="text-base font-bold font-mono text-amber-400 mt-1">3 changes</div>
+                      <div className="bg-[#05030c] border border-white/[0.03] p-3 rounded-lg text-left">
+                        <div className="text-[9px] font-mono text-zinc-500">ALERT DENSITY</div>
+                        <div className="text-sm font-bold font-mono text-purple-400 mt-1">3 changes</div>
                       </div>
-                      <div className="bg-white/[0.02] border border-white/5 p-3 rounded-lg text-left">
-                        <div className="text-[10px] font-mono text-zinc-500">OPPORTUNITIES</div>
-                        <div className="text-base font-bold font-mono text-emerald-400 mt-1">2 plays</div>
+                      <div className="bg-[#05030c] border border-white/[0.03] p-3 rounded-lg text-left">
+                        <div className="text-[9px] font-mono text-zinc-500">OPPORTUNITIES</div>
+                        <div className="text-sm font-bold font-mono text-indigo-400 mt-1">2 plays</div>
                       </div>
                     </div>
 
-                    {/* Change highlight */}
-                    <div className="bg-[#0b0b0f] border border-white/[0.05] p-4 rounded-xl text-left">
+                    {/* Change Highlight Card */}
+                    <div className="bg-[#05030c]/50 border border-white/[0.04] p-4 rounded-xl text-left">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                        <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">
                           PRICING UPDATE DETECTED
                         </span>
-                        <span className="text-[10px] font-mono text-zinc-500">June 4, 2026</span>
+                        <span className="text-[9px] font-mono text-zinc-500">June 4, 2026</span>
                       </div>
-                      <h4 className="text-xs font-semibold text-white mb-1.5">
+                      <h4 className="text-xs font-semibold text-white mb-1.5 leading-snug">
                         {selectedDashboardComp === 'stripe' && 'Removed flat-rate pricing for enterprise accounts ($99/mo tier grandfathered)'}
                         {selectedDashboardComp === 'paypal' && 'Merchant card transaction fee adjusted from 2.9% to 3.49% flat rate'}
                         {selectedDashboardComp === 'square' && 'POS Terminal firmware update v3.1 introducing dynamic check fees'}
@@ -621,10 +718,10 @@ export default function LandingPage() {
                       </p>
                     </div>
 
-                    {/* Automated Playbook Play */}
-                    <div className="bg-emerald-500/[0.02] border border-emerald-500/20 p-4 rounded-xl text-left flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    {/* Action Playbook */}
+                    <div className="bg-purple-500/[0.01] border border-purple-500/20 p-4 rounded-xl text-left flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                       <div>
-                        <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-emerald-400 mb-1 flex items-center gap-1.5">
+                        <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-purple-400 mb-1 flex items-center gap-1.5">
                           <CheckCircle size={10} weight="fill" />
                           <span>SUGGESTED SALES PLAYBOOK</span>
                         </div>
@@ -641,7 +738,7 @@ export default function LandingPage() {
                           setCopiedPlaybook(true);
                           setTimeout(() => setCopiedPlaybook(false), 2000);
                         }}
-                        className="self-start sm:self-center px-3.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
+                        className="self-start sm:self-center px-3.5 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer"
                       >
                         <Clipboard size={11} />
                         <span>{copiedPlaybook ? 'Copied script' : 'Copy copy script'}</span>
@@ -651,10 +748,10 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Footer notes */}
-                <div className="pt-4 mt-4 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-zinc-500">
+                {/* Export link */}
+                <div className="pt-4 mt-4 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-2 text-[9px] text-zinc-500">
                   <span>Monitor output targets: 4 pages, 2 API routes, 1 documentation path</span>
-                  <Link href="/auth/login" className="text-blue-400 hover:underline flex items-center gap-1 font-mono">
+                  <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 font-mono">
                     <span>Export Battle Card PDF</span>
                     <ArrowUpRight size={10} />
                   </Link>
@@ -668,103 +765,172 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CORE FEATURES BENTO */}
-      <section id="features" className="relative z-10 py-24 px-6 border-b border-white/[0.05]">
+      {/* CORE FEATURES (Sleek Grid with Custom SVG diagrams - Fluxor chrome style) */}
+      <section id="features" className="relative z-10 py-24 px-6 border-b border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
           
           <div className="text-center mb-16">
             <motion.div {...fadeUp(0)}>
-              <span className="text-[9px] font-mono text-blue-400 uppercase tracking-widest border border-blue-500/20 bg-blue-500/5 px-3 py-1 rounded-full mb-4 inline-block">
+              <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest border border-purple-500/20 bg-purple-500/5 px-3 py-1 rounded-full mb-4 inline-block">
                 Core capabilities
               </span>
-              <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-white leading-none">
-                Deep intelligence. Legal compliance.
+              <h2 className="text-3xl lg:text-5xl font-bold tracking-tight text-white mb-4">
+                Deep intelligence. <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-300 font-normal">Legal compliance.</span>
               </h2>
             </motion.div>
           </div>
 
           <div className="grid md:grid-cols-6 gap-6 max-w-5xl mx-auto">
-            {/* 1 */}
+            {/* Feature 1: Pricing Grids */}
             <motion.div
               {...fadeUp(0.05)}
-              className="md:col-span-3 bg-zinc-950 border border-white/[0.06] hover:border-blue-500/20 hover:scale-[1.01] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 group cursor-default"
+              className="md:col-span-3 bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/25 p-6 rounded-2xl transition-all duration-300 group cursor-default shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[300px]"
             >
-              <div className="w-10 h-10 bg-blue-600/10 border border-blue-500/25 rounded-lg flex items-center justify-center text-blue-400 mb-4 group-hover:bg-blue-600/20 transition-all">
-                <TrendUp size={20} weight="bold" />
+              <div>
+                <div className="w-9 h-9 bg-purple-500/10 border border-purple-500/25 rounded-lg flex items-center justify-center text-purple-400 mb-4 group-hover:bg-purple-500/20 transition-all">
+                  <TrendUp size={18} weight="bold" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">Pricing Grids Monitoring</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  We scan HTML elements, custom pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments instantly.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white mb-1.5">Pricing Grids Monitoring</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                We scan HTML elements, custom pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments instantly.
-              </p>
+              
+              {/* Custom SVG Tech Art: Glowing Chart inside grid */}
+              <div className="h-24 w-full mt-6 bg-[#04020a] rounded-lg border border-white/[0.02] relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10" style={{
+                  backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                  backgroundSize: '12px 12px'
+                }} />
+                <svg className="w-full h-full p-2" viewBox="0 0 280 80">
+                  <path d="M 10 70 L 50 60 L 90 40 L 130 50 L 170 30 L 210 20 L 250 10" fill="none" stroke="#a78bfa" strokeWidth="1.5" className="opacity-80" />
+                  <circle cx="250" cy="10" r="3.5" fill="#c084fc" className="animate-ping" />
+                  <circle cx="250" cy="10" r="2.5" fill="#a78bfa" />
+                </svg>
+              </div>
             </motion.div>
 
-            {/* 2 */}
+            {/* Feature 2: Review Site Scraping */}
             <motion.div
               {...fadeUp(0.1)}
-              className="md:col-span-3 bg-zinc-950 border border-white/[0.06] hover:border-emerald-500/20 hover:scale-[1.01] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 group cursor-default"
+              className="md:col-span-3 bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/25 p-6 rounded-2xl transition-all duration-300 group cursor-default shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[300px]"
             >
-              <div className="w-10 h-10 bg-emerald-600/10 border border-emerald-500/25 rounded-lg flex items-center justify-center text-emerald-400 mb-4 group-hover:bg-emerald-600/20 transition-all">
-                <Chats size={20} weight="bold" />
+              <div>
+                <div className="w-9 h-9 bg-indigo-500/10 border border-indigo-500/25 rounded-lg flex items-center justify-center text-indigo-400 mb-4 group-hover:bg-indigo-500/20 transition-all">
+                  <Chats size={18} weight="bold" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">Review Site Scraping</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white mb-1.5">Review Site Scraping</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn.
-              </p>
+
+              {/* Custom SVG Tech Art: Scanning Radar Circle */}
+              <div className="h-24 w-full mt-6 bg-[#04020a] rounded-lg border border-white/[0.02] relative overflow-hidden flex items-center justify-center">
+                <svg className="w-20 h-20 opacity-70" viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="30" fill="none" stroke="#818cf8" strokeWidth="1" strokeDasharray="3 3" className="opacity-30" />
+                  <circle cx="40" cy="40" r="20" fill="none" stroke="#818cf8" strokeWidth="1" className="opacity-45" />
+                  <circle cx="40" cy="40" r="10" fill="none" stroke="#818cf8" strokeWidth="1" className="opacity-60" />
+                  <line x1="40" y1="40" x2="68" y2="40" stroke="#a78bfa" strokeWidth="1.5" className="animate-[spin_4s_linear_infinite] origin-[40px_40px]" />
+                  <circle cx="58" cy="30" r="2.5" fill="#34d399" className="animate-pulse" />
+                  <circle cx="28" cy="50" r="2" fill="#fbbf24" className="animate-pulse" />
+                </svg>
+              </div>
             </motion.div>
 
-            {/* 3 */}
+            {/* Feature 3: AI Copilot Playbooks */}
             <motion.div
               {...fadeUp(0.15)}
-              className="md:col-span-2 bg-zinc-950 border border-white/[0.06] hover:border-purple-500/20 hover:scale-[1.01] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 group cursor-default"
+              className="md:col-span-2 bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/25 p-6 rounded-2xl transition-all duration-300 group cursor-default shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[300px]"
             >
-              <div className="w-10 h-10 bg-purple-600/10 border border-purple-500/25 rounded-lg flex items-center justify-center text-purple-400 mb-4 group-hover:bg-purple-600/20 transition-all">
-                <Lightning size={20} weight="bold" />
+              <div>
+                <div className="w-9 h-9 bg-purple-500/10 border border-purple-500/25 rounded-lg flex items-center justify-center text-purple-400 mb-4 group-hover:bg-purple-500/20 transition-all">
+                  <Lightning size={18} weight="bold" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">AI Copilot Playbooks</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Generates responsive email templates and target landing page guidelines designed around the competitor changes flagged today.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white mb-1.5">AI Copilot Playbooks</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                Generates responsive email templates and target landing page guidelines designed around the competitor changes flagged today.
-              </p>
+
+              {/* Custom SVG Tech Art: Node branch connections */}
+              <div className="h-20 w-full mt-6 bg-[#04020a] rounded-lg border border-white/[0.02] relative overflow-hidden flex items-center justify-center">
+                <svg className="w-40 h-16 opacity-80" viewBox="0 0 160 64">
+                  <rect x="10" y="24" width="25" height="15" rx="3" fill="#090614" stroke="#a78bfa" strokeWidth="1" />
+                  <circle cx="13" cy="31.5" r="1.5" fill="#a78bfa" />
+                  <path d="M 35 31.5 L 60 31.5 M 60 31.5 L 80 15 M 60 31.5 L 80 48" stroke="#4f46e5" strokeWidth="1" />
+                  <rect x="80" y="7" width="40" height="15" rx="3" fill="#090614" stroke="#818cf8" strokeWidth="1" />
+                  <rect x="80" y="41" width="40" height="15" rx="3" fill="#090614" stroke="#f472b6" strokeWidth="1" />
+                </svg>
+              </div>
             </motion.div>
 
-            {/* 4 */}
+            {/* Feature 4: Historical Changelog */}
             <motion.div
               {...fadeUp(0.2)}
-              className="md:col-span-2 bg-zinc-950 border border-white/[0.06] hover:border-amber-500/20 hover:scale-[1.01] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 group cursor-default"
+              className="md:col-span-2 bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/25 p-6 rounded-2xl transition-all duration-300 group cursor-default shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[300px]"
             >
-              <div className="w-10 h-10 bg-amber-600/10 border border-amber-500/25 rounded-lg flex items-center justify-center text-amber-400 mb-4 group-hover:bg-amber-600/20 transition-all">
-                <CalendarBlank size={20} weight="bold" />
+              <div>
+                <div className="w-9 h-9 bg-purple-500/10 border border-purple-500/25 rounded-lg flex items-center justify-center text-purple-400 mb-4 group-hover:bg-purple-500/20 transition-all">
+                  <CalendarBlank size={18} weight="bold" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">Historical Changelog</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white mb-1.5">Historical Changelog</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments.
-              </p>
+
+              {/* Custom SVG Tech Art: Logs Timeline grid */}
+              <div className="h-20 w-full mt-6 bg-[#04020a] rounded-lg border border-white/[0.02] relative overflow-hidden flex items-center justify-center">
+                <svg className="w-40 h-16 opacity-70" viewBox="0 0 160 64">
+                  <line x1="10" y1="32" x2="150" y2="32" stroke="#3f3f46" strokeWidth="1.5" />
+                  {[30, 70, 110].map((cx, i) => (
+                    <g key={i}>
+                      <circle cx={cx} cy="32" r="5" fill="#090614" stroke="#c084fc" strokeWidth="1.5" />
+                      <circle cx={cx} cy="32" r="2.5" fill="#c084fc" className="animate-pulse" />
+                      <line x1={cx} y1="32" x2={cx} y2="12" stroke="#3f3f46" strokeWidth="1" strokeDasharray="2 2" />
+                    </g>
+                  ))}
+                </svg>
+              </div>
             </motion.div>
 
-            {/* 5 */}
+            {/* Feature 5: Zero-Access Crawling */}
             <motion.div
               {...fadeUp(0.25)}
-              className="md:col-span-2 bg-zinc-950 border border-white/[0.06] hover:border-blue-500/20 hover:scale-[1.01] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 group cursor-default"
+              className="md:col-span-2 bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/25 p-6 rounded-2xl transition-all duration-300 group cursor-default shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[300px]"
             >
-              <div className="w-10 h-10 bg-blue-600/10 border border-blue-500/25 rounded-lg flex items-center justify-center text-blue-400 mb-4 group-hover:bg-blue-600/20 transition-all">
-                <ShieldCheck size={20} weight="bold" />
+              <div>
+                <div className="w-9 h-9 bg-purple-500/10 border border-purple-500/25 rounded-lg flex items-center justify-center text-purple-400 mb-4 group-hover:bg-purple-500/20 transition-all">
+                  <ShieldCheck size={18} weight="bold" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white mb-1.5">Zero-Access Crawling</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
-              </p>
+
+              {/* Custom SVG Tech Art: Secure Shield Shield map */}
+              <div className="h-20 w-full mt-6 bg-[#04020a] rounded-lg border border-white/[0.02] relative overflow-hidden flex items-center justify-center">
+                <svg className="w-40 h-16 opacity-75" viewBox="0 0 160 64">
+                  <rect x="68" y="16" width="24" height="32" rx="4" fill="none" stroke="#818cf8" strokeWidth="1.5" />
+                  <path d="M 80 24 L 80 40 M 74 32 L 86 32" stroke="#34d399" strokeWidth="1.5" />
+                  <circle cx="80" cy="32" r="14" fill="none" stroke="#34d399" strokeWidth="1" strokeDasharray="3 3" className="animate-[spin_20s_linear_infinite]" />
+                </svg>
+              </div>
             </motion.div>
           </div>
 
         </div>
       </section>
 
-      {/* INTERACTIVE BATTLE CARD preview */}
-      <section id="battle-card" className="relative z-10 py-24 px-6 border-b border-white/[0.05]">
+      {/* INTERACTIVE BATTLE CARD preview (Sleek Neon-purple board) */}
+      <section id="battle-card" className="relative z-10 py-24 px-6 border-b border-white/[0.04]">
         <div className="max-w-5xl mx-auto">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
             <div>
-              <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 rounded-full mb-4 inline-block">
+              <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest border border-purple-500/20 bg-purple-500/5 px-3 py-1 rounded-full mb-4 inline-block">
                 Interactive Preview
               </span>
               <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-white leading-none mb-3">
@@ -776,14 +942,14 @@ export default function LandingPage() {
             </div>
 
             {/* Switchers */}
-            <div className="flex p-1 bg-white/[0.02] border border-white/[0.06] rounded-full gap-1 flex-shrink-0">
+            <div className="flex p-1 bg-[#090614]/80 border border-white/[0.06] rounded-full gap-1 flex-shrink-0">
               {(['stripe', 'paypal', 'square'] as const).map((comp) => (
                 <button
                   key={comp}
                   onClick={() => setActiveComp(comp)}
                   className={`text-xs font-semibold px-4.5 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${
                     activeComp === comp
-                      ? 'bg-blue-600 text-white shadow-md'
+                      ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
                       : 'text-zinc-400 hover:text-white'
                   }`}
                 >
@@ -796,12 +962,12 @@ export default function LandingPage() {
           {/* Interactive Battle Card UI */}
           <motion.div
             layoutId="battle-card-panel"
-            className="p-1 bg-white/[0.02] border border-white/[0.08] rounded-2xl shadow-xl overflow-hidden"
+            className="p-1 bg-[#0a0715]/40 border border-purple-500/20 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm"
           >
-            <div className="bg-zinc-950 border border-white/5 rounded-xl overflow-hidden">
+            <div className="bg-[#05030c] border border-white/[0.04] rounded-xl overflow-hidden">
               
               {/* Header */}
-              <div className="px-5 py-4 border-b border-white/[0.04] bg-zinc-900/50 flex items-center justify-between">
+              <div className="px-5 py-4 border-b border-white/[0.04] bg-[#090614] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-lg ${currentCard.logoColor} flex items-center justify-center shadow-md`}>
                     <Crosshair size={14} weight="bold" className="text-white" />
@@ -811,21 +977,21 @@ export default function LandingPage() {
                     <p className="text-[9px] font-mono text-zinc-500">Live Weekly Synthesizer</p>
                   </div>
                 </div>
-                <div className="text-[10px] font-mono text-zinc-500">{currentCard.date}</div>
+                <div className="text-[9px] font-mono text-zinc-500">{currentCard.date}</div>
               </div>
 
               {/* Grid Quadrants */}
-              <div className="grid md:grid-cols-2 divide-x divide-y divide-white/[0.04] bg-white/[0.02]">
+              <div className="grid md:grid-cols-2 divide-x divide-y divide-white/[0.04] bg-white/[0.01]">
                 
-                {/* 1 */}
+                {/* Quadrant 1 */}
                 <div className="p-6 text-left hover:bg-white/[0.01] transition-colors duration-200">
-                  <div className="inline-flex items-center text-[9px] font-mono uppercase tracking-widest text-blue-400 mb-4 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                  <div className="inline-flex items-center text-[9px] font-mono uppercase tracking-widest text-purple-400 mb-4 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
                     01 · DETECTED CHANGES
                   </div>
                   <div className="space-y-3.5">
                     {currentCard.changes.map((row, j) => (
                       <div key={j} className="flex gap-2.5 items-start">
-                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-wide flex-shrink-0 mt-0.5 border ${row.tc}`}>
+                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded uppercase tracking-wide flex-shrink-0 mt-0.5 border ${row.tc ? row.tc.replace('text-amber-400 bg-amber-400/10 border-amber-400/20', 'badge-pricing_change').replace('text-emerald-400 bg-emerald-400/10 border-emerald-400/20', 'badge-feature_add').replace('text-blue-400 bg-blue-400/10 border-blue-400/20', 'badge-minor_copy') : 'badge-pricing_change'}`}>
                           {row.tag}
                         </span>
                         <span className="text-xs text-zinc-300 leading-snug">{row.text}</span>
@@ -834,7 +1000,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* 2 */}
+                {/* Quadrant 2 */}
                 <div className="p-6 text-left hover:bg-white/[0.01] transition-colors duration-200">
                   <div className="inline-flex items-center text-[9px] font-mono uppercase tracking-widest text-red-400 mb-4 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
                     02 · USER COMPLAINTS
@@ -849,7 +1015,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* 3 */}
+                {/* Quadrant 3 */}
                 <div className="p-6 text-left hover:bg-white/[0.01] transition-colors duration-200">
                   <div className="inline-flex items-center text-[9px] font-mono uppercase tracking-widest text-amber-400 mb-4 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
                     03 · STRATEGIC SIGNALS
@@ -866,7 +1032,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* 4 */}
+                {/* Quadrant 4 */}
                 <div className="p-6 text-left hover:bg-white/[0.01] transition-colors duration-200">
                   <div className="inline-flex items-center text-[9px] font-mono uppercase tracking-widest text-emerald-400 mb-4 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                     04 · PLAYBOOK ACTIONS
@@ -890,12 +1056,12 @@ export default function LandingPage() {
       </section>
 
       {/* LOCAL BUSINESS EXCLUSIVES */}
-      <section className="relative z-10 py-24 px-6 border-b border-white/[0.05]">
+      <section className="relative z-10 py-24 px-6 border-b border-white/[0.04]">
         <div className="max-w-4xl mx-auto">
           
           <div className="text-center mb-12">
             <motion.div {...fadeUp(0)}>
-              <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 rounded-full mb-4 inline-block">
+              <span className="text-[9px] font-mono text-purple-400 uppercase tracking-widest border border-purple-500/20 bg-purple-500/5 px-3 py-1 rounded-full mb-4 inline-block">
                 Local Markets
               </span>
               <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-white leading-none">
@@ -928,9 +1094,9 @@ export default function LandingPage() {
               <motion.div
                 key={card.title}
                 {...fadeUp(i * 0.08)}
-                className="bg-zinc-950 border border-white/[0.06] hover:border-emerald-500/20 hover:scale-[1.02] p-5 rounded-xl transition-all duration-300 group cursor-default"
+                className="bg-[#090614]/50 border border-white/[0.04] hover:border-purple-500/25 hover:scale-[1.02] p-5 rounded-xl transition-all duration-300 group cursor-default shadow-xl"
               >
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 group-hover:bg-emerald-500/25 transition-all">
+                <div className="w-9 h-9 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 group-hover:bg-purple-500/25 transition-all">
                   {card.icon}
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">{card.title}</h3>
@@ -943,7 +1109,7 @@ export default function LandingPage() {
       </section>
 
       {/* PRICING PLANS */}
-      <section id="pricing" className="relative z-10 py-24 px-6 border-b border-white/[0.05]">
+      <section id="pricing" className="relative z-10 py-24 px-6 border-b border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
           <PricingBasic />
         </div>
@@ -960,18 +1126,22 @@ export default function LandingPage() {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="relative z-10 py-32 px-6 bg-zinc-950 border-t border-white/[0.02]">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative z-10 py-32 px-6 bg-[#020105] border-t border-white/[0.02] relative overflow-hidden">
+        {/* Glow */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[150px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="max-w-3xl mx-auto text-center relative z-10">
           <motion.div {...fadeUp(0)}>
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-[1.05] mb-6">
-              Start tracking competitor movements <span className="text-blue-500">automatically today.</span>
+              Start tracking competitor movements <br />
+              <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300">automatically today.</span>
             </h2>
             <p className="text-zinc-400 text-sm max-w-sm mx-auto leading-relaxed mb-8">
               Claim your 14-day free trial now. Monitor up to 7 competitors. Cancel with a single click inside settings.
             </p>
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-3 bg-white text-black font-semibold px-6 py-3 rounded-full hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(255,255,255,0.22)] active:scale-[0.985] transition-all duration-300 text-sm cursor-pointer"
+              className="inline-flex items-center gap-3 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(255,255,255,0.25)] active:scale-[0.985] transition-all duration-300 text-sm cursor-pointer"
             >
               <span>Get started with 14-day trial</span>
               <ArrowRight size={13} weight="bold" />
@@ -987,8 +1157,8 @@ export default function LandingPage() {
           {/* Brand block */}
           <div className="col-span-2 space-y-4 text-left">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-blue-600/10 border border-blue-500/25 flex items-center justify-center rounded-lg">
-                <Crosshair size={12} weight="bold" className="text-blue-400" />
+              <div className="w-7 h-7 bg-purple-500/10 border border-purple-500/25 flex items-center justify-center rounded-lg">
+                <Crosshair size={12} weight="bold" className="text-purple-400" />
               </div>
               <span className="text-sm font-semibold text-white">Competitor Analyzer</span>
             </div>
@@ -1030,7 +1200,7 @@ export default function LandingPage() {
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 required
-                className="w-full bg-white/[0.02] border border-white/[0.1] rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-700 focus:outline-none focus:border-blue-500/40 transition-colors"
+                className="w-full bg-white/[0.02] border border-white/[0.1] rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-700 focus:outline-none focus:border-purple-500/40 transition-colors"
               />
               <button
                 type="submit"

@@ -245,13 +245,13 @@ ${card.win_conditions && card.win_conditions.length > 0
   return (
     <div className="space-y-6">
       {/* A) HEADER ROW */}
-      <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 shadow-sm">
+      <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
             <img 
               src={`https://www.google.com/s2/favicons?domain=${comp.url.split('://')[-1].split('/')[0]}&sz=64`}
               alt=""
-              className="w-12 h-12 rounded-xl bg-white border border-[#e5e5e5] p-1.5 flex-shrink-0"
+              className="w-12 h-12 rounded-xl bg-[#130f2c] border border-white/[0.08] p-1.5 flex-shrink-0"
             />
             <div>
               {editing ? (
@@ -260,44 +260,44 @@ ${card.win_conditions && card.win_conditions.length > 0
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="border border-[#e5e5e5] rounded-lg px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="bg-white/[0.02] border border-white/[0.08] text-white rounded-lg px-2 py-1 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                     placeholder="Name"
                   />
                   <input
                     type="text"
                     value={editUrl}
                     onChange={(e) => setEditUrl(e.target.value)}
-                    className="border border-[#e5e5e5] rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="bg-white/[0.02] border border-white/[0.08] text-white rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                     placeholder="URL"
                   />
                   <button 
                     onClick={saveCompetitorSettings}
                     disabled={savingSettings}
-                    className="px-3 py-1 bg-[#2563eb] text-white rounded-lg text-xs font-semibold hover:bg-blue-600 transition-colors"
+                    className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-semibold transition-colors"
                   >
                     {savingSettings ? 'Saving...' : 'Save'}
                   </button>
                   <button 
                     onClick={() => setEditing(false)}
-                    className="px-3 py-1 bg-[#f5f5f5] text-neutral-600 border border-[#e5e5e5] rounded-lg text-xs font-semibold hover:bg-neutral-100 transition-colors"
+                    className="px-3 py-1 bg-white/[0.02] text-zinc-300 border border-white/10 rounded-lg text-xs font-semibold hover:bg-white/[0.05] transition-colors"
                   >
                     Cancel
                   </button>
                 </div>
               ) : (
                 <>
-                  <h1 className="text-xl font-bold text-[#171717]">{comp.name || comp.url}</h1>
+                  <h1 className="text-xl font-bold text-white">{comp.name || comp.url}</h1>
                   <a 
                     href={comp.url} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-xs text-[#737373] hover:underline inline-flex items-center gap-1 mt-0.5"
+                    className="text-xs text-zinc-400 hover:underline inline-flex items-center gap-1 mt-0.5"
                   >
                     <Globe size={12} /> {comp.url}
                   </a>
                 </>
               )}
-              <p className="text-xs text-[#737373] mt-1 flex items-center gap-1.5">
+              <p className="text-xs text-zinc-500 mt-1 flex items-center gap-1.5">
                 <Clock size={12} /> Last scanned {lastScannedText}
               </p>
             </div>
@@ -307,11 +307,11 @@ ${card.win_conditions && card.win_conditions.length > 0
             <button
               onClick={handleScan}
               disabled={scanning}
-              className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#e5e5e5] hover:bg-[#fafafa] active:bg-[#f0f0f0] text-sm font-semibold rounded-lg text-[#171717] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 border border-white/10 hover:bg-white/[0.04] active:bg-white/[0.08] text-sm font-semibold rounded-lg text-white transition-colors cursor-pointer bg-white/[0.01]"
             >
               {scanning ? (
                 <>
-                  <ArrowsClockwise size={16} className="animate-spin text-[#2563eb]" />
+                  <ArrowsClockwise size={16} className="animate-spin text-purple-400" />
                   Scanning...
                 </>
               ) : (
@@ -323,7 +323,7 @@ ${card.win_conditions && card.win_conditions.length > 0
             </button>
             <button
               onClick={() => setEditing(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#e5e5e5] hover:bg-[#fafafa] active:bg-[#f0f0f0] text-sm font-semibold rounded-lg text-[#171717] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 border border-white/10 hover:bg-white/[0.04] active:bg-white/[0.08] text-sm font-semibold rounded-lg text-white transition-colors cursor-pointer bg-white/[0.01]"
             >
               <Pencil size={16} />
               Edit
@@ -336,27 +336,27 @@ ${card.win_conditions && card.win_conditions.length > 0
         {/* LEFT COLUMN: Timeline & Scan History (2/3 width) */}
         <div className="lg:col-span-2 space-y-6">
           {/* B) CHANGE TIMELINE */}
-          <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm">
-            <div className="px-5 py-4 border-b border-[#e5e5e5]">
-              <h2 className="text-sm font-bold text-[#171717]">Change History</h2>
-              <p className="text-xs text-[#737373]">Archived snapshots and diff analyzer</p>
+          <div className="bg-[#0b0819]/50 border border-white/[0.06] shadow-lg rounded-2xl backdrop-blur-md">
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <h2 className="text-sm font-bold text-white">Change History</h2>
+              <p className="text-xs text-zinc-400">Archived snapshots and diff analyzer</p>
             </div>
 
             <div className="p-5">
               {detail.change_events.length === 0 ? (
-                <div className="text-center py-8 text-sm text-[#737373]">
+                <div className="text-center py-8 text-sm text-zinc-500">
                   No changes detected yet for this competitor.
                 </div>
               ) : (
-                <div className="relative border-l-2 border-[#e5e5e5] pl-6 ml-3 space-y-8 py-2">
+                <div className="relative border-l-2 border-white/[0.06] pl-6 ml-3 space-y-8 py-2">
                   {detail.change_events.map((event: any) => {
                     const isExpanded = expandedEventId === event.id;
                     const changeTypeStyles: Record<string, string> = {
-                      pricing_change: 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]',
-                      new_feature: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
-                      positioning_shift: 'bg-[#faf5ff] text-[#8b5cf6] border-[#e9d5ff]',
-                      review_trend: 'bg-[#fffbeb] text-[#d97706] border-[#fef3c7]',
-                      minor_copy: 'bg-[#fafafa] text-[#737373] border-[#e5e5e5]',
+                      pricing_change: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                      new_feature: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+                      positioning_shift: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+                      review_trend: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                      minor_copy: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
                     };
                     
                     const typeStyle = changeTypeStyles[event.change_type] || changeTypeStyles.minor_copy;
@@ -369,22 +369,22 @@ ${card.win_conditions && card.win_conditions.length > 0
                     return (
                       <div key={event.id} className="relative">
                         {/* Timeline Bullet */}
-                        <div className="absolute -left-[31px] top-1.5 bg-white p-0.5 rounded-full">
-                          <Circle size={10} weight="fill" className="text-[#2563eb]" />
+                        <div className="absolute -left-[31px] top-1.5 bg-[#0a0715] p-0.5 rounded-full">
+                          <Circle size={10} weight="fill" className="text-purple-500" />
                         </div>
 
-                        <div className="bg-white border border-[#e5e5e5] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-[#0a0718]/45 border border-white/[0.06] rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
                           {/* Event Header */}
                           <div 
                             onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-neutral-50/50 transition-colors"
+                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-xs font-semibold text-[#171717]">{dateFormatted}</span>
-                                <span className="text-[10px] text-[#737373] font-mono">({event.week_label})</span>
+                                <span className="text-xs font-semibold text-white">{dateFormatted}</span>
+                                <span className="text-[10px] text-zinc-500 font-mono">({event.week_label})</span>
                               </div>
-                              <p className="text-xs text-[#737373] mt-0.5 truncate max-w-[280px] md:max-w-[400px]">
+                              <p className="text-xs text-zinc-400 mt-0.5 truncate max-w-[280px] md:max-w-[400px]">
                                 {event.brief_text || "Copy differences scanned."}
                               </p>
                             </div>
@@ -404,17 +404,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                                 initial={{ height: 0 }}
                                 animate={{ height: 'auto' }}
                                 exit={{ height: 0 }}
-                                className="border-t border-[#e5e5e5] overflow-hidden"
+                                className="border-t border-white/[0.06] overflow-hidden"
                               >
-                                <div className="p-4 bg-[#fafafa]">
-                                  <p className="text-sm font-semibold text-[#171717] mb-2">Analysis Summary</p>
-                                  <p className="text-xs text-[#737373] leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
+                                <div className="p-4 bg-[#0d0922]/50">
+                                  <p className="text-sm font-semibold text-white mb-2">Analysis Summary</p>
+                                  <p className="text-xs text-zinc-400 leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
                                   
                                   <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-semibold text-[#171717]">Text Diff Viewer</span>
+                                    <span className="text-xs font-semibold text-white">Text Diff Viewer</span>
                                     {event.net_char_delta !== 0 && (
                                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
-                                        event.net_char_delta > 0 ? 'text-emerald-700 bg-emerald-50' : 'text-red-700 bg-red-50'
+                                        event.net_char_delta > 0 ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-red-400 bg-red-500/10 border border-red-500/20'
                                       }`}>
                                         {event.net_char_delta > 0 ? '+' : ''}{event.net_char_delta} chars
                                       </span>
@@ -435,26 +435,26 @@ ${card.win_conditions && card.win_conditions.length > 0
           </div>
 
           {/* E) SCAN HISTORY */}
-          <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm">
-            <div className="px-5 py-4 border-b border-[#e5e5e5]">
-              <h2 className="text-sm font-bold text-[#171717]">Scan Logs</h2>
-              <p className="text-xs text-[#737373]">Full database raw crawl history</p>
+          <div className="bg-[#0b0819]/50 border border-white/[0.06] shadow-lg rounded-2xl backdrop-blur-md overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06]">
+              <h2 className="text-sm font-bold text-white">Scan Logs</h2>
+              <p className="text-xs text-zinc-400">Full database raw crawl history</p>
             </div>
             
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-[#171717]">
+              <table className="w-full text-left text-sm text-zinc-300">
                 <thead>
-                  <tr className="border-b border-[#e5e5e5] bg-neutral-50/50">
-                    <th className="px-5 py-3 font-semibold text-[#737373] text-xs uppercase tracking-wider">Date</th>
-                    <th className="px-5 py-3 font-semibold text-[#737373] text-xs uppercase tracking-wider">File Size</th>
-                    <th className="px-5 py-3 font-semibold text-[#737373] text-xs uppercase tracking-wider">Status</th>
-                    <th className="px-5 py-3 font-semibold text-[#737373] text-xs uppercase tracking-wider">Changes</th>
+                  <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+                    <th className="px-5 py-3 font-semibold text-zinc-400 text-xs uppercase tracking-wider">Date</th>
+                    <th className="px-5 py-3 font-semibold text-zinc-400 text-xs uppercase tracking-wider">File Size</th>
+                    <th className="px-5 py-3 font-semibold text-zinc-400 text-xs uppercase tracking-wider">Status</th>
+                    <th className="px-5 py-3 font-semibold text-zinc-400 text-xs uppercase tracking-wider">Changes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#e5e5e5]">
+                <tbody className="divide-y divide-white/[0.04]">
                   {detail.scan_history && detail.scan_history.length > 0 ? (
                     detail.scan_history.map((scan: any) => (
-                      <tr key={scan.id} className="hover:bg-neutral-50/30 transition-colors">
+                      <tr key={scan.id} className="hover:bg-white/[0.02] transition-colors">
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs">
                           {new Date(scan.fetched_at).toLocaleString('en-US', {
                             month: 'short',
@@ -468,25 +468,25 @@ ${card.win_conditions && card.win_conditions.length > 0
                         </td>
                         <td className="px-5 py-3.5 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
-                            scan.status === 'success' ? 'bg-[#f0fdf4] text-[#14532d] border-[#bbf7d0]' : 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]'
+                            scan.status === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
                           }`}>
                             {scan.status}
                           </span>
                         </td>
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs font-semibold">
                           {scan.changes_detected > 0 ? (
-                            <span className="text-[#2563eb] inline-flex items-center gap-1">
+                            <span className="text-purple-400 inline-flex items-center gap-1">
                               <Lightning size={12} weight="fill" /> {scan.changes_detected} found
                             </span>
                           ) : (
-                            <span className="text-[#737373]">None</span>
+                            <span className="text-zinc-500">None</span>
                           )}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="px-5 py-8 text-center text-sm text-[#737373]">
+                      <td colSpan={4} className="px-5 py-8 text-center text-sm text-zinc-500">
                         No scans recorded yet.
                       </td>
                     </tr>
@@ -500,14 +500,14 @@ ${card.win_conditions && card.win_conditions.length > 0
         {/* RIGHT COLUMN: Battle Card & Review Analytics (1/3 width) */}
         <div className="space-y-6">
           {/* C) BATTLE CARD */}
-          <div className="bg-white rounded-xl border border-[#e5e5e5] border-l-4 border-l-[#2563eb] shadow-sm p-5 relative">
+          <div className="bg-[#0b0819]/50 border border-white/[0.06] border-l-4 border-l-purple-500 shadow-lg rounded-2xl backdrop-blur-md p-5 relative">
             {detail.battlecard ? (
               <div className="space-y-5">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-base font-bold text-[#171717]">{comp.name || comp.url} Battle Card</h2>
-                    <p className="text-[11px] text-[#737373] mt-0.5 flex items-center gap-1">
+                    <h2 className="text-base font-bold text-white">{comp.name || comp.url} Battle Card</h2>
+                    <p className="text-[11px] text-zinc-400 mt-0.5 flex items-center gap-1">
                       <Calendar size={11} /> Week of {new Date(detail.battlecard.generated_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -515,17 +515,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={copyBattlecardToClipboard}
-                      className="p-1.5 hover:bg-[#fafafa] active:bg-[#f0f0f0] border border-[#e5e5e5] text-neutral-600 hover:text-neutral-900 rounded-lg transition-colors cursor-pointer relative"
+                      className="p-1.5 hover:bg-white/[0.04] active:bg-white/[0.08] border border-white/10 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer relative bg-white/[0.01]"
                       title="Copy to clipboard"
                     >
-                      {copied ? <CheckCircle size={14} className="text-emerald-600" /> : <Copy size={14} />}
+                      {copied ? <CheckCircle size={14} className="text-emerald-400" /> : <Copy size={14} />}
                     </button>
                     <button
                       onClick={shareBattlecard}
-                      className="p-1.5 hover:bg-[#fafafa] active:bg-[#f0f0f0] border border-[#e5e5e5] text-neutral-600 hover:text-neutral-900 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 hover:bg-white/[0.04] active:bg-white/[0.08] border border-white/10 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer bg-white/[0.01]"
                       title="Share Card"
                     >
-                      {shared ? <CheckCircle size={14} className="text-emerald-600" /> : <ShareNetwork size={14} />}
+                      {shared ? <CheckCircle size={14} className="text-emerald-400" /> : <ShareNetwork size={14} />}
                     </button>
                   </div>
                 </div>
@@ -533,13 +533,13 @@ ${card.win_conditions && card.win_conditions.length > 0
                 {/* Content Accordions */}
                 <div className="space-y-3">
                   {/* Accordion 1: Recent Changes */}
-                  <div className="border border-[#e5e5e5] rounded-lg overflow-hidden">
+                  <div className="border border-white/[0.06] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('changes')}
-                      className="w-full px-4 py-3 bg-[#fafafa] flex items-center justify-between text-xs font-bold text-[#171717]"
+                      className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Lightning size={14} className="text-[#2563eb]" /> Recent Changes
+                        <Lightning size={14} className="text-purple-400" /> Recent Changes
                       </span>
                       {cardOpenSections.changes ? <CaretUp size={12} /> : <CaretDown size={12} />}
                     </button>
@@ -549,17 +549,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white"
+                          className="overflow-hidden bg-[#0c0922]/50 text-zinc-400 border-t border-white/[0.06]"
                         >
-                          <div className="p-4 border-t border-[#e5e5e5] text-xs text-[#737373] space-y-2">
+                          <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[#171717]">
+                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
                                 {detail.battlecard.what_changed.map((c: string, idx: number) => (
                                   <li key={idx}>{c}</li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="italic text-[#737373]">
+                              <p className="italic text-zinc-500">
                                 Your competitor has been quiet this week &mdash; no pricing or feature changes detected.
                               </p>
                             )}
@@ -570,13 +570,13 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 2: Their Weaknesses */}
-                  <div className="border border-[#e5e5e5] rounded-lg overflow-hidden">
+                  <div className="border border-white/[0.06] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('weaknesses')}
-                      className="w-full px-4 py-3 bg-[#fafafa] flex items-center justify-between text-xs font-bold text-[#171717]"
+                      className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Warning size={14} className="text-[#dc2626]" /> Their Weaknesses
+                        <Warning size={14} className="text-red-400" /> Their Weaknesses
                       </span>
                       {cardOpenSections.weaknesses ? <CaretUp size={12} /> : <CaretDown size={12} />}
                     </button>
@@ -586,17 +586,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white"
+                          className="overflow-hidden bg-[#0c0922]/50 text-zinc-400 border-t border-white/[0.06]"
                         >
-                          <div className="p-4 border-t border-[#e5e5e5] text-xs text-[#737373] space-y-2">
+                          <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[#171717]">
+                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
                                 {detail.battlecard.weaknesses.map((w: string, idx: number) => (
                                   <li key={idx}>{w}</li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="italic text-[#737373]">No complaints found in reviews.</p>
+                              <p className="italic text-zinc-500">No complaints found in reviews.</p>
                             )}
                           </div>
                         </motion.div>
@@ -605,13 +605,13 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 3: Talking Points */}
-                  <div className="border border-[#e5e5e5] rounded-lg overflow-hidden">
+                  <div className="border border-white/[0.06] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('talkingPoints')}
-                      className="w-full px-4 py-3 bg-[#fafafa] flex items-center justify-between text-xs font-bold text-[#171717]"
+                      className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <ChatText size={14} className="text-[#059669]" /> Talking Points
+                        <ChatText size={14} className="text-emerald-400" /> Talking Points
                       </span>
                       {cardOpenSections.talkingPoints ? <CaretUp size={12} /> : <CaretDown size={12} />}
                     </button>
@@ -621,17 +621,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white"
+                          className="overflow-hidden bg-[#0c0922]/50 text-zinc-400 border-t border-white/[0.06]"
                         >
-                          <div className="p-4 border-t border-[#e5e5e5] text-xs text-[#737373] space-y-2">
+                          <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
-                              <ol className="list-decimal pl-4 space-y-1.5 leading-relaxed text-[#171717]">
+                              <ol className="list-decimal pl-4 space-y-1.5 leading-relaxed text-zinc-200">
                                 {detail.battlecard.talking_points.map((tp: string, idx: number) => (
                                   <li key={idx}>{tp}</li>
                                 ))}
                               </ol>
                             ) : (
-                              <p className="italic text-[#737373]">No talking points generated.</p>
+                              <p className="italic text-zinc-500">No talking points generated.</p>
                             )}
                           </div>
                         </motion.div>
@@ -640,13 +640,13 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 4: Win Conditions */}
-                  <div className="border border-[#e5e5e5] rounded-lg overflow-hidden">
+                  <div className="border border-white/[0.06] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('winConditions')}
-                      className="w-full px-4 py-3 bg-[#fafafa] flex items-center justify-between text-xs font-bold text-[#171717]"
+                      className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Trophy size={14} className="text-[#d97706]" /> Win Conditions
+                        <Trophy size={14} className="text-amber-400" /> Win Conditions
                       </span>
                       {cardOpenSections.winConditions ? <CaretUp size={12} /> : <CaretDown size={12} />}
                     </button>
@@ -656,17 +656,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white"
+                          className="overflow-hidden bg-[#0c0922]/50 text-zinc-400 border-t border-white/[0.06]"
                         >
-                          <div className="p-4 border-t border-[#e5e5e5] text-xs text-[#737373] space-y-2">
+                          <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[#171717]">
+                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
                                 {detail.battlecard.win_conditions.map((wc: string, idx: number) => (
                                   <li key={idx}>{wc}</li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="italic text-[#737373]">No win conditions generated.</p>
+                              <p className="italic text-zinc-500">No win conditions generated.</p>
                             )}
                           </div>
                         </motion.div>
@@ -679,11 +679,11 @@ ${card.win_conditions && card.win_conditions.length > 0
                   <button
                     onClick={handleRegenerateBattlecard}
                     disabled={regenerating}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#e5e5e5] hover:bg-[#fafafa] active:bg-[#f0f0f0] text-xs font-semibold rounded-lg text-[#171717] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-white/10 hover:bg-white/[0.05] text-xs font-semibold rounded-lg text-zinc-300 transition-colors cursor-pointer bg-white/[0.01]"
                   >
                     {regenerating ? (
                       <>
-                        <ArrowsClockwise size={12} className="animate-spin text-[#2563eb]" />
+                        <ArrowsClockwise size={12} className="animate-spin text-purple-400" />
                         Regenerating...
                       </>
                     ) : (
@@ -697,13 +697,13 @@ ${card.win_conditions && card.win_conditions.length > 0
               </div>
             ) : (
               <div className="text-center py-12 space-y-4">
-                <Lightning size={32} className="mx-auto text-neutral-300" />
-                <h3 className="text-sm font-semibold text-[#171717]">No Battle Card Generated</h3>
-                <p className="text-xs text-[#737373] max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
+                <Lightning size={32} className="mx-auto text-zinc-600 animate-pulse" />
+                <h3 className="text-sm font-semibold text-white">No Battle Card Generated</h3>
+                <p className="text-xs text-zinc-400 max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
                 <button
                   onClick={handleRegenerateBattlecard}
                   disabled={regenerating}
-                  className="px-4 py-2 bg-[#2563eb] text-white hover:bg-blue-600 text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
                 >
                   {regenerating ? <ArrowsClockwise size={12} className="animate-spin" /> : null}
                   Generate Battle Card
@@ -713,23 +713,23 @@ ${card.win_conditions && card.win_conditions.length > 0
           </div>
 
           {/* D) RATING TREND CHART */}
-          <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5 space-y-4">
+          <div className="bg-[#0b0819]/50 border border-white/[0.06] shadow-lg rounded-2xl p-5 space-y-4 backdrop-blur-md">
             <div>
-              <h2 className="text-sm font-bold text-[#171717]">Rating Trend</h2>
-              <p className="text-xs text-[#737373]">Avg score progression over time</p>
+              <h2 className="text-sm font-bold text-white">Rating Trend</h2>
+              <p className="text-xs text-zinc-400">Avg score progression over time</p>
             </div>
             
             {ratingData.length > 0 ? (
               <div className="h-[120px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={ratingData}>
-                    <XAxis dataKey="date" tick={{ fill: '#737373', fontSize: 10 }} />
-                    <YAxis domain={[1, 5]} tick={{ fill: '#737373', fontSize: 10 }} width={15} />
+                    <XAxis dataKey="date" tick={{ fill: '#71717a', fontSize: 10 }} />
+                    <YAxis domain={[1, 5]} tick={{ fill: '#71717a', fontSize: 10 }} width={15} />
                     <Tooltip 
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-[#171717] text-white text-[10px] px-2 py-1 rounded shadow">
+                            <div className="bg-[#130f2c]/90 border border-white/[0.08] backdrop-blur-md text-white text-[10px] px-2 py-1 rounded shadow">
                               {payload[0].value} average
                             </div>
                           );
@@ -740,16 +740,16 @@ ${card.win_conditions && card.win_conditions.length > 0
                     <Line 
                       type="monotone" 
                       dataKey="rating" 
-                      stroke="#2563eb" 
+                      stroke="#a855f7" 
                       strokeWidth={2} 
-                      dot={{ r: 3, fill: '#2563eb' }} 
+                      dot={{ r: 3, fill: '#a855f7' }} 
                       activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="text-center py-6 text-xs text-[#737373] italic">
+              <div className="text-center py-6 text-xs text-zinc-500 italic">
                 No ratings history available yet.
               </div>
             )}

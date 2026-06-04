@@ -97,23 +97,22 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     { href: '/queue', label: 'Action Queue', Icon: CheckSquare },
     { href: '/settings', label: 'Settings', Icon: Gear },
   ];
-
   return (
-    <aside className="fixed top-0 left-0 h-full w-60 flex flex-col z-40 bg-white border-r border-[#e5e5e5] font-sans">
+    <aside className="fixed top-0 left-0 h-full w-60 flex flex-col z-40 bg-[#090614] border-r border-white/[0.06] font-sans">
       {/* Top section: Wordmark + Profile */}
-      <div className="p-5 border-b border-[#e5e5e5] space-y-3">
+      <div className="p-5 border-b border-white/[0.06] space-y-3">
         <div>
-          <span className="text-base font-bold text-[#171717]">Intel</span>
-          <span className="text-xs text-[#737373] ml-1.5 font-medium">by competitor analyzer</span>
+          <span className="text-base font-bold text-white tracking-tight">Intel</span>
+          <span className="text-xs text-purple-400 ml-1.5 font-medium tracking-wide">analyzer</span>
         </div>
         
-        <div className="flex items-center justify-between gap-2 bg-[#fafafa] border border-[#e5e5e5] rounded-lg p-2.5">
+        <div className="flex items-center justify-between gap-2 bg-white/[0.02] border border-white/[0.06] rounded-lg p-2.5">
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-[#171717] truncate" title={email}>
+            <p className="text-xs font-semibold text-zinc-200 truncate" title={email}>
               {email}
             </p>
           </div>
-          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-wide">
+          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-wide">
             {planBadge}
           </span>
         </div>
@@ -132,8 +131,8 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               className={clsx(
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all relative border-l-2',
                 isActive
-                  ? 'bg-blue-50 text-blue-600 border-blue-600 font-semibold'
-                  : 'text-[#737373] border-transparent hover:bg-neutral-50 hover:text-[#171717]'
+                  ? 'bg-purple-950/20 text-purple-400 border-purple-500 font-semibold'
+                  : 'text-zinc-400 border-transparent hover:bg-white/[0.02] hover:text-white'
               )}
             >
               <Icon
@@ -143,7 +142,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               />
               <span className="truncate flex-1">{label}</span>
               {hasBadge && (
-                <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                   {pendingCount}
                 </span>
               )}
@@ -153,12 +152,12 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
       </nav>
 
       {/* Bottom section */}
-      <div className="p-4 border-t border-[#e5e5e5] space-y-3 bg-[#fafafa]">
+      <div className="p-4 border-t border-white/[0.06] space-y-3 bg-white/[0.01]">
         {/* Scan all now button */}
         <button
           onClick={handleScanAll}
           disabled={scanning}
-          className="w-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] disabled:opacity-50 py-2.5 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+          className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 py-2.5 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
         >
           {scanning ? (
             <>
@@ -176,20 +175,20 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         {/* Add competitor link */}
         <Link
           href="/competitors"
-          className="w-full border border-[#e5e5e5] bg-white hover:bg-neutral-50 text-neutral-700 py-2 rounded-lg text-xs font-semibold text-center block transition-colors"
+          className="w-full border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 text-zinc-300 py-2 rounded-lg text-xs font-semibold text-center block transition-all"
         >
           Add competitor
         </Link>
 
         {/* Upgrade prompt if on trial */}
         {settings && settings.subscription_status === 'trialing' && (
-          <div className="border border-[#e5e5e5] rounded-lg p-2.5 bg-white text-center space-y-2 mt-2">
-            <p className="text-[10px] text-[#737373] font-medium leading-normal">
+          <div className="border border-white/10 rounded-lg p-2.5 bg-white/[0.02] text-center space-y-2 mt-2">
+            <p className="text-[10px] text-zinc-400 font-medium leading-normal">
               {trialDays} days left in trial
             </p>
             <Link
               href="/settings"
-              className="w-full bg-[#2563eb] text-white hover:bg-[#1d4ed8] py-1.5 rounded-md text-[10px] font-bold text-center block transition-colors"
+              className="w-full bg-purple-600 hover:bg-purple-500 text-white py-1.5 rounded-md text-[10px] font-bold text-center block transition-colors"
             >
               Upgrade
             </Link>
@@ -199,7 +198,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <form action="/api/auth/logout" method="POST" className="pt-1">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-xs text-[#737373] hover:text-[#171717] hover:bg-neutral-100 transition-colors cursor-pointer"
+            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-xs text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
             <SignOut size={14} />
             <span>Sign out</span>

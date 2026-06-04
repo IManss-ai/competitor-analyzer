@@ -222,7 +222,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <svg width={width} height={height} className="overflow-visible">
         <polyline
           fill="none"
-          stroke="#2563eb"
+          stroke="#a855f7"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -251,65 +251,65 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-[#171717]/40 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
         
         {/* Modal content */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 bg-white rounded-xl border border-[#e5e5e5] shadow-xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 bg-[#0e0a22]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
         >
           <div className="text-center mb-6">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(139,92,246,0.15)]">
               <Compass size={24} weight="duotone" />
             </div>
-            <h2 className="text-lg font-bold text-[#171717]">Welcome! Let's add your first competitor.</h2>
-            <p className="text-xs text-[#737373] mt-1">We will start monitoring them instantly in real-time.</p>
+            <h2 className="text-lg font-bold text-white tracking-tight">Welcome! Let's add your first competitor.</h2>
+            <p className="text-xs text-zinc-400 mt-1">We will start monitoring them instantly in real-time.</p>
           </div>
 
           <form onSubmit={submitOnboardingCompetitor} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#171717] mb-1.5">Competitor URL *</label>
+              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Competitor URL *</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. competitor.com"
                 value={onboardingUrl}
                 onChange={(e) => setOnboardingUrl(e.target.value)}
-                className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#171717] mb-1.5">Competitor Name (Optional)</label>
+              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Competitor Name (Optional)</label>
               <input
                 type="text"
                 placeholder="e.g. Rival Inc"
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
-                className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#171717] mb-1.5">G2 or Trustpilot URL (Optional)</label>
+              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">G2 or Trustpilot URL (Optional)</label>
               <input
                 type="text"
                 placeholder="e.g. g2.com/products/competitor/reviews"
                 value={onboardingG2Url}
                 onChange={(e) => setOnboardingG2Url(e.target.value)}
-                className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
               />
             </div>
 
             {onboardingError && (
-              <p className="text-xs text-red-600 font-medium">{onboardingError}</p>
+              <p className="text-xs text-red-400 font-medium">{onboardingError}</p>
             )}
 
             <button
               type="submit"
               disabled={submittingOnboarding}
-              className="w-full bg-[#2563eb] text-white hover:bg-blue-600 disabled:opacity-50 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
             >
               {submittingOnboarding ? (
                 <>
@@ -325,7 +325,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <button
                 type="button"
                 onClick={() => setOnboardingStep(3)}
-                className="text-xs font-medium text-[#737373] hover:text-[#171717] hover:underline cursor-pointer"
+                className="text-xs font-medium text-zinc-500 hover:text-white hover:underline cursor-pointer"
               >
                 Skip onboarding & go to dashboard
               </button>
@@ -346,24 +346,24 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     };
 
     return (
-      <div className="bg-white rounded-xl border border-[#e5e5e5] p-8 max-w-xl mx-auto shadow-sm text-center space-y-6 my-12">
+      <div className="bg-[#0c0919]/60 backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12">
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-          <div className="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-t-blue-600 rounded-full animate-spin"></div>
-          <Buildings size={36} className="text-blue-600" />
+          <div className="absolute inset-0 border-4 border-purple-500/10 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-t-purple-500 rounded-full animate-spin"></div>
+          <Buildings size={36} className="text-purple-400" />
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-bold text-[#171717]">Running your initial scan...</h2>
-          <p className="text-xs text-[#737373] max-w-sm mx-auto">
+          <h2 className="text-lg font-bold text-white tracking-tight">Running your initial scan...</h2>
+          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
             We are analyzing the competitor homepage for copy structures, pricing, and reviews.
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-[#e5e5e5] rounded-xl p-4 bg-[#fafafa]">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#737373]">Live Status</span>
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#171717]">
-            <Spinner size={16} className="animate-spin text-blue-600" />
+        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-white/[0.08] rounded-xl p-4 bg-white/[0.02]">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">Live Status</span>
+          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <Spinner size={16} className="animate-spin text-purple-400" />
             {statusMessages[onboardingStatus] || statusMessages.fetching}
           </div>
         </div>
@@ -375,20 +375,20 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   if (onboardingStep === 2) {
     const isError = onboardingStatus === 'error';
     return (
-      <div className="bg-white rounded-xl border border-[#e5e5e5] p-8 max-w-xl mx-auto shadow-sm text-center space-y-6 my-12">
-        <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+      <div className="bg-[#0c0919]/60 backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12">
+        <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
           {isError ? (
-            <Warning size={32} className="text-red-500" />
+            <Warning size={32} className="text-red-400" />
           ) : (
             <CheckCircle size={32} />
           )}
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-bold text-[#171717]">
+          <h2 className="text-lg font-bold text-white tracking-tight">
             {isError ? 'Competitor Added with Scan Warning' : 'First scan complete!'}
           </h2>
-          <p className="text-xs text-[#737373] max-w-sm mx-auto">
+          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
             {isError 
               ? "We added your competitor but couldn't scan their page. Check their URL or try again."
               : "We've captured their current landing page snapshot and scheduled the monitor."
@@ -397,10 +397,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {!isError && (
-          <div className="border border-[#e5e5e5] rounded-xl p-4 bg-[#fafafa] max-w-md mx-auto text-left space-y-2 text-xs">
-            <p className="font-bold text-[#171717]">{onboardingName || onboardingUrl}</p>
-            <p className="text-[#737373] truncate">{onboardingUrl}</p>
-            <p className="text-[#737373] border-t border-[#e5e5e5] pt-2 mt-2 leading-relaxed">
+          <div className="border border-white/[0.08] rounded-xl p-4 bg-white/[0.02] max-w-md mx-auto text-left space-y-2 text-xs">
+            <p className="font-bold text-white">{onboardingName || onboardingUrl}</p>
+            <p className="text-zinc-400 truncate">{onboardingUrl}</p>
+            <p className="text-zinc-500 border-t border-white/[0.06] pt-2 mt-2 leading-relaxed">
               We will automatically check this competitor every Monday and email you changes.
             </p>
           </div>
@@ -414,13 +414,13 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               setOnboardingG2Url('');
               setOnboardingStep(0);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 bg-[#f5f5f5] text-neutral-800 border border-[#e5e5e5] hover:bg-neutral-100 text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 bg-white/[0.02] text-zinc-300 border border-white/10 hover:bg-white/[0.05] text-sm font-semibold rounded-lg transition-colors cursor-pointer"
           >
             Add another competitor
           </button>
           <button
             onClick={() => setOnboardingStep(3)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-[#2563eb] text-white hover:bg-blue-600 text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 text-sm font-semibold rounded-lg transition-colors cursor-pointer"
           >
             Go to Dashboard
           </button>
@@ -428,70 +428,68 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       </div>
     );
   }
-
-  // ── NORMAL DASHBOARD RENDER ──────────────────────────────────────────────
   return (
     <div className="space-y-6">
       {/* A) HEADER ROW */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Competitors Tracked */}
-        <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 shadow-sm">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-[#737373] tracking-wide uppercase">Competitors Tracked</span>
-            <Buildings size={20} className="text-[#737373]" />
+            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Competitors Tracked</span>
+            <Buildings size={20} className="text-zinc-500" />
           </div>
-          <div className="text-2xl font-bold text-[#171717]">{dashboardData.competitor_count}</div>
-          <p className="text-xs text-[#737373] mt-1">Active targets</p>
+          <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.competitor_count}</div>
+          <p className="text-xs text-zinc-500 mt-1">Active targets</p>
         </div>
 
         {/* Changes This Week */}
-        <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 shadow-sm">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-[#737373] tracking-wide uppercase">Changes This Week</span>
-            <Lightning size={20} className="text-[#2563eb]" />
+            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Changes This Week</span>
+            <Lightning size={20} className="text-purple-400" />
           </div>
-          <div className="text-2xl font-bold text-[#171717]">{dashboardData.changes_this_week || 0}</div>
-          <p className="text-xs text-[#737373] mt-1">Past 7 days</p>
+          <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.changes_this_week || 0}</div>
+          <p className="text-xs text-zinc-500 mt-1">Past 7 days</p>
         </div>
 
         {/* Alerts Pending */}
-        <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 shadow-sm">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-[#737373] tracking-wide uppercase">Alerts Pending</span>
-            <CheckSquare size={20} className="text-[#d97706]" />
+            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Alerts Pending</span>
+            <CheckSquare size={20} className="text-amber-500" />
           </div>
-          <div className="text-2xl font-bold text-[#171717]">{dashboardData.pending_count}</div>
-          <p className="text-xs text-[#737373] mt-1">Requires review</p>
+          <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.pending_count}</div>
+          <p className="text-xs text-zinc-500 mt-1">Requires review</p>
         </div>
 
         {/* Avg Review Score */}
-        <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 shadow-sm">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-[#737373] tracking-wide uppercase">Avg Review Score</span>
-            <Star size={20} className="text-[#d97706]" weight="fill" />
+            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Avg Review Score</span>
+            <Star size={20} className="text-amber-500" weight="fill" />
           </div>
-          <div className="text-2xl font-bold text-[#171717]">
+          <div className="text-2xl font-bold text-white tracking-tight">
             {dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '--'}
           </div>
-          <p className="text-xs text-[#737373] mt-1">Across integrations</p>
+          <p className="text-xs text-zinc-500 mt-1">Across integrations</p>
         </div>
       </div>
 
       {/* B) ACTIVITY CHART (28-day bar chart) */}
-      <div className="bg-white rounded-xl border border-[#e5e5e5] p-5 shadow-sm">
+      <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-sm font-bold text-[#171717]">Daily Activity (28 Days)</h2>
-            <p className="text-xs text-[#737373]">Scans and detected changes</p>
+            <h2 className="text-sm font-bold text-white">Daily Activity (28 Days)</h2>
+            <p className="text-xs text-zinc-400">Scans and detected changes</p>
           </div>
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-4 text-xs font-medium">
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[#e5e5e5] rounded-sm"></div>
-              <span className="text-[#737373]">Quiet scan</span>
+              <div className="w-2.5 h-2.5 bg-white/5 rounded-sm"></div>
+              <span className="text-zinc-500">Quiet scan</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[#2563eb] rounded-sm"></div>
-              <span className="text-[#171717]">Changes detected</span>
+              <div className="w-2.5 h-2.5 bg-purple-500 rounded-sm shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+              <span className="text-zinc-300">Changes detected</span>
             </div>
           </div>
         </div>
@@ -505,9 +503,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     const parts = val.split('-');
                     return `${parts[1]}/${parts[2]}`;
                   }}
-                  tick={{ fill: '#737373', fontSize: 10 }}
-                  axisLine={{ stroke: '#e5e5e5' }}
-                  tickLine={{ stroke: '#e5e5e5' }}
+                  tick={{ fill: '#71717a', fontSize: 10 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                  tickLine={{ stroke: 'rgba(255,255,255,0.06)' }}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
@@ -516,15 +514,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       const dateObj = new Date(data.date);
                       const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                       return (
-                        <div className="bg-[#171717] text-white text-xs px-3 py-2 rounded-lg shadow-md border border-neutral-800 font-sans">
-                          <p className="font-semibold">{formattedDate}</p>
-                          <p className="text-neutral-400 mt-0.5">{data.change_count} changes detected</p>
+                        <div className="bg-[#130f2c]/90 border border-white/[0.08] backdrop-blur-md text-white text-xs px-3 py-2 rounded-xl shadow-2xl font-sans">
+                          <p className="font-semibold text-zinc-200">{formattedDate}</p>
+                          <p className="text-purple-400 font-medium mt-0.5">{data.change_count} changes detected</p>
                         </div>
                       );
                     }
                     return null;
                   }}
-                  cursor={{ fill: '#fafafa' }}
+                  cursor={{ fill: 'rgba(255,255,255,0.02)' }}
                 />
                 <Bar dataKey="change_count" radius={[3, 3, 0, 0]}>
                   {activityDays.map((entry, idx) => {
@@ -534,7 +532,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     return (
                       <Cell 
                         key={idx} 
-                        fill={hasChanges ? (isToday ? '#2563eb' : '#3b82f6') : '#e5e5e5'} 
+                        fill={hasChanges ? (isToday ? '#a855f7' : '#8b5cf6') : 'rgba(255,255,255,0.06)'} 
                       />
                     );
                   })}
@@ -542,8 +540,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full flex items-center justify-center text-xs text-[#737373]">
-              <Spinner size={20} className="animate-spin text-[#2563eb]" />
+            <div className="h-full flex items-center justify-center text-xs text-zinc-500">
+              <Spinner size={20} className="animate-spin text-purple-500" />
             </div>
           )}
         </div>
@@ -551,44 +549,44 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* C) INTEL FEED */}
-        <div id="feed" className="lg:col-span-2 bg-white rounded-xl border border-[#e5e5e5] shadow-sm flex flex-col">
-          <div className="px-5 py-4 border-b border-[#e5e5e5]">
-            <h2 className="text-sm font-bold text-[#171717]">Intel Feed</h2>
-            <p className="text-xs text-[#737373]">Chronological timeline of competitor events</p>
+        <div id="feed" className="lg:col-span-2 bg-[#0b0819]/45 border border-white/[0.06] shadow-lg rounded-2xl flex flex-col backdrop-blur-md">
+          <div className="px-5 py-4 border-b border-white/[0.06]">
+            <h2 className="text-sm font-bold text-white">Intel Feed</h2>
+            <p className="text-xs text-zinc-400">Chronological timeline of competitor events</p>
           </div>
 
-          <div className="divide-y divide-[#e5e5e5] flex-1">
+          <div className="divide-y divide-white/[0.04] flex-1">
             {feedEvents.length === 0 ? (
-              <div className="p-8 text-center text-sm text-[#737373]">
+              <div className="p-8 text-center text-sm text-zinc-500">
                 No change events recorded yet. Run a scan to see data.
               </div>
             ) : (
               feedEvents.map((event) => {
                 const isExpanded = expandedEventId === event.id;
                 const changeTypeStyles: Record<string, string> = {
-                  pricing_change: 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]',
-                  new_feature: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
-                  positioning_shift: 'bg-[#faf5ff] text-[#8b5cf6] border-[#e9d5ff]',
-                  review_trend: 'bg-[#fffbeb] text-[#d97706] border-[#fef3c7]',
-                  minor_copy: 'bg-[#fafafa] text-[#737373] border-[#e5e5e5]',
+                  pricing_change: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                  new_feature: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+                  positioning_shift: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+                  review_trend: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                  minor_copy: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
                 };
                 
                 const typeStyle = changeTypeStyles[event.change_type] || changeTypeStyles.minor_copy;
                 const hostname = event.competitor_url.split('://')[-1].split('/')[0].replace('www.', '');
 
                 return (
-                  <div key={event.id} className="p-5 hover:bg-[#fafafa] transition-colors">
+                  <div key={event.id} className="p-5 hover:bg-white/[0.02] transition-colors duration-200">
                     <div className="flex items-start gap-4">
                       {/* Favicon */}
                       <img 
                         src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`} 
                         alt="" 
-                        className="w-8 h-8 rounded-md bg-white border border-[#e5e5e5] p-1 flex-shrink-0"
+                        className="w-8 h-8 rounded-md bg-[#130f2c] border border-white/[0.08] p-1 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
-                          <span className="text-sm font-bold text-[#171717]">{event.competitor_name || hostname}</span>
-                          <span className="text-xs text-[#737373] whitespace-nowrap">{formatTimeAgo(event.detected_at)}</span>
+                          <span className="text-sm font-bold text-white">{event.competitor_name || hostname}</span>
+                          <span className="text-xs text-zinc-500 whitespace-nowrap">{formatTimeAgo(event.detected_at)}</span>
                         </div>
                         
                         <div className="flex items-center gap-2 mb-2">
@@ -599,7 +597,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
                         <p 
                           onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                          className={`text-sm text-[#171717] leading-relaxed cursor-pointer hover:text-[#2563eb] transition-colors ${
+                          className={`text-sm text-zinc-300 leading-relaxed cursor-pointer hover:text-purple-400 transition-colors ${
                             isExpanded ? '' : 'line-clamp-2'
                           }`}
                         >
@@ -609,14 +607,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <div className="flex items-center gap-4 mt-3">
                           <Link 
                             href={`/competitors/${event.competitor_id}`}
-                            className="text-xs font-semibold text-[#2563eb] hover:text-[#1d4ed8] inline-flex items-center gap-1"
+                            className="text-xs font-semibold text-purple-400 hover:text-purple-300 inline-flex items-center gap-1 hover:underline"
                           >
                             View Battle Card <ArrowRight size={12} />
                           </Link>
                           {event.brief_text && event.brief_text.length > 120 && (
                             <button 
                               onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                              className="text-xs text-[#737373] hover:text-[#171717] inline-flex items-center gap-0.5"
+                              className="text-xs text-zinc-500 hover:text-zinc-300 inline-flex items-center gap-0.5"
                             >
                               {isExpanded ? <>Collapse <CaretUp size={12} /></> : <>Expand <CaretDown size={12} /></>}
                             </button>
@@ -631,15 +629,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </div>
 
           {hasMoreFeed && (
-            <div className="p-4 border-t border-[#e5e5e5] text-center">
+            <div className="p-4 border-t border-white/[0.06] text-center">
               <button
                 onClick={loadMoreFeed}
                 disabled={loadingFeed}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-[#e5e5e5] hover:bg-[#fafafa] active:bg-[#f0f0f0] text-sm font-semibold rounded-lg text-[#171717] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/[0.04] active:bg-white/[0.08] text-sm font-semibold rounded-lg text-white transition-colors cursor-pointer bg-white/[0.01]"
               >
                 {loadingFeed ? (
                   <>
-                    <Spinner size={16} className="animate-spin text-[#2563eb]" />
+                    <Spinner size={16} className="animate-spin text-purple-400" />
                     Loading...
                   </>
                 ) : (
@@ -651,33 +649,33 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {/* D) COMPETITOR HEALTH TABLE */}
-        <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm flex flex-col">
-          <div className="px-5 py-4 border-b border-[#e5e5e5]">
-            <h2 className="text-sm font-bold text-[#171717]">Tracked Competitors</h2>
-            <p className="text-xs text-[#737373]">Landscape health and review averages</p>
+        <div className="bg-[#0b0819]/45 border border-white/[0.06] shadow-lg rounded-2xl flex flex-col backdrop-blur-md">
+          <div className="px-5 py-4 border-b border-white/[0.06]">
+            <h2 className="text-sm font-bold text-white">Tracked Competitors</h2>
+            <p className="text-xs text-zinc-400">Landscape health and review averages</p>
           </div>
 
-          <div className="divide-y divide-[#e5e5e5] flex-1 overflow-x-auto">
+          <div className="divide-y divide-white/[0.04] flex-1 overflow-x-auto">
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
                 const statusStyles = {
-                  Active: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
-                  'No changes': 'bg-[#fafafa] text-[#737373] border-[#e5e5e5]',
-                  Error: 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]',
+                  Active: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+                  'No changes': 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+                  Error: 'bg-red-500/10 text-red-400 border-red-500/20',
                 };
                 
                 const statusStyle = statusStyles[comp.status] || statusStyles['No changes'];
 
                 return (
-                  <div key={comp.id} className="p-5 hover:bg-[#fafafa] transition-colors space-y-3">
+                  <div key={comp.id} className="p-5 hover:bg-white/[0.02] transition-colors duration-200 space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-[#171717] truncate">{comp.name}</h3>
+                        <h3 className="text-sm font-bold text-white truncate">{comp.name}</h3>
                         <a 
                           href={comp.url} 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="text-xs text-[#737373] hover:underline truncate block"
+                          className="text-xs text-zinc-400 hover:underline truncate block"
                         >
                           {comp.url}
                         </a>
@@ -689,15 +687,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
                     <div className="grid grid-cols-2 gap-4 text-xs py-1">
                       <div>
-                        <span className="text-[#737373] block mb-0.5">Last Scanned</span>
-                        <span className="font-semibold text-[#171717]">{formatTimeAgo(comp.last_scanned)}</span>
+                        <span className="text-zinc-500 block mb-0.5">Last Scanned</span>
+                        <span className="font-semibold text-zinc-300">{formatTimeAgo(comp.last_scanned)}</span>
                       </div>
                       <div>
-                        <span className="text-[#737373] block mb-0.5">Reviews Avg</span>
-                        <span className="font-semibold text-[#171717] inline-flex items-center gap-1">
+                        <span className="text-zinc-500 block mb-0.5">Reviews Avg</span>
+                        <span className="font-semibold text-zinc-300 inline-flex items-center gap-1">
                           {comp.avg_rating !== null ? (
                             <>
-                              <Star size={12} weight="fill" className="text-[#d97706]" />
+                              <Star size={12} weight="fill" className="text-amber-500" />
                               {comp.avg_rating.toFixed(1)}
                             </>
                           ) : (
@@ -707,27 +705,27 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-[#e5e5e5]/50 pt-3">
+                    <div className="flex items-center justify-between border-t border-white/[0.04] pt-3">
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] text-[#737373] uppercase tracking-wider font-semibold">4-Week Activity</span>
+                        <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">4-Week Activity</span>
                         <div className="h-6 flex items-center">{renderSparkline(comp.trend)}</div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => scanNow(comp.id)}
                           disabled={!!scanningCompId}
-                          className="inline-flex items-center justify-center p-1.5 border border-[#e5e5e5] hover:bg-neutral-100 text-[#171717] rounded-lg cursor-pointer transition-colors"
+                          className="inline-flex items-center justify-center p-1.5 border border-white/10 hover:bg-white/[0.05] text-zinc-300 rounded-lg cursor-pointer transition-colors bg-white/[0.01]"
                           title="Scan now"
                         >
                           {scanningCompId === comp.id ? (
-                            <Spinner size={14} className="animate-spin text-[#2563eb]" />
+                            <Spinner size={14} className="animate-spin text-purple-400" />
                           ) : (
                             <ArrowsClockwise size={14} />
                           )}
                         </button>
                         <Link 
                           href={`/competitors/${comp.id}`}
-                          className="text-xs font-semibold text-[#2563eb] hover:text-[#1d4ed8] hover:underline"
+                          className="text-xs font-semibold text-purple-400 hover:text-purple-300 hover:underline"
                         >
                           Details
                         </Link>
@@ -737,7 +735,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 );
               })
             ) : (
-              <div className="p-8 text-center text-sm text-[#737373]">
+              <div className="p-8 text-center text-sm text-zinc-500">
                 No competitors tracked.
               </div>
             )}

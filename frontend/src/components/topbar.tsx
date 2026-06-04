@@ -18,11 +18,11 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
   return (
     <header className="flex items-start justify-between mb-8">
       <div>
-        <h1 className="text-[22px] font-semibold text-[#0a0a0a] tracking-tight leading-none">
+        <h1 className="text-[22px] font-semibold text-white tracking-tight leading-none">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-sm text-[#737373] mt-1.5 font-normal">{subtitle}</p>
+          <p className="text-sm text-zinc-400 mt-1.5 font-normal">{subtitle}</p>
         )}
       </div>
       <div className="flex items-center gap-6 pt-0.5">
@@ -36,15 +36,15 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span className="text-xs font-medium text-[#525252]">Monitoring active</span>
+          <span className="text-xs font-medium text-zinc-300">Monitoring active</span>
         </div>
-        <div className="h-4 w-px bg-[#e5e5e5]"></div>
+        <div className="h-4 w-px bg-white/10"></div>
         {lastScan ? (
-          <time className="text-xs text-[#a3a3a3] font-mono" dateTime={lastScan}>
+          <time className="text-xs text-zinc-500 font-mono" dateTime={lastScan}>
             Last scan: {getRelativeTime(lastScan)}
           </time>
         ) : (
-          <span className="text-xs text-[#a3a3a3] font-mono">No scans yet</span>
+          <span className="text-xs text-zinc-500 font-mono">No scans yet</span>
         )}
       </div>
     </header>
