@@ -13,7 +13,7 @@ export default function OnboardingModal() {
   useEffect(() => {
     const stored = localStorage.getItem('business_type');
     if (!stored) {
-      setVisible(true);
+      setTimeout(() => setVisible(true), 0);
     }
   }, []);
 
