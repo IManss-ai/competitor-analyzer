@@ -86,3 +86,17 @@ def verify_session_token(token: str) -> dict | None:
         return _session_serializer.loads(token, max_age=300)  # 5 minutes
     except Exception:
         return None
+
+
+def hash_password(password: str) -> str:
+    """Hash password using SHA-256 with a static salt for dependency-free security."""
+    salt = "competitor-analyzer-salt-2026-salt"
+    return hashlib.sha256((password + salt).encode()).hexdigest()
+
+
+def check_password(password: str, hashed: str | None) -> bool:
+    """Verify if password matches the hashed version."""
+    if not hashed:
+        return False
+    return hash_password(password) == hashed
+

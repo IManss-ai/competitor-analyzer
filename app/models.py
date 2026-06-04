@@ -6,6 +6,7 @@ class User(Base):
     __tablename__ = "users"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     email = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=True)
     polar_customer_id = Column("stripe_customer_id", String, nullable=True)
     polar_subscription_id = Column("stripe_subscription_id", String, nullable=True)
     subscription_status = Column(String, default="trialing")  # trialing/active/canceled/past_due

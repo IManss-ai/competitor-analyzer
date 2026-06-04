@@ -29,6 +29,7 @@ def _run_migrations():
             command.stamp(cfg, "head")
         command.upgrade(cfg, "head")
         print("[startup] Alembic migrations applied")
+        _apply_column_guards()
     except Exception as e:
         print(f"[startup] Alembic failed ({e}), applying manual column guards")
         _apply_column_guards()
@@ -36,6 +37,7 @@ def _run_migrations():
 def _apply_column_guards():
     """Idempotent ALTER TABLE statements for columns alembic can't add."""
     stmts = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS google_maps_url VARCHAR",

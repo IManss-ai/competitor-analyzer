@@ -42,6 +42,47 @@ async def api_login(payload: dict, db: Session = Depends(get_session)):
     return {"ok": True}
 
 
+@router.post("/auth/direct-login")
+async def api_direct_login(payload: dict, db: Session = Depends(get_session)):
+    email = payload.get("email", "").strip().lower()
+    password = payload.get("password", "")
+    
+    if not email or not password:
+        raise HTTPException(status_code=422, detail="Email and password required")
+        
+    from app.auth import hash_password, check_password
+    user = db.query(User).filter(User.email == email).first()
+    
+    if not user:
+        # Automatically create user (Instant Sign Up)
+        user = User(email=email, password_hash=hash_password(password))
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        if user.password_hash is None:
+            # Connect password for user who initially logged in via magic link
+            user.password_hash = hash_password(password)
+            db.commit()
+        elif not check_password(password, user.password_hash):
+            raise HTTPException(status_code=401, detail="Invalid password for this email address.")
+            
+    session_token = generate_session_token(str(user.id), user.email)
+    return {"ok": True, "session_token": session_token}
+
+
+@router.post("/auth/google-login")
+async def api_google_login(payload: dict, db: Session = Depends(get_session)):
+    email = payload.get("email", "").strip().lower()
+    if not email:
+        raise HTTPException(status_code=422, detail="Google email is required")
+        
+    user = get_or_create_user(email, db)
+    session_token = generate_session_token(str(user.id), user.email)
+    return {"ok": True, "session_token": session_token}
+
+
+
 @router.post("/auth/exchange")
 def api_exchange(payload: dict):
     session_token = payload.get("session_token", "")
