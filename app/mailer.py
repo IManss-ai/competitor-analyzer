@@ -11,28 +11,28 @@ async def send_weekly_brief(
 ) -> bool:
     if not change_summaries:
         subject = "Your Battle Card is ready — 0 competitor moves this week"
+        text_body = "No changes detected this week — your competitors stayed quiet.\n\n"
     else:
-        subject = f"Your Battle Card is ready — {len(change_summaries)} competitor move{'s' if len(change_summaries) != 1 else ''} this week"
+        subject = f"Your Battle Card is ready — {len(change_summaries)} competitor moves this week"
+        
+        grouped = {}
+        for s in change_summaries:
+            name = s.get("competitor_name") or s.get("url", "Unknown")
+            grouped.setdefault(name, []).append(s)
+            
+        lines = []
+        for name, changes in grouped.items():
+            lines.append(f"## {name} ({len(changes)} changes)")
+            for c in changes:
+                c_type = c.get("change_type", "").replace("_", " ").title()
+                brief = c.get("brief_text") or "Updated site — no significant text change detected."
+                lines.append(f"- [{c_type}] {brief}")
+            lines.append("")
+        
+        lines.append(f"View Full Battle Card: {APP_BASE_URL}/dashboard")
+        text_body = "\n".join(lines)
 
-    lines = ["Your Battle Card — Week of Monday\n"]
-    for s in change_summaries:
-        name = s.get("competitor_name") or s.get("url", "Unknown")
-        change_type = s.get("change_type", "").replace("_", " ").title()
-        brief = s.get("brief_text") or "Updated site — no significant text change detected."
-        lines.append(f"## {name}")
-        lines.append(f"Change: {change_type}")
-        lines.append(brief)
-        lines.append("")
-
-    if pending_action_count > 0:
-        lines.append("---")
-        lines.append(f"You have {pending_action_count} action draft{'s' if pending_action_count != 1 else ''} waiting for approval.")
-        lines.append(f"Review them: {APP_BASE_URL}/queue")
-    else:
-        lines.append("No new action drafts this week.")
-
-    lines.append(f"\n---\nManage your competitors: {APP_BASE_URL}/competitors")
-    text_body = "\n".join(lines)
+    text_body += f"\n\n---\nYou're receiving this because you track competitors on Competitor Analyzer. Manage your settings at {APP_BASE_URL}/settings"
 
     import os
     from jinja2 import Environment, FileSystemLoader
