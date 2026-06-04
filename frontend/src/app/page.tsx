@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   Crosshair, ArrowRight, CheckCircle, Sparkle,
   Eye, MagnifyingGlass, Lightning,
+  Star, InstagramLogo, Cards,
 } from '@phosphor-icons/react';
 import DisplayCards from '@/components/ui/display-cards';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
@@ -194,7 +195,7 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div {...fadeUp(0.35)} className="text-sm text-white/50 mb-8 font-medium">
-              Trusted by founders tracking 200+ competitors
+              Trusted by founders and local business owners tracking 200+ competitors
             </motion.div>
 
             <motion.div {...fadeUp(0.4)} className="flex items-center gap-4 text-xs text-white/25 font-mono">
@@ -547,6 +548,52 @@ export default function LandingPage() {
             </div>
           </div>
         </ContainerScroll>
+      </section>
+
+      {/* BUILT FOR LOCAL BUSINESSES */}
+      <section className="relative z-10 py-24 px-6 lg:px-10 border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto">
+          <motion.div {...reveal()} className="text-center mb-14">
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-[1.0] mb-4">
+              Built for local businesses <span className="text-emerald-400">too.</span>
+            </h2>
+            <p className="text-white/45 max-w-md mx-auto text-base leading-relaxed">
+              Not just SaaS. Track the salon next door, the gym down the street, or the café across town.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {[
+              {
+                icon: <Star size={22} weight="fill" />,
+                title: 'Google Reviews',
+                body: 'Track your competitor\u2019s Google rating changes and new reviews weekly',
+              },
+              {
+                icon: <InstagramLogo size={22} weight="fill" />,
+                title: 'Social Activity',
+                body: 'Monitor their Instagram and Facebook posts without an account',
+              },
+              {
+                icon: <Cards size={22} weight="fill" />,
+                title: 'Local Battle Cards',
+                body: 'AI-generated action plan: steal their customers, fix your gaps',
+              },
+            ].map((card, i) => (
+              <motion.div
+                key={card.title}
+                {...reveal(i * 0.1)}
+                className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-6 hover:bg-white/[0.06] hover:border-white/[0.14] transition-all group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5 group-hover:bg-emerald-500/20 transition-all">
+                  {card.icon}
+                </div>
+                <h3 className="text-base font-semibold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-white/45 leading-relaxed">{card.body}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* PRICING */}
