@@ -198,9 +198,14 @@ export default function CompetitorManager({
             <p className="text-lg font-semibold text-[#0a0a0a] mb-2 tracking-tight">
               No competitors yet
             </p>
-            <p className="text-sm text-[#525252] max-w-sm mx-auto mb-6">
+            <p className="text-sm text-[#525252] max-w-sm mx-auto mb-4">
               Add a competitor URL to start tracking their pricing, features, and messaging changes.
             </p>
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-xs text-[#a3a3a3]">Examples:</span>
+              <button onClick={() => { setShowAdd(true); setUrl('https://stripe.com'); }} className="text-xs text-[#737373] hover:text-[#0a0a0a] bg-zinc-100 hover:bg-zinc-200 px-2 py-1 rounded transition-colors cursor-pointer">stripe.com</button>
+              <button onClick={() => { setShowAdd(true); setUrl('https://linear.app'); }} className="text-xs text-[#737373] hover:text-[#0a0a0a] bg-zinc-100 hover:bg-zinc-200 px-2 py-1 rounded transition-colors cursor-pointer">linear.app</button>
+            </div>
             <button
               onClick={() => setShowAdd(true)}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all cursor-pointer"

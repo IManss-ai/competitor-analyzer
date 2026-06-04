@@ -11,6 +11,7 @@ import MiniActivityChart from '@/components/mini-activity-chart';
 import Link from 'next/link';
 import { Plus, CheckSquare, TrendUp, ArrowRight, Clock, Lightning } from '@phosphor-icons/react/dist/ssr';
 import ReviewIntelligence from '@/components/review-intelligence';
+import ScanNowButton from '@/components/scan-now-button';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -50,6 +51,7 @@ export default async function DashboardPage() {
         title="Dashboard"
         subtitle="Your competitive intelligence overview"
         lastScan={data.last_scan}
+        actions={<ScanNowButton userId={session.user!.user_id} />}
       />
 
       {/* Stats */}
@@ -126,27 +128,39 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {data.events.length === 0 ? (
-          <div className="px-6 py-20 text-center">
-            {/* Rich empty state illustration */}
+        {data.competitor_count === 0 && data.events.length === 0 ? (
+          <div className="px-6 py-16">
+            <div className="border-2 border-dashed border-[#e5e5e5] rounded-xl p-8 flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 bg-[#f5f5f5] rounded-full flex items-center justify-center mb-4">
+                <Plus size={24} className="text-[#a3a3a3]" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#0a0a0a] mb-2 tracking-tight">Add your first competitor to start tracking</h3>
+              <p className="text-sm text-[#525252] max-w-sm mx-auto mb-6 leading-relaxed">
+                Add your first competitor to start tracking their pricing, features, and positioning.
+              </p>
+              <Link 
+                href="/competitors" 
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all"
+              >
+                Add your first competitor
+              </Link>
+            </div>
+          </div>
+        ) : data.competitor_count > 0 && data.events.length === 0 ? (
+          <div className="px-6 py-20 text-center flex flex-col items-center">
             <div className="relative w-32 h-32 mx-auto mb-6">
               <div className="absolute inset-0 border-4 border-zinc-100 rounded-full animate-pulse"></div>
               <div className="absolute inset-4 border-2 border-zinc-100 rounded-full"></div>
               <div className="absolute inset-8 border border-zinc-100 rounded-full"></div>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-zinc-200 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)]"></div>
-              <div className="absolute top-1/2 left-1/2 w-[50%] h-[1px] bg-gradient-to-r from-zinc-200 to-transparent origin-left rotate-[45deg]"></div>
+              <div className="absolute top-1/2 left-1/2 w-[50%] h-[1px] bg-gradient-to-r from-zinc-200 to-transparent origin-left rotate-[45deg] animate-[spin_4s_linear_infinite]"></div>
             </div>
             
-            <h3 className="text-lg font-semibold text-[#0a0a0a] mb-2 tracking-tight">Your intelligence feed is empty</h3>
+            <h3 className="text-lg font-semibold text-[#0a0a0a] mb-2 tracking-tight">Monitoring active</h3>
             <p className="text-sm text-[#525252] max-w-sm mx-auto mb-6 leading-relaxed">
-              We need something to monitor. Add your top competitors to begin tracking their pricing, features, and positioning.
+              Your scan runs every Monday at 8am UTC. Click 'Scan Now' to see results immediately.
             </p>
-            <Link 
-              href="/competitors" 
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all"
-            >
-              Add your first competitor
-            </Link>
+            <ScanNowButton userId={session.user!.user_id} />
           </div>
         ) : (
           <div className="divide-y divide-[#f5f5f5]">

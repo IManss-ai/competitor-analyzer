@@ -3,6 +3,7 @@ interface TopbarProps {
   title: string;
   subtitle?: string;
   lastScan?: string | null;
+  actions?: React.ReactNode;
 }
 
 function getRelativeTime(dateString: string) {
@@ -13,7 +14,7 @@ function getRelativeTime(dateString: string) {
   return `${days} days ago`;
 }
 
-export default function Topbar({ title, subtitle, lastScan }: TopbarProps) {
+export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {
   return (
     <header className="flex items-start justify-between mb-8">
       <div>
@@ -25,6 +26,11 @@ export default function Topbar({ title, subtitle, lastScan }: TopbarProps) {
         )}
       </div>
       <div className="flex items-center gap-6 pt-0.5">
+        {actions && (
+          <div className="flex items-center">
+            {actions}
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
