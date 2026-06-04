@@ -68,6 +68,8 @@ async def billing_portal(
 
 @router.post("/webhook")
 async def billing_webhook(request: Request, db: Session = Depends(get_session)):
+    if not POLAR_WEBHOOK_SECRET:
+        raise HTTPException(status_code=503, detail="Webhook not configured")
     body = await request.body()
     try:
         event = validate_event(

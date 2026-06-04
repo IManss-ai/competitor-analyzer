@@ -35,6 +35,9 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
                 
         app.dependency_overrides[get_session] = override_get_session
         self.client = TestClient(app, raise_server_exceptions=False)
+        # Ensure webhook secret guard doesn't block tests
+        self._webhook_secret_patch = patch("app.routes.billing.POLAR_WEBHOOK_SECRET", "test-secret")
+        self._webhook_secret_patch.start()
         
         # Database records
         self.db = self.SessionLocal()
@@ -49,6 +52,7 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
         self.db.close()
         Base.metadata.drop_all(self.engine)
         app.dependency_overrides.clear()
+        self._webhook_secret_patch.stop()
 
     @patch("app.billing._get_polar")
     async def test_create_checkout_session(self, mock_get_polar):
