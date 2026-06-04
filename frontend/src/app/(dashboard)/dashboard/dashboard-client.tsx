@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Buildings, 
   Lightning, 
@@ -39,6 +39,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const [loadingFeed, setLoadingFeed] = useState(false);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
   const [scanningCompId, setScanningCompId] = useState<string | null>(null);
+  const [scanDoneCompId, setScanDoneCompId] = useState<string | null>(null);
 
   // Onboarding states (Phase 5)
   const [onboardingStep, setOnboardingStep] = useState<number>(() => {
@@ -191,13 +192,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}` 
+          Authorization: `Bearer ${userId}`
         }
       });
       if (res.ok) {
-        alert("Scan started! The analysis will complete in the background.");
+        setScanDoneCompId(competitorId);
+        setTimeout(() => setScanDoneCompId(null), 3000);
       }
     } catch (e) {
       console.error(e);
@@ -222,7 +224,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <svg width={width} height={height} className="overflow-visible">
         <polyline
           fill="none"
-          stroke="#a855f7"
+          stroke="#38bdf8"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -257,10 +259,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 bg-[#0e0a22]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 bg-[#080e1c]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
         >
           <div className="text-center mb-6">
-            <div className="w-12 h-12 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(139,92,246,0.15)]">
+            <div className="w-12 h-12 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
               <Compass size={24} weight="duotone" />
             </div>
             <h2 className="text-lg font-bold text-white tracking-tight">Welcome! Let's add your first competitor.</h2>
@@ -276,7 +278,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder="e.g. competitor.com"
                 value={onboardingUrl}
                 onChange={(e) => setOnboardingUrl(e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
               />
             </div>
 
@@ -287,7 +289,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder="e.g. Rival Inc"
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
               />
             </div>
 
@@ -298,7 +300,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder="e.g. g2.com/products/competitor/reviews"
                 value={onboardingG2Url}
                 onChange={(e) => setOnboardingG2Url(e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
               />
             </div>
 
@@ -309,7 +311,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <button
               type="submit"
               disabled={submittingOnboarding}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+              className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               {submittingOnboarding ? (
                 <>
@@ -348,9 +350,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     return (
       <div className="bg-[#0c0919]/60 backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12">
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-          <div className="absolute inset-0 border-4 border-purple-500/10 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-t-purple-500 rounded-full animate-spin"></div>
-          <Buildings size={36} className="text-purple-400" />
+          <div className="absolute inset-0 border-4 border-sky-500/10 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin"></div>
+          <Buildings size={36} className="text-sky-400" />
         </div>
 
         <div className="space-y-2">
@@ -363,7 +365,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-white/[0.08] rounded-xl p-4 bg-white/[0.02]">
           <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">Live Status</span>
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <Spinner size={16} className="animate-spin text-purple-400" />
+            <Spinner size={16} className="animate-spin text-sky-400" />
             {statusMessages[onboardingStatus] || statusMessages.fetching}
           </div>
         </div>
@@ -420,7 +422,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </button>
           <button
             onClick={() => setOnboardingStep(3)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
           >
             Go to Dashboard
           </button>
@@ -433,7 +435,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       {/* A) HEADER ROW */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Competitors Tracked */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Competitors Tracked</span>
             <Buildings size={20} className="text-zinc-500" />
@@ -443,17 +445,17 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {/* Changes This Week */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Changes This Week</span>
-            <Lightning size={20} className="text-purple-400" />
+            <Lightning size={20} className="text-sky-400" />
           </div>
           <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.changes_this_week || 0}</div>
           <p className="text-xs text-zinc-500 mt-1">Past 7 days</p>
         </div>
 
         {/* Alerts Pending */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Alerts Pending</span>
             <CheckSquare size={20} className="text-amber-500" />
@@ -463,7 +465,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {/* Avg Review Score */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-purple-500/20 hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Avg Review Score</span>
             <Star size={20} className="text-amber-500" weight="fill" />
@@ -488,7 +490,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <span className="text-zinc-500">Quiet scan</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-purple-500 rounded-sm shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+              <div className="w-2.5 h-2.5 bg-sky-500 rounded-sm"></div>
               <span className="text-zinc-300">Changes detected</span>
             </div>
           </div>
@@ -516,7 +518,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       return (
                         <div className="bg-[#130f2c]/90 border border-white/[0.08] backdrop-blur-md text-white text-xs px-3 py-2 rounded-xl shadow-2xl font-sans">
                           <p className="font-semibold text-zinc-200">{formattedDate}</p>
-                          <p className="text-purple-400 font-medium mt-0.5">{data.change_count} changes detected</p>
+                          <p className="text-sky-400 font-medium mt-0.5">{data.change_count} changes detected</p>
                         </div>
                       );
                     }
@@ -532,7 +534,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     return (
                       <Cell 
                         key={idx} 
-                        fill={hasChanges ? (isToday ? '#a855f7' : '#8b5cf6') : 'rgba(255,255,255,0.06)'} 
+                        fill={hasChanges ? (isToday ? '#38bdf8' : '#0ea5e9') : 'rgba(255,255,255,0.06)'}
                       />
                     );
                   })}
@@ -541,7 +543,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             </ResponsiveContainer>
           ) : (
             <div className="h-full flex items-center justify-center text-xs text-zinc-500">
-              <Spinner size={20} className="animate-spin text-purple-500" />
+              <Spinner size={20} className="animate-spin text-sky-500" />
             </div>
           )}
         </div>
@@ -565,9 +567,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 const isExpanded = expandedEventId === event.id;
                 const changeTypeStyles: Record<string, string> = {
                   pricing_change: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-                  new_feature: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-                  positioning_shift: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-                  review_trend: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                  new_feature: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                  positioning_shift: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+                  review_trend: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
                   minor_copy: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
                 };
                 
@@ -597,7 +599,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
                         <p 
                           onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                          className={`text-sm text-zinc-300 leading-relaxed cursor-pointer hover:text-purple-400 transition-colors ${
+                          className={`text-sm text-zinc-300 leading-relaxed cursor-pointer hover:text-sky-400 transition-colors ${
                             isExpanded ? '' : 'line-clamp-2'
                           }`}
                         >
@@ -607,7 +609,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <div className="flex items-center gap-4 mt-3">
                           <Link 
                             href={`/competitors/${event.competitor_id}`}
-                            className="text-xs font-semibold text-purple-400 hover:text-purple-300 inline-flex items-center gap-1 hover:underline"
+                            className="text-xs font-semibold text-sky-400 hover:text-sky-300 inline-flex items-center gap-1 hover:underline"
                           >
                             View Battle Card <ArrowRight size={12} />
                           </Link>
@@ -637,7 +639,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               >
                 {loadingFeed ? (
                   <>
-                    <Spinner size={16} className="animate-spin text-purple-400" />
+                    <Spinner size={16} className="animate-spin text-sky-400" />
                     Loading...
                   </>
                 ) : (
@@ -659,7 +661,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
                 const statusStyles = {
-                  Active: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+                  Active: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
                   'No changes': 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
                   Error: 'bg-red-500/10 text-red-400 border-red-500/20',
                 };
@@ -718,14 +720,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           title="Scan now"
                         >
                           {scanningCompId === comp.id ? (
-                            <Spinner size={14} className="animate-spin text-purple-400" />
+                            <Spinner size={14} className="animate-spin text-sky-400" />
                           ) : (
                             <ArrowsClockwise size={14} />
                           )}
                         </button>
                         <Link 
                           href={`/competitors/${comp.id}`}
-                          className="text-xs font-semibold text-purple-400 hover:text-purple-300 hover:underline"
+                          className="text-xs font-semibold text-sky-400 hover:text-sky-300 hover:underline"
                         >
                           Details
                         </Link>
