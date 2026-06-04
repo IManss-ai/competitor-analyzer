@@ -35,7 +35,7 @@ cp .env.example .env
 Key variables:
 - `DATABASE_URL`: local sqlite connection (`sqlite:///./test.db`) or production postgres
 - `OPENAI_API_KEY`: API key for GPT-4o / GPT-4o-mini
-- `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` / `STRIPE_PRICE_ID`: Stripe variables
+- `POLAR_ACCESS_TOKEN` / `POLAR_WEBHOOK_SECRET` / `POLAR_SAAS_PRODUCT_ID` / `POLAR_LOCAL_PRODUCT_ID`: Polar.sh variables
 - `MAILGUN_API_KEY` / `MAILGUN_DOMAIN`: Mailgun configuration
 
 ## Architecture Notes
