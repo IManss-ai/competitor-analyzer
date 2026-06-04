@@ -6,7 +6,7 @@ psycopg2-binary>=2.9.9
 httpx==0.27.0
 python-dotenv==1.0.1
 openai==1.30.1
-stripe==9.4.0
+polar-sdk
 apscheduler==3.10.4
 itsdangerous==2.2.0
 jinja2==3.1.4

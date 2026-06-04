@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from datetime import datetime, timezone, timedelta
-import stripe
 
 from main import app
 from app.db import Base, get_session
@@ -51,130 +50,113 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
         Base.metadata.drop_all(self.engine)
         app.dependency_overrides.clear()
 
-    @patch("stripe.checkout.Session.create")
-    async def test_create_checkout_session(self, mock_create):
-        mock_sess = MagicMock()
-        mock_sess.url = "https://checkout.stripe.com/pay"
-        mock_create.return_value = mock_sess
+    @patch("app.billing._get_polar")
+    async def test_create_checkout_session(self, mock_get_polar):
+        mock_polar = MagicMock()
+        mock_checkout = MagicMock()
+        mock_checkout.url = "https://checkout.polar.sh/pay"
+        mock_polar.checkouts.create.return_value = mock_checkout
+        mock_get_polar.return_value.__enter__.return_value = mock_polar
 
-        url = await create_checkout_session("test@user.com", "user-id-123")
-        self.assertEqual(url, "https://checkout.stripe.com/pay")
-        mock_create.assert_called_once()
+        with patch("app.billing.POLAR_SAAS_PRODUCT_ID", "saas_prod_123"), \
+             patch("app.billing.POLAR_ACCESS_TOKEN", "access_tok_123"):
+            url = await create_checkout_session("test@user.com", "user-id-123")
+            self.assertEqual(url, "https://checkout.polar.sh/pay")
 
-    @patch("stripe.billing_portal.Session.create")
-    async def test_create_portal_session(self, mock_create):
-        mock_sess = MagicMock()
-        mock_sess.url = "https://billing.stripe.com/portal"
-        mock_create.return_value = mock_sess
+    @patch("app.billing._get_polar")
+    async def test_create_portal_session(self, mock_get_polar):
+        mock_polar = MagicMock()
+        mock_session = MagicMock()
+        mock_session.customer_portal_url = "https://billing.polar.sh/portal"
+        mock_polar.customer_sessions.create.return_value = mock_session
+        mock_get_polar.return_value.__enter__.return_value = mock_polar
 
         url = await create_portal_session("cust_123")
-        self.assertEqual(url, "https://billing.stripe.com/portal")
-        mock_create.assert_called_once()
+        self.assertEqual(url, "https://billing.polar.sh/portal")
 
-    @patch("stripe.Webhook.construct_event")
-    @patch("stripe.Subscription.retrieve")
-    def test_stripe_webhook_checkout_completed(self, mock_retrieve, mock_construct):
-        # Mock Stripe objects
-        mock_construct.return_value = {
-            "type": "checkout.session.completed",
-            "data": {
-                "object": {
-                    "customer": "cust_completed_123",
-                    "subscription": "sub_completed_456",
-                    "metadata": {"user_id": str(self.user.id)}
-                }
-            }
-        }
-        
-        mock_sub = MagicMock()
-        mock_sub.get.return_value = 1799999999 # Unix timestamp far in future
-        mock_retrieve.return_value = mock_sub
+    @patch("app.routes.billing.validate_event")
+    def test_polar_webhook_subscription_created(self, mock_validate):
+        mock_event = MagicMock()
+        mock_event.TYPE = "subscription.created"
+        mock_event.data.customer_id = "cust_completed_123"
+        mock_event.data.id = "sub_completed_456"
+        mock_event.data.metadata = {"user_id": str(self.user.id)}
+        mock_validate.return_value = mock_event
 
         response = self.client.post(
             "/billing/webhook",
-            headers={"stripe-signature": "valid-sig"}
+            headers={"webhook-signature": "valid-sig"}
         )
         self.assertEqual(response.status_code, 200)
         
-        # Assert database updated
         self.db.refresh(self.user)
-        self.assertEqual(self.user.stripe_customer_id, "cust_completed_123")
-        self.assertEqual(self.user.stripe_subscription_id, "sub_completed_456")
-        self.assertEqual(self.user.subscription_status, "trialing")
-        self.assertIsNotNone(self.user.trial_ends_at)
+        self.assertEqual(self.user.polar_customer_id, "cust_completed_123")
+        self.assertEqual(self.user.polar_subscription_id, "sub_completed_456")
+        self.assertEqual(self.user.subscription_status, "active")
 
-    @patch("stripe.Webhook.construct_event")
-    def test_stripe_webhook_subscription_updated(self, mock_construct):
-        # Setup subscription id on user
-        self.user.stripe_subscription_id = "sub_updated_123"
+    @patch("app.routes.billing.validate_event")
+    def test_polar_webhook_subscription_updated(self, mock_validate):
+        self.user.polar_subscription_id = "sub_updated_123"
         self.db.commit()
 
-        mock_construct.return_value = {
-            "type": "customer.subscription.updated",
-            "data": {
-                "object": {
-                    "id": "sub_updated_123",
-                    "status": "active",
-                    "trial_end": None
-                }
-            }
-        }
+        mock_event = MagicMock()
+        mock_event.TYPE = "subscription.updated"
+        mock_event.data.customer_id = "cust_completed_123"
+        mock_event.data.id = "sub_updated_123"
+        mock_event.data.status.value = "active"
+        mock_event.data.metadata = {"user_id": str(self.user.id)}
+        mock_validate.return_value = mock_event
 
         response = self.client.post(
             "/billing/webhook",
-            headers={"stripe-signature": "valid-sig"}
+            headers={"webhook-signature": "valid-sig"}
         )
         self.assertEqual(response.status_code, 200)
         
         self.db.refresh(self.user)
         self.assertEqual(self.user.subscription_status, "active")
-        self.assertIsNone(self.user.trial_ends_at)
 
-    @patch("stripe.Webhook.construct_event")
-    def test_stripe_webhook_subscription_deleted(self, mock_construct):
-        self.user.stripe_subscription_id = "sub_deleted_123"
+    @patch("app.routes.billing.validate_event")
+    def test_polar_webhook_subscription_canceled(self, mock_validate):
+        self.user.polar_subscription_id = "sub_deleted_123"
         self.db.commit()
 
-        mock_construct.return_value = {
-            "type": "customer.subscription.deleted",
-            "data": {
-                "object": {
-                    "id": "sub_deleted_123"
-                }
-            }
-        }
+        mock_event = MagicMock()
+        mock_event.TYPE = "subscription.canceled"
+        mock_event.data.customer_id = "cust_completed_123"
+        mock_event.data.id = "sub_deleted_123"
+        mock_event.data.metadata = {"user_id": str(self.user.id)}
+        mock_validate.return_value = mock_event
 
         response = self.client.post(
             "/billing/webhook",
-            headers={"stripe-signature": "valid-sig"}
+            headers={"webhook-signature": "valid-sig"}
         )
         self.assertEqual(response.status_code, 200)
         
         self.db.refresh(self.user)
         self.assertEqual(self.user.subscription_status, "canceled")
 
-    @patch("stripe.Webhook.construct_event")
-    def test_stripe_webhook_payment_failed(self, mock_construct):
-        self.user.stripe_subscription_id = "sub_failed_123"
+    @patch("app.routes.billing.validate_event")
+    def test_polar_webhook_subscription_revoked(self, mock_validate):
+        self.user.polar_subscription_id = "sub_failed_123"
         self.db.commit()
 
-        mock_construct.return_value = {
-            "type": "invoice.payment_failed",
-            "data": {
-                "object": {
-                    "subscription": "sub_failed_123"
-                }
-            }
-        }
+        mock_event = MagicMock()
+        mock_event.TYPE = "subscription.revoked"
+        mock_event.data.customer_id = "cust_completed_123"
+        mock_event.data.id = "sub_failed_123"
+        mock_event.data.metadata = {"user_id": str(self.user.id)}
+        mock_validate.return_value = mock_event
 
         response = self.client.post(
             "/billing/webhook",
-            headers={"stripe-signature": "valid-sig"}
+            headers={"webhook-signature": "valid-sig"}
         )
         self.assertEqual(response.status_code, 200)
         
         self.db.refresh(self.user)
-        self.assertEqual(self.user.subscription_status, "past_due")
+        self.assertEqual(self.user.subscription_status, "canceled")
 
     async def test_mailer_builder_and_fallback(self):
         # Simply checks that send_weekly_brief completes successfully with fallbacks

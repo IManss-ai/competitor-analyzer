@@ -1,27 +1,38 @@
-from fastapi import APIRouter, Request, Depends, Form, BackgroundTasks, Header, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, Header
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-import stripe
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 from app.db import get_session
 from app.models import User
 from app.session import require_current_user
 from app.billing import create_checkout_session, create_portal_session
-from app.config import STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
-from datetime import datetime, timezone, timedelta
+from app.config import POLAR_SAAS_PRODUCT_ID, POLAR_WEBHOOK_SECRET
+from polar_sdk.webhooks import validate_event, WebhookVerificationError, WebhookUnknownTypeError
 import uuid
 
 router = APIRouter(prefix="/billing")
 templates = Jinja2Templates(directory="templates")
 
-stripe.api_key = STRIPE_SECRET_KEY
-
 @router.get("/checkout")
-async def billing_checkout(request: Request, plan: str = "saas", db=Depends(get_session), user_id=Depends(require_current_user)):
+async def billing_checkout(
+    request: Request,
+    plan: str = "saas",
+    db: Session = Depends(get_session),
+    user_id=Depends(require_current_user)
+):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
     user = db.get(User, user_uuid)
     if not user:
         return RedirectResponse(url="/auth/login")
-        
+
+    if not POLAR_SAAS_PRODUCT_ID:
+        return templates.TemplateResponse("settings.html", {
+            "request": request,
+            "user": user,
+            "error": "Polar billing setup is incomplete: POLAR_SAAS_PRODUCT_ID not configured."
+        })
+
     try:
         checkout_url = await create_checkout_session(user.email, str(user.id), plan_type=plan)
         return RedirectResponse(url=checkout_url)
@@ -29,106 +40,87 @@ async def billing_checkout(request: Request, plan: str = "saas", db=Depends(get_
         return templates.TemplateResponse("settings.html", {
             "request": request,
             "user": user,
-            "error": f"Stripe checkout initialization failed: {str(e)}"
+            "error": f"Polar checkout initialization failed: {str(e)}"
         })
 
 @router.get("/success", response_class=HTMLResponse)
-async def billing_success(
-    request: Request,
-    session_id: str,
-    background_tasks: BackgroundTasks,
-    db=Depends(get_session),
-    user_id=Depends(require_current_user)
-):
-    user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
-    user = db.get(User, user_uuid)
-    
-    # Trigger an immediate on-demand scan in background for this user
-    from app.routes.scan import _run_scan_background
-    background_tasks.add_task(_run_scan_background, str(user.id))
-    
+async def billing_success(request: Request):
     return templates.TemplateResponse("billing_success.html", {
         "request": request,
     })
 
 @router.get("/portal")
-async def billing_portal(request: Request, db=Depends(get_session), user_id=Depends(require_current_user)):
+async def billing_portal(
+    request: Request,
+    db: Session = Depends(get_session),
+    user_id=Depends(require_current_user)
+):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
     user = db.get(User, user_uuid)
-    if not user or not user.stripe_customer_id:
-        return RedirectResponse(url="/billing/checkout")
-    try:
-        portal_url = await create_portal_session(user.stripe_customer_id)
-        return RedirectResponse(url=portal_url)
-    except Exception as e:
+    if not user or not user.polar_customer_id:
         return RedirectResponse(url="/settings")
 
-@router.get("/cancel")
-async def billing_cancel(request: Request):
-    return RedirectResponse(url="/settings")
+    try:
+        portal_url = await create_portal_session(user.polar_customer_id)
+        return RedirectResponse(url=portal_url)
+    except Exception:
+        return RedirectResponse(url="/settings")
 
 @router.post("/webhook")
-async def stripe_webhook(request: Request, stripe_signature: str = Header(None), db=Depends(get_session)):
-    payload = await request.body()
+async def billing_webhook(request: Request, db: Session = Depends(get_session)):
+    body = await request.body()
     try:
-        event = stripe.Webhook.construct_event(
-            payload, stripe_signature, STRIPE_WEBHOOK_SECRET
+        event = validate_event(
+            payload=body,
+            headers=dict(request.headers),
+            secret=POLAR_WEBHOOK_SECRET,
         )
-    except (ValueError, stripe.error.SignatureVerificationError) as e:
-        raise HTTPException(status_code=400, detail="Invalid signature")
+    except WebhookVerificationError:
+        raise HTTPException(status_code=403, detail="Invalid signature")
+    except WebhookUnknownTypeError:
+        return {"ok": True}
 
-    event_type = event.get("type")
-    data_object = event.get("data", {}).get("object", {})
+    event_type = getattr(event, "TYPE", None)
+    if not event_type:
+        return {"ok": True}
 
-    if event_type == "checkout.session.completed":
-        user_id = data_object.get("metadata", {}).get("user_id")
-        stripe_customer_id = data_object.get("customer")
-        stripe_subscription_id = data_object.get("subscription")
-        
-        if user_id:
-            user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
-            user = db.get(User, user_uuid)
-            if user:
-                user.stripe_customer_id = stripe_customer_id
-                user.stripe_subscription_id = stripe_subscription_id
-                user.subscription_status = "trialing"
-                
-                # Fetch subscription to record trial end date
-                try:
-                    sub = stripe.Subscription.retrieve(stripe_subscription_id)
-                    if sub.get("trial_end"):
-                        user.trial_ends_at = datetime.fromtimestamp(sub.get("trial_end"), tz=timezone.utc)
-                except Exception:
-                    # Fallback to 14 days if retrieval fails
-                    user.trial_ends_at = datetime.now(timezone.utc) + timedelta(days=14)
-                
-                db.commit()
+    data = getattr(event, "data", None)
+    if not data:
+        return {"ok": True}
 
-    elif event_type == "customer.subscription.updated":
-        stripe_subscription_id = data_object.get("id")
-        status = data_object.get("status")
-        
-        user = db.query(User).filter(User.stripe_subscription_id == stripe_subscription_id).first()
-        if user:
-            user.subscription_status = status
-            if data_object.get("trial_end"):
-                user.trial_ends_at = datetime.fromtimestamp(data_object.get("trial_end"), tz=timezone.utc)
-            else:
-                user.trial_ends_at = None
-            db.commit()
+    # Find the user via event.data.metadata.get("user_id") or event.data.customer_id
+    user = None
+    metadata = getattr(data, "metadata", {}) or {}
+    user_id = metadata.get("user_id")
 
-    elif event_type == "customer.subscription.deleted":
-        stripe_subscription_id = data_object.get("id")
-        user = db.query(User).filter(User.stripe_subscription_id == stripe_subscription_id).first()
-        if user:
+    if user_id:
+        try:
+            user = db.get(User, uuid.UUID(user_id))
+        except Exception:
+            pass
+
+    customer_id = getattr(data, "customer_id", None)
+    if not user and customer_id:
+        user = db.execute(
+            select(User).where(User.polar_customer_id == customer_id)
+        ).scalar_one_or_none()
+
+    if user:
+        if customer_id:
+            user.polar_customer_id = customer_id
+
+        if event_type in ("subscription.created", "subscription.active"):
+            user.subscription_status = "active"
+            user.polar_subscription_id = getattr(data, "id", user.polar_subscription_id)
+        elif event_type in ("subscription.canceled", "subscription.revoked"):
             user.subscription_status = "canceled"
-            db.commit()
+        elif event_type == "subscription.updated":
+            status_enum = getattr(data, "status", None)
+            if status_enum:
+                # status_enum can be an Enum with .value or string
+                status_val = getattr(status_enum, "value", str(status_enum))
+                user.subscription_status = str(status_val)
 
-    elif event_type == "invoice.payment_failed":
-        stripe_subscription_id = data_object.get("subscription")
-        user = db.query(User).filter(User.stripe_subscription_id == stripe_subscription_id).first()
-        if user:
-            user.subscription_status = "past_due"
-            db.commit()
+        db.commit()
 
     return {"status": "success"}

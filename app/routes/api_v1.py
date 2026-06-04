@@ -320,7 +320,6 @@ def api_settings(user_id: str = Depends(require_api_user), db: Session = Depends
         "email": user.email,
         "subscription_status": user.subscription_status,
         "trial_ends_at": user.trial_ends_at.isoformat() if user.trial_ends_at else None,
-        "stripe_customer_id": user.stripe_customer_id,
         "business_type": getattr(user, "business_type", None) or "saas",
     }
 
@@ -390,7 +389,7 @@ async def api_billing_portal_url(user_id: str = Depends(require_api_user), db: S
     from app.config import FRONTEND_URL
     user_uuid = uuid.UUID(user_id)
     user = db.get(User, user_uuid)
-    if not user or not user.stripe_customer_id:
+    if not user or not user.polar_customer_id:
         raise HTTPException(status_code=400, detail="No active subscription")
-    url = await create_portal_session(user.stripe_customer_id, return_url=f"{FRONTEND_URL}/settings")
+    url = await create_portal_session(user.polar_customer_id, return_url=f"{FRONTEND_URL}/settings")
     return {"url": url}

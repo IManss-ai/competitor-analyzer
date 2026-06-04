@@ -49,19 +49,16 @@ export default async function SettingsPage() {
   let checkoutUrl = '';
   let portalUrl = '';
   
-  if (data.stripe_customer_id) {
+  try {
+    const res = await api.getPortalUrl();
+    portalUrl = res.url;
+  } catch (e) {
     try {
-      const res = await api.getPortalUrl();
-      portalUrl = res.url;
-    } catch (e) {
-      console.error('Failed to fetch portal url:', e);
-    }
-  } else {
-    try {
-      const res = await api.getCheckoutUrl();
+      const planType = data.business_type === 'local' ? 'local' : 'saas';
+      const res = await api.getCheckoutUrl(planType);
       checkoutUrl = res.url;
-    } catch (e) {
-      console.error('Failed to fetch checkout url:', e);
+    } catch (checkoutErr) {
+      console.error('Failed to fetch checkout url:', checkoutErr);
     }
   }
 
@@ -174,19 +171,19 @@ export default async function SettingsPage() {
                   </div>
                 </div>
 
-                {data.stripe_customer_id && portalUrl && (
+                {portalUrl && (
                   <div>
                     <a
                       href={portalUrl}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all"
                     >
-                      Manage billing
+                      Manage subscription
                       <ArrowSquareOut size={14} />
                     </a>
                   </div>
                 )}
 
-                {!data.stripe_customer_id && checkoutUrl && (
+                {checkoutUrl && (
                   <div>
                     <a
                       href={checkoutUrl}

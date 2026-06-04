@@ -74,7 +74,6 @@ export interface SettingsData {
   email: string;
   subscription_status: string;
   trial_ends_at: string | null;
-  stripe_customer_id: string | null;
   business_type?: BusinessType;
 }
 

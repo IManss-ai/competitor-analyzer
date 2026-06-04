@@ -1,43 +1,44 @@
-import stripe
-from app.config import STRIPE_SECRET_KEY, STRIPE_PRICE_ID, STRIPE_LOCAL_PRICE_ID, APP_BASE_URL
+import os
+from app.config import POLAR_ACCESS_TOKEN, POLAR_SAAS_PRODUCT_ID, POLAR_LOCAL_PRODUCT_ID
 
-stripe.api_key = STRIPE_SECRET_KEY
+def _get_polar():
+    from polar_sdk import Polar
+    return Polar(access_token=POLAR_ACCESS_TOKEN)
 
 async def create_checkout_session(
     user_email: str,
     user_id: str,
     plan_type: str = "saas",
     success_url: str = None,
-    cancel_url: str = None
+    cancel_url: str = None,
 ) -> str:
-    """
-    Create a Stripe Checkout session with 14-day free trial.
-    plan_type: "saas" ($49/mo) or "local" ($19/mo).
-    Returns the checkout URL.
-    """
-    price_id = STRIPE_LOCAL_PRICE_ID if plan_type == "local" else STRIPE_PRICE_ID
-    if not price_id:
-        raise ValueError(f"Stripe price ID not configured for plan: {plan_type}")
+    """Create a Polar checkout session. Returns the checkout URL."""
+    from polar_sdk import Polar
+    from polar_sdk import models
 
-    session = stripe.checkout.Session.create(
-        customer_email=user_email,
-        payment_method_types=["card"],
-        line_items=[{"price": price_id, "quantity": 1}],
-        mode="subscription",
-        subscription_data={
-            "trial_period_days": 14,
-            "metadata": {"user_id": user_id},
-        },
-        success_url=success_url or f"{APP_BASE_URL}/billing/success?session_id={{CHECKOUT_SESSION_ID}}",
-        cancel_url=cancel_url or f"{APP_BASE_URL}/billing/cancel",
-        metadata={"user_id": user_id, "plan_type": plan_type},
-    )
-    return session.url
+    product_id = POLAR_LOCAL_PRODUCT_ID if plan_type == "local" else POLAR_SAAS_PRODUCT_ID
+    if not product_id:
+        raise ValueError(f"Polar product ID not configured for plan: {plan_type}")
+    if not POLAR_ACCESS_TOKEN:
+        raise ValueError("POLAR_ACCESS_TOKEN not configured")
 
-async def create_portal_session(stripe_customer_id: str, return_url: str = None) -> str:
-    """Create Stripe customer portal session for billing management."""
-    session = stripe.billing_portal.Session.create(
-        customer=stripe_customer_id,
-        return_url=return_url or f"{APP_BASE_URL}/settings",
-    )
-    return session.url
+    with _get_polar() as polar:
+        checkout = polar.checkouts.create(request=models.CheckoutCreate(
+            products=[product_id],
+            customer_email=user_email,
+            success_url=success_url,
+            metadata={"user_id": user_id, "plan_type": plan_type},
+        ))
+    return checkout.url
+
+async def create_portal_session(polar_customer_id: str, return_url: str = None) -> str:
+    """Create a Polar customer portal session. Returns the portal URL."""
+    from polar_sdk import Polar
+    from polar_sdk import models
+
+    with _get_polar() as polar:
+        session = polar.customer_sessions.create(request=models.CustomerSessionCustomerIDCreate(
+            customer_id=polar_customer_id,
+            return_url=return_url,
+        ))
+    return session.customer_portal_url

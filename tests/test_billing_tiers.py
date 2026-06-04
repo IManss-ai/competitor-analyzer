@@ -45,27 +45,31 @@ class TestBillingTiers(unittest.IsolatedAsyncioTestCase):
 
     # ── Billing tier tests ───────────────────────────────────────────────
 
-    @patch("app.config.STRIPE_LOCAL_PRICE_ID", "")
-    @patch("app.billing.STRIPE_LOCAL_PRICE_ID", "")
+    @patch("app.config.POLAR_LOCAL_PRODUCT_ID", "")
+    @patch("app.billing.POLAR_LOCAL_PRODUCT_ID", "")
     async def test_local_plan_raises_when_price_not_configured(self):
-        """create_checkout_session with plan_type='local' raises ValueError when STRIPE_LOCAL_PRICE_ID is empty."""
+        """create_checkout_session with plan_type='local' raises ValueError when POLAR_LOCAL_PRODUCT_ID is empty."""
         with self.assertRaises(ValueError) as ctx:
             await create_checkout_session("test@example.com", "user-123", plan_type="local")
         self.assertIn("local", str(ctx.exception))
 
-    @patch("stripe.checkout.Session.create")
-    @patch("app.billing.STRIPE_LOCAL_PRICE_ID", "price_local_test_123")
-    async def test_local_plan_uses_local_price_id(self, mock_create):
-        """create_checkout_session with plan_type='local' uses STRIPE_LOCAL_PRICE_ID."""
-        mock_sess = MagicMock()
-        mock_sess.url = "https://checkout.stripe.com/local"
-        mock_create.return_value = mock_sess
+    @patch("app.billing._get_polar")
+    @patch("app.billing.POLAR_LOCAL_PRODUCT_ID", "price_local_test_123")
+    @patch("app.billing.POLAR_ACCESS_TOKEN", "access_tok_123")
+    async def test_local_plan_uses_local_price_id(self, mock_get_polar):
+        """create_checkout_session with plan_type='local' uses POLAR_LOCAL_PRODUCT_ID."""
+        mock_polar = MagicMock()
+        mock_checkout = MagicMock()
+        mock_checkout.url = "https://checkout.polar.sh/local"
+        mock_polar.checkouts.create.return_value = mock_checkout
+        mock_get_polar.return_value.__enter__.return_value = mock_polar
 
         url = await create_checkout_session("test@example.com", "user-123", plan_type="local")
-        self.assertEqual(url, "https://checkout.stripe.com/local")
-        call_kwargs = mock_create.call_args
-        line_items = call_kwargs.kwargs.get("line_items") or call_kwargs[1].get("line_items")
-        self.assertEqual(line_items[0]["price"], "price_local_test_123")
+        self.assertEqual(url, "https://checkout.polar.sh/local")
+        mock_polar.checkouts.create.assert_called_once()
+        call_args = mock_polar.checkouts.create.call_args
+        request_obj = call_args.kwargs.get("request") or call_args[0][0]
+        self.assertEqual(request_obj.products[0], "price_local_test_123")
 
     # ── Onboarding endpoint tests ────────────────────────────────────────
 
