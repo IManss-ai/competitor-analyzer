@@ -4,6 +4,8 @@ from app.config import DATABASE_URL
 
 if "sqlite" in DATABASE_URL:
     engine = create_engine(DATABASE_URL, connect_args={"timeout": 10})
+elif "asyncpg" in DATABASE_URL:
+    engine = create_engine(DATABASE_URL, connect_args={"timeout": 10})
 else:
     engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 10})
     
