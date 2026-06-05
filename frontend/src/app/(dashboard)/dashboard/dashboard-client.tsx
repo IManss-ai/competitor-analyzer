@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2 } from 'lucide-react';
+import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, ShoppingBag } from 'lucide-react';
 import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { DashboardData, Competitor } from '@/lib/types';
 
@@ -25,16 +25,20 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const [scanningCompId, setScanningCompId] = useState<string | null>(null);
   const [scanDoneCompId, setScanDoneCompId] = useState<string | null>(null);
 
-  // Onboarding states (Phase 5)
+  // Onboarding states
   const [onboardingStep, setOnboardingStep] = useState<number>(() => {
-    return competitors.length === 0 ? 0 : 3;
+    return competitors.length === 0 ? -1 : 3;
   });
+  const [selectedBusinessType, setSelectedBusinessType] = useState<'saas' | 'local'>(isLocalBusiness ? 'local' : 'saas');
+  const [savingBusinessType, setSavingBusinessType] = useState(false);
   const [onboardingJobId, setOnboardingJobId] = useState<string | null>(null);
   const [onboardingCompId, setOnboardingCompId] = useState<string | null>(null);
   const [onboardingStatus, setOnboardingStatus] = useState<string>('fetching');
   const [onboardingUrl, setOnboardingUrl] = useState('');
   const [onboardingName, setOnboardingName] = useState('');
   const [onboardingG2Url, setOnboardingG2Url] = useState('');
+  const [onboardingMapsUrl, setOnboardingMapsUrl] = useState('');
+  const [onboardingInstagram, setOnboardingInstagram] = useState('');
   const [submittingOnboarding, setSubmittingOnboarding] = useState(false);
   const [onboardingError, setOnboardingError] = useState('');
 
@@ -102,7 +106,22 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     return () => clearInterval(intervalId);
   }, [onboardingStep, onboardingJobId, userId, apiUrl]);
 
-  // Submit onboarding Step 1
+  // Business type selection handler
+  const confirmBusinessType = async (type: 'saas' | 'local') => {
+    setSelectedBusinessType(type);
+    setSavingBusinessType(true);
+    try {
+      await fetch(`${apiUrl}/api/v1/onboarding/business-type`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userId}` },
+        body: JSON.stringify({ business_type: type })
+      });
+    } catch (_) {}
+    setSavingBusinessType(false);
+    setOnboardingStep(0);
+  };
+
+  // Submit onboarding competitor form
   const submitOnboardingCompetitor = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!onboardingUrl.trim()) return;
@@ -130,7 +149,21 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       const data = await res.json();
       setOnboardingCompId(data.id);
       setOnboardingJobId(data.job_id);
-      setOnboardingStep(1); // Move to Step 2 (scanning)
+
+      // If local business, PATCH the local-specific fields
+      if (selectedBusinessType === 'local' && (onboardingMapsUrl || onboardingInstagram)) {
+        await fetch(`${apiUrl}/api/v1/local/competitors/${data.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userId}` },
+          body: JSON.stringify({
+            google_maps_url: onboardingMapsUrl || null,
+            instagram_handle: onboardingInstagram || null,
+            business_type: 'local'
+          })
+        }).catch(() => {});
+      }
+
+      setOnboardingStep(1); // Move to scanning
     } catch (err: any) {
       setOnboardingError(err.message || 'An error occurred.');
     } finally {
@@ -232,7 +265,79 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     return `${diffDays}d ago`;
   };
 
-  // ── ONBOARDING STEP 1: MODAL ──────────────────────────────────────────────
+  // ── ONBOARDING STEP -1: BUSINESS TYPE SELECTION ──────────────────────────
+  if (onboardingStep === -1) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="relative z-10 bg-[#080e1c]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+        >
+          <div className="text-center mb-7">
+            <div className="w-12 h-12 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Compass size={24} />
+            </div>
+            <h2 className="text-lg font-bold text-white tracking-tight">What kind of business are you?</h2>
+            <p className="text-xs text-zinc-400 mt-1">We'll personalize what you track and how we report it.</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {[
+              {
+                type: 'saas' as const,
+                icon: <Globe size={22} className="text-sky-400" />,
+                title: 'B2B SaaS',
+                desc: 'Track pricing pages, features, messaging, and G2/Trustpilot reviews.',
+                border: 'border-sky-500/30 bg-sky-500/5',
+                check: 'text-sky-400'
+              },
+              {
+                type: 'local' as const,
+                icon: <MapPin size={22} className="text-cyan-400" />,
+                title: 'Local Business',
+                desc: 'Track Google Maps reviews, Instagram activity, and nearby competitors.',
+                border: 'border-cyan-500/30 bg-cyan-500/5',
+                check: 'text-cyan-400'
+              }
+            ].map(({ type, icon, title, desc, border, check }) => (
+              <button
+                key={type}
+                onClick={() => setSelectedBusinessType(type)}
+                className={`relative text-left p-4 rounded-xl border transition-all cursor-pointer ${
+                  selectedBusinessType === type
+                    ? border
+                    : 'border-white/[0.07] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                }`}
+              >
+                {selectedBusinessType === type && (
+                  <CheckCircle2 size={14} className={`absolute top-3 right-3 ${check}`} />
+                )}
+                <div className="mb-2">{icon}</div>
+                <p className="text-sm font-bold text-white mb-1">{title}</p>
+                <p className="text-[11px] text-zinc-500 leading-snug">{desc}</p>
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => confirmBusinessType(selectedBusinessType)}
+            disabled={savingBusinessType}
+            className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+          >
+            {savingBusinessType ? (
+              <><Loader2 size={16} className="animate-spin" /> Saving...</>
+            ) : (
+              <>Continue as {selectedBusinessType === 'saas' ? 'SaaS' : 'Local Business'} <ArrowRight size={14} /></>
+            )}
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── ONBOARDING STEP 0: ADD FIRST COMPETITOR ───────────────────────────────
   if (onboardingStep === 0) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -240,26 +345,38 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
         
         {/* Modal content */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           className="relative z-10 bg-[#080e1c]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
         >
           <div className="text-center mb-6">
-            <div className="w-12 h-12 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Compass size={24}  />
+            <div className={`w-12 h-12 border rounded-full flex items-center justify-center mx-auto mb-3 ${
+              selectedBusinessType === 'local'
+                ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+                : 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+            }`}>
+              {selectedBusinessType === 'local' ? <MapPin size={24} /> : <Compass size={24} />}
             </div>
-            <h2 className="text-lg font-bold text-white tracking-tight">Welcome! Let's add your first competitor.</h2>
-            <p className="text-xs text-zinc-400 mt-1">We will start monitoring them instantly in real-time.</p>
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              {selectedBusinessType === 'local' ? "Add your first local competitor" : "Add your first competitor"}
+            </h2>
+            <p className="text-xs text-zinc-400 mt-1">
+              {selectedBusinessType === 'local'
+                ? "We'll track their Google Maps reviews, social posts, and nearby presence."
+                : "We'll start monitoring them instantly in real-time."}
+            </p>
           </div>
 
           <form onSubmit={submitOnboardingCompetitor} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Competitor URL *</label>
+              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">
+                {selectedBusinessType === 'local' ? 'Competitor Website URL *' : 'Competitor URL *'}
+              </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. competitor.com"
+                placeholder={selectedBusinessType === 'local' ? 'e.g. rivalcafe.com' : 'e.g. competitor.com'}
                 value={onboardingUrl}
                 onChange={(e) => setOnboardingUrl(e.target.value)}
                 className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
@@ -267,26 +384,51 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Competitor Name (Optional)</label>
+              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Business Name (Optional)</label>
               <input
                 type="text"
-                placeholder="e.g. Rival Inc"
+                placeholder={selectedBusinessType === 'local' ? 'e.g. Rival Cafe Downtown' : 'e.g. Rival Inc'}
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
                 className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">G2 or Trustpilot URL (Optional)</label>
-              <input
-                type="text"
-                placeholder="e.g. g2.com/products/competitor/reviews"
-                value={onboardingG2Url}
-                onChange={(e) => setOnboardingG2Url(e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
-              />
-            </div>
+            {selectedBusinessType === 'local' ? (
+              <>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Google Maps URL (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. maps.google.com/place/..."
+                    value={onboardingMapsUrl}
+                    onChange={(e) => setOnboardingMapsUrl(e.target.value)}
+                    className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Instagram Handle (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. @rivalcafe"
+                    value={onboardingInstagram}
+                    onChange={(e) => setOnboardingInstagram(e.target.value)}
+                    className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                  />
+                </div>
+              </>
+            ) : (
+              <div>
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">G2 or Trustpilot URL (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. g2.com/products/competitor/reviews"
+                  value={onboardingG2Url}
+                  onChange={(e) => setOnboardingG2Url(e.target.value)}
+                  className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                />
+              </div>
+            )}
 
             {onboardingError && (
               <p className="text-xs text-red-400 font-medium">{onboardingError}</p>
@@ -298,22 +440,26 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               {submittingOnboarding ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Creating...
-                </>
+                <><Loader2 size={16} className="animate-spin" /> Creating...</>
               ) : (
                 'Add Competitor + Run First Scan'
               )}
             </button>
 
-            <div className="text-center pt-2">
+            <div className="text-center pt-2 flex items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setOnboardingStep(-1)}
+                className="text-xs font-medium text-zinc-600 hover:text-zinc-300 hover:underline cursor-pointer"
+              >
+                ← Change type
+              </button>
               <button
                 type="button"
                 onClick={() => setOnboardingStep(3)}
                 className="text-xs font-medium text-zinc-500 hover:text-white hover:underline cursor-pointer"
               >
-                Skip onboarding & go to dashboard
+                Skip & go to dashboard
               </button>
             </div>
           </form>
