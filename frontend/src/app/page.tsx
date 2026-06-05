@@ -132,6 +132,31 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const [card1Hovered, setCard1Hovered] = useState(false);
+  const [card2Hovered, setCard2Hovered] = useState(false);
+  const [card3Hovered, setCard3Hovered] = useState(false);
+  const [card4Hovered, setCard4Hovered] = useState(false);
+  const [card5Hovered, setCard5Hovered] = useState(false);
+
+  const [typewriterText, setTypewriterText] = useState("");
+
+  useEffect(() => {
+    if (!card3Hovered) {
+      setTypewriterText("");
+      return;
+    }
+    const fullText = "› Email: 'We heard Stripe raised rates...'";
+    let i = 0;
+    const interval = setInterval(() => {
+      setTypewriterText(fullText.slice(0, i + 1));
+      i++;
+      if (i >= fullText.length) {
+        clearInterval(interval);
+      }
+    }, 45);
+    return () => clearInterval(interval);
+  }, [card3Hovered]);
+
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -723,6 +748,8 @@ export default function LandingPage() {
               custom={0}
               whileHover="hover"
               initial="rest"
+              onMouseEnter={() => setCard1Hovered(true)}
+              onMouseLeave={() => setCard1Hovered(false)}
               className="md:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
@@ -736,9 +763,31 @@ export default function LandingPage() {
               </div>
               <div className="flex-shrink-0 w-full sm:w-48 h-20 bg-[#030712] rounded-2xl border border-white/[0.04] overflow-hidden relative">
                 <svg className="w-full h-full p-2" viewBox="0 0 180 64">
-                  <path d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4" fill="none" stroke="#0ea5e9" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4 L 175 64 L 8 64Z" fill="url(#chartFill)" />
-                  <circle cx="175" cy="4" r="3" fill="#38bdf8" />
+                  <motion.path
+                    d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
+                    fill="none"
+                    stroke="#0ea5e9"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: card1Hovered ? 1 : 0 }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                  />
+                  <motion.path
+                    d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4 L 175 64 L 8 64Z"
+                    fill="url(#chartFill)"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: card1Hovered ? 1 : 0 }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                  />
+                  <motion.circle
+                    cx="175"
+                    cy="4"
+                    r="3"
+                    fill="#38bdf8"
+                    animate={card1Hovered ? { scale: [1, 1.4, 1] } : { scale: 1 }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                  />
                   <defs>
                     <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="64">
                       <stop stopColor="#0ea5e9" stopOpacity="0.15" />
@@ -755,6 +804,8 @@ export default function LandingPage() {
               custom={1}
               whileHover="hover"
               initial="rest"
+              onMouseEnter={() => setCard2Hovered(true)}
+              onMouseLeave={() => setCard2Hovered(false)}
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
@@ -765,10 +816,20 @@ export default function LandingPage() {
                 Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn away from competitors.
               </p>
               <div className="mt-4 space-y-2">
-                {['G2 · Trustpilot', 'Capterra · Reddit', 'App Store · Play'].map((src) => (
-                  <div key={src} className="flex items-center gap-2 text-[10px] font-mono text-zinc-500">
-                    <span className="w-1 h-1 rounded-full bg-emerald-500" /> {src}
-                  </div>
+                {['G2 · Trustpilot', 'Capterra · Reddit', 'App Store · Play'].map((src, idx) => (
+                  <motion.div
+                    key={src}
+                    animate={card2Hovered ? { x: 0 } : { x: -4 }}
+                    transition={{ delay: idx * 0.06, duration: 0.2, ease: 'easeOut' }}
+                    className="flex items-center gap-2 text-[10px] font-mono text-zinc-500"
+                  >
+                    <motion.span
+                      animate={card2Hovered ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+                      transition={{ delay: idx * 0.06, duration: 0.3 }}
+                      className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                    />
+                    {src}
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -778,6 +839,8 @@ export default function LandingPage() {
               custom={2}
               whileHover="hover"
               initial="rest"
+              onMouseEnter={() => setCard3Hovered(true)}
+              onMouseLeave={() => setCard3Hovered(false)}
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -787,6 +850,16 @@ export default function LandingPage() {
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Generates targeted email scripts and landing page copy built around the competitor changes detected today.
               </p>
+              <div className="mt-4 font-mono text-[9px] text-sky-400 bg-sky-950/10 border border-sky-500/10 p-2.5 rounded-lg min-h-[36px] flex items-center">
+                <span>{typewriterText}</span>
+                {card3Hovered && (
+                  <motion.span
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ repeat: Infinity, duration: 0.8 }}
+                    className="w-1.5 h-3 bg-sky-400 ml-0.5"
+                  />
+                )}
+              </div>
             </motion.div>
 
             {/* Row 3: 1 + 2 */}
@@ -795,15 +868,43 @@ export default function LandingPage() {
               custom={3}
               whileHover="hover"
               initial="rest"
-              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
+              onMouseEnter={() => setCard4Hovered(true)}
+              onMouseLeave={() => setCard4Hovered(false)}
+              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col justify-between"
             >
-              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <ShieldCheck size={18}  />
+              <div>
+                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
+                  <ShieldCheck size={18}  />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
+                </p>
               </div>
-              <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
-              </p>
+              <div className="mt-6 flex items-center gap-3">
+                <div className="flex-1 h-[2px] bg-white/[0.04] rounded-full overflow-hidden relative">
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: card4Hovered ? 1 : 0 }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    style={{ transformOrigin: 'left' }}
+                    className="absolute inset-0 bg-sky-500"
+                  />
+                </div>
+                <AnimatePresence>
+                  {card4Hovered && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ delay: 0.7, duration: 0.2 }}
+                      className="text-sky-400 flex-shrink-0"
+                    >
+                      <CheckCircle2 size={12} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
 
             <motion.div
@@ -811,6 +912,8 @@ export default function LandingPage() {
               custom={4}
               whileHover="hover"
               initial="rest"
+              onMouseEnter={() => setCard5Hovered(true)}
+              onMouseLeave={() => setCard5Hovered(false)}
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -820,15 +923,25 @@ export default function LandingPage() {
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments over time.
               </p>
-              <div className="mt-5 flex items-center gap-0">
+              <div
+                key={card5Hovered ? 'hover' : 'rest'}
+                className="mt-5 flex items-center gap-0"
+              >
                 {Array.from({ length: 12 }).map((_, i) => (
                   <div
                     key={i}
                     className="flex-1 h-8 border-r border-white/[0.04] last:border-r-0 flex items-end pb-1 px-0.5"
                   >
-                    <div
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: `${20 + Math.sin(i * 1.3) * 14}px` }}
+                      transition={{
+                        duration: 0.4,
+                        ease: 'easeOut',
+                        delay: i * 0.04,
+                      }}
                       className="w-full bg-sky-500/30 rounded-sm"
-                      style={{ height: `${20 + Math.sin(i * 1.3) * 14}px`, opacity: 0.3 + i * 0.06 }}
+                      style={{ opacity: 0.3 + i * 0.06 }}
                     />
                   </div>
                 ))}
