@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Crosshair, ArrowRight, CheckCircle,
-  Eye, MagnifyingGlass, Lightning,
+  Lightning,
   TrendUp, ShieldCheck, Chats, CalendarBlank,
   GithubLogo, TwitterLogo, LinkedinLogo,
   ArrowUpRight, Clipboard, Star, InstagramLogo, Cards
 } from '@phosphor-icons/react';
 import { PricingBasic } from '@/components/ui/pricing-demo';
+import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -103,21 +104,21 @@ const BATTLE_CARDS_DATA = {
 };
 
 const COMPANIES = [
-  { name: 'Harbour', abbr: 'H' },
-  { name: 'Fieldwork', abbr: 'F' },
-  { name: 'Lumen', abbr: 'L' },
-  { name: 'Conduit', abbr: 'C' },
-  { name: 'Rho', abbr: 'R' },
-  { name: 'Latitude', abbr: 'L' },
+  { name: 'Stripe', abbr: 'S' },
+  { name: 'Notion', abbr: 'N' },
+  { name: 'Linear', abbr: 'L' },
+  { name: 'Vercel', abbr: 'V' },
+  { name: 'Figma', abbr: 'F' },
+  { name: 'Loom', abbr: 'L' },
 ];
 
 // ─── Animation helpers ───────────────────────────────────────────────────────
 
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 16 },
+  initial: { opacity: 0, y: 12 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.1 },
-  transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as any },
+  viewport: { once: true, amount: 0.05, margin: "0px 0px -50px 0px" },
+  transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] as any },
 });
 
 // ─── Page ────────────────────────────────────────────────────────────────────
@@ -397,7 +398,7 @@ export default function LandingPage() {
       <section className="py-12 border-y border-white/[0.05]">
         <div className="max-w-5xl mx-auto px-6">
           <p className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest mb-7 text-center">
-            Trusted by growth-stage teams
+            Used by teams at
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
             {COMPANIES.map((co) => (
@@ -415,8 +416,30 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── SCANNER STREAM ──────────────────────────────────────────────── */}
+      <section className="py-0 overflow-hidden border-b border-white/[0.05] relative">
+        {/* Top fade */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#040812] to-transparent z-30 pointer-events-none" />
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#040812] to-transparent z-30 pointer-events-none" />
+        {/* Left fade */}
+        <div className="absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#040812] to-transparent z-30 pointer-events-none" />
+        {/* Right fade */}
+        <div className="absolute top-0 right-0 bottom-0 w-24 bg-gradient-to-l from-[#040812] to-transparent z-30 pointer-events-none" />
+
+        <ScannerCardStream
+          initialSpeed={100}
+          direction={-1}
+          cardGap={40}
+          friction={0.97}
+          scanEffect="scramble"
+          height={260}
+          repeat={5}
+        />
+      </section>
+
       {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-24 px-6 border-b border-white/[0.05]">
+      <section id="how-it-works" className="py-24 px-6 border-b border-white/[0.05] bg-[#06101f]">
         <div className="max-w-5xl mx-auto">
 
           <motion.div {...fadeUp(0)} className="mb-16">
@@ -428,42 +451,45 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                n: '01',
-                title: 'Register competitor URLs',
-                body: 'Add domains of up to 7 competitors. We automatically scan homepages, pricing grids, developer docs, and social feeds.',
-                icon: <Eye size={18} weight="bold" />,
-              },
-              {
-                n: '02',
-                title: 'AI analyzes modifications',
-                body: 'Our engine parses changes daily. When a pricing tier is tweaked or complaints pile up, AI formats it into clean categorized insights.',
-                icon: <MagnifyingGlass size={18} weight="bold" />,
-              },
-              {
-                n: '03',
-                title: 'Get your sales playbook',
-                body: 'Every Monday, receive an executive brief outlining competitor modifications, friction points, and your exact response script.',
-                icon: <Lightning size={18} weight="bold" />,
-              },
-            ].map((step, i) => (
-              <motion.div
-                key={i}
-                {...fadeUp(i * 0.08)}
-                className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/20 hover:bg-white/[0.03] transition-all duration-300"
-              >
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400">
-                    {step.icon}
+          <div className="relative">
+            {/* Connecting line (desktop only) */}
+            <div className="hidden md:block absolute top-5 left-[calc(16.5%)] right-[calc(16.5%)] h-px">
+              <div className="h-full bg-gradient-to-r from-sky-500/20 via-sky-500/40 to-sky-500/20" />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+              {[
+                {
+                  n: '01',
+                  title: 'Register competitor URLs',
+                  body: 'Add domains of up to 7 competitors. We automatically scan homepages, pricing grids, developer docs, and social feeds.',
+                },
+                {
+                  n: '02',
+                  title: 'AI analyzes modifications',
+                  body: 'Our engine parses changes daily. When a pricing tier is tweaked or complaints pile up, AI formats it into clean categorized insights.',
+                },
+                {
+                  n: '03',
+                  title: 'Get your sales playbook',
+                  body: 'Every Monday, receive an executive brief outlining competitor modifications, friction points, and your exact response script.',
+                },
+              ].map((step, i) => (
+                <motion.div key={i} {...fadeUp(i * 0.1)} className="flex flex-col gap-5">
+                  {/* Number node */}
+                  <div className="relative flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full border border-sky-500/30 bg-sky-500/8 flex items-center justify-center flex-shrink-0 relative z-10">
+                      <span className="text-sky-400 text-sm font-bold font-mono">{step.n}</span>
+                    </div>
+                    <div className="flex-1 h-px bg-white/[0.04] md:hidden" />
                   </div>
-                  <span className="text-[11px] font-mono text-zinc-600">{step.n}</span>
-                </div>
-                <h3 className="text-sm font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">{step.body}</p>
-              </motion.div>
-            ))}
+                  <div>
+                    <h3 className="text-white font-semibold text-base mb-2 leading-snug">{step.title}</h3>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{step.body}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -609,7 +635,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
-      <section id="features" className="py-24 px-6 border-b border-white/[0.05]">
+      <section id="features" className="py-24 px-6 border-b border-white/[0.05] bg-[#06101f]">
         <div className="max-w-5xl mx-auto">
 
           <motion.div {...fadeUp(0)} className="mb-3">
@@ -856,7 +882,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
-      <section className="py-20 px-6 border-b border-white/[0.05]">
+      <section className="py-20 px-6 border-b border-white/[0.05] bg-[#06101f]">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div {...fadeUp(0)}>
