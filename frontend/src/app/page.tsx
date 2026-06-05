@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { Crosshair, ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard } from 'lucide-react';
+import { Crosshair, ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard, Check } from 'lucide-react';
 import { Github, Twitter, Linkedin, Instagram } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
@@ -114,8 +114,23 @@ export default function LandingPage() {
   const [selectedDashboardComp, setSelectedDashboardComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen'>('stripe');
   const [copiedPlaybook, setCopiedPlaybook] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hoveredDashComp, setHoveredDashComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen' | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const isPausedRef = useRef(false);
+
+  useEffect(() => {
+    const comps = ['stripe', 'paypal', 'square', 'adyen'] as const;
+    const interval = setInterval(() => {
+      if (isPausedRef.current) return;
+      setSelectedDashboardComp((current) => {
+        const idx = comps.indexOf(current);
+        const nextIdx = (idx + 1) % comps.length;
+        return comps[nextIdx];
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -476,7 +491,11 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-[200px_1fr] min-h-[480px]">
 
               {/* Sidebar */}
-              <div className="border-r border-white/[0.06] p-4 space-y-6">
+              <div
+                onMouseEnter={() => { isPausedRef.current = true; }}
+                onMouseLeave={() => { isPausedRef.current = false; }}
+                className="border-r border-white/[0.06] p-4 space-y-6"
+              >
                 <div>
                   <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-wider mb-3">Tracked</div>
                   <div className="space-y-1">
@@ -484,6 +503,8 @@ export default function LandingPage() {
                       <button
                         key={comp}
                         onClick={() => setSelectedDashboardComp(comp)}
+                        onMouseEnter={() => setHoveredDashComp(comp)}
+                        onMouseLeave={() => setHoveredDashComp(null)}
                         className="w-full text-left text-xs px-3 py-2.5 rounded-lg font-medium flex items-center justify-between transition-colors cursor-pointer relative"
                         style={{ color: selectedDashboardComp === comp ? '#ffffff' : '#6b7280' }}
                       >
@@ -498,6 +519,27 @@ export default function LandingPage() {
                         <span className={`w-1.5 h-1.5 rounded-full relative z-10 transition-colors ${
                           selectedDashboardComp === comp ? 'bg-sky-400' : 'bg-zinc-700'
                         }`} />
+
+                        <AnimatePresence>
+                          {hoveredDashComp === comp && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                              transition={{ duration: 0.12 }}
+                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[#080d1a] border border-white/[0.08] text-white px-3 py-2 rounded-lg shadow-xl text-[10px] w-48 pointer-events-none"
+                            >
+                              <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-r-[5px] border-r-white/[0.08] border-b-4 border-b-transparent" />
+                              <div className="absolute right-[calc(100%-1px)] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-r-[4px] border-r-[#080d1a] border-b-[3px] border-b-transparent" />
+                              <p className="leading-snug font-normal text-zinc-300">
+                                {comp === 'stripe' && 'Removed flat enterprise pricing'}
+                                {comp === 'paypal' && 'Merchant card fee increased to 3.49%'}
+                                {comp === 'square' && 'POS dynamic checkout fee update'}
+                                {comp === 'adyen' && 'Changed EMEA SLA & redirect APIs'}
+                              </p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </button>
                     ))}
                   </div>
@@ -512,82 +554,122 @@ export default function LandingPage() {
               </div>
 
               {/* Main panel */}
-              <div className="p-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-5">
+              <div className="p-5 flex flex-col justify-between overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedDashboardComp}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0, transition: { duration: 0.25, ease: 'easeOut' } }}
+                    exit={{ opacity: 0, x: -8, transition: { duration: 0.15, ease: 'easeIn' } }}
+                    className="flex-1 flex flex-col justify-between"
+                  >
                     <div>
-                      <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                        <TrendingUp size={14} className="text-sky-400" />
-                        Intel Feed · <span className="text-zinc-600">last scan 8m ago</span>
-                      </h3>
-                    </div>
-                    <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-zinc-500 px-2.5 py-1 rounded-lg">
-                      ALL
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    {[
-                      { label: 'Monitored', value: '4 targets', color: 'text-white' },
-                      { label: 'Changes', value: '3 this week', color: 'text-sky-400' },
-                      { label: 'Plays', value: '2 ready', color: 'text-emerald-400' },
-                    ].map((s) => (
-                      <div key={s.label} className="bg-white/[0.02] border border-white/[0.04] p-3 rounded-2xl">
-                        <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
-                        <div className={`text-sm font-bold font-mono ${s.color}`}>{s.value}</div>
+                      <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-5">
+                        <div>
+                          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                            <TrendingUp size={14} className="text-sky-400" />
+                            Intel Feed · <span className="text-zinc-600">last scan 8m ago</span>
+                          </h3>
+                        </div>
+                        <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-zinc-500 px-2.5 py-1 rounded-lg">
+                          ALL
+                        </span>
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-2xl mb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-mono text-sky-300 bg-sky-500/8 border border-sky-500/15 px-2 py-0.5 rounded-md">
-                        PRICING UPDATE
-                      </span>
-                      <span className="text-[10px] font-mono text-zinc-600">June 4, 2026</span>
-                    </div>
-                    <h4 className="text-xs font-semibold text-white mb-1.5 leading-snug">
-                      {selectedDashboardComp === 'stripe' && 'Removed flat-rate pricing for enterprise accounts'}
-                      {selectedDashboardComp === 'paypal' && 'Card transaction fee adjusted from 2.9% to 3.49%'}
-                      {selectedDashboardComp === 'square' && 'POS firmware update v3.1 with dynamic checkout fees'}
-                      {selectedDashboardComp === 'adyen' && 'Changed EMEA support tiers and custom POS redirect APIs'}
-                    </h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
-                      {selectedDashboardComp === 'stripe' && 'Enterprise leads now redirected to "Contact Sales" pipeline, hiding transaction fee discounts.'}
-                      {selectedDashboardComp === 'paypal' && 'Rate change increases merchant billing overhead by 20%. Developers report sandbox instability.'}
-                      {selectedDashboardComp === 'square' && 'Terminals report Wi-Fi dropping during heavy retail checkout hours.'}
-                      {selectedDashboardComp === 'adyen' && 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.'}
-                    </p>
-                  </div>
-
-                  <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-2xl flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
-                        <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
+                      <div className="grid grid-cols-3 gap-3 mb-4">
+                        {[
+                          { label: 'Monitored', value: '4 targets', color: 'text-white' },
+                          { label: 'Changes', value: '3 this week', color: 'text-sky-400' },
+                          { label: 'Plays', value: '2 ready', color: 'text-emerald-400' },
+                        ].map((s) => (
+                          <div key={s.label} className="bg-white/[0.02] border border-white/[0.04] p-3 rounded-2xl">
+                            <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
+                            <div className={`text-sm font-bold font-mono ${s.color}`}>{s.value}</div>
+                          </div>
+                        ))}
                       </div>
-                      <p className="text-xs text-zinc-300 leading-snug">
-                        {selectedDashboardComp === 'stripe' && 'Email script targeting Stripe companies flagging transparent flat support agreements.'}
-                        {selectedDashboardComp === 'paypal' && 'Campaign addressing developers: "Zero-latency sandbox trial & transparent flat billing".'}
-                        {selectedDashboardComp === 'square' && 'Ads targeting retail merchants highlighting terminal offline-mode robustness.'}
-                        {selectedDashboardComp === 'adyen' && 'Target mid-market merchants looking for dedicated phone support lines.'}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
-                      className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Copy size={10} />
-                      {copiedPlaybook ? 'Copied' : 'Copy script'}
-                    </button>
-                  </div>
-                </div>
 
-                <div className="pt-4 mt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-600 font-mono">
-                  <span>4 pages · 2 API routes · 1 docs path monitored</span>
-                  <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
-                    Export Battle Card <ArrowUpRight size={9} />
-                  </Link>
-                </div>
+                      <motion.div
+                        initial={{ borderLeftColor: 'rgba(56, 189, 248, 0)' }}
+                        animate={{ borderLeftColor: ['rgba(56, 189, 248, 0)', 'rgba(56, 189, 248, 0.3)', 'rgba(56, 189, 248, 0.15)'] }}
+                        transition={{ duration: 1.5, ease: 'easeOut' }}
+                        style={{ borderLeftWidth: 3 }}
+                        className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-2xl mb-3"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-mono text-sky-300 bg-sky-500/8 border border-sky-500/15 px-2 py-0.5 rounded-md">
+                            PRICING UPDATE
+                          </span>
+                          <span className="text-[10px] font-mono text-zinc-600">June 4, 2026</span>
+                        </div>
+                        <h4 className="text-xs font-semibold text-white mb-1.5 leading-snug">
+                          {selectedDashboardComp === 'stripe' && 'Removed flat-rate pricing for enterprise accounts'}
+                          {selectedDashboardComp === 'paypal' && 'Card transaction fee adjusted from 2.9% to 3.49%'}
+                          {selectedDashboardComp === 'square' && 'POS firmware update v3.1 with dynamic checkout fees'}
+                          {selectedDashboardComp === 'adyen' && 'Changed EMEA support tiers and custom POS redirect APIs'}
+                        </h4>
+                        <p className="text-xs text-zinc-400 leading-relaxed">
+                          {selectedDashboardComp === 'stripe' && 'Enterprise leads now redirected to "Contact Sales" pipeline, hiding transaction fee discounts.'}
+                          {selectedDashboardComp === 'paypal' && 'Rate change increases merchant billing overhead by 20%. Developers report sandbox instability.'}
+                          {selectedDashboardComp === 'square' && 'Terminals report Wi-Fi dropping during heavy retail checkout hours.'}
+                          {selectedDashboardComp === 'adyen' && 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.'}
+                        </p>
+                      </motion.div>
+
+                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-2xl flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
+                            <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
+                          </div>
+                          <p className="text-xs text-zinc-300 leading-snug">
+                            {selectedDashboardComp === 'stripe' && 'Email script targeting Stripe companies flagging transparent flat support agreements.'}
+                            {selectedDashboardComp === 'paypal' && 'Campaign addressing developers: "Zero-latency sandbox trial & transparent flat billing".'}
+                            {selectedDashboardComp === 'square' && 'Ads targeting retail merchants highlighting terminal offline-mode robustness.'}
+                            {selectedDashboardComp === 'adyen' && 'Target mid-market merchants looking for dedicated phone support lines.'}
+                          </p>
+                        </div>
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
+                        >
+                          <AnimatePresence mode="wait">
+                            {copiedPlaybook ? (
+                              <motion.span
+                                key="copied"
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.8, opacity: 0 }}
+                                className="flex items-center gap-1"
+                              >
+                                <Check size={10} className="text-emerald-400" />
+                                Copied ✓
+                              </motion.span>
+                            ) : (
+                              <motion.span
+                                key="copy"
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.8, opacity: 0 }}
+                                className="flex items-center gap-1"
+                              >
+                                <Copy size={10} />
+                                Copy script
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </motion.button>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 mt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-600 font-mono">
+                      <span>4 pages · 2 API routes · 1 docs path monitored</span>
+                      <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
+                        Export Battle Card <ArrowUpRight size={9} />
+                      </Link>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
             </div>
