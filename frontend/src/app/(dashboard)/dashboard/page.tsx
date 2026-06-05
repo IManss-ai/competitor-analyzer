@@ -8,6 +8,7 @@ import ScanNowButton from '@/components/scan-now-button';
 import DashboardAnimator, { DashboardSection } from './dashboard-animator';
 import DashboardClient from './dashboard-client';
 import LocalBusinessSection from '@/components/local-business-section';
+import ReviewIntelligence from '@/components/review-intelligence';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -44,8 +45,15 @@ export default async function DashboardPage() {
         isLocalBusiness={isLocalBusiness}
       />
 
+      <DashboardSection className="mt-6">
+        <ReviewIntelligence
+          competitors={compData.competitors}
+          reviewsData={reviewsData}
+        />
+      </DashboardSection>
+
       {isLocalBusiness && (
-        <DashboardSection className="mt-8">
+        <DashboardSection className="mt-6">
           <LocalBusinessSection
             competitors={compData.competitors}
             isLocalBusiness={isLocalBusiness}
