@@ -143,7 +143,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     if (loadingFeed) return;
     setLoadingFeed(true);
     try {
-      const res = await fetch(`${apiUrl}/api/v1/dashboard/feed?limit=20&offset={feedOffset}`, {
+      const res = await fetch(`${apiUrl}/api/v1/dashboard/feed?limit=20&offset=${feedOffset}`, {
         headers: { Authorization: `Bearer ${userId}` }
       });
       if (res.ok) {
@@ -372,7 +372,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
         <div className="space-y-2">
           <h2 className="text-lg font-bold text-white tracking-tight">
-            {isError ? 'Competitor Added with Scan AlertTriangle' : 'First scan complete!'}
+            {isError ? 'Scan had an issue' : 'First scan complete!'}
           </h2>
           <p className="text-xs text-zinc-400 max-w-sm mx-auto">
             {isError 
@@ -558,7 +558,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 };
                 
                 const typeStyle = changeTypeStyles[event.change_type] || changeTypeStyles.minor_copy;
-                const hostname = event.competitor_url.split('://')[-1].split('/')[0].replace('www.', '');
+                const hostname = (event.competitor_url.split('://')[1] || event.competitor_url).split('/')[0].replace('www.', '');
 
                 return (
                   <div key={event.id} className="p-5 hover:bg-white/[0.02] transition-colors duration-200">
@@ -577,7 +577,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         
                         <div className="flex items-center gap-2 mb-2">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${typeStyle}`}>
-                            {event.change_type.replace('_', ' ')}
+                            {event.change_type.replace(/_/g, ' ')}
                           </span>
                         </div>
 
@@ -705,6 +705,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         >
                           {scanningCompId === comp.id ? (
                             <Loader2 size={14} className="animate-spin text-sky-400" />
+                          ) : scanDoneCompId === comp.id ? (
+                            <CheckCircle2 size={14} className="text-emerald-400" />
                           ) : (
                             <RefreshCw size={14} />
                           )}

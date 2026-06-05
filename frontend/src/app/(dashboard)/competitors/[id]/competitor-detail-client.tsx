@@ -229,7 +229,7 @@ ${card.win_conditions && card.win_conditions.length > 0
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
             <img 
-              src={`https://www.google.com/s2/favicons?domain=${comp.url.split('://')[-1].split('/')[0]}&sz=64`}
+              src={`https://www.google.com/s2/favicons?domain=${(comp.url.split('://')[1] || comp.url).split('/')[0]}&sz=64`}
               alt=""
               className="w-12 h-12 rounded-xl bg-[#130f2c] border border-white/[0.08] p-1.5 flex-shrink-0"
             />
@@ -371,7 +371,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                             
                             <div className="flex items-center gap-2 flex-shrink-0">
                               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${typeStyle}`}>
-                                {event.change_type.replace('_', ' ')}
+                                {event.change_type.replace(/_/g, ' ')}
                               </span>
                               {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                             </div>
