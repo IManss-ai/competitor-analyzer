@@ -12,6 +12,8 @@ import {
 } from '@phosphor-icons/react';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
+import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
+import { InteractiveDotCanvas } from '@/components/ui/interactive-dot-canvas';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -110,6 +112,17 @@ const COMPANIES = [
   { name: 'Vercel', abbr: 'V' },
   { name: 'Figma', abbr: 'F' },
   { name: 'Loom', abbr: 'L' },
+];
+
+const HERO_STRIP_IMAGES = [
+  { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=560&h=320&fit=crop&q=80', label: 'Pricing analysis' },
+  { url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=560&h=320&fit=crop&q=80', label: 'Feature tracking' },
+  { url: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=560&h=320&fit=crop&q=80', label: 'Copy changes' },
+  { url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=560&h=320&fit=crop&q=80', label: 'Market signals' },
+  { url: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=560&h=320&fit=crop&q=80', label: 'Traffic trends' },
+  { url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=560&h=320&fit=crop&q=80', label: 'Team growth' },
+  { url: 'https://images.unsplash.com/photo-1599658880436-c61792e70672?w=560&h=320&fit=crop&q=80', label: 'Ad tracking' },
+  { url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=560&h=320&fit=crop&q=80', label: 'Review sentiment' },
 ];
 
 // ─── Animation helpers ───────────────────────────────────────────────────────
@@ -254,11 +267,14 @@ export default function LandingPage() {
       </AnimatePresence>
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
-      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-24 px-6">
-        {/* Subtle top glow - static, no animation */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-sky-600/6 rounded-full blur-[120px] pointer-events-none" />
+      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-24 px-6 overflow-hidden">
+        {/* Interactive dot canvas background */}
+        <InteractiveDotCanvas className="z-0 opacity-70" />
 
-        <div className="max-w-7xl mx-auto">
+        {/* Subtle top glow - static, no animation */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-sky-600/6 rounded-full blur-[120px] pointer-events-none z-0" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
             {/* Left: copy */}
@@ -279,7 +295,12 @@ export default function LandingPage() {
                 transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[52px] sm:text-[60px] lg:text-[64px] font-bold tracking-tight leading-[1.02] mb-6 text-white"
               >
-                Know every<br className="hidden sm:block" /> competitor move.
+                Know every competitor<br className="hidden sm:block" />
+                <HeroRotatingWord
+                  words={['move.', 'pricing change.', 'feature launch.', 'messaging shift.', 'hiring signal.']}
+                  className="text-sky-400"
+                  interval={2400}
+                />
               </motion.h1>
 
               <motion.p
@@ -390,6 +411,51 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
+          </div>
+        </div>
+
+        {/* ── ANALYTICS STRIP ─────────────────────────────────────────── */}
+        <div className="relative mt-16 -mx-6 overflow-hidden">
+          {/* Left fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-[#040812] to-transparent z-10 pointer-events-none" />
+          {/* Right fade */}
+          <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-[#040812] to-transparent z-10 pointer-events-none" />
+
+          <div
+            className="flex items-center"
+            style={{
+              gap: '16px',
+              paddingLeft: '16px',
+              animation: 'hero-marquee 42s linear infinite',
+              width: 'max-content',
+            }}
+          >
+            {[...HERO_STRIP_IMAGES, ...HERO_STRIP_IMAGES].map((img, i) => (
+              <div
+                key={i}
+                className="relative flex-shrink-0 rounded-xl overflow-hidden border border-white/[0.07]"
+                style={{ width: '280px', height: '158px' }}
+              >
+                <img
+                  src={img.url}
+                  alt={img.label}
+                  className="w-full h-full object-cover"
+                  style={{ filter: 'brightness(0.45) saturate(0.8)' }}
+                  loading="lazy"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                {/* Scan line effect */}
+                <div className="absolute inset-x-0 top-0 h-px bg-sky-400/20" />
+                {/* Label */}
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1 rounded-full bg-sky-400/60 flex-shrink-0" />
+                  <span className="text-[10px] font-mono text-sky-400/60 uppercase tracking-widest">
+                    {img.label}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
