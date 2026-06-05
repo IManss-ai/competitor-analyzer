@@ -106,6 +106,29 @@ const BATTLE_CARDS_DATA = {
 
 // ─── Animation helpers ───────────────────────────────────────────────────────
 
+function TypewriterComplaint({ text, delay }: { text: string; delay: number }) {
+  const [displayedText, setDisplayedText] = useState("");
+
+  useEffect(() => {
+    setDisplayedText("");
+    const startTimeout = setTimeout(() => {
+      let i = 0;
+      const interval = setInterval(() => {
+        setDisplayedText(text.slice(0, i + 1));
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+        }
+      }, 30);
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => clearTimeout(startTimeout);
+  }, [text, delay]);
+
+  return <>{displayedText}</>;
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
@@ -115,6 +138,7 @@ export default function LandingPage() {
   const [copiedPlaybook, setCopiedPlaybook] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredDashComp, setHoveredDashComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen' | null>(null);
+  const [hoveredBattleTab, setHoveredBattleTab] = useState<'stripe' | 'paypal' | 'square' | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
@@ -979,9 +1003,18 @@ export default function LandingPage() {
                 <button
                   key={comp}
                   onClick={() => setActiveComp(comp)}
+                  onMouseEnter={() => setHoveredBattleTab(comp)}
+                  onMouseLeave={() => setHoveredBattleTab(null)}
                   className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors cursor-pointer relative"
                   style={{ color: activeComp === comp ? '#ffffff' : '#6b7280' }}
                 >
+                  {hoveredBattleTab === comp && activeComp !== comp && (
+                    <motion.div
+                      layoutId="battleTabHover"
+                      className="absolute inset-0 bg-white/[0.04] rounded-full"
+                      transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                    />
+                  )}
                   {activeComp === comp && (
                     <motion.div
                       layoutId="activeBattleTab"
@@ -1018,69 +1051,114 @@ export default function LandingPage() {
             </div>
 
             {/* 4 quadrants */}
-            <div className="grid md:grid-cols-2 divide-x divide-y divide-white/[0.05]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeComp}
+                className="grid md:grid-cols-2 divide-x divide-y divide-white/[0.05]"
+              >
+                {/* Quadrant 1 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, delay: 0 * 0.06 }}
+                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                >
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-sky-400 bg-sky-500/8 border border-sky-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
+                    Detected changes
+                  </div>
+                  <div className="space-y-3">
+                    {currentCard.changes.map((row, j) => (
+                      <div key={j} className="flex gap-2.5 items-start">
+                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md uppercase tracking-wide flex-shrink-0 mt-0.5 border ${row.tc}`}>
+                          {row.tag}
+                        </span>
+                        <span className="text-xs text-zinc-300 leading-snug">{row.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
 
-              <div className="p-5 hover:bg-white/[0.01] transition-colors">
-                <div className="text-[10px] font-mono uppercase tracking-widest text-sky-400 bg-sky-500/8 border border-sky-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
-                  Detected changes
-                </div>
-                <div className="space-y-3">
-                  {currentCard.changes.map((row, j) => (
-                    <div key={j} className="flex gap-2.5 items-start">
-                      <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md uppercase tracking-wide flex-shrink-0 mt-0.5 border ${row.tc}`}>
-                        {row.tag}
-                      </span>
-                      <span className="text-xs text-zinc-300 leading-snug">{row.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                {/* Quadrant 2 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, delay: 1 * 0.06 }}
+                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                >
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-red-400 bg-red-500/8 border border-red-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
+                    User complaints
+                  </div>
+                  <div className="space-y-4">
+                    {currentCard.complaints.map((c, j) => (
+                      <div key={j} className="border-l-2 border-red-500/20 pl-3">
+                        <p className="text-xs text-zinc-400 italic leading-relaxed min-h-[32px]">
+                          <TypewriterComplaint text={c.text} delay={200} />
+                        </p>
+                        <span className="text-[10px] font-mono text-zinc-600 mt-1 block">{c.source}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
 
-              <div className="p-5 hover:bg-white/[0.01] transition-colors">
-                <div className="text-[10px] font-mono uppercase tracking-widest text-red-400 bg-red-500/8 border border-red-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
-                  User complaints
-                </div>
-                <div className="space-y-4">
-                  {currentCard.complaints.map((c, j) => (
-                    <div key={j} className="border-l-2 border-red-500/20 pl-3">
-                      <p className="text-xs text-zinc-400 italic leading-relaxed">{c.text}</p>
-                      <span className="text-[10px] font-mono text-zinc-600 mt-1 block">{c.source}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                {/* Quadrant 3 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, delay: 2 * 0.06 }}
+                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                >
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-amber-400 bg-amber-500/8 border border-amber-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
+                    Strategic signals
+                  </div>
+                  <div className="space-y-3">
+                    {currentCard.signals.map((sig, j) => (
+                      <div key={j} className="flex gap-2 items-start">
+                        <span className="text-amber-500 text-sm mt-0.5 flex-shrink-0">›</span>
+                        <p className="text-xs text-zinc-300 leading-snug">
+                          <strong className="text-white font-semibold">{sig.bold}</strong>{sig.rest}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
 
-              <div className="p-5 hover:bg-white/[0.01] transition-colors">
-                <div className="text-[10px] font-mono uppercase tracking-widest text-amber-400 bg-amber-500/8 border border-amber-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
-                  Strategic signals
-                </div>
-                <div className="space-y-3">
-                  {currentCard.signals.map((sig, j) => (
-                    <div key={j} className="flex gap-2 items-start">
-                      <span className="text-amber-500 text-sm mt-0.5 flex-shrink-0">›</span>
-                      <p className="text-xs text-zinc-300 leading-snug">
-                        <strong className="text-white font-semibold">{sig.bold}</strong>{sig.rest}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-5 hover:bg-white/[0.01] transition-colors">
-                <div className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 bg-emerald-500/8 border border-emerald-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
-                  Playbook actions
-                </div>
-                <div className="space-y-2.5">
-                  {currentCard.moves.map((move, j) => (
-                    <div key={j} className="flex gap-2 items-start">
-                      <CheckCircle2 size={14}  className="text-emerald-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-xs text-zinc-300 leading-snug">{move}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-            </div>
+                {/* Quadrant 4 */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, delay: 3 * 0.06 }}
+                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                >
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 bg-emerald-500/8 border border-emerald-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
+                    Playbook actions
+                  </div>
+                  <div className="space-y-2.5">
+                    {currentCard.moves.map((move, j) => (
+                      <div key={j} className="flex gap-2 items-start">
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 400,
+                            damping: 20,
+                            delay: 0.05 + j * 0.05
+                          }}
+                          className="text-emerald-400 flex-shrink-0 mt-0.5"
+                        >
+                          <CheckCircle2 size={14} />
+                        </motion.div>
+                        <span className="text-xs text-zinc-300 leading-snug">{move}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
         </div>
