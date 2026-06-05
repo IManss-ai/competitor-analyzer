@@ -159,3 +159,16 @@ pre,
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+/* Ensure Framer Motion whileInView elements are visible to non-JS / crawlers */
+@media (prefers-reduced-motion: reduce) {
+  [style*="opacity: 0"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Progressive enhancement: show sections immediately if JS loads slowly */
+.motion-safe-fallback {
+  opacity: 1;
+}
