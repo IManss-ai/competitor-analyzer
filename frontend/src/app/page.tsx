@@ -11,6 +11,7 @@ import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { InteractiveDotCanvas } from '@/components/ui/interactive-dot-canvas';
 import { fadeUpVariants, staggerContainerVariants, cardHoverVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
+import { PlatformRoadmap } from '@/components/ui/platform-roadmap';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -975,6 +976,11 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
+      {/* ── ROADMAP ──────────────────────────────────────────────────────── */}
+      <PlatformRoadmap />
 
       <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
