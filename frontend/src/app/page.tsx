@@ -10,6 +10,7 @@ import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { InteractiveDotCanvas } from '@/components/ui/interactive-dot-canvas';
 import { fadeUpVariants, staggerContainerVariants, cardHoverVariants } from '@/lib/animations';
+import HowItWorksPanels from '@/components/ui/how-it-works-panels';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -438,57 +439,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="relative">
-            {/* Connecting line (desktop only) */}
-            <div className="hidden md:block absolute top-5 left-[calc(16.5%)] right-[calc(16.5%)] h-px">
-              <div className="h-full bg-gradient-to-r from-sky-500/20 via-sky-500/40 to-sky-500/20" />
-            </div>
-
-            <motion.div
-              variants={staggerContainerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.05 }}
-              className="grid md:grid-cols-3 gap-12 md:gap-8"
-            >
-              {[
-                {
-                  n: '01',
-                  title: 'Register competitor URLs',
-                  body: 'Add domains of up to 7 competitors. We automatically scan homepages, pricing grids, developer docs, and social feeds.',
-                },
-                {
-                  n: '02',
-                  title: 'AI analyzes modifications',
-                  body: 'Our engine parses changes daily. When a pricing tier is tweaked or complaints pile up, AI formats it into clean categorized insights.',
-                },
-                {
-                  n: '03',
-                  title: 'Get your sales playbook',
-                  body: 'Every Monday, receive an executive brief outlining competitor modifications, friction points, and your exact response script.',
-                },
-              ].map((step, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUpVariants}
-                  custom={i}
-                  className="flex flex-col gap-5"
-                >
-                  {/* Number node */}
-                  <div className="relative flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full border border-sky-500/30 bg-sky-500/8 flex items-center justify-center flex-shrink-0 relative z-10">
-                      <span className="text-sky-400 text-sm font-bold font-mono">{step.n}</span>
-                    </div>
-                    <div className="flex-1 h-px bg-white/[0.04] md:hidden" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-base mb-2 leading-snug">{step.title}</h3>
-                    <p className="text-zinc-400 text-sm leading-relaxed">{step.body}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+          <HowItWorksPanels />
         </div>
       </section>
 
