@@ -32,7 +32,7 @@ const tiers: PricingTier[] = [
     features: [
       "Website monitoring",
       "Pricing page tracking",
-      "Battle CreditCard with AI action plans",
+      "Battle Card with AI action plans",
       "Review intelligence (G2, Trustpilot)",
       "Weekly email report",
     ],
@@ -51,7 +51,7 @@ const tiers: PricingTier[] = [
       "Google Reviews monitoring",
       "Instagram & Facebook tracking",
       "Nearby competitor alerts",
-      "Local Battle CreditCard",
+      "Local Battle Card",
       "Weekly summary email",
     ],
     cta: "Start free trial →",

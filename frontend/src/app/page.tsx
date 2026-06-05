@@ -311,7 +311,7 @@ export default function LandingPage() {
                 { label: 'How it works', href: '#how-it-works' },
                 { label: 'Command Center', href: '#dashboard-showcase' },
                 { label: 'Features', href: '#features' },
-                { label: 'Battle CreditCard', href: '#battle-card' },
+                { label: 'Battle Card', href: '#battle-card' },
                 { label: 'Pricing', href: '#pricing' },
                 { label: 'Sign in', href: '/auth/login' },
               ].map((item, i) => (
@@ -1402,7 +1402,7 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Product</h4>
               <ul className="space-y-2 text-xs text-zinc-400">
-                {['How it works', 'Command Center', 'Features', 'Battle CreditCard'].map((l) => (
+                {['How it works', 'Command Center', 'Features', 'Battle Card'].map((l) => (
                   <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>
                 ))}
               </ul>

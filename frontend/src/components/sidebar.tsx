@@ -83,7 +83,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     { href: '/dashboard',           label: 'Dashboard',    Icon: LayoutDashboard },
     { href: '/competitors',         label: 'Competitors',  Icon: Building2 },
     { href: '/dashboard#feed',      label: 'Intel Feed',   Icon: FileText },
-    { href: '/dashboard#battlecards', label: 'Battle CreditCard', Icon: Shield },
+    { href: '/dashboard#battlecards', label: 'Battle Card', Icon: Shield },
     { href: '/trends',              label: 'Trends',       Icon: TrendingUp },
     { href: '/queue',               label: 'Action Queue', Icon: CheckSquare },
     { href: '/settings',            label: 'Settings',     Icon: Settings },
