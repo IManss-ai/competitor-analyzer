@@ -172,3 +172,9 @@ pre,
 .motion-safe-fallback {
   opacity: 1;
 }
+
+/* Hero analytics strip marquee */
+@keyframes hero-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
