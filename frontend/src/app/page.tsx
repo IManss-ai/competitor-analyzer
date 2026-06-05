@@ -327,7 +327,7 @@ export default function LandingPage() {
               transition={{ duration: 0.65, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <div className="bg-[#080e1c] border border-white/[0.07] rounded-2xl overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.5)]">
+              <div className="bg-[#080e1c] border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.5)]">
                 {/* Panel header */}
                 <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
                   <div className="flex items-center gap-2">
@@ -344,7 +344,7 @@ export default function LandingPage() {
                   {FEED.map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.025] transition-colors cursor-default"
+                      className="flex items-start gap-3 px-3 py-2.5 rounded-2xl hover:bg-white/[0.025] transition-colors cursor-default"
                     >
                       <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                         {item.type}
@@ -401,7 +401,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── SCANNER STREAM ──────────────────────────────────────────────── */}
-      <section className="py-0 overflow-hidden border-b border-white/[0.05] relative">
+      <section className="py-0 overflow-hidden bg-[#040812] relative">
         {/* Top fade */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#040812] to-transparent z-30 pointer-events-none" />
         {/* Bottom fade */}
@@ -422,8 +422,10 @@ export default function LandingPage() {
         />
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
       {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-24 px-6 border-b border-white/[0.05] bg-[#06101f]">
+      <section id="how-it-works" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-5xl mx-auto">
 
           <motion.div {...fadeUp(0)} className="mb-16">
@@ -478,8 +480,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── DASHBOARD SHOWCASE ──────────────────────────────────────────── */}
-      <section id="dashboard-showcase" className="py-24 px-6 border-b border-white/[0.05]">
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
+      {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
+      <section id="dashboard-showcase" className="py-24 px-6 bg-[#040812] relative">
         <div className="max-w-7xl mx-auto">
 
           <motion.div {...fadeUp(0)} className="mb-12">
@@ -493,7 +497,7 @@ export default function LandingPage() {
 
           <motion.div
             {...fadeUp(0.1)}
-            className="border border-white/[0.06] rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] bg-[#060b18]"
+            className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] bg-[#060b18]"
           >
             <div className="grid md:grid-cols-[200px_1fr] min-h-[480px]">
 
@@ -554,14 +558,14 @@ export default function LandingPage() {
                       { label: 'Changes', value: '3 this week', color: 'text-sky-400' },
                       { label: 'Plays', value: '2 ready', color: 'text-emerald-400' },
                     ].map((s) => (
-                      <div key={s.label} className="bg-white/[0.02] border border-white/[0.04] p-3 rounded-xl">
+                      <div key={s.label} className="bg-white/[0.02] border border-white/[0.04] p-3 rounded-2xl">
                         <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
                         <div className={`text-sm font-bold font-mono ${s.color}`}>{s.value}</div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-xl mb-3">
+                  <div className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-2xl mb-3">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[10px] font-mono text-sky-300 bg-sky-500/8 border border-sky-500/15 px-2 py-0.5 rounded-md">
                         PRICING UPDATE
@@ -582,7 +586,7 @@ export default function LandingPage() {
                     </p>
                   </div>
 
-                  <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-xl flex items-center justify-between gap-3">
+                  <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-2xl flex items-center justify-between gap-3">
                     <div>
                       <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
                         <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
@@ -617,8 +621,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
-      <section id="features" className="py-24 px-6 border-b border-white/[0.05] bg-[#06101f]">
+      <section id="features" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-5xl mx-auto">
 
           <motion.div {...fadeUp(0)} className="mb-3">
@@ -638,7 +644,7 @@ export default function LandingPage() {
             {/* Row 1: Full width feature */}
             <motion.div
               {...fadeUp(0.05)}
-              className="md:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
+              className="md:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
                 <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -649,7 +655,7 @@ export default function LandingPage() {
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full sm:w-48 h-20 bg-[#030712] rounded-xl border border-white/[0.04] overflow-hidden relative">
+              <div className="flex-shrink-0 w-full sm:w-48 h-20 bg-[#030712] rounded-2xl border border-white/[0.04] overflow-hidden relative">
                 <svg className="w-full h-full p-2" viewBox="0 0 180 64">
                   <path d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4" fill="none" stroke="#0ea5e9" strokeWidth="1.5" strokeLinecap="round" />
                   <path d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4 L 175 64 L 8 64Z" fill="url(#chartFill)" />
@@ -667,7 +673,7 @@ export default function LandingPage() {
             {/* Row 2: 2 + 1 */}
             <motion.div
               {...fadeUp(0.1)}
-              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
+              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
                 <MessageSquare size={18}  />
@@ -687,7 +693,7 @@ export default function LandingPage() {
 
             <motion.div
               {...fadeUp(0.12)}
-              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
+              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <Zap size={18}  />
@@ -701,7 +707,7 @@ export default function LandingPage() {
             {/* Row 3: 1 + 2 */}
             <motion.div
               {...fadeUp(0.14)}
-              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
+              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <ShieldCheck size={18}  />
@@ -714,7 +720,7 @@ export default function LandingPage() {
 
             <motion.div
               {...fadeUp(0.16)}
-              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
+              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <Calendar size={18}  />
@@ -742,8 +748,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
-      <section id="battle-card" className="py-24 px-6 border-b border-white/[0.05]">
+      <section id="battle-card" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-5xl mx-auto">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
@@ -779,7 +787,7 @@ export default function LandingPage() {
 
           <motion.div
             {...fadeUp(0.08)}
-            className="border border-white/[0.06] rounded-2xl overflow-hidden bg-[#060b18]"
+            className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden bg-[#060b18]"
           >
             {/* Card header */}
             <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
@@ -864,8 +872,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
-      <section className="py-20 px-6 border-b border-white/[0.05] bg-[#06101f]">
+      <section className="py-20 px-6 bg-[#040812] relative">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div {...fadeUp(0)}>
@@ -885,7 +895,7 @@ export default function LandingPage() {
                 { icon: <Instagram size={15}  />, title: 'Social Actions Scan', body: 'Monitor local competitor Instagram and Facebook feeds without credentials.' },
                 { icon: <CreditCard size={15}  />, title: 'Local Battle Playbooks', body: 'AI checklists: support gaps, price comparisons, promotion templates.' },
               ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.05] p-4 rounded-xl hover:border-sky-500/15 transition-all">
+                <div key={i} className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-all duration-300">
                   <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
                     {item.icon}
                   </div>
@@ -900,8 +910,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
       {/* ── PRICING ─────────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 px-6 border-b border-white/[0.05]">
+      <section id="pricing" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-7xl mx-auto">
           <motion.div {...fadeUp(0)} className="mb-3">
             <span className="text-[10px] font-mono text-sky-400 uppercase tracking-widest border border-sky-500/20 bg-sky-500/5 px-3 py-1 rounded-full inline-block">
@@ -912,8 +924,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
       {/* ── CTA ─────────────────────────────────────────────────────────── */}
-      <section className="py-28 px-6 relative overflow-hidden">
+      <section className="py-28 px-6 bg-[#040812] relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-950/5 to-transparent pointer-events-none" />
         <div className="max-w-2xl mx-auto text-center relative z-10">
           <motion.div {...fadeUp(0)}>
