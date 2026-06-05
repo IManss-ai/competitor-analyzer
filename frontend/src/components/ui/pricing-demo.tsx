@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { CheckCircle, ArrowRight } from "@phosphor-icons/react";
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 const reveal = (delay = 0) => ({
   initial: { opacity: 0, y: 28 } as const,
@@ -32,7 +32,7 @@ const tiers: PricingTier[] = [
     features: [
       "Website monitoring",
       "Pricing page tracking",
-      "Battle Cards with AI action plans",
+      "Battle CreditCard with AI action plans",
       "Review intelligence (G2, Trustpilot)",
       "Weekly email report",
     ],
@@ -51,7 +51,7 @@ const tiers: PricingTier[] = [
       "Google Reviews monitoring",
       "Instagram & Facebook tracking",
       "Nearby competitor alerts",
-      "Local Battle Cards",
+      "Local Battle CreditCard",
       "Weekly summary email",
     ],
     cta: "Start free trial →",
@@ -102,7 +102,7 @@ function PricingBasic() {
             <ul className="space-y-3 mb-8">
               {tier.features.map((feat) => (
                 <li key={feat} className="flex items-start gap-2.5 text-sm text-zinc-300">
-                  <CheckCircle size={16} weight="fill" className={`flex-shrink-0 mt-0.5 ${tier.accentClass}`} />
+                  <CheckCircle2 size={16}  className={`flex-shrink-0 mt-0.5 ${tier.accentClass}`} />
                   <span>{feat}</span>
                 </li>
               ))}
@@ -115,7 +115,7 @@ function PricingBasic() {
             >
               <span className="text-sm">{tier.cta}</span>
               <span className="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center">
-                <ArrowRight size={13} weight="bold" />
+                <ArrowRight size={13}  />
               </span>
             </Link>
 

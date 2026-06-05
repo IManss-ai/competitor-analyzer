@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Sparkle } from '@phosphor-icons/react';
+import { Sparkles } from 'lucide-react';
 
 interface DisplayCardProps {
   className?: string;
@@ -15,7 +15,7 @@ interface DisplayCardProps {
 
 function DisplayCard({
   className,
-  icon = <Sparkle />,
+  icon = <Sparkles />,
   title = "Update",
   description = "Something changed",
   date = "just now",
@@ -71,19 +71,19 @@ interface DisplayCardsProps {
 
 const defaultCards: CardData[] = [
   {
-    icon: <Sparkle weight="fill" />,
+    icon: <Sparkles  />,
     title: "Pricing change",
     description: "Stripe removed enterprise tier",
     date: "2h ago",
   },
   {
-    icon: <Sparkle weight="fill" />,
+    icon: <Sparkles  />,
     title: "New feature",
     description: "Competitor launched SDK v4",
     date: "1d ago",
   },
   {
-    icon: <Sparkle weight="fill" />,
+    icon: <Sparkles  />,
     title: "Strategic signal",
     description: "4 new sales hires in EMEA",
     date: "3d ago",

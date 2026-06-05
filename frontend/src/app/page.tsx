@@ -3,13 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import {
-  Crosshair, ArrowRight, CheckCircle,
-  Lightning,
-  TrendUp, ShieldCheck, Chats, CalendarBlank,
-  GithubLogo, TwitterLogo, LinkedinLogo,
-  ArrowUpRight, Clipboard, Star, InstagramLogo, Cards
-} from '@phosphor-icons/react';
+import { Crosshair, ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard } from 'lucide-react';
+import { Github, Twitter, Linkedin, Instagram } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
@@ -179,7 +174,7 @@ export default function LandingPage() {
           {/* Brand */}
           <Link href="#" className="flex items-center gap-2.5 group">
             <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
-              <Crosshair size={13} weight="bold" className="text-sky-400" />
+              <Crosshair size={13}  className="text-sky-400" />
             </div>
             <span className="text-sm font-semibold text-white tracking-tight">Competitor Analyzer</span>
           </Link>
@@ -189,7 +184,7 @@ export default function LandingPage() {
             <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
             <a href="#dashboard-showcase" className="hover:text-white transition-colors">Command Center</a>
             <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#battle-card" className="hover:text-white transition-colors">Battle Cards</a>
+            <a href="#battle-card" className="hover:text-white transition-colors">Battle CreditCard</a>
             <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           </div>
 
@@ -203,7 +198,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 active:scale-[0.97] transition-all"
             >
               Get started
-              <ArrowRight size={10} weight="bold" />
+              <ArrowRight size={10}  />
             </Link>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -231,7 +226,7 @@ export default function LandingPage() {
                 { label: 'How it works', href: '#how-it-works' },
                 { label: 'Command Center', href: '#dashboard-showcase' },
                 { label: 'Features', href: '#features' },
-                { label: 'Battle Cards', href: '#battle-card' },
+                { label: 'Battle CreditCard', href: '#battle-card' },
                 { label: 'Pricing', href: '#pricing' },
                 { label: 'Sign in', href: '/auth/login' },
               ].map((item, i) => (
@@ -312,14 +307,14 @@ export default function LandingPage() {
                   className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 active:scale-[0.97] transition-all"
                 >
                   Start 14-day free trial
-                  <ArrowRight size={12} weight="bold" />
+                  <ArrowRight size={12}  />
                 </Link>
                 <a
                   href="#dashboard-showcase"
                   className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors px-2 py-3"
                 >
                   See a live demo
-                  <ArrowRight size={12} weight="regular" className="opacity-50" />
+                  <ArrowRight size={12}  className="opacity-50" />
                 </a>
               </motion.div>
 
@@ -330,13 +325,13 @@ export default function LandingPage() {
                 className="flex items-center gap-5 text-xs text-zinc-500"
               >
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle size={13} weight="fill" className="text-sky-500" /> No card required
+                  <CheckCircle2 size={13}  className="text-sky-500" /> No card required
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle size={13} weight="fill" className="text-sky-500" /> Cancel anytime
+                  <CheckCircle2 size={13}  className="text-sky-500" /> Cancel anytime
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle size={13} weight="fill" className="text-sky-500" /> 5 min setup
+                  <CheckCircle2 size={13}  className="text-sky-500" /> 5 min setup
                 </span>
               </motion.div>
             </div>
@@ -352,7 +347,7 @@ export default function LandingPage() {
                 {/* Panel header */}
                 <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
                   <div className="flex items-center gap-2">
-                    <TrendUp size={14} className="text-sky-400" />
+                    <TrendingUp size={14} className="text-sky-400" />
                     <span className="text-sm font-semibold text-white">Intel Feed</span>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -565,7 +560,7 @@ export default function LandingPage() {
                   <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-5">
                     <div>
                       <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                        <TrendUp size={14} className="text-sky-400" />
+                        <TrendingUp size={14} className="text-sky-400" />
                         Intel Feed - <span className="capitalize text-sky-300">{selectedDashboardComp}</span>
                       </h3>
                       <p className="text-[10px] font-mono text-zinc-600 mt-0.5">Live monitoring · last scan 12 min ago</p>
@@ -612,7 +607,7 @@ export default function LandingPage() {
                   <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-xl flex items-center justify-between gap-3">
                     <div>
                       <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
-                        <CheckCircle size={9} weight="fill" /> SUGGESTED PLAYBOOK
+                        <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
                       </div>
                       <p className="text-xs text-zinc-300 leading-snug">
                         {selectedDashboardComp === 'stripe' && 'Email script targeting Stripe companies flagging transparent flat support agreements.'}
@@ -625,7 +620,7 @@ export default function LandingPage() {
                       onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
                       className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
                     >
-                      <Clipboard size={10} />
+                      <Copy size={10} />
                       {copiedPlaybook ? 'Copied' : 'Copy script'}
                     </button>
                   </div>
@@ -669,7 +664,7 @@ export default function LandingPage() {
             >
               <div className="flex-1">
                 <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                  <TrendUp size={18} weight="bold" />
+                  <TrendingUp size={18}  />
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">Pricing Grid Monitoring</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
@@ -697,7 +692,7 @@ export default function LandingPage() {
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
             >
               <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
-                <Chats size={18} weight="bold" />
+                <MessageSquare size={18}  />
               </div>
               <h3 className="text-sm font-bold text-white mb-2">Review Site Intelligence</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
@@ -717,7 +712,7 @@ export default function LandingPage() {
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <Lightning size={18} weight="bold" />
+                <Zap size={18}  />
               </div>
               <h3 className="text-sm font-bold text-white mb-2">AI Copilot Playbooks</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
@@ -731,7 +726,7 @@ export default function LandingPage() {
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <ShieldCheck size={18} weight="bold" />
+                <ShieldCheck size={18}  />
               </div>
               <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
@@ -744,7 +739,7 @@ export default function LandingPage() {
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:border-sky-500/15 transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <CalendarBlank size={18} weight="bold" />
+                <Calendar size={18}  />
               </div>
               <h3 className="text-sm font-bold text-white mb-2">Historical Changelog</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
@@ -812,7 +807,7 @@ export default function LandingPage() {
             <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg ${currentCard.logoColor} flex items-center justify-center`}>
-                  <Crosshair size={13} weight="bold" className="text-white" />
+                  <Crosshair size={13}  className="text-white" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">{currentCard.company} Battle Card</h4>
@@ -878,7 +873,7 @@ export default function LandingPage() {
                 <div className="space-y-2.5">
                   {currentCard.moves.map((move, j) => (
                     <div key={j} className="flex gap-2 items-start">
-                      <CheckCircle size={14} weight="fill" className="text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 size={14}  className="text-emerald-400 flex-shrink-0 mt-0.5" />
                       <span className="text-xs text-zinc-300 leading-snug">{move}</span>
                     </div>
                   ))}
@@ -908,9 +903,9 @@ export default function LandingPage() {
             </motion.div>
             <motion.div {...fadeUp(0.08)} className="grid grid-cols-1 gap-3">
               {[
-                { icon: <Star size={15} weight="fill" />, title: 'Google Reviews Track', body: 'Weekly alerts when a nearby competitor receives critical reviews.' },
-                { icon: <InstagramLogo size={15} weight="fill" />, title: 'Social Actions Scan', body: 'Monitor local competitor Instagram and Facebook feeds without credentials.' },
-                { icon: <Cards size={15} weight="fill" />, title: 'Local Battle Playbooks', body: 'AI checklists: support gaps, price comparisons, promotion templates.' },
+                { icon: <Star size={15}  />, title: 'Google Reviews Track', body: 'Weekly alerts when a nearby competitor receives critical reviews.' },
+                { icon: <Instagram size={15}  />, title: 'Social Actions Scan', body: 'Monitor local competitor Instagram and Facebook feeds without credentials.' },
+                { icon: <CreditCard size={15}  />, title: 'Local Battle Playbooks', body: 'AI checklists: support gaps, price comparisons, promotion templates.' },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.05] p-4 rounded-xl hover:border-sky-500/15 transition-all">
                   <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
@@ -955,7 +950,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-2.5 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 active:scale-[0.98] transition-all text-sm"
             >
               Start free trial
-              <ArrowRight size={13} weight="bold" />
+              <ArrowRight size={13}  />
             </Link>
           </motion.div>
         </div>
@@ -970,7 +965,7 @@ export default function LandingPage() {
             <div className="col-span-2 space-y-4">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded-lg">
-                  <Crosshair size={11} weight="bold" className="text-sky-400" />
+                  <Crosshair size={11}  className="text-sky-400" />
                 </div>
                 <span className="text-sm font-semibold text-white">Competitor Analyzer</span>
               </div>
@@ -982,7 +977,7 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Product</h4>
               <ul className="space-y-2 text-xs text-zinc-400">
-                {['How it works', 'Command Center', 'Features', 'Battle Cards'].map((l) => (
+                {['How it works', 'Command Center', 'Features', 'Battle CreditCard'].map((l) => (
                   <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>
                 ))}
               </ul>
@@ -1024,9 +1019,9 @@ export default function LandingPage() {
               &copy; {new Date().getFullYear()} Competitor Analyzer. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-zinc-500">
-              <a href="#" className="hover:text-white transition-colors"><TwitterLogo size={14} /></a>
-              <a href="#" className="hover:text-white transition-colors"><LinkedinLogo size={14} /></a>
-              <a href="#" className="hover:text-white transition-colors"><GithubLogo size={14} /></a>
+              <a href="#" className="hover:text-white transition-colors"><Twitter size={14} /></a>
+              <a href="#" className="hover:text-white transition-colors"><Linkedin size={14} /></a>
+              <a href="#" className="hover:text-white transition-colors"><Github size={14} /></a>
             </div>
           </div>
         </div>

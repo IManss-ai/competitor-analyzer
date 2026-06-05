@@ -2,15 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-  Crosshair,
-  EnvelopeSimple,
-  LockSimple,
-  ArrowRight,
-  CheckCircle,
-  GoogleLogo,
-  Globe
-} from '@phosphor-icons/react';
+import { Crosshair, Mail, Lock, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
+import { Chrome } from '@/components/ui/brand-icons';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function LoginPage() {
@@ -144,7 +137,7 @@ export default function LoginPage() {
         
         <Link href="/" className="relative flex items-center gap-2.5 z-10 hover:opacity-85 transition-opacity max-w-fit">
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-            <Crosshair size={14} weight="bold" className="text-white" />
+            <Crosshair size={14}  className="text-white" />
           </div>
           <span className="text-sm font-semibold tracking-tight">
             Competitor Analyzer
@@ -207,7 +200,7 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 hover:opacity-85 transition-opacity max-w-fit">
             <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-              <Crosshair size={14} weight="bold" className="text-white" />
+              <Crosshair size={14}  className="text-white" />
             </div>
             <span className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
               Competitor Analyzer
@@ -217,7 +210,7 @@ export default function LoginPage() {
           {sent ? (
             <div className="text-center">
               <div className="mx-auto w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mb-5">
-                <CheckCircle size={24} weight="fill" className="text-emerald-600" />
+                <CheckCircle2 size={24}  className="text-emerald-600" />
               </div>
               <h1 className="text-lg font-semibold text-[#0a0a0a] mb-2 tracking-tight">
                 Check your email
@@ -265,7 +258,7 @@ export default function LoginPage() {
                 whileTap={{ scale: 0.98 }}
                 className="w-full flex items-center justify-center gap-2.5 bg-white border border-[#e5e5e5] text-zinc-700 text-sm font-semibold py-2.5 px-4 rounded-lg hover:bg-zinc-50 hover:border-zinc-300 shadow-sm transition-all cursor-pointer mb-5"
               >
-                <GoogleLogo size={18} weight="bold" className="text-red-500" />
+                <Chrome size={18}  className="text-red-500" />
                 <span>Continue with Google / Gmail</span>
               </motion.button>
 
@@ -312,7 +305,7 @@ export default function LoginPage() {
                       Email address
                     </label>
                     <div className="relative">
-                      <EnvelopeSimple
+                      <Mail
                         size={15}
                         className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a3a3a3] pointer-events-none"
                       />
@@ -336,7 +329,7 @@ export default function LoginPage() {
                       Password
                     </label>
                     <div className="relative">
-                      <LockSimple
+                      <Lock
                         size={15}
                         className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a3a3a3] pointer-events-none"
                       />
@@ -361,7 +354,7 @@ export default function LoginPage() {
                     className="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-sm font-semibold py-2.5 px-4 rounded-lg hover:bg-[#1f1f23] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {loading ? 'Authenticating...' : 'Enter command center'}
-                    {!loading && <ArrowRight size={13} weight="bold" />}
+                    {!loading && <ArrowRight size={13}  />}
                   </motion.button>
 
                   <p className="text-[10px] text-center text-[#a3a3a3] leading-relaxed">
@@ -379,7 +372,7 @@ export default function LoginPage() {
                       Email address
                     </label>
                     <div className="relative">
-                      <EnvelopeSimple
+                      <Mail
                         size={15}
                         className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a3a3a3] pointer-events-none"
                       />
@@ -403,7 +396,7 @@ export default function LoginPage() {
                     className="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] text-white text-sm font-semibold py-2.5 px-4 rounded-lg hover:bg-[#1f1f23] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {loading ? 'Sending link...' : 'Continue with link'}
-                    {!loading && <ArrowRight size={13} weight="bold" />}
+                    {!loading && <ArrowRight size={13}  />}
                   </motion.button>
 
                   <p className="text-[10px] text-center text-[#a3a3a3] leading-relaxed">
@@ -428,7 +421,7 @@ export default function LoginPage() {
             >
               {/* Google Header */}
               <div className="flex items-center gap-2 mb-6 pb-4 border-b border-zinc-100">
-                <GoogleLogo size={22} weight="bold" className="text-blue-500" />
+                <Chrome size={22}  className="text-blue-500" />
                 <span className="text-sm font-bold text-zinc-800">Sign in with Google</span>
               </div>
 

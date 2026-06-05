@@ -2,14 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import {
-  Lightning,
-  Warning,
-  ChatText,
-  Trophy,
-  Copy,
-  Check
-} from '@phosphor-icons/react';
+import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-react';
 
 interface BattleCardData {
   title: string;
@@ -89,7 +82,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* WHAT CHANGED */}
         <section className="bg-white rounded-xl border border-[#e5e5e5] p-5 mb-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Lightning size={16} className="text-[#2563eb]" weight="bold" />
+            <Zap size={16} className="text-[#2563eb]"  />
             <h2 className="text-xs font-semibold text-[#171717] uppercase tracking-wide">
               What Changed
             </h2>
@@ -112,7 +105,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* THEIR WEAKNESSES */}
         <section className="bg-white rounded-xl border border-[#e5e5e5] p-5 mb-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Warning size={16} className="text-[#2563eb]" weight="bold" />
+            <AlertTriangle size={16} className="text-[#2563eb]"  />
             <h2 className="text-xs font-semibold text-[#171717] uppercase tracking-wide">
               Their Weaknesses
             </h2>
@@ -135,7 +128,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* TALKING POINTS */}
         <section className="bg-white rounded-xl border border-[#e5e5e5] p-5 mb-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <ChatText size={16} className="text-[#2563eb]" weight="bold" />
+            <MessageSquare size={16} className="text-[#2563eb]"  />
             <h2 className="text-xs font-semibold text-[#171717] uppercase tracking-wide">
               Your Talking Points
             </h2>
@@ -158,7 +151,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* WIN CONDITIONS */}
         <section className="bg-white rounded-xl border border-[#e5e5e5] p-5 mb-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Trophy size={16} className="text-[#2563eb]" weight="bold" />
+            <Trophy size={16} className="text-[#2563eb]"  />
             <h2 className="text-xs font-semibold text-[#171717] uppercase tracking-wide">
               Win Conditions
             </h2>

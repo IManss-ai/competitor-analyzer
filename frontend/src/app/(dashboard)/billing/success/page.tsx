@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { CheckCircle, ArrowRight } from '@phosphor-icons/react/dist/ssr';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function BillingSuccessPage() {
   return (
     <div className="flex items-center justify-center min-h-[70vh]">
       <div className="bg-white border border-[#e5e5e5] rounded-2xl p-10 max-w-md w-full text-center shadow-sm">
         <div className="mx-auto w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle size={36} weight="fill" className="text-emerald-500" />
+          <CheckCircle2 size={36}  className="text-emerald-500" />
         </div>
         <h1 className="text-2xl font-semibold text-[#0a0a0a] tracking-tight mb-3">You&apos;re all set!</h1>
         <p className="text-sm text-[#525252] mb-8 leading-relaxed">

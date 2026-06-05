@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { animate, motion } from 'motion/react';
-import { ArrowUp, ArrowDown, Minus } from '@phosphor-icons/react';
+import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
 
 interface StatsCardProps {
   title: string;
@@ -82,9 +82,9 @@ export default function StatsCard({
                 trend === 'flat' && 'text-zinc-600 bg-zinc-100 border-zinc-200'
               )}
             >
-              {trend === 'up' && <ArrowUp size={9} weight="bold" />}
-              {trend === 'down' && <ArrowDown size={9} weight="bold" />}
-              {trend === 'flat' && <Minus size={9} weight="bold" />}
+              {trend === 'up' && <ArrowUp size={9}  />}
+              {trend === 'down' && <ArrowDown size={9}  />}
+              {trend === 'flat' && <Minus size={9}  />}
               <span className="uppercase tracking-wider">{trend}</span>
             </div>
           )}

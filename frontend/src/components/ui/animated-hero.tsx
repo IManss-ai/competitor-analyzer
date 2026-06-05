@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Phone } from '@phosphor-icons/react';
+import { ArrowRight, Phone } from 'lucide-react';
 
 interface AnimatedHeroProps {
   titles?: string[];

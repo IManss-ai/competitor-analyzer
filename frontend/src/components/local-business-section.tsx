@@ -1,5 +1,5 @@
 import { Competitor } from '@/lib/types';
-import { Storefront } from '@phosphor-icons/react/dist/ssr';
+import { Store } from 'lucide-react';
 import Link from 'next/link';
 import LocalScanButton from './local-scan-button';
 
@@ -20,7 +20,7 @@ export default function LocalBusinessSection({
     <div className="bg-white rounded-xl border border-[#e5e5e5] overflow-hidden mb-6 shadow-sm">
       <div className="px-6 py-4 border-b border-[#f0f0f0] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Storefront size={18} className="text-[#0a0a0a]" weight="bold" />
+          <Store size={18} className="text-[#0a0a0a]"  />
           <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
             Local Intelligence
           </h2>
@@ -45,7 +45,7 @@ export default function LocalBusinessSection({
               <div key={comp.id} className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-[#fafafa] border border-[#f0f0f0] flex items-center justify-center flex-shrink-0">
-                    <Storefront size={14} className="text-[#a3a3a3]" />
+                    <Store size={14} className="text-[#a3a3a3]" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-[#0a0a0a] truncate">

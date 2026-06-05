@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, PencilSimple, X, ClipboardText, CheckCircle, ArrowsClockwise } from '@phosphor-icons/react';
+import { Check, Pencil, X, Copy, CheckCircle2, RefreshCw } from 'lucide-react';
 import ChangeBadge from '@/components/change-badge';
 import type { QueueAction } from '@/lib/types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -69,7 +69,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             />
             <div className="absolute inset-0 rounded-full bg-emerald-50 flex items-center justify-center">
-              <CheckCircle size={32} weight="fill" className="text-emerald-500" />
+              <CheckCircle2 size={32}  className="text-emerald-500" />
             </div>
           </div>
           <h3 className="text-xl font-semibold text-[#0a0a0a] tracking-tight mb-2">Queue is clear</h3>
@@ -80,7 +80,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
             onClick={() => window.location.reload()}
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all cursor-pointer"
           >
-            <ArrowsClockwise size={16} />
+            <RefreshCw size={16} />
             Scan for new changes
           </button>
         </div>
@@ -157,7 +157,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                         {copiedId === action.id ? (
                           <Check size={14} className="text-emerald-400" />
                         ) : (
-                          <ClipboardText size={14} />
+                          <Copy size={14} />
                         )}
                       </button>
                     </div>
@@ -178,9 +178,9 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-50 cursor-pointer shadow-sm"
                     >
                       {approving === action.id ? (
-                        <ArrowsClockwise size={15} className="animate-spin" />
+                        <RefreshCw size={15} className="animate-spin" />
                       ) : (
-                        <Check size={15} weight="bold" />
+                        <Check size={15}  />
                       )}
                       <span>{approving === action.id ? 'Approving...' : 'Approve action'}</span>
                     </motion.button>
@@ -201,7 +201,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                         }}
                         className="inline-flex items-center gap-2 px-4 py-2.5 border border-zinc-200/80 text-sm font-medium rounded-lg text-[#525252] hover:bg-zinc-50 transition-colors cursor-pointer"
                       >
-                        <PencilSimple size={15} />
+                        <Pencil size={15} />
                         <span>Edit draft</span>
                       </button>
                     )}

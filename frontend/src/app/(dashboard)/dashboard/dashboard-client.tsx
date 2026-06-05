@@ -3,23 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Buildings, 
-  Lightning, 
-  CheckSquare, 
-  Star, 
-  Clock, 
-  ArrowRight, 
-  Spinner, 
-  Globe, 
-  CaretDown, 
-  CaretUp,
-  Warning,
-  ArrowsClockwise,
-  Plus,
-  Compass,
-  CheckCircle
-} from '@phosphor-icons/react';
+import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2 } from 'lucide-react';
 import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { DashboardData, Competitor } from '@/lib/types';
 
@@ -263,7 +247,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         >
           <div className="text-center mb-6">
             <div className="w-12 h-12 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Compass size={24} weight="duotone" />
+              <Compass size={24}  />
             </div>
             <h2 className="text-lg font-bold text-white tracking-tight">Welcome! Let's add your first competitor.</h2>
             <p className="text-xs text-zinc-400 mt-1">We will start monitoring them instantly in real-time.</p>
@@ -315,7 +299,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             >
               {submittingOnboarding ? (
                 <>
-                  <Spinner size={16} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin" />
                   Creating...
                 </>
               ) : (
@@ -352,7 +336,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
           <div className="absolute inset-0 border-4 border-sky-500/10 rounded-full"></div>
           <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin"></div>
-          <Buildings size={36} className="text-sky-400" />
+          <Building2 size={36} className="text-sky-400" />
         </div>
 
         <div className="space-y-2">
@@ -365,7 +349,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-white/[0.08] rounded-xl p-4 bg-white/[0.02]">
           <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">Live Status</span>
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <Spinner size={16} className="animate-spin text-sky-400" />
+            <Loader2 size={16} className="animate-spin text-sky-400" />
             {statusMessages[onboardingStatus] || statusMessages.fetching}
           </div>
         </div>
@@ -380,15 +364,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <div className="bg-[#0c0919]/60 backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12">
         <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
           {isError ? (
-            <Warning size={32} className="text-red-400" />
+            <AlertTriangle size={32} className="text-red-400" />
           ) : (
-            <CheckCircle size={32} />
+            <CheckCircle2 size={32} />
           )}
         </div>
 
         <div className="space-y-2">
           <h2 className="text-lg font-bold text-white tracking-tight">
-            {isError ? 'Competitor Added with Scan Warning' : 'First scan complete!'}
+            {isError ? 'Competitor Added with Scan AlertTriangle' : 'First scan complete!'}
           </h2>
           <p className="text-xs text-zinc-400 max-w-sm mx-auto">
             {isError 
@@ -438,7 +422,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Competitors Tracked</span>
-            <Buildings size={20} className="text-zinc-500" />
+            <Building2 size={20} className="text-zinc-500" />
           </div>
           <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.competitor_count}</div>
           <p className="text-xs text-zinc-500 mt-1">Active targets</p>
@@ -448,7 +432,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Changes This Week</span>
-            <Lightning size={20} className="text-sky-400" />
+            <Zap size={20} className="text-sky-400" />
           </div>
           <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.changes_this_week || 0}</div>
           <p className="text-xs text-zinc-500 mt-1">Past 7 days</p>
@@ -468,7 +452,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Avg Review Score</span>
-            <Star size={20} className="text-amber-500" weight="fill" />
+            <Star size={20} className="text-amber-500"  />
           </div>
           <div className="text-2xl font-bold text-white tracking-tight">
             {dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '--'}
@@ -543,7 +527,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             </ResponsiveContainer>
           ) : (
             <div className="h-full flex items-center justify-center text-xs text-zinc-500">
-              <Spinner size={20} className="animate-spin text-sky-500" />
+              <Loader2 size={20} className="animate-spin text-sky-500" />
             </div>
           )}
         </div>
@@ -618,7 +602,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                               onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
                               className="text-xs text-zinc-500 hover:text-zinc-300 inline-flex items-center gap-0.5"
                             >
-                              {isExpanded ? <>Collapse <CaretUp size={12} /></> : <>Expand <CaretDown size={12} /></>}
+                              {isExpanded ? <>Collapse <ChevronUp size={12} /></> : <>Expand <ChevronDown size={12} /></>}
                             </button>
                           )}
                         </div>
@@ -639,7 +623,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               >
                 {loadingFeed ? (
                   <>
-                    <Spinner size={16} className="animate-spin text-sky-400" />
+                    <Loader2 size={16} className="animate-spin text-sky-400" />
                     Loading...
                   </>
                 ) : (
@@ -697,7 +681,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <span className="font-semibold text-zinc-300 inline-flex items-center gap-1">
                           {comp.avg_rating !== null ? (
                             <>
-                              <Star size={12} weight="fill" className="text-amber-500" />
+                              <Star size={12}  className="text-amber-500" />
                               {comp.avg_rating.toFixed(1)}
                             </>
                           ) : (
@@ -720,9 +704,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           title="Scan now"
                         >
                           {scanningCompId === comp.id ? (
-                            <Spinner size={14} className="animate-spin text-sky-400" />
+                            <Loader2 size={14} className="animate-spin text-sky-400" />
                           ) : (
-                            <ArrowsClockwise size={14} />
+                            <RefreshCw size={14} />
                           )}
                         </button>
                         <Link 

@@ -4,18 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
-import {
-  House,
-  Buildings,
-  Newspaper,
-  Shield,
-  TrendUp,
-  CheckSquare,
-  Gear,
-  SignOut,
-  ArrowsClockwise,
-  ArrowRight,
-} from '@phosphor-icons/react';
+import { LayoutDashboard, Building2, FileText, Shield, TrendingUp, CheckSquare, Settings, LogOut, RefreshCw, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface SidebarProps {
@@ -91,13 +80,13 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const isOnTrial = settings?.subscription_status === 'trialing';
 
   const navItems = [
-    { href: '/dashboard',           label: 'Dashboard',    Icon: House },
-    { href: '/competitors',         label: 'Competitors',  Icon: Buildings },
-    { href: '/dashboard#feed',      label: 'Intel Feed',   Icon: Newspaper },
-    { href: '/dashboard#battlecards', label: 'Battle Cards', Icon: Shield },
-    { href: '/trends',              label: 'Trends',       Icon: TrendUp },
+    { href: '/dashboard',           label: 'Dashboard',    Icon: LayoutDashboard },
+    { href: '/competitors',         label: 'Competitors',  Icon: Building2 },
+    { href: '/dashboard#feed',      label: 'Intel Feed',   Icon: FileText },
+    { href: '/dashboard#battlecards', label: 'Battle CreditCard', Icon: Shield },
+    { href: '/trends',              label: 'Trends',       Icon: TrendingUp },
     { href: '/queue',               label: 'Action Queue', Icon: CheckSquare },
-    { href: '/settings',            label: 'Settings',     Icon: Gear },
+    { href: '/settings',            label: 'Settings',     Icon: Settings },
   ];
 
   return (
@@ -155,7 +144,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               )}
               <Icon
                 size={15}
-                weight={isActive ? 'fill' : 'regular'}
                 className="flex-shrink-0"
               />
               <span className="flex-1 truncate">{label}</span>
@@ -185,14 +173,14 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         >
           {scanning ? (
             <>
-              <ArrowsClockwise size={13} className="animate-spin" />
+              <RefreshCw size={13} className="animate-spin" />
               Scanning...
             </>
           ) : scanDone ? (
             <>Scan queued!</>
           ) : (
             <>
-              <ArrowsClockwise size={13} />
+              <RefreshCw size={13} />
               Scan all now
             </>
           )}
@@ -235,7 +223,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             type="submit"
             className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-[11px] text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
-            <SignOut size={13} />
+            <LogOut size={13} />
             <span>Sign out</span>
           </button>
         </form>

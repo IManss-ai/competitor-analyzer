@@ -1,13 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Trash,
-  Plus,
-  ArrowSquareOut,
-  CaretDown,
-  Storefront,
-} from '@phosphor-icons/react';
+import { Trash2, Plus, ExternalLink, ChevronDown, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
 import BattleCard from '@/components/battle-card';
@@ -134,7 +128,7 @@ export default function CompetitorManager({
           whileTap={{ scale: 0.96 }}
           className="inline-flex items-center gap-2 px-4 py-2 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 cursor-pointer"
         >
-          <Plus size={16} weight="bold" />
+          <Plus size={16}  />
           Add Competitor
         </motion.button>
       </div>
@@ -196,9 +190,9 @@ export default function CompetitorManager({
                       onClick={() => setShowLocalFields(!showLocalFields)}
                       className="flex items-center gap-2 text-sm font-medium text-[#0a0a0a] hover:text-blue-600 transition-colors cursor-pointer mb-4"
                     >
-                      <Storefront size={16} weight="duotone" />
+                      <Store size={16}  />
                       Local Business Details
-                      <CaretDown
+                      <ChevronDown
                         size={14}
                         className={`text-[#a3a3a3] transition-transform ${showLocalFields ? 'rotate-180' : ''}`}
                       />
@@ -290,7 +284,7 @@ export default function CompetitorManager({
         </div>
       </div>
 
-      {/* Competitor Cards */}
+      {/* Competitor CreditCard */}
       {competitors.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
@@ -387,7 +381,7 @@ export default function CompetitorManager({
                           className="inline-flex items-center gap-1 text-xs text-[#737373] hover:text-blue-600 font-mono transition-colors truncate max-w-full"
                         >
                           {comp.url}
-                          <ArrowSquareOut size={12} className="flex-shrink-0" />
+                          <ExternalLink size={12} className="flex-shrink-0" />
                         </a>
                       </div>
                     </div>
@@ -438,7 +432,7 @@ export default function CompetitorManager({
                         className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-40"
                         title="Remove competitor"
                       >
-                        <Trash size={16} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>

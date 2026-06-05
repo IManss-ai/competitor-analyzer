@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowsClockwise } from '@phosphor-icons/react';
+import { RefreshCw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function ScanNowButton({ userId }: { userId: string }) {
@@ -36,7 +36,7 @@ export default function ScanNowButton({ userId }: { userId: string }) {
         disabled={loading}
         className="inline-flex items-center gap-2 bg-[#0a0a0a] text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#1a1a1a] transition-all disabled:opacity-50 cursor-pointer"
       >
-        <ArrowsClockwise size={16} className={loading ? "animate-spin" : ""} />
+        <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
         Scan Now
       </button>
 

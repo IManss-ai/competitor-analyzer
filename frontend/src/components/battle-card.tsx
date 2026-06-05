@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lightning, Spinner, X, CheckCircle } from '@phosphor-icons/react';
+import { Zap, Loader2, X, CheckCircle2 } from 'lucide-react';
 
 interface BattleCardProps {
   competitorId: string;
@@ -52,7 +52,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
         onClick={generateCard}
         className="px-3.5 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100/80 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border border-blue-200/60 cursor-pointer"
       >
-        <Lightning weight="fill" size={13} className="text-blue-500" />
+        <Zap  size={13} className="text-blue-500" />
         <span>Battle Card</span>
       </motion.button>
 
@@ -76,7 +76,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                 <div className="p-6 border-b border-white/[0.06] bg-black/40 flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Lightning className="text-blue-400" weight="fill" size={18} />
+                      <Zap className="text-blue-400"  size={18} />
                       {competitorName} Battle Card
                     </h3>
                     <p className="text-[10px] text-white/30 mt-1 font-mono uppercase tracking-wider">generated via Claude AI</p>
@@ -93,7 +93,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                 <div className="p-6 min-h-[200px] flex flex-col justify-center">
                   {loading ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-white/50 space-y-4 py-8">
-                      <Spinner size={28} className="animate-spin text-blue-500" />
+                      <Loader2 size={28} className="animate-spin text-blue-500" />
                       <p className="text-xs font-mono uppercase tracking-wider animate-pulse">Analyzing competitor moves...</p>
                     </div>
                   ) : error ? (
@@ -115,7 +115,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                             transition={{ delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                             className="flex items-start gap-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10"
                           >
-                            <CheckCircle size={16} weight="fill" className="text-blue-500 shrink-0 mt-0.5" />
+                            <CheckCircle2 size={16}  className="text-blue-500 shrink-0 mt-0.5" />
                             <span className="text-sm text-white/80 leading-relaxed">{action}</span>
                           </motion.li>
                         ))}

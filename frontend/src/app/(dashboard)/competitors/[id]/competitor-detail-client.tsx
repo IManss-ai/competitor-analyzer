@@ -2,26 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Lightning, 
-  Warning, 
-  ChatText, 
-  Trophy, 
-  Copy, 
-  ShareNetwork, 
-  ArrowsClockwise, 
-  Pencil, 
-  Globe, 
-  Calendar,
-  CheckCircle,
-  Eye,
-  EyeSlash,
-  Star,
-  Clock,
-  Circle,
-  CaretUp,
-  CaretDown
-} from '@phosphor-icons/react';
+import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Eye, EyeOff, Star, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
 
@@ -187,7 +168,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     );
   };
 
-  // Text formatter for Clipboard Copy
+  // Text formatter for Copy Copy
   const copyBattlecardToClipboard = () => {
     const card = detail.battlecard;
     if (!card) return;
@@ -310,12 +291,12 @@ ${card.win_conditions && card.win_conditions.length > 0
             >
               {scanning ? (
                 <>
-                  <ArrowsClockwise size={16} className="animate-spin text-sky-400" />
+                  <RefreshCw size={16} className="animate-spin text-sky-400" />
                   Scanning...
                 </>
               ) : (
                 <>
-                  <ArrowsClockwise size={16} />
+                  <RefreshCw size={16} />
                   Scan Now
                 </>
               )}
@@ -369,7 +350,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       <div key={event.id} className="relative">
                         {/* Timeline Bullet */}
                         <div className="absolute -left-[31px] top-1.5 bg-[#0a0715] p-0.5 rounded-full">
-                          <Circle size={10} weight="fill" className="text-sky-500" />
+                          <Circle size={10}  className="text-sky-500" />
                         </div>
 
                         <div className="bg-[#0a0718]/45 border border-white/[0.06] rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
@@ -392,7 +373,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${typeStyle}`}>
                                 {event.change_type.replace('_', ' ')}
                               </span>
-                              {isExpanded ? <CaretUp size={16} /> : <CaretDown size={16} />}
+                              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                             </div>
                           </div>
 
@@ -475,7 +456,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs font-semibold">
                           {scan.changes_detected > 0 ? (
                             <span className="text-sky-400 inline-flex items-center gap-1">
-                              <Lightning size={12} weight="fill" /> {scan.changes_detected} found
+                              <Zap size={12}  /> {scan.changes_detected} found
                             </span>
                           ) : (
                             <span className="text-zinc-500">None</span>
@@ -517,14 +498,14 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="p-1.5 hover:bg-white/[0.04] active:bg-white/[0.08] border border-white/10 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer relative bg-white/[0.01]"
                       title="Copy to clipboard"
                     >
-                      {copied ? <CheckCircle size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                      {copied ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Copy size={14} />}
                     </button>
                     <button
                       onClick={shareBattlecard}
                       className="p-1.5 hover:bg-white/[0.04] active:bg-white/[0.08] border border-white/10 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer bg-white/[0.01]"
                       title="Share Card"
                     >
-                      {shared ? <CheckCircle size={14} className="text-emerald-400" /> : <ShareNetwork size={14} />}
+                      {shared ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Share2 size={14} />}
                     </button>
                   </div>
                 </div>
@@ -538,9 +519,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Lightning size={14} className="text-sky-400" /> Recent Changes
+                        <Zap size={14} className="text-sky-400" /> Recent Changes
                       </span>
-                      {cardOpenSections.changes ? <CaretUp size={12} /> : <CaretDown size={12} />}
+                      {cardOpenSections.changes ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
                     <AnimatePresence>
                       {cardOpenSections.changes && (
@@ -575,9 +556,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Warning size={14} className="text-red-400" /> Their Weaknesses
+                        <AlertTriangle size={14} className="text-red-400" /> Their Weaknesses
                       </span>
-                      {cardOpenSections.weaknesses ? <CaretUp size={12} /> : <CaretDown size={12} />}
+                      {cardOpenSections.weaknesses ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
                     <AnimatePresence>
                       {cardOpenSections.weaknesses && (
@@ -610,9 +591,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-white/[0.02] flex items-center justify-between text-xs font-bold text-white hover:bg-white/[0.04] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <ChatText size={14} className="text-emerald-400" /> Talking Points
+                        <MessageSquare size={14} className="text-emerald-400" /> Talking Points
                       </span>
-                      {cardOpenSections.talkingPoints ? <CaretUp size={12} /> : <CaretDown size={12} />}
+                      {cardOpenSections.talkingPoints ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
                     <AnimatePresence>
                       {cardOpenSections.talkingPoints && (
@@ -647,7 +628,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       <span className="flex items-center gap-2">
                         <Trophy size={14} className="text-amber-400" /> Win Conditions
                       </span>
-                      {cardOpenSections.winConditions ? <CaretUp size={12} /> : <CaretDown size={12} />}
+                      {cardOpenSections.winConditions ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
                     <AnimatePresence>
                       {cardOpenSections.winConditions && (
@@ -682,12 +663,12 @@ ${card.win_conditions && card.win_conditions.length > 0
                   >
                     {regenerating ? (
                       <>
-                        <ArrowsClockwise size={12} className="animate-spin text-sky-400" />
+                        <RefreshCw size={12} className="animate-spin text-sky-400" />
                         Regenerating...
                       </>
                     ) : (
                       <>
-                        <ArrowsClockwise size={12} />
+                        <RefreshCw size={12} />
                         Regenerate Card
                       </>
                     )}
@@ -696,7 +677,7 @@ ${card.win_conditions && card.win_conditions.length > 0
               </div>
             ) : (
               <div className="text-center py-12 space-y-4">
-                <Lightning size={32} className="mx-auto text-zinc-600 animate-pulse" />
+                <Zap size={32} className="mx-auto text-zinc-600 animate-pulse" />
                 <h3 className="text-sm font-semibold text-white">No Battle Card Generated</h3>
                 <p className="text-xs text-zinc-400 max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
                 <button
@@ -704,7 +685,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   disabled={regenerating}
                   className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
                 >
-                  {regenerating ? <ArrowsClockwise size={12} className="animate-spin" /> : null}
+                  {regenerating ? <RefreshCw size={12} className="animate-spin" /> : null}
                   Generate Battle Card
                 </button>
               </div>

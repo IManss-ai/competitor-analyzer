@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Laptop, Storefront } from '@phosphor-icons/react';
+import { Laptop, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { BusinessType } from '@/lib/types';
 
@@ -55,7 +55,7 @@ export default function OnboardingModal() {
     },
     {
       type: 'local',
-      icon: Storefront,
+      icon: Store,
       title: 'Local Business',
       description: 'Track nearby competitors on Google Maps, Instagram, and Facebook',
     },
@@ -115,7 +115,7 @@ export default function OnboardingModal() {
                           : 'bg-[#f5f5f5] text-[#6b7280]'
                       }`}
                     >
-                      <Icon size={24} weight="duotone" />
+                      <Icon size={24}  />
                     </div>
                     <h3 className="text-sm font-semibold text-[#0a0a0a] mb-1">
                       {opt.title}

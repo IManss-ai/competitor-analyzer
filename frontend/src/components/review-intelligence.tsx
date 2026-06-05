@@ -1,5 +1,5 @@
 import { Competitor, CompetitorReviewsData } from '@/lib/types';
-import { Star } from '@phosphor-icons/react/dist/ssr';
+import { Star } from 'lucide-react';
 
 interface ReviewIntelligenceProps {
   competitors: Competitor[];
@@ -13,7 +13,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
     <div className="bg-white rounded-xl border border-[#e5e5e5] overflow-hidden mb-6 shadow-sm">
       <div className="px-6 py-4 border-b border-[#f0f0f0] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Star size={18} className="text-[#0a0a0a]" weight="bold" />
+          <Star size={18} className="text-[#0a0a0a]"  />
           <h2 className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
             Review Intelligence
           </h2>

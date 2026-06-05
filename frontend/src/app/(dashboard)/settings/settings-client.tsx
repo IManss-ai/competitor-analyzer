@@ -3,18 +3,7 @@
 import { useState } from 'react';
 import { Competitor, SettingsData } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
-import {
-  LockKey,
-  EnvelopeSimple,
-  Check,
-  ArrowSquareOut,
-  Trash,
-  Plus,
-  Bell,
-  Calendar,
-  User as UserIcon,
-  Warning
-} from '@phosphor-icons/react';
+import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle } from 'lucide-react';
 import clsx from 'clsx';
 
 interface SettingsClientProps {
@@ -208,8 +197,8 @@ export default function SettingsClient({
             { id: 'profile', label: 'Profile', Icon: UserIcon },
             { id: 'schedule', label: 'Scan Schedule', Icon: Calendar },
             { id: 'notifications', label: 'Notifications', Icon: Bell },
-            { id: 'competitors', label: 'Competitors', Icon: Trash },
-            { id: 'billing', label: 'Billing & Plan', Icon: ArrowSquareOut },
+            { id: 'competitors', label: 'Competitors', Icon: Trash2 },
+            { id: 'billing', label: 'Billing & Plan', Icon: ExternalLink },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -287,7 +276,7 @@ export default function SettingsClient({
             {/* Change Password Card */}
             <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5">
               <h3 className="text-sm font-semibold text-[#171717] mb-3 flex items-center gap-2">
-                <LockKey size={16} />
+                <Lock size={16} />
                 Change Password
               </h3>
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
@@ -486,7 +475,7 @@ export default function SettingsClient({
                             className="text-[#737373] hover:text-red-600 p-1.5 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer"
                             title="Delete"
                           >
-                            <Trash size={16} />
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </div>
@@ -600,7 +589,7 @@ export default function SettingsClient({
                     "Priority email support"
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <Check size={14} className="text-[#16a34a] flex-shrink-0" weight="bold" />
+                      <Check size={14} className="text-[#16a34a] flex-shrink-0"  />
                       <span className="text-sm text-[#171717]">{feat}</span>
                     </div>
                   ))}
@@ -614,7 +603,7 @@ export default function SettingsClient({
                     className="inline-flex items-center gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
                   >
                     Manage billing
-                    <ArrowSquareOut size={14} />
+                    <ExternalLink size={14} />
                   </a>
                 </div>
               )}
@@ -626,7 +615,7 @@ export default function SettingsClient({
                     className="inline-flex items-center gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
                   >
                     Upgrade to Pro
-                    <ArrowSquareOut size={14} />
+                    <ExternalLink size={14} />
                   </a>
                 </div>
               )}

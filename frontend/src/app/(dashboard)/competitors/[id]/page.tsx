@@ -5,7 +5,7 @@ import { createApiClient } from '@/lib/api';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import Link from 'next/link';
-import { CaretLeft } from '@phosphor-icons/react/dist/ssr';
+import { ChevronLeft } from 'lucide-react';
 import CompetitorDetailClient from './competitor-detail-client';
 import DashboardAnimator from '../../dashboard/dashboard-animator';
 
@@ -27,7 +27,7 @@ export default async function CompetitorDetailPage({ params }: PageProps) {
           href="/competitors" 
           className="text-xs font-semibold text-[#737373] hover:text-[#171717] inline-flex items-center gap-1 transition-colors"
         >
-          <CaretLeft size={14} /> Back to Competitors
+          <ChevronLeft size={14} /> Back to Competitors
         </Link>
       </div>
 

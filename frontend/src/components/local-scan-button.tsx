@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MagnifyingGlass } from '@phosphor-icons/react';
+import { Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 interface LocalScanButtonProps {
@@ -41,7 +41,7 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
         disabled={loading}
         className="inline-flex items-center gap-2 bg-[#0a0a0a] text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#1a1a1a] transition-all disabled:opacity-50 cursor-pointer"
       >
-        <MagnifyingGlass size={16} className={loading ? 'animate-spin' : ''} />
+        <Search size={16} className={loading ? 'animate-spin' : ''} />
         Scan local competitors
       </button>
 
