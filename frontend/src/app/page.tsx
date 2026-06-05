@@ -13,6 +13,8 @@ import { fadeUpVariants, staggerContainerVariants, cardHoverVariants } from '@/l
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
 import { PlatformRoadmap } from '@/components/ui/platform-roadmap';
 
+const MotionLink = motion.create(Link);
+
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const FEED = [
@@ -130,6 +132,19 @@ function TypewriterComplaint({ text, delay }: { text: string; delay: number }) {
   return <>{displayedText}</>;
 }
 
+const iconRotateVariants = {
+  rest: { rotate: 0 },
+  hover: { rotate: 360, transition: { duration: 0.5 } }
+};
+
+const navItems = [
+  { label: 'How it works', href: '#how-it-works', key: 'how-it-works' },
+  { label: 'Command Center', href: '#dashboard-showcase', key: 'dashboard-showcase' },
+  { label: 'Features', href: '#features', key: 'features' },
+  { label: 'Battle Cards', href: '#battle-card', key: 'battle-card' },
+  { label: 'Pricing', href: '#pricing', key: 'pricing' },
+];
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
@@ -140,6 +155,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [hoveredDashComp, setHoveredDashComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen' | null>(null);
   const [hoveredBattleTab, setHoveredBattleTab] = useState<'stripe' | 'paypal' | 'square' | null>(null);
+  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
@@ -226,33 +242,57 @@ export default function LandingPage() {
 
           {/* Links */}
           <div className="hidden md:flex items-center gap-7 text-[11px] font-medium text-zinc-400">
-            <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
-            <a href="#dashboard-showcase" className="hover:text-white transition-colors">Command Center</a>
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#battle-card" className="hover:text-white transition-colors">Battle CreditCard</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+            {navItems.map((item) => (
+              <Link
+                key={item.key}
+                href={item.href}
+                onMouseEnter={() => setHoveredNav(item.key)}
+                onMouseLeave={() => setHoveredNav(null)}
+                className="relative py-1 hover:text-white transition-colors duration-200"
+              >
+                <span>{item.label}</span>
+                {hoveredNav === item.key && (
+                  <motion.span
+                    layoutId="navHover"
+                    className="absolute bottom-0 left-0 right-0 h-px bg-sky-400 origin-left"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                  />
+                )}
+              </Link>
+            ))}
           </div>
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Link href="/auth/login" className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1.5">
-              Sign in
-            </Link>
-            <Link
+            <MotionLink
               href="/auth/login"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 active:scale-[0.97] transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1.5"
+            >
+              Sign in
+            </MotionLink>
+            <MotionLink
+              href="/auth/login"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 transition-all"
             >
               Get started
-              <ArrowRight size={10}  />
-            </Link>
-            <button
+              <ArrowRight size={10} />
+            </MotionLink>
+            <motion.button
               onClick={() => setMenuOpen(!menuOpen)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               className="p-1.5 md:hidden flex flex-col gap-1 items-center justify-center w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
               aria-label="Toggle menu"
             >
               <span className={`w-3.5 h-0.5 bg-white transition-transform duration-300 ${menuOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
               <span className={`w-3.5 h-0.5 bg-white transition-transform duration-300 ${menuOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
-            </button>
+            </motion.button>
           </div>
         </motion.nav>
       </div>
@@ -281,13 +321,15 @@ export default function LandingPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <Link
+                  <MotionLink
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-2xl font-bold text-zinc-300 hover:text-white transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="text-2xl font-bold text-zinc-300 hover:text-white transition-colors inline-block"
                   >
                     {item.label}
-                  </Link>
+                  </MotionLink>
                 </motion.div>
               ))}
             </div>
@@ -352,20 +394,24 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8"
               >
-                <Link
+                <MotionLink
                   href="/auth/login"
-                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 active:scale-[0.97] transition-all"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 transition-all hero-trial-btn relative overflow-hidden"
                 >
                   Start 14-day free trial
-                  <ArrowRight size={12}  />
-                </Link>
-                <a
+                  <ArrowRight size={12} />
+                </MotionLink>
+                <motion.a
                   href="#dashboard-showcase"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors px-2 py-3"
                 >
                   See a live demo
-                  <ArrowRight size={12}  className="opacity-50" />
-                </a>
+                  <ArrowRight size={12} className="opacity-50" />
+                </motion.a>
               </motion.div>
 
               <motion.div
@@ -568,12 +614,14 @@ export default function LandingPage() {
                   <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-wider mb-3">Tracked</div>
                   <div className="space-y-1">
                     {(['stripe', 'paypal', 'square', 'adyen'] as const).map((comp) => (
-                      <button
+                      <motion.button
                         key={comp}
                         onClick={() => setSelectedDashboardComp(comp)}
                         onMouseEnter={() => setHoveredDashComp(comp)}
                         onMouseLeave={() => setHoveredDashComp(null)}
-                        className="w-full text-left text-xs px-3 py-2.5 rounded-lg font-medium flex items-center justify-between transition-colors cursor-pointer relative"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="w-full text-left text-xs px-3 py-2.5 rounded-lg font-medium flex items-center justify-between transition-colors cursor-pointer relative animate-none"
                         style={{ color: selectedDashboardComp === comp ? '#ffffff' : '#6b7280' }}
                       >
                         {selectedDashboardComp === comp && (
@@ -608,7 +656,7 @@ export default function LandingPage() {
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
@@ -697,7 +745,8 @@ export default function LandingPage() {
                           </p>
                         </div>
                         <motion.button
-                          whileTap={{ scale: 0.95 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
                           onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
                           className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
                         >
@@ -732,9 +781,14 @@ export default function LandingPage() {
 
                     <div className="pt-4 mt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-600 font-mono">
                       <span>4 pages · 2 API routes · 1 docs path monitored</span>
-                      <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
+                      <MotionLink
+                        href="/auth/login"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1"
+                      >
                         Export Battle Card <ArrowUpRight size={9} />
-                      </Link>
+                      </MotionLink>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -796,9 +850,12 @@ export default function LandingPage() {
               className="md:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
-                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                  <TrendingUp size={18}  />
-                </div>
+                <motion.div
+                  variants={iconRotateVariants}
+                  className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
+                >
+                  <TrendingUp size={18} />
+                </motion.div>
                 <h3 className="text-sm font-bold text-white mb-2">Pricing Grid Monitoring</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
@@ -851,9 +908,12 @@ export default function LandingPage() {
               onMouseLeave={() => setCard2Hovered(false)}
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
-              <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
-                <MessageSquare size={18}  />
-              </div>
+              <motion.div
+                variants={iconRotateVariants}
+                className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4"
+              >
+                <MessageSquare size={18} />
+              </motion.div>
               <h3 className="text-sm font-bold text-white mb-2">Review Site Intelligence</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn away from competitors.
@@ -886,9 +946,12 @@ export default function LandingPage() {
               onMouseLeave={() => setCard3Hovered(false)}
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
-              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <Zap size={18}  />
-              </div>
+              <motion.div
+                variants={iconRotateVariants}
+                className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
+              >
+                <Zap size={18} />
+              </motion.div>
               <h3 className="text-sm font-bold text-white mb-2">AI Copilot Playbooks</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Generates targeted email scripts and landing page copy built around the competitor changes detected today.
@@ -916,9 +979,12 @@ export default function LandingPage() {
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                  <ShieldCheck size={18}  />
-                </div>
+                <motion.div
+                  variants={iconRotateVariants}
+                  className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
+                >
+                  <ShieldCheck size={18} />
+                </motion.div>
                 <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">
                   100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
@@ -959,9 +1025,12 @@ export default function LandingPage() {
               onMouseLeave={() => setCard5Hovered(false)}
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
-              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <Calendar size={18}  />
-              </div>
+              <motion.div
+                variants={iconRotateVariants}
+                className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
+              >
+                <Calendar size={18} />
+              </motion.div>
               <h3 className="text-sm font-bold text-white mb-2">Historical Changelog</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments over time.
@@ -1024,11 +1093,13 @@ export default function LandingPage() {
 
             <div className="flex p-1 bg-white/[0.03] border border-white/[0.06] rounded-full gap-0.5 flex-shrink-0">
               {(['stripe', 'paypal', 'square'] as const).map((comp) => (
-                <button
+                <motion.button
                   key={comp}
                   onClick={() => setActiveComp(comp)}
                   onMouseEnter={() => setHoveredBattleTab(comp)}
                   onMouseLeave={() => setHoveredBattleTab(null)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
                   className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors cursor-pointer relative"
                   style={{ color: activeComp === comp ? '#ffffff' : '#6b7280' }}
                 >
@@ -1047,7 +1118,7 @@ export default function LandingPage() {
                     />
                   )}
                   <span className="relative z-10 capitalize">{comp}</span>
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
@@ -1207,9 +1278,14 @@ export default function LandingPage() {
               <p className="text-zinc-400 text-sm leading-relaxed mb-6">
                 Not just SaaS. Crawl Google Maps reviews, social activity, and pricing for physical salons, cafes, gyms, and nearby competitors.
               </p>
-              <Link href="/auth/login" className="inline-flex items-center gap-2 text-sm font-semibold text-sky-400 hover:text-sky-300 transition-colors">
+              <MotionLink
+                href="/auth/login"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-sky-400 hover:text-sky-300 transition-colors"
+              >
                 See local plan <ArrowRight size={13} />
-              </Link>
+              </MotionLink>
             </motion.div>
             <motion.div
               variants={staggerContainerVariants}
@@ -1285,13 +1361,22 @@ export default function LandingPage() {
             <p className="text-zinc-400 text-base max-w-sm mx-auto leading-relaxed mb-8">
               14-day free trial. Monitor up to 7 competitors. Cancel with one click.
             </p>
-            <Link
+            <MotionLink
               href="/auth/login"
-              className="inline-flex items-center gap-2.5 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 active:scale-[0.98] transition-all text-sm"
+              whileHover="hover"
+              initial="rest"
+              whileTap={{ scale: 0.97 }}
+              animate={{ scale: 1 }}
+              className="inline-flex items-center gap-2.5 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 transition-all text-sm relative"
             >
-              Start free trial
-              <ArrowRight size={13}  />
-            </Link>
+              <span>Start free trial</span>
+              <motion.span
+                variants={{ rest: { x: 0 }, hover: { x: 3 } }}
+                className="inline-block"
+              >
+                <ArrowRight size={13} />
+              </motion.span>
+            </MotionLink>
           </motion.div>
         </div>
       </section>
