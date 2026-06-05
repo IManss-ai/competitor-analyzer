@@ -114,17 +114,6 @@ const COMPANIES = [
   { name: 'Loom', abbr: 'L' },
 ];
 
-const HERO_STRIP_IMAGES = [
-  { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=560&h=320&fit=crop&q=80', label: 'Pricing analysis' },
-  { url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=560&h=320&fit=crop&q=80', label: 'Feature tracking' },
-  { url: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=560&h=320&fit=crop&q=80', label: 'Copy changes' },
-  { url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=560&h=320&fit=crop&q=80', label: 'Market signals' },
-  { url: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=560&h=320&fit=crop&q=80', label: 'Traffic trends' },
-  { url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=560&h=320&fit=crop&q=80', label: 'Team growth' },
-  { url: 'https://images.unsplash.com/photo-1599658880436-c61792e70672?w=560&h=320&fit=crop&q=80', label: 'Ad tracking' },
-  { url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=560&h=320&fit=crop&q=80', label: 'Review sentiment' },
-];
-
 // ─── Animation helpers ───────────────────────────────────────────────────────
 
 const fadeUp = (delay = 0) => ({
@@ -411,51 +400,6 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-          </div>
-        </div>
-
-        {/* ── ANALYTICS STRIP ─────────────────────────────────────────── */}
-        <div className="relative mt-16 -mx-6 overflow-hidden">
-          {/* Left fade */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-[#040812] to-transparent z-10 pointer-events-none" />
-          {/* Right fade */}
-          <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-[#040812] to-transparent z-10 pointer-events-none" />
-
-          <div
-            className="flex items-center"
-            style={{
-              gap: '16px',
-              paddingLeft: '16px',
-              animation: 'hero-marquee 42s linear infinite',
-              width: 'max-content',
-            }}
-          >
-            {[...HERO_STRIP_IMAGES, ...HERO_STRIP_IMAGES].map((img, i) => (
-              <div
-                key={i}
-                className="relative flex-shrink-0 rounded-xl overflow-hidden border border-white/[0.07]"
-                style={{ width: '280px', height: '158px' }}
-              >
-                <img
-                  src={img.url}
-                  alt={img.label}
-                  className="w-full h-full object-cover"
-                  style={{ filter: 'brightness(0.45) saturate(0.8)' }}
-                  loading="lazy"
-                />
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                {/* Scan line effect */}
-                <div className="absolute inset-x-0 top-0 h-px bg-sky-400/20" />
-                {/* Label */}
-                <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1 rounded-full bg-sky-400/60 flex-shrink-0" />
-                  <span className="text-[10px] font-mono text-sky-400/60 uppercase tracking-widest">
-                    {img.label}
-                  </span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
