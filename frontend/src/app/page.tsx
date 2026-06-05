@@ -9,6 +9,7 @@ import { PricingBasic } from '@/components/ui/pricing-demo';
 import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { InteractiveDotCanvas } from '@/components/ui/interactive-dot-canvas';
+import { fadeUpVariants, staggerContainerVariants, cardHoverVariants } from '@/lib/animations';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -103,13 +104,6 @@ const BATTLE_CARDS_DATA = {
 
 
 // ─── Animation helpers ───────────────────────────────────────────────────────
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 12 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.05, margin: "0px 0px -50px 0px" },
-  transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] as any },
-});
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
@@ -428,7 +422,14 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-5xl mx-auto">
 
-          <motion.div {...fadeUp(0)} className="mb-16">
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            custom={0}
+            className="mb-16"
+          >
             <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight mb-4">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
@@ -443,7 +444,13 @@ export default function LandingPage() {
               <div className="h-full bg-gradient-to-r from-sky-500/20 via-sky-500/40 to-sky-500/20" />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+            <motion.div
+              variants={staggerContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.05 }}
+              className="grid md:grid-cols-3 gap-12 md:gap-8"
+            >
               {[
                 {
                   n: '01',
@@ -461,7 +468,12 @@ export default function LandingPage() {
                   body: 'Every Monday, receive an executive brief outlining competitor modifications, friction points, and your exact response script.',
                 },
               ].map((step, i) => (
-                <motion.div key={i} {...fadeUp(i * 0.1)} className="flex flex-col gap-5">
+                <motion.div
+                  key={i}
+                  variants={fadeUpVariants}
+                  custom={i}
+                  className="flex flex-col gap-5"
+                >
                   {/* Number node */}
                   <div className="relative flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full border border-sky-500/30 bg-sky-500/8 flex items-center justify-center flex-shrink-0 relative z-10">
@@ -475,7 +487,7 @@ export default function LandingPage() {
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -486,7 +498,14 @@ export default function LandingPage() {
       <section id="dashboard-showcase" className="py-24 px-6 bg-[#040812] relative">
         <div className="max-w-7xl mx-auto">
 
-          <motion.div {...fadeUp(0)} className="mb-12">
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.08 }}
+            custom={0}
+            className="mb-12"
+          >
             <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight mb-4">
               The Intelligence Command Center
             </h2>
@@ -496,7 +515,11 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.div
-            {...fadeUp(0.1)}
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.08 }}
+            custom={1}
             className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] bg-[#060b18]"
           >
             <div className="grid md:grid-cols-[200px_1fr] min-h-[480px]">
@@ -627,23 +650,46 @@ export default function LandingPage() {
       <section id="features" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-5xl mx-auto">
 
-          <motion.div {...fadeUp(0)} className="mb-3">
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.06 }}
+            custom={0}
+            className="mb-3"
+          >
             <span className="text-[10px] font-mono text-sky-400 uppercase tracking-widest border border-sky-500/20 bg-sky-500/5 px-3 py-1 rounded-full inline-block">
               Core capabilities
             </span>
           </motion.div>
-          <motion.div {...fadeUp(0.05)} className="mb-12">
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.06 }}
+            custom={1}
+            className="mb-12"
+          >
             <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight">
               Deep intelligence.<br className="hidden md:block" /> Built for your sales team.
             </h2>
           </motion.div>
 
           {/* Asymmetric bento: full width, then 2+1, then 1+2 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <motion.div
+            variants={staggerContainerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.05 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          >
 
             {/* Row 1: Full width feature */}
             <motion.div
-              {...fadeUp(0.05)}
+              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              custom={0}
+              whileHover="hover"
+              initial="rest"
               className="md:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
@@ -672,7 +718,10 @@ export default function LandingPage() {
 
             {/* Row 2: 2 + 1 */}
             <motion.div
-              {...fadeUp(0.1)}
+              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              custom={1}
+              whileHover="hover"
+              initial="rest"
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
@@ -692,7 +741,10 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div
-              {...fadeUp(0.12)}
+              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              custom={2}
+              whileHover="hover"
+              initial="rest"
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -706,7 +758,10 @@ export default function LandingPage() {
 
             {/* Row 3: 1 + 2 */}
             <motion.div
-              {...fadeUp(0.14)}
+              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              custom={3}
+              whileHover="hover"
+              initial="rest"
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -719,7 +774,10 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div
-              {...fadeUp(0.16)}
+              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              custom={4}
+              whileHover="hover"
+              initial="rest"
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -744,7 +802,7 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -755,7 +813,13 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-            <motion.div {...fadeUp(0)}>
+            <motion.div
+              variants={fadeUpVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              custom={0}
+            >
               <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight mb-3">
                 Explore a live Battle Card
               </h2>
@@ -786,7 +850,11 @@ export default function LandingPage() {
           </div>
 
           <motion.div
-            {...fadeUp(0.08)}
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            custom={1}
             className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden bg-[#060b18]"
           >
             {/* Card header */}
@@ -878,7 +946,13 @@ export default function LandingPage() {
       <section className="py-20 px-6 bg-[#040812] relative">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div {...fadeUp(0)}>
+            <motion.div
+              variants={fadeUpVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              custom={0}
+            >
               <h2 className="text-2xl lg:text-3xl font-bold tracking-tight text-white mb-4">
                 Built for local businesses too
               </h2>
@@ -889,13 +963,26 @@ export default function LandingPage() {
                 See local plan <ArrowRight size={13} />
               </Link>
             </motion.div>
-            <motion.div {...fadeUp(0.08)} className="grid grid-cols-1 gap-3">
+            <motion.div
+              variants={staggerContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.05 }}
+              className="grid grid-cols-1 gap-3"
+            >
               {[
                 { icon: <Star size={15}  />, title: 'Google Reviews Track', body: 'Weekly alerts when a nearby competitor receives critical reviews.' },
                 { icon: <Instagram size={15}  />, title: 'Social Actions Scan', body: 'Monitor local competitor Instagram and Facebook feeds without credentials.' },
                 { icon: <CreditCard size={15}  />, title: 'Local Battle Playbooks', body: 'AI checklists: support gaps, price comparisons, promotion templates.' },
               ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-all duration-300">
+                <motion.div
+                  key={i}
+                  variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+                  custom={i}
+                  whileHover="hover"
+                  initial="rest"
+                  className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-all duration-300"
+                >
                   <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
                     {item.icon}
                   </div>
@@ -903,7 +990,7 @@ export default function LandingPage() {
                     <h4 className="text-xs font-semibold text-white mb-0.5">{item.title}</h4>
                     <p className="text-xs text-zinc-500 leading-relaxed">{item.body}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
@@ -915,7 +1002,14 @@ export default function LandingPage() {
       {/* ── PRICING ─────────────────────────────────────────────────────── */}
       <section id="pricing" className="py-24 px-6 bg-[#050c1a] relative">
         <div className="max-w-7xl mx-auto">
-          <motion.div {...fadeUp(0)} className="mb-3">
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            custom={0}
+            className="mb-3"
+          >
             <span className="text-[10px] font-mono text-sky-400 uppercase tracking-widest border border-sky-500/20 bg-sky-500/5 px-3 py-1 rounded-full inline-block">
               Pricing
             </span>
@@ -930,7 +1024,13 @@ export default function LandingPage() {
       <section className="py-28 px-6 bg-[#040812] relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-950/5 to-transparent pointer-events-none" />
         <div className="max-w-2xl mx-auto text-center relative z-10">
-          <motion.div {...fadeUp(0)}>
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            custom={0}
+          >
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-[1.05] mb-5">
               Start tracking competitor movements today.
             </h2>
