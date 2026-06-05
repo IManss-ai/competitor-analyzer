@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
+import { Inter } from 'next/font/google';
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Competitor Analyzer',
@@ -16,9 +22,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${GeistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#06030c] text-zinc-100 font-sans selection:bg-sky-600/30 selection:text-zinc-50">{children}</body>
+      <body className={`${inter.variable} font-sans antialiased min-h-full bg-[#06030c] text-zinc-100 selection:bg-sky-600/30 selection:text-zinc-50`}>
+        {children}
+      </body>
     </html>
   );
 }
