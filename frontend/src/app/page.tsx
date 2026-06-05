@@ -100,14 +100,7 @@ const BATTLE_CARDS_DATA = {
   }
 };
 
-const COMPANIES = [
-  { name: 'Stripe', abbr: 'S' },
-  { name: 'Notion', abbr: 'N' },
-  { name: 'Linear', abbr: 'L' },
-  { name: 'Vercel', abbr: 'V' },
-  { name: 'Figma', abbr: 'F' },
-  { name: 'Loom', abbr: 'L' },
-];
+
 
 // ─── Animation helpers ───────────────────────────────────────────────────────
 
@@ -125,8 +118,6 @@ export default function LandingPage() {
   const [activeComp, setActiveComp] = useState<'stripe' | 'paypal' | 'square'>('stripe');
   const [selectedDashboardComp, setSelectedDashboardComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen'>('stripe');
   const [copiedPlaybook, setCopiedPlaybook] = useState(false);
-  const [emailInput, setEmailInput] = useState('');
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -142,14 +133,7 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (emailInput.trim()) {
-      setNewsletterSubscribed(true);
-      setEmailInput('');
-      setTimeout(() => setNewsletterSubscribed(false), 5000);
-    }
-  };
+
 
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
@@ -351,8 +335,7 @@ export default function LandingPage() {
                     <span className="text-sm font-semibold text-white">Intel Feed</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                    <span className="text-[11px] font-mono text-sky-400">Live</span>
+                    <span className="text-[11px] font-mono text-zinc-500">Updated 8m ago</span>
                   </div>
                 </div>
 
@@ -384,39 +367,35 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Floating stat badges */}
-              <div className="absolute -left-6 top-1/3 hidden lg:flex items-center gap-2 bg-[#080e1c] border border-white/[0.07] rounded-xl px-3 py-2 shadow-lg">
-                <span className="text-emerald-400 text-sm font-bold">+14</span>
-                <span className="text-xs text-zinc-400">changes this week</span>
-              </div>
-              <div className="absolute -right-6 bottom-1/4 hidden lg:flex items-center gap-2 bg-[#080e1c] border border-white/[0.07] rounded-xl px-3 py-2 shadow-lg">
-                <span className="text-sky-400 text-sm font-bold">3</span>
-                <span className="text-xs text-zinc-400">playbooks ready</span>
-              </div>
+
             </motion.div>
 
           </div>
         </div>
       </section>
 
-      {/* ── LOGO WALL ───────────────────────────────────────────────────── */}
-      <section className="py-12 border-y border-white/[0.05]">
-        <div className="max-w-5xl mx-auto px-6">
-          <p className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest mb-7 text-center">
-            Used by teams at
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
-            {COMPANIES.map((co) => (
-              <div key={co.name} className="flex items-center gap-2.5 opacity-40 hover:opacity-70 transition-opacity cursor-default">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <rect width="20" height="20" rx="5" fill="currentColor" className="text-zinc-400" />
-                  <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#040812" fontSize="10" fontWeight="700" fontFamily="system-ui">
-                    {co.abbr}
-                  </text>
-                </svg>
-                <span className="text-sm font-semibold text-zinc-300 tracking-tight">{co.name}</span>
-              </div>
-            ))}
+      {/* ── SOCIAL PROOF BAR ────────────────────────────────────────────── */}
+      <section className="py-10 border-y border-white/[0.04]">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center
+                        justify-center gap-8 text-center">
+          <div>
+            <div className="text-2xl font-bold text-white tabular-nums">1,200+</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">sales teams</div>
+          </div>
+          <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
+          <div>
+            <div className="text-2xl font-bold text-white tabular-nums">8,400+</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">competitors tracked</div>
+          </div>
+          <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
+          <div>
+            <div className="text-2xl font-bold text-white tabular-nums">24/7</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">automated scanning</div>
+          </div>
+          <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
+          <div>
+            <div className="text-2xl font-bold text-white tabular-nums">4h</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">avg detection time</div>
           </div>
         </div>
       </section>
@@ -561,9 +540,8 @@ export default function LandingPage() {
                     <div>
                       <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                         <TrendingUp size={14} className="text-sky-400" />
-                        Intel Feed - <span className="capitalize text-sky-300">{selectedDashboardComp}</span>
+                        Intel Feed · <span className="text-zinc-600">last scan 8m ago</span>
                       </h3>
-                      <p className="text-[10px] font-mono text-zinc-600 mt-0.5">Live monitoring · last scan 12 min ago</p>
                     </div>
                     <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-zinc-500 px-2.5 py-1 rounded-lg">
                       ALL
@@ -992,24 +970,13 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            <div className="col-span-2 md:col-span-1 space-y-3">
-              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Weekly Intel</h4>
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <input
-                  type="email"
-                  placeholder="name@company.com"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  required
-                  className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-sky-500/30 transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="w-full py-2 bg-white hover:bg-zinc-100 text-black font-semibold text-xs rounded-lg cursor-pointer transition-colors"
-                >
-                  {newsletterSubscribed ? 'Subscribed!' : 'Subscribe'}
-                </button>
-              </form>
+            <div className="space-y-3">
+              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Links</h4>
+              <ul className="space-y-2 text-xs text-zinc-400">
+                {['Privacy Policy', 'Terms of Service', 'Status', 'Contact'].map((l) => (
+                  <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>
+                ))}
+              </ul>
             </div>
 
           </div>
