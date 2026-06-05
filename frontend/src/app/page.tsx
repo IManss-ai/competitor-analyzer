@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { Crosshair, ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard, Check } from 'lucide-react';
 import { Github, Twitter, Linkedin, Instagram } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
@@ -143,6 +143,7 @@ export default function LandingPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
+  const { scrollY } = useScroll();
 
   useEffect(() => {
     const comps = ['stripe', 'paypal', 'square', 'adyen'] as const;
@@ -211,7 +212,7 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className={`w-full max-w-5xl rounded-full border px-5 py-2.5 flex items-center justify-between transition-all duration-300 ${
             scrolled
-              ? 'bg-[#040812]/90 border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl'
+              ? 'bg-[#040812]/90 border-white/[0.08] shadow-[0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl'
               : 'bg-[#040812]/60 border-white/[0.05] backdrop-blur-md'
           }`}
         >
@@ -297,7 +298,12 @@ export default function LandingPage() {
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-24 px-6 overflow-hidden">
         {/* Interactive dot canvas background */}
-        <InteractiveDotCanvas className="z-0 opacity-70" />
+        <motion.div
+          style={{ y: useTransform(scrollY, [0, 500], [0, 60]) }}
+          className="absolute inset-0 z-0 pointer-events-none"
+        >
+          <InteractiveDotCanvas className="opacity-70" />
+        </motion.div>
 
         {/* Subtle top glow - static, no animation */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-sky-600/6 rounded-full blur-[120px] pointer-events-none z-0" />
@@ -435,7 +441,13 @@ export default function LandingPage() {
       </section>
 
       {/* ── SOCIAL PROOF BAR ────────────────────────────────────────────── */}
-      <section className="py-10 border-y border-white/[0.04]">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="py-10 border-y border-white/[0.04]"
+      >
         <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center
                         justify-center gap-8 text-center">
           <div>
@@ -458,10 +470,16 @@ export default function LandingPage() {
             <div className="text-[11px] text-zinc-500 font-mono mt-0.5">avg detection time</div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SCANNER STREAM ──────────────────────────────────────────────── */}
-      <section className="py-0 overflow-hidden bg-[#040812] relative">
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.05 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="py-0 overflow-hidden bg-[#040812] relative"
+      >
         {/* Top fade */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#040812] to-transparent z-30 pointer-events-none" />
         {/* Bottom fade */}
@@ -480,7 +498,7 @@ export default function LandingPage() {
           height={260}
           repeat={5}
         />
-      </section>
+      </motion.section>
 
       <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
@@ -763,7 +781,7 @@ export default function LandingPage() {
             variants={staggerContainerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.05 }}
+            viewport={{ once: true, amount: 0.06 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-4"
           >
 

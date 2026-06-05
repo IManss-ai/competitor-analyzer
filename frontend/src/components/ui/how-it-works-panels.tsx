@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { Check, CheckCircle2, Zap, Mail, FileText, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { cardHoverVariants } from '@/lib/animations';
+import { cardHoverVariants, fadeUpVariants } from '@/lib/animations';
 
 // ─── TYPES & VARIANTS ────────────────────────────────────────────────────────
 
@@ -404,11 +404,16 @@ export default function HowItWorksPanels() {
           const isHovered = hoveredIndex === idx;
 
           return (
-            <div
+            <motion.div
               key={idx}
               onMouseEnter={() => setHoveredIndex(idx)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-stretch"
+              variants={fadeUpVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              custom={idx}
+              className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-slate-stretch"
             >
               {/* Left Side: Node Circle (floating offset to vertical line) */}
               <div className="absolute -left-7 md:-left-[43px] top-4 z-20 flex items-center justify-center">
@@ -458,7 +463,7 @@ export default function HowItWorksPanels() {
                   {step.renderMockup(isHovered)}
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
           );
         })}
       </div>
