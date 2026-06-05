@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Competitor Analyzer',
+  title: 'Rivalscope',
   description: 'AI-powered competitor intelligence dashboard',
 };
 

@@ -323,7 +323,7 @@ export default function SettingsClient({
           <div className="space-y-6">
             <div>
               <h2 className="text-lg font-semibold text-[#171717] mb-1">Scan schedule</h2>
-              <p className="text-sm text-[#737373]">Configure how frequently Competitor Analyzer crawls and scans tracked sites.</p>
+              <p className="text-sm text-[#737373]">Configure how frequently Rivalscope crawls and scans tracked sites.</p>
             </div>
 
             <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5 space-y-4">
@@ -544,7 +544,7 @@ export default function SettingsClient({
             <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5">
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h3 className="text-base font-semibold text-[#171717] mb-2">Competitor Analyzer Pro</h3>
+                  <h3 className="text-base font-semibold text-[#171717] mb-2">Rivalscope Pro</h3>
                   <div className="flex items-center gap-3">
                     <span className="text-lg font-semibold text-[#171717]">$49<span className="text-sm text-[#737373] font-normal">/mo</span></span>
                     <span

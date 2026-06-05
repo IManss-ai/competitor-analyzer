@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { Crosshair, ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard, Check } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard, Check } from 'lucide-react';
+import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { Github, Twitter, Linkedin, Instagram } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
@@ -102,7 +103,27 @@ const BATTLE_CARDS_DATA = {
       'Advertise "Dual-band Wi-Fi backup POS terminal integration" to counter connection drops.',
       'Target Square merchants with "Contract-free hardware replacement program".',
     ]
+  },
+  adyen: {
+    company: 'Adyen',
+    logoColor: 'bg-emerald-700',
+    date: 'Updated 1 day ago',
+    changes: [
+      { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Changed EMEA support tiers and custom POS redirect APIs' },
+      { tag: 'messaging', tc: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20', text: 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.' }
+    ],
+    complaints: [],
+    signals: [],
+    moves: [
+      'Target mid-market merchants looking for dedicated phone support lines.'
+    ]
   }
+};
+const COMP_CHANGE_COUNTS: Record<string, number> = {
+  stripe: 3,
+  paypal: 1,
+  square: 2,
+  adyen: 1,
 };
 
 
@@ -157,6 +178,11 @@ export default function LandingPage() {
   const [hoveredBattleTab, setHoveredBattleTab] = useState<'stripe' | 'paypal' | 'square' | null>(null);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
 
+  const [commandCenterInView, setCommandCenterInView] = useState(false);
+  const [metricCounters, setMetricCounters] = useState([0, 0, 0]);
+  const [scanSweeping, setScanSweeping] = useState(false);
+  const commandCenterRef = useRef<HTMLElement>(null);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
   const { scrollY } = useScroll();
@@ -210,7 +236,45 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  // Animate metric counters when Command Center enters view
+  useEffect(() => {
+    const el = commandCenterRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !commandCenterInView) {
+          setCommandCenterInView(true);
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [commandCenterInView]);
 
+  useEffect(() => {
+    if (!commandCenterInView) return;
+    const targets = [4, 3, 2];
+    const duration = 1300;
+    const startTime = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setMetricCounters(targets.map((t) => Math.round(eased * t)));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [commandCenterInView]);
+
+  // Periodic scan sweep animation every 6 seconds
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setScanSweeping(true);
+      setTimeout(() => setScanSweeping(false), 1300);
+    }, 6000);
+    return () => clearInterval(iv);
+  }, []);
 
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
@@ -235,9 +299,9 @@ export default function LandingPage() {
           {/* Brand */}
           <Link href="#" className="flex items-center gap-2.5 group">
             <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
-              <Crosshair size={13}  className="text-sky-400" />
+              <RivalscopeLogo size={13} className="text-sky-400" />
             </div>
-            <span className="text-sm font-semibold text-white tracking-tight">Competitor Analyzer</span>
+            <span className="text-sm font-semibold text-white tracking-tight">Rivalscope</span>
           </Link>
 
           {/* Links */}
@@ -575,7 +639,7 @@ export default function LandingPage() {
       <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" className="py-24 px-6 bg-[#040812] relative">
+      <section id="dashboard-showcase" ref={commandCenterRef} className="py-24 px-6 bg-[#040812] relative">
         <div className="max-w-7xl mx-auto">
 
           <motion.div
@@ -632,9 +696,19 @@ export default function LandingPage() {
                           />
                         )}
                         <span className="capitalize relative z-10">{comp}</span>
-                        <span className={`w-1.5 h-1.5 rounded-full relative z-10 transition-colors ${
-                          selectedDashboardComp === comp ? 'bg-sky-400' : 'bg-zinc-700'
-                        }`} />
+                        {COMP_CHANGE_COUNTS[comp] > 0 ? (
+                          <span className={`flex-shrink-0 min-w-[18px] px-1 py-0.5 rounded text-[8px] font-bold font-mono relative z-10 text-center transition-colors ${
+                            selectedDashboardComp === comp
+                              ? 'bg-sky-500/20 text-sky-300 border border-sky-500/25'
+                              : 'bg-zinc-800 text-zinc-600'
+                          }`}>
+                            {COMP_CHANGE_COUNTS[comp]}
+                          </span>
+                        ) : (
+                          <span className={`w-1.5 h-1.5 rounded-full relative z-10 transition-colors ${
+                            selectedDashboardComp === comp ? 'bg-sky-400' : 'bg-zinc-700'
+                          }`} />
+                        )}
 
                         <AnimatePresence>
                           {hoveredDashComp === comp && (
@@ -670,7 +744,24 @@ export default function LandingPage() {
               </div>
 
               {/* Main panel */}
-              <div className="p-5 flex flex-col justify-between overflow-hidden">
+              <div className="p-5 flex flex-col justify-between overflow-hidden relative">
+                    {/* Periodic scan sweep */}
+                    <AnimatePresence>
+                      {scanSweeping && (
+                        <motion.div
+                          key="scan-sweep"
+                          initial={{ x: '-110%', opacity: 0.9 }}
+                          animate={{ x: '110%', opacity: 0.3 }}
+                          exit={{}}
+                          transition={{ duration: 1.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                          className="absolute inset-y-0 left-0 w-32 pointer-events-none z-20"
+                          style={{
+                            background:
+                              'linear-gradient(to right, transparent, rgba(56,189,248,0.07), rgba(56,189,248,0.12), rgba(56,189,248,0.07), transparent)',
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedDashboardComp}
@@ -681,56 +772,84 @@ export default function LandingPage() {
                   >
                     <div>
                       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-5">
-                        <div>
-                          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                            <TrendingUp size={14} className="text-sky-400" />
-                            Intel Feed · <span className="text-zinc-600">last scan 8m ago</span>
-                          </h3>
+                        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                          <TrendingUp size={14} className="text-sky-400" />
+                          Intel Feed
+                          <span className="text-zinc-600 font-normal text-xs">· last scan 8m ago</span>
+                        </h3>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5">
+                            <motion.div
+                              animate={{ opacity: [1, 0.3, 1], scale: [1, 0.7, 1] }}
+                              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                              className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                            />
+                            <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Live</span>
+                          </div>
+                          <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-zinc-500 px-2.5 py-1 rounded-lg">
+                            ALL
+                          </span>
                         </div>
-                        <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-zinc-500 px-2.5 py-1 rounded-lg">
-                          ALL
-                        </span>
                       </div>
 
                       <div className="grid grid-cols-3 gap-3 mb-4">
                         {[
-                          { label: 'Monitored', value: '4 targets', color: 'text-white' },
-                          { label: 'Changes', value: '3 this week', color: 'text-sky-400' },
-                          { label: 'Plays', value: '2 ready', color: 'text-emerald-400' },
+                          { label: 'Monitored', unit: 'targets', color: 'text-white', trend: null, idx: 0 },
+                          { label: 'Changes', unit: 'this week', color: 'text-sky-400', trend: '↑ +2', trendColor: 'text-sky-400', idx: 1 },
+                          { label: 'Plays', unit: 'ready', color: 'text-emerald-400', trend: '↑ new', trendColor: 'text-emerald-400', idx: 2 },
                         ].map((s) => (
                           <div key={s.label} className="bg-white/[0.02] border border-white/[0.04] p-3 rounded-2xl">
                             <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
-                            <div className={`text-sm font-bold font-mono ${s.color}`}>{s.value}</div>
+                            <div className={`text-sm font-bold font-mono ${s.color} flex items-baseline gap-1`}>
+                              <motion.span
+                                key={`${selectedDashboardComp}-${s.idx}-${commandCenterInView}`}
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: s.idx * 0.05 }}
+                              >
+                                {metricCounters[s.idx]}
+                              </motion.span>
+                              <span className="text-[10px] font-normal text-zinc-500">{s.unit}</span>
+                            </div>
+                            {s.trend && (
+                              <div className={`text-[9px] font-mono mt-1 ${s.trendColor}`}>{s.trend}</div>
+                            )}
                           </div>
                         ))}
                       </div>
 
-                      <motion.div
-                        initial={{ borderLeftColor: 'rgba(56, 189, 248, 0)' }}
-                        animate={{ borderLeftColor: ['rgba(56, 189, 248, 0)', 'rgba(56, 189, 248, 0.3)', 'rgba(56, 189, 248, 0.15)'] }}
-                        transition={{ duration: 1.5, ease: 'easeOut' }}
-                        style={{ borderLeftWidth: 3 }}
-                        className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-2xl mb-3"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-mono text-sky-300 bg-sky-500/8 border border-sky-500/15 px-2 py-0.5 rounded-md">
-                            PRICING UPDATE
-                          </span>
-                          <span className="text-[10px] font-mono text-zinc-600">June 4, 2026</span>
-                        </div>
-                        <h4 className="text-xs font-semibold text-white mb-1.5 leading-snug">
-                          {selectedDashboardComp === 'stripe' && 'Removed flat-rate pricing for enterprise accounts'}
-                          {selectedDashboardComp === 'paypal' && 'Card transaction fee adjusted from 2.9% to 3.49%'}
-                          {selectedDashboardComp === 'square' && 'POS firmware update v3.1 with dynamic checkout fees'}
-                          {selectedDashboardComp === 'adyen' && 'Changed EMEA support tiers and custom POS redirect APIs'}
-                        </h4>
-                        <p className="text-xs text-zinc-400 leading-relaxed">
-                          {selectedDashboardComp === 'stripe' && 'Enterprise leads now redirected to "Contact Sales" pipeline, hiding transaction fee discounts.'}
-                          {selectedDashboardComp === 'paypal' && 'Rate change increases merchant billing overhead by 20%. Developers report sandbox instability.'}
-                          {selectedDashboardComp === 'square' && 'Terminals report Wi-Fi dropping during heavy retail checkout hours.'}
-                          {selectedDashboardComp === 'adyen' && 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.'}
-                        </p>
-                      </motion.div>
+                      {/* Staggered intelligence event cards */}
+                      <div className="space-y-2 mb-3">
+                        <AnimatePresence mode="popLayout">
+                          {BATTLE_CARDS_DATA[selectedDashboardComp].changes.map((change, i) => (
+                            <motion.div
+                              key={`${selectedDashboardComp}-change-${i}`}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{
+                                opacity: 1,
+                                x: 0,
+                                transition: { delay: i * 0.07, duration: 0.22, ease: 'easeOut' },
+                              }}
+                              exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
+                              className="bg-white/[0.02] border border-white/[0.05] p-3 rounded-xl"
+                              style={{
+                                borderLeftWidth: 2,
+                                borderLeftColor: i === 0 ? 'rgba(56,189,248,0.25)' : 'transparent',
+                              }}
+                            >
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>
+                                  {change.tag.toUpperCase()}
+                                </span>
+                                <span className="text-[9px] font-mono text-zinc-600">
+                                  {i === 0 ? 'today' : i === 1 ? '2d ago' : '4d ago'}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-zinc-300 leading-snug">{change.text}</p>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
 
                       <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-2xl flex items-center justify-between gap-3">
                         <div>
@@ -738,10 +857,7 @@ export default function LandingPage() {
                             <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
                           </div>
                           <p className="text-xs text-zinc-300 leading-snug">
-                            {selectedDashboardComp === 'stripe' && 'Email script targeting Stripe companies flagging transparent flat support agreements.'}
-                            {selectedDashboardComp === 'paypal' && 'Campaign addressing developers: "Zero-latency sandbox trial & transparent flat billing".'}
-                            {selectedDashboardComp === 'square' && 'Ads targeting retail merchants highlighting terminal offline-mode robustness.'}
-                            {selectedDashboardComp === 'adyen' && 'Target mid-market merchants looking for dedicated phone support lines.'}
+                            {BATTLE_CARDS_DATA[selectedDashboardComp].moves[0]}
                           </p>
                         </div>
                         <motion.button
@@ -1135,7 +1251,7 @@ export default function LandingPage() {
             <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg ${currentCard.logoColor} flex items-center justify-center`}>
-                  <Crosshair size={13}  className="text-white" />
+                  <RivalscopeLogo size={13} className="text-white" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white">{currentCard.company} Battle Card</h4>
@@ -1390,9 +1506,9 @@ export default function LandingPage() {
             <div className="col-span-2 space-y-4">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded-lg">
-                  <Crosshair size={11}  className="text-sky-400" />
+                  <RivalscopeLogo size={11} className="text-sky-400" />
                 </div>
-                <span className="text-sm font-semibold text-white">Competitor Analyzer</span>
+                <span className="text-sm font-semibold text-white">Rivalscope</span>
               </div>
               <p className="text-xs text-zinc-400 leading-relaxed max-w-xs">
                 AI-driven competitive intelligence. Track pricing, reviews, and messaging shifts so you can act before the next sales call.
@@ -1430,7 +1546,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[11px] text-zinc-600 font-mono">
-              &copy; {new Date().getFullYear()} Competitor Analyzer. All rights reserved.
+              &copy; {new Date().getFullYear()} Rivalscope. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-zinc-500">
               <a href="#" className="hover:text-white transition-colors"><Twitter size={14} /></a>

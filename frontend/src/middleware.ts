@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const session = request.cookies.get('competitor-analyzer-session');
+  const session = request.cookies.get('rivalscope-session');
   const { pathname } = request.nextUrl;
 
   // Public routes that don't need auth

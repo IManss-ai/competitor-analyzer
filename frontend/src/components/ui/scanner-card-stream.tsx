@@ -6,11 +6,16 @@ import * as THREE from 'three';
 
 // Competitor-intelligence themed images (Unsplash — reliable URLs)
 const COMPETITOR_CARD_IMAGES = [
+  // Dark BI analytics dashboard — pricing & conversion data
   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop&q=80",
+  // Multi-screen market research setup
+  "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?w=800&h=500&fit=crop&q=80",
+  // Strategic data analysis — charts on laptop
   "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&h=500&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=500&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=800&h=500&fit=crop&q=80",
+  // SaaS growth metrics dashboard
+  "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=800&h=500&fit=crop&q=80",
+  // Competitor mapping / market positioning screen
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop&q=80",
 ];
 
 const ASCII_CHARS =
@@ -435,7 +440,7 @@ const ScannerCardStream = ({
                 <img
                   src={card.image}
                   alt="Competitor intelligence scan"
-                  className="w-full h-full object-cover brightness-[0.85] contrast-105"
+                  className="w-full h-full object-cover brightness-[0.65] contrast-110 saturate-[0.55]"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/30 rounded-2xl" />

@@ -174,7 +174,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* FOOTER */}
         <footer className="text-center pt-8 pb-16 border-t border-[#e5e5e5] mt-8">
           <p className="text-xs text-[#a3a3a3]">
-            Powered by Competitor Analyzer
+            Powered by Rivalscope
           </p>
           <p className="text-sm text-[#737373] mt-2">
             Track your competitors 24/7.{' '}

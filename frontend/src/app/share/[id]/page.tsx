@@ -55,7 +55,7 @@ export default async function PublicSharePage({ params }: PageProps) {
             href="/auth/login"
             className="inline-block bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
           >
-            Go to Competitor Analyzer
+            Go to Rivalscope
           </a>
         </div>
       </div>

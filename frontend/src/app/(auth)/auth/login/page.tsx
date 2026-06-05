@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Crosshair, Mail, Lock, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
+import { Mail, Lock, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
+import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { Chrome } from '@/components/ui/brand-icons';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -137,10 +138,10 @@ export default function LoginPage() {
         
         <Link href="/" className="relative flex items-center gap-2.5 z-10 hover:opacity-85 transition-opacity max-w-fit">
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-            <Crosshair size={14}  className="text-white" />
+            <RivalscopeLogo size={14} className="text-white" />
           </div>
           <span className="text-sm font-semibold tracking-tight">
-            Competitor Analyzer
+            Rivalscope
           </span>
         </Link>
 
@@ -189,7 +190,7 @@ export default function LoginPage() {
         </div>
 
         <p className="relative z-10 text-[11px] text-white/20 font-mono">
-          © {new Date().getFullYear()} Competitor Analyzer. All rights reserved.
+          © {new Date().getFullYear()} Rivalscope. All rights reserved.
         </p>
       </div>
 
@@ -200,10 +201,10 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 hover:opacity-85 transition-opacity max-w-fit">
             <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-              <Crosshair size={14}  className="text-white" />
+              <RivalscopeLogo size={14} className="text-white" />
             </div>
             <span className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
-              Competitor Analyzer
+              Rivalscope
             </span>
           </Link>
 
@@ -426,7 +427,7 @@ export default function LoginPage() {
               </div>
 
               <h3 className="text-base font-semibold text-zinc-900 mb-1">Choose an account</h3>
-              <p className="text-xs text-zinc-500 mb-5">to continue to Competitor Analyzer</p>
+              <p className="text-xs text-zinc-500 mb-5">to continue to Rivalscope</p>
 
               {/* Fast selector buttons */}
               <div className="space-y-2 mb-5">

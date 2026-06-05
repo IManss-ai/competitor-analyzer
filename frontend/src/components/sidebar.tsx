@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
+import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { LayoutDashboard, Building2, FileText, Shield, TrendingUp, CheckSquare, Settings, LogOut, RefreshCw, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -97,13 +98,10 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <div className="flex items-center gap-2.5 mb-4">
           {/* Lettermark */}
           <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center flex-shrink-0">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M3 2h6M6 2v8M3 10h6" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <RivalscopeLogo size={12} className="text-sky-400" />
           </div>
           <div className="leading-none">
-            <span className="text-[13px] font-bold text-white tracking-tight">Intel</span>
-            <span className="text-[11px] text-sky-400 ml-1 font-medium tracking-wide">analyzer</span>
+            <span className="text-[13px] font-bold text-white tracking-tight">Rival</span><span className="text-[13px] font-bold text-sky-400 tracking-tight">scope</span>
           </div>
         </div>
 

@@ -65,7 +65,7 @@ function AnimatedHero({ titles }: AnimatedHeroProps) {
 
           <p className="text-lg md:text-xl leading-relaxed tracking-tight text-white/50 max-w-2xl text-center">
             Stop tracking competitors manually with browser bookmarks and Google Alerts.
-            Competitor Analyzer monitors everything automatically and delivers a weekly Battle Card
+            Rivalscope monitors everything automatically and delivers a weekly Battle Card
             with exactly what changed and what to do about it.
           </p>
         </div>

@@ -10,7 +10,7 @@ export default function BillingSuccessPage() {
         </div>
         <h1 className="text-2xl font-semibold text-[#0a0a0a] tracking-tight mb-3">You&apos;re all set!</h1>
         <p className="text-sm text-[#525252] mb-8 leading-relaxed">
-          Your 14-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Competitor Analyzer Pro.
+          Your 14-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
         </p>
         <Link
           href="/dashboard"
