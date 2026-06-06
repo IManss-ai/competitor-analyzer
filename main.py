@@ -40,21 +40,20 @@ def _apply_column_guards():
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS scan_schedule VARCHAR DEFAULT 'weekly'",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT 1",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT TRUE",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS digest_email VARCHAR",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS google_maps_url VARCHAR",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS instagram_handle VARCHAR",
         "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS facebook_page VARCHAR",
     ]
-    try:
-        with engine.connect() as conn:
-            for stmt in stmts:
+    for stmt in stmts:
+        try:
+            with engine.begin() as conn:
                 conn.execute(__import__("sqlalchemy").text(stmt))
-            conn.commit()
-        print("[startup] Column guards applied")
-    except Exception as e:
-        print(f"[startup] Column guards failed (non-fatal): {e}")
+        except Exception as e:
+            print(f"[startup] Column guard statement failed (non-fatal): {stmt} - Error: {e}")
+    print("[startup] Column guards applied")
 
 async def _init_db():
     try:
@@ -124,3 +123,19 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok", "version": "v5-bg-init"}
+
+@app.get("/diagnostic-db")
+def diagnostic_db():
+    from app.db import get_session
+    from app.models import User
+    db = next(get_session())
+    try:
+        users = db.query(User).all()
+        return {
+            "status": "ok",
+            "users_count": len(users),
+            "users": [{"id": str(u.id), "email": u.email, "has_password": u.password_hash is not None} for u in users]
+        }
+    except Exception as e:
+        import traceback
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
