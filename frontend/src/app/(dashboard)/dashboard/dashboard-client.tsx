@@ -273,50 +273,48 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 bg-[#080e1c]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-7">
-            <div className="w-12 h-12 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'var(--accent-subtle)', color: 'var(--accent-primary)', borderColor: 'var(--accent-border)', borderWidth: 1 }}>
               <Compass size={24} />
             </div>
-            <h2 className="text-lg font-bold text-white tracking-tight">What kind of business are you?</h2>
-            <p className="text-xs text-zinc-400 mt-1">We'll personalize what you track and how we report it.</p>
+            <h2 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>What kind of business are you?</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>We&apos;ll personalize what you track and how we report it.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
             {[
               {
                 type: 'saas' as const,
-                icon: <Globe size={22} className="text-sky-400" />,
+                icon: <Globe size={22} style={{ color: 'var(--accent-primary)' }} />,
                 title: 'B2B SaaS',
                 desc: 'Track pricing pages, features, messaging, and G2/Trustpilot reviews.',
-                border: 'border-sky-500/30 bg-sky-500/5',
-                check: 'text-sky-400'
+                borderStyle: { borderColor: 'var(--accent-primary)', backgroundColor: 'var(--accent-subtle)' },
+                checkColor: 'var(--accent-primary)'
               },
               {
                 type: 'local' as const,
-                icon: <MapPin size={22} className="text-cyan-400" />,
+                icon: <MapPin size={22} style={{ color: '#a78bfa' }} />,
                 title: 'Local Business',
                 desc: 'Track Google Maps reviews, Instagram activity, and nearby competitors.',
-                border: 'border-cyan-500/30 bg-cyan-500/5',
-                check: 'text-cyan-400'
+                borderStyle: { borderColor: 'var(--accent-primary)', backgroundColor: 'var(--accent-subtle)' },
+                checkColor: 'var(--accent-primary)'
               }
-            ].map(({ type, icon, title, desc, border, check }) => (
+            ].map(({ type, icon, title, desc, borderStyle, checkColor }) => (
               <button
                 key={type}
                 onClick={() => setSelectedBusinessType(type)}
-                className={`relative text-left p-4 rounded-xl border transition-all cursor-pointer ${
-                  selectedBusinessType === type
-                    ? border
-                    : 'border-white/[0.07] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
-                }`}
+                className={`relative text-left p-4 rounded-xl border transition-all cursor-pointer`}
+                style={selectedBusinessType === type ? borderStyle : { borderColor: 'var(--border-default)', backgroundColor: 'rgba(255,255,255,0.02)' }}
               >
                 {selectedBusinessType === type && (
-                  <CheckCircle2 size={14} className={`absolute top-3 right-3 ${check}`} />
+                  <CheckCircle2 size={14} className="absolute top-3 right-3" style={{ color: checkColor }} />
                 )}
                 <div className="mb-2">{icon}</div>
                 <p className="text-sm font-bold text-white mb-1">{title}</p>
-                <p className="text-[11px] text-zinc-500 leading-snug">{desc}</p>
+                <p className="text-[11px] leading-snug" style={{ color: 'var(--text-muted)' }}>{desc}</p>
               </button>
             ))}
           </div>
@@ -324,7 +322,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           <button
             onClick={() => confirmBusinessType(selectedBusinessType)}
             disabled={savingBusinessType}
-            className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="w-full disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            style={{ backgroundColor: 'var(--accent-primary)' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
           >
             {savingBusinessType ? (
               <><Loader2 size={16} className="animate-spin" /> Saving...</>
@@ -348,20 +349,25 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 bg-[#080e1c]/90 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md rounded-2xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-6">
-            <div className={`w-12 h-12 border rounded-full flex items-center justify-center mx-auto mb-3 ${
-              selectedBusinessType === 'local'
-                ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
-                : 'bg-sky-500/10 text-sky-400 border-sky-500/20'
-            }`}>
+            <div 
+              className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
+              style={{
+                backgroundColor: 'var(--accent-subtle)',
+                color: 'var(--accent-primary)',
+                borderColor: 'var(--accent-border)',
+                borderWidth: 1,
+              }}
+            >
               {selectedBusinessType === 'local' ? <MapPin size={24} /> : <Compass size={24} />}
             </div>
-            <h2 className="text-lg font-bold text-white tracking-tight">
+            <h2 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
               {selectedBusinessType === 'local' ? "Add your first local competitor" : "Add your first competitor"}
             </h2>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
               {selectedBusinessType === 'local'
                 ? "We'll track their Google Maps reviews, social posts, and nearby presence."
                 : "We'll start monitoring them instantly in real-time."}
@@ -370,7 +376,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
           <form onSubmit={submitOnboardingCompetitor} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">
+              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>
                 {selectedBusinessType === 'local' ? 'Competitor Website URL *' : 'Competitor URL *'}
               </label>
               <input
@@ -379,65 +385,68 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder={selectedBusinessType === 'local' ? 'e.g. rivalcafe.com' : 'e.g. competitor.com'}
                 value={onboardingUrl}
                 onChange={(e) => setOnboardingUrl(e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                className="rs-input placeholder-zinc-600 focus:outline-none w-full"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Business Name (Optional)</label>
+              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Business Name (Optional)</label>
               <input
                 type="text"
                 placeholder={selectedBusinessType === 'local' ? 'e.g. Rival Cafe Downtown' : 'e.g. Rival Inc'}
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                className="rs-input placeholder-zinc-600 focus:outline-none w-full"
               />
             </div>
 
             {selectedBusinessType === 'local' ? (
               <>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Google Maps URL (Optional)</label>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Google Maps URL (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g. maps.google.com/place/..."
                     value={onboardingMapsUrl}
                     onChange={(e) => setOnboardingMapsUrl(e.target.value)}
-                    className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                    className="rs-input placeholder-zinc-600 focus:outline-none w-full"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-400 mb-1.5">Instagram Handle (Optional)</label>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Instagram Handle (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g. @rivalcafe"
                     value={onboardingInstagram}
                     onChange={(e) => setOnboardingInstagram(e.target.value)}
-                    className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                    className="rs-input placeholder-zinc-600 focus:outline-none w-full"
                   />
                 </div>
               </>
             ) : (
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">G2 or Trustpilot URL (Optional)</label>
+                <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>G2 or Trustpilot URL (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. g2.com/products/competitor/reviews"
                   value={onboardingG2Url}
                   onChange={(e) => setOnboardingG2Url(e.target.value)}
-                  className="w-full bg-white/[0.02] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"
+                  className="rs-input placeholder-zinc-600 focus:outline-none w-full"
                 />
               </div>
             )}
 
             {onboardingError && (
-              <p className="text-xs text-red-400 font-medium">{onboardingError}</p>
+              <p className="text-xs text-red-400 font-medium font-mono">{onboardingError}</p>
             )}
 
             <button
               type="submit"
               disabled={submittingOnboarding}
-              className="w-full bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              style={{ backgroundColor: 'var(--accent-primary)' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
             >
               {submittingOnboarding ? (
                 <><Loader2 size={16} className="animate-spin" /> Creating...</>
@@ -478,15 +487,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     };
 
     return (
-      <div className="bg-[#0c0919]/60 backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12">
+      <div className="backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-          <div className="absolute inset-0 border-4 border-sky-500/10 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin"></div>
-          <Building2 size={36} className="text-sky-400" />
+          <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(124,58,237,0.1)' }}></div>
+          <div className="absolute inset-0 border-4 border-t-purple-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
+          <Building2 size={36} style={{ color: 'var(--accent-primary)' }} />
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-bold text-white tracking-tight">Running your initial scan...</h2>
+          <h2 className="text-lg font-bold tracking-tight text-white">Running your initial scan...</h2>
           <p className="text-xs text-zinc-400 max-w-sm mx-auto">
             We are analyzing the competitor homepage for copy structures, pricing, and reviews.
           </p>
@@ -495,7 +504,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-white/[0.08] rounded-xl p-4 bg-white/[0.02]">
           <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">Live Status</span>
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <Loader2 size={16} className="animate-spin text-sky-400" />
+            <Loader2 size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
             {statusMessages[onboardingStatus] || statusMessages.fetching}
           </div>
         </div>
@@ -507,7 +516,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   if (onboardingStep === 2) {
     const isError = onboardingStatus === 'error';
     return (
-      <div className="bg-[#0c0919]/60 backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12">
+      <div className="backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
           {isError ? (
             <AlertTriangle size={32} className="text-red-400" />
@@ -517,7 +526,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-bold text-white tracking-tight">
+          <h2 className="text-lg font-bold tracking-tight text-white">
             {isError ? 'Scan had an issue' : 'First scan complete!'}
           </h2>
           <p className="text-xs text-zinc-400 max-w-sm mx-auto">
@@ -552,7 +561,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </button>
           <button
             onClick={() => setOnboardingStep(3)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            style={{ backgroundColor: 'var(--accent-primary)' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
           >
             Go to Dashboard
           </button>
@@ -741,7 +753,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               >
                 {loadingFeed ? (
                   <>
-                    <Loader2 size={16} className="animate-spin text-sky-400" />
+                    <Loader2 size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
                     Loading...
                   </>
                 ) : (

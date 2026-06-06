@@ -39,22 +39,22 @@ export default async function TrendsPage() {
       <Topbar title="Trends" subtitle="Activity overview across your landscape" />
 
       {!hasCompetitors ? (
-        <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
-          <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] px-6 py-24 text-center">
-            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-zinc-50 border border-zinc-200/50">
-              <div className="w-2.5 h-[30%] bg-zinc-200 rounded-sm"></div>
-              <div className="w-2.5 h-[70%] bg-zinc-300 rounded-sm"></div>
-              <div className="w-2.5 h-[50%] bg-zinc-200 rounded-sm"></div>
-              <div className="w-2.5 h-[90%] bg-zinc-300 rounded-sm"></div>
+        <div className="rs-card p-6">
+          <div className="px-6 py-24 text-center flex flex-col items-center">
+            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-white/5 border border-white/10">
+              <div className="w-2.5 h-[30%] bg-white/10 rounded-sm"></div>
+              <div className="w-2.5 h-[70%] bg-white/20 rounded-sm"></div>
+              <div className="w-2.5 h-[50%] bg-white/10 rounded-sm"></div>
+              <div className="w-2.5 h-[90%] bg-white/20 rounded-sm"></div>
             </div>
             
-            <h3 className="text-xl font-semibold text-[#0a0a0a] tracking-tight mb-2">No data to show yet</h3>
-            <p className="text-sm text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
+            <h3 className="text-xl font-semibold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>No data to show yet</h3>
+            <p className="text-sm max-w-sm mx-auto mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Trends will appear here once you add competitors and we complete the first weekly scan.
             </p>
             <Link 
               href="/competitors" 
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#2563eb] text-white text-sm font-medium rounded-lg hover:bg-[#1d4ed8] transition-all cursor-pointer"
+              className="rs-btn-primary cursor-pointer"
             >
               Add competitors
             </Link>
@@ -65,36 +65,30 @@ export default async function TrendsPage() {
           {/* Top row: 2 charts side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* A) Change Frequency Chart */}
-            <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
-              <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
-                <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
-                  Change frequency (Past 12 Weeks — Top 5)
-                </h2>
-                <TrendsChart data={changeFrequencyChartData} competitors={metricsData.weekly_changes} />
-              </div>
+            <div className="rs-card p-6">
+              <h2 className="rs-label mb-6">
+                Change frequency (Past 12 Weeks — Top 5)
+              </h2>
+              <TrendsChart data={changeFrequencyChartData} competitors={metricsData.weekly_changes} />
             </div>
 
             {/* B) Change Type Breakdown Stacked Bar Chart */}
-            <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
-              <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
-                <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
-                  Change type breakdown (Past 8 Weeks)
-                </h2>
-                <TrendsTypeBreakdown data={metricsData.type_breakdown} />
-              </div>
+            <div className="rs-card p-6">
+              <h2 className="rs-label mb-6">
+                Change type breakdown (Past 8 Weeks)
+              </h2>
+              <TrendsTypeBreakdown data={metricsData.type_breakdown} />
             </div>
           </div>
 
           {/* Bottom row: Review trends & Density heatmap */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* C) Review Score Trends */}
-            <div className="p-1 bg-zinc-100/50 border border-zinc-200/60 rounded-2xl shadow-sm">
-              <div className="bg-white border border-zinc-100 rounded-[calc(1rem-0.125rem)] p-6">
-                <h2 className="text-xs font-mono text-[#737373] uppercase tracking-wider mb-6">
-                  Review score trends
-                </h2>
-                <TrendsReviews trends={metricsData.review_trends} />
-              </div>
+            <div className="rs-card p-6">
+              <h2 className="rs-label mb-6">
+                Review score trends
+              </h2>
+              <TrendsReviews trends={metricsData.review_trends} />
             </div>
 
             {/* D) Alert Heatmap */}

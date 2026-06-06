@@ -21,30 +21,30 @@ const statusConfig: Record<
   active: {
     label: 'Active',
     dot: 'bg-emerald-500',
-    text: 'text-emerald-700',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-200',
+    text: 'text-emerald-400',
+    bg: 'bg-emerald-500/10',
+    border: 'border-emerald-500/20',
   },
   trialing: {
     label: 'Trial',
-    dot: 'bg-blue-500',
-    text: 'text-blue-700',
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
+    dot: 'bg-[#7c3aed]',
+    text: 'text-purple-400',
+    bg: 'bg-purple-500/10',
+    border: 'border-purple-500/20',
   },
   canceled: {
     label: 'Canceled',
-    dot: 'bg-red-400',
-    text: 'text-red-700',
-    bg: 'bg-red-50',
-    border: 'border-red-200',
+    dot: 'bg-red-500',
+    text: 'text-red-400',
+    bg: 'bg-red-500/10',
+    border: 'border-red-500/20',
   },
   past_due: {
     label: 'Past due',
-    dot: 'bg-amber-400',
-    text: 'text-amber-700',
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
+    dot: 'bg-amber-500',
+    text: 'text-amber-400',
+    bg: 'bg-amber-500/10',
+    border: 'border-amber-500/20',
   },
 };
 
@@ -192,7 +192,7 @@ export default function SettingsClient({
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pb-12">
       {/* Left Navigation Sidebar */}
       <aside className="lg:w-56 flex-shrink-0">
-        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-[#e5e5e5]">
+        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-white/5">
           {[
             { id: 'profile', label: 'Profile', Icon: UserIcon },
             { id: 'schedule', label: 'Scan Schedule', Icon: Calendar },
@@ -204,10 +204,10 @@ export default function SettingsClient({
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={clsx(
-                'flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-150 cursor-pointer',
+                'flex items-center gap-3 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-150 cursor-pointer',
                 activeTab === tab.id
-                  ? 'bg-neutral-100 text-[#171717] font-semibold'
-                  : 'text-[#737373] hover:bg-neutral-50 hover:text-[#171717]'
+                  ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold rounded-t-lg lg:rounded-r-lg lg:rounded-l-none'
+                  : 'text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]'
               )}
             >
               <tab.Icon size={16} />
@@ -224,29 +224,29 @@ export default function SettingsClient({
         {activeTab === 'profile' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-[#171717] mb-1">Profile settings</h2>
-              <p className="text-sm text-[#737373]">Manage your login email, security settings, and business profile.</p>
+              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Profile settings</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage your login email, security settings, and business profile.</p>
             </div>
 
             {/* General Profile Card */}
-            <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5 space-y-4">
+            <div className="rs-card p-5 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#737373] uppercase tracking-wider mb-1">
+                <label className="rs-label block mb-1.5">
                   Email address
                 </label>
                 <input
                   type="email"
                   disabled
                   value={settings.email}
-                  className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm bg-neutral-50 text-[#737373] cursor-not-allowed"
+                  className="rs-input opacity-50 cursor-not-allowed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#737373] uppercase tracking-wider mb-1">
+                <label className="rs-label block mb-1.5">
                   Business type
                 </label>
-                <p className="text-xs text-[#737373] mb-3">Toggles features specific to your business model.</p>
+                <p className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>Toggles features specific to your business model.</p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { id: 'saas', title: 'B2B SaaS', desc: 'Price pages, Jina scraping, features' },
@@ -259,14 +259,14 @@ export default function SettingsClient({
                       className={clsx(
                         'border p-3.5 rounded-xl text-left cursor-pointer transition-all',
                         settings.business_type === item.id
-                          ? 'border-[#2563eb] bg-blue-50/20'
-                          : 'border-[#e5e5e5] hover:bg-neutral-50'
+                          ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
+                          : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03]'
                       )}
                     >
-                      <p className={clsx('text-sm font-semibold', settings.business_type === item.id ? 'text-[#2563eb]' : 'text-[#171717]')}>
+                      <p className="text-sm font-semibold" style={{ color: settings.business_type === item.id ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
                         {item.title}
                       </p>
-                      <p className="text-xs text-[#737373] mt-1">{item.desc}</p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{item.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -274,42 +274,42 @@ export default function SettingsClient({
             </div>
 
             {/* Change Password Card */}
-            <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5">
-              <h3 className="text-sm font-semibold text-[#171717] mb-3 flex items-center gap-2">
+            <div className="rs-card p-5">
+              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <Lock size={16} />
                 Change Password
               </h3>
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-[#737373] mb-1">New Password</label>
+                  <label className="rs-label block mb-1.5">New Password</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb]"
+                    className="rs-input"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[#737373] mb-1">Confirm New Password</label>
+                  <label className="rs-label block mb-1.5">Confirm New Password</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb]"
+                    className="rs-input"
                   />
                 </div>
 
                 {passwordStatus.type && (
-                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-green-600' : 'text-red-600')}>
+                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-green-400' : 'text-red-400')}>
                     {passwordStatus.message}
                   </p>
                 )}
 
                 <button
                   type="submit"
-                  className="bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                  className="rs-btn-primary cursor-pointer"
                 >
                   Update password
                 </button>
@@ -322,11 +322,11 @@ export default function SettingsClient({
         {activeTab === 'schedule' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-[#171717] mb-1">Scan schedule</h2>
-              <p className="text-sm text-[#737373]">Configure how frequently Rivalscope crawls and scans tracked sites.</p>
+              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Scan schedule</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Configure how frequently Rivalscope crawls and scans tracked sites.</p>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5 space-y-4">
+            <div className="rs-card p-5 space-y-4">
               <div className="space-y-3">
                 {[
                   { id: 'weekly', title: 'Weekly Scans', desc: 'Scans run every Monday at 8:00 AM UTC. Best for standard competitive tracking.' },
@@ -337,8 +337,8 @@ export default function SettingsClient({
                     className={clsx(
                       'flex items-start gap-4 border p-4 rounded-xl cursor-pointer transition-all',
                       (settings as any).scan_schedule === item.id
-                        ? 'border-[#2563eb] bg-blue-50/20'
-                        : 'border-[#e5e5e5] hover:bg-neutral-50'
+                        ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
+                        : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03]'
                     )}
                   >
                     <input
@@ -347,11 +347,11 @@ export default function SettingsClient({
                       value={item.id}
                       checked={(settings as any).scan_schedule === item.id}
                       onChange={() => handleUpdateSetting('scan_schedule', item.id)}
-                      className="mt-1"
+                      className="mt-1 accent-[var(--accent-primary)] cursor-pointer"
                     />
                     <div>
-                      <p className="text-sm font-semibold text-[#171717]">{item.title}</p>
-                      <p className="text-xs text-[#737373] mt-1">{item.desc}</p>
+                      <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{item.title}</p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{item.desc}</p>
                     </div>
                   </label>
                 ))}
@@ -364,26 +364,26 @@ export default function SettingsClient({
         {activeTab === 'notifications' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-[#171717] mb-1">Notification preferences</h2>
-              <p className="text-sm text-[#737373]">Control how and where you receive intelligence briefings and change alerts.</p>
+              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Notification preferences</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Control how and where you receive intelligence briefings and change alerts.</p>
             </div>
 
-            <form onSubmit={handleNotificationsSubmit} className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5 space-y-6">
+            <form onSubmit={handleNotificationsSubmit} className="rs-card p-5 space-y-6">
               <label className="flex items-start gap-4 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={!!(settings as any).email_notifications}
                   onChange={(e) => setSettings({ ...settings, email_notifications: e.target.checked } as any)}
-                  className="mt-1 rounded border-[#e5e5e5] text-[#2563eb] focus:ring-[#2563eb]/20"
+                  className="mt-1 accent-[var(--accent-primary)] cursor-pointer"
                 />
                 <div>
-                  <p className="text-sm font-semibold text-[#171717]">Send weekly intelligence digest email</p>
-                  <p className="text-xs text-[#737373] mt-0.5">Receive a summary of competitor activity and generated talking points.</p>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Send weekly intelligence digest email</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>Receive a summary of competitor activity and generated talking points.</p>
                 </div>
               </label>
 
               <div>
-                <label className="block text-xs font-semibold text-[#737373] uppercase tracking-wider mb-1.5">
+                <label className="rs-label block mb-1.5">
                   Digest delivery email
                 </label>
                 <input
@@ -391,19 +391,19 @@ export default function SettingsClient({
                   value={(settings as any).digest_email || ''}
                   onChange={(e) => setSettings({ ...settings, digest_email: e.target.value } as any)}
                   placeholder={settings.email}
-                  className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb]"
+                  className="rs-input"
                 />
               </div>
 
               {notifStatus.type && (
-                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-green-600' : 'text-red-600')}>
+                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-green-400' : 'text-red-400')}>
                   {notifStatus.message}
                 </p>
               )}
 
               <button
                 type="submit"
-                className="bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                className="rs-btn-primary cursor-pointer"
               >
                 Save notifications
               </button>
@@ -415,22 +415,22 @@ export default function SettingsClient({
         {activeTab === 'competitors' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-[#171717] mb-1">Competitors list</h2>
-              <p className="text-sm text-[#737373]">Manage tracked websites, enable/disable scanning, or add new competitors.</p>
+              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Competitors list</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage tracked websites, enable/disable scanning, or add new competitors.</p>
             </div>
 
             {/* Quick List */}
-            <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm overflow-hidden">
-              <div className="p-4 border-b border-[#e5e5e5] bg-[#fafafa]">
-                <h3 className="text-xs font-semibold text-[#737373] uppercase tracking-wider">Tracked competitors</h3>
+            <div className="rs-card overflow-hidden">
+              <div className="p-4 border-b border-white/5 bg-white/[0.01]">
+                <h3 className="rs-label">Tracked competitors</h3>
               </div>
 
               {competitors.length === 0 ? (
-                <div className="p-6 text-center text-sm text-[#737373]">
+                <div className="p-6 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
                   No competitors added yet. Use the form below to add one.
                 </div>
               ) : (
-                <div className="divide-y divide-[#e5e5e5]">
+                <div className="divide-y divide-white/5">
                   {competitors.map((comp) => {
                     const cleanUrl = comp.url.replace(/https?:\/\/(www\.)?/, '');
                     const faviconUrl = `https://www.google.com/s2/favicons?domain=${cleanUrl}&sz=32`;
@@ -444,13 +444,13 @@ export default function SettingsClient({
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/favicon.ico';
                             }}
-                            className="w-7 h-7 rounded border border-[#e5e5e5] bg-white p-0.5"
+                            className="w-7 h-7 rounded border border-white/10 bg-white/5 p-0.5"
                           />
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-[#171717] truncate">
+                            <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
                               {comp.name || comp.url}
                             </p>
-                            <p className="text-xs text-[#737373] truncate">{comp.url}</p>
+                            <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{comp.url}</p>
                           </div>
                         </div>
 
@@ -463,8 +463,8 @@ export default function SettingsClient({
                               onChange={() => handleToggleCompetitor(comp)}
                               className="sr-only peer"
                             />
-                            <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 relative"></div>
-                            <span className="ml-2 text-xs font-semibold text-[#737373] min-w-[48px]">
+                            <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent-primary)] relative"></div>
+                            <span className="ml-2 text-xs font-semibold min-w-[48px]" style={{ color: 'var(--text-secondary)' }}>
                               {comp.active ? 'Active' : 'Paused'}
                             </span>
                           </label>
@@ -472,7 +472,7 @@ export default function SettingsClient({
                           {/* Delete Button */}
                           <button
                             onClick={() => handleDeleteCompetitor(comp.id)}
-                            className="text-[#737373] hover:text-red-600 p-1.5 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer"
+                            className="text-zinc-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 size={16} />
@@ -486,37 +486,37 @@ export default function SettingsClient({
             </div>
 
             {/* Add Competitor Card */}
-            <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5">
-              <h3 className="text-sm font-semibold text-[#171717] mb-3 flex items-center gap-2">
+            <div className="rs-card p-5">
+              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <Plus size={16} />
                 Add new competitor
               </h3>
               <form onSubmit={handleAddCompetitor} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-[#737373] mb-1">Competitor Name (optional)</label>
+                    <label className="rs-label block mb-1.5">Competitor Name (optional)</label>
                     <input
                       type="text"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       placeholder="e.g. Acme Corp"
-                      className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb]"
+                      className="rs-input"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#737373] mb-1">Competitor Website (URL)</label>
+                    <label className="rs-label block mb-1.5">Competitor Website (URL)</label>
                     <input
                       type="text"
                       value={newUrl}
                       onChange={(e) => setNewUrl(e.target.value)}
                       placeholder="e.g. acme.com"
-                      className="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb]"
+                      className="rs-input"
                     />
                   </div>
                 </div>
 
                 {addStatus.type && (
-                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-green-600' : 'text-red-600')}>
+                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-green-400' : 'text-red-400')}>
                     {addStatus.message}
                   </p>
                 )}
@@ -524,7 +524,7 @@ export default function SettingsClient({
                 <button
                   type="submit"
                   disabled={isAdding}
-                  className="bg-[#2563eb] text-white hover:bg-[#1d4ed8] disabled:opacity-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2"
+                  className="rs-btn-primary cursor-pointer flex items-center gap-2"
                 >
                   {isAdding ? 'Adding...' : 'Add competitor'}
                 </button>
@@ -537,16 +537,16 @@ export default function SettingsClient({
         {activeTab === 'billing' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold text-[#171717] mb-1">Subscription & billing</h2>
-              <p className="text-sm text-[#737373]">Manage payment details, upgrade your account, or download invoices.</p>
+              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Subscription & billing</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage payment details, upgrade your account, or download invoices.</p>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm p-5">
+            <div className="rs-card p-5">
               <div className="flex items-start justify-between mb-8">
                 <div>
-                  <h3 className="text-base font-semibold text-[#171717] mb-2">Rivalscope Pro</h3>
+                  <h3 className="text-base font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Rivalscope Pro</h3>
                   <div className="flex items-center gap-3">
-                    <span className="text-lg font-semibold text-[#171717]">$49<span className="text-sm text-[#737373] font-normal">/mo</span></span>
+                    <span className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>$49<span className="text-sm font-normal" style={{ color: 'var(--text-secondary)' }}>/mo</span></span>
                     <span
                       className={clsx(
                         'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md border text-[11px] uppercase tracking-wide font-bold',
@@ -563,10 +563,10 @@ export default function SettingsClient({
 
                 {settings.trial_ends_at && (
                   <div className="text-right">
-                    <p className="text-[11px] font-medium text-[#737373] uppercase tracking-wide mb-1">
+                    <p className="text-[11px] font-medium uppercase tracking-wide mb-1" style={{ color: 'var(--text-muted)' }}>
                       Trial ends
                     </p>
-                    <p className="text-sm font-mono font-medium text-[#171717]">
+                    <p className="text-sm font-mono font-medium" style={{ color: 'var(--text-primary)' }}>
                       {new Date(settings.trial_ends_at).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -578,8 +578,8 @@ export default function SettingsClient({
               </div>
 
               {/* Plan Card Features */}
-              <div className="bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-5 mb-6">
-                <p className="text-xs font-semibold text-[#737373] uppercase tracking-wider mb-4">Included in Pro plan:</p>
+              <div className="bg-white/[0.01] border border-white/5 rounded-xl p-5 mb-6">
+                <p className="rs-label mb-4">Included in Pro plan:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                   {[
                     "Track up to 7 competitors",
@@ -589,8 +589,8 @@ export default function SettingsClient({
                     "Priority email support"
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <Check size={14} className="text-[#16a34a] flex-shrink-0"  />
-                      <span className="text-sm text-[#171717]">{feat}</span>
+                      <Check size={14} className="text-emerald-400 flex-shrink-0" />
+                      <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{feat}</span>
                     </div>
                   ))}
                 </div>
@@ -600,7 +600,7 @@ export default function SettingsClient({
                 <div>
                   <a
                     href={portalUrl}
-                    className="inline-flex items-center gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    className="rs-btn-primary cursor-pointer"
                   >
                     Manage billing
                     <ExternalLink size={14} />
@@ -612,7 +612,7 @@ export default function SettingsClient({
                 <div>
                   <a
                     href={checkoutUrl}
-                    className="inline-flex items-center gap-2 bg-[#2563eb] text-white hover:bg-[#1d4ed8] px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    className="rs-btn-primary cursor-pointer"
                   >
                     Upgrade to Pro
                     <ExternalLink size={14} />

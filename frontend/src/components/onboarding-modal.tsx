@@ -79,13 +79,14 @@ export default function OnboardingModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="relative z-10 bg-white rounded-2xl shadow-2xl p-8 md:p-10 max-w-xl w-full mx-4"
+            className="relative z-10 rounded-2xl shadow-2xl p-8 md:p-10 max-w-xl w-full mx-4 border border-white/5"
+            style={{ backgroundColor: 'var(--surface-overlay)' }}
           >
             <div className="text-center mb-8">
-              <h2 className="text-xl font-semibold text-[#0a0a0a] tracking-tight mb-2">
+              <h2 className="text-xl font-semibold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>
                 How do you use this?
               </h2>
-              <p className="text-sm text-[#6b7280]">
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 Choose your business type to personalize your experience
               </p>
             </div>
@@ -100,27 +101,27 @@ export default function OnboardingModal() {
                     key={opt.type}
                     onClick={() => handleSelect(opt.type)}
                     disabled={saving}
-                    whileHover={{ y: -2, boxShadow: '0 8px 25px rgba(0,0,0,0.08)' }}
+                    whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}
                     whileTap={{ scale: 0.97 }}
-                    className={`relative p-6 rounded-xl border-2 text-left transition-all cursor-pointer disabled:opacity-60 ${
-                      isSelected
-                        ? 'border-blue-500 bg-blue-50/50 shadow-sm'
-                        : 'border-[#e5e5e5] bg-white hover:border-[#d4d4d4]'
-                    }`}
+                    className={`relative p-6 rounded-xl border text-left transition-all cursor-pointer disabled:opacity-60`}
+                    style={{
+                      borderColor: isSelected ? 'var(--accent-primary)' : 'var(--border-default)',
+                      backgroundColor: isSelected ? 'var(--accent-subtle)' : 'rgba(255,255,255,0.02)',
+                    }}
                   >
                     <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${
-                        isSelected
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'bg-[#f5f5f5] text-[#6b7280]'
-                      }`}
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors`}
+                      style={{
+                        backgroundColor: isSelected ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)',
+                        color: isSelected ? '#ffffff' : 'var(--text-secondary)',
+                      }}
                     >
                       <Icon size={24}  />
                     </div>
-                    <h3 className="text-sm font-semibold text-[#0a0a0a] mb-1">
+                    <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
                       {opt.title}
                     </h3>
-                    <p className="text-xs text-[#6b7280] leading-relaxed">
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                       {opt.description}
                     </p>
 
@@ -129,7 +130,8 @@ export default function OnboardingModal() {
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute top-3 right-3 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"
+                        className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: 'var(--accent-primary)' }}
                       >
                         <svg
                           width="10"
@@ -159,7 +161,7 @@ export default function OnboardingModal() {
                 animate={{ opacity: 1 }}
                 className="mt-6 text-center"
               >
-                <p className="text-xs text-[#a3a3a3] font-medium">
+                <p className="text-xs font-medium font-mono" style={{ color: 'var(--text-muted)' }}>
                   Setting up your workspace...
                 </p>
               </motion.div>

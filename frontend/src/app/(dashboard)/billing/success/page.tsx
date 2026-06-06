@@ -4,17 +4,17 @@ import { CheckCircle2, ArrowRight } from 'lucide-react';
 export default function BillingSuccessPage() {
   return (
     <div className="flex items-center justify-center min-h-[70vh]">
-      <div className="bg-white border border-[#e5e5e5] rounded-2xl p-10 max-w-md w-full text-center shadow-sm">
-        <div className="mx-auto w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle2 size={36}  className="text-emerald-500" />
+      <div className="rs-card p-10 max-w-md w-full text-center">
+        <div className="mx-auto w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-6">
+          <CheckCircle2 size={36} className="text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-semibold text-[#0a0a0a] tracking-tight mb-3">You&apos;re all set!</h1>
-        <p className="text-sm text-[#525252] mb-8 leading-relaxed">
+        <h1 className="text-2xl font-semibold tracking-tight mb-3" style={{ color: 'var(--text-primary)' }}>You&apos;re all set!</h1>
+        <p className="text-sm mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           Your 14-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
         </p>
         <Link
           href="/dashboard"
-          className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-[#0a0a0a] text-white text-sm font-medium rounded-lg hover:bg-[#1a1a1a] active:scale-[0.98] transition-all"
+          className="rs-btn-primary w-full cursor-pointer"
         >
           Go to dashboard
           <ArrowRight size={16} />

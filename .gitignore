@@ -39,3 +39,4 @@ frontend/.next/
 frontend/out/
 frontend/.env.local
 .vercel
+.gstack/

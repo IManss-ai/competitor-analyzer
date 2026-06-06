@@ -92,6 +92,7 @@ app.add_middleware(
         FRONTEND_URL,
         "http://localhost:3000",
         "http://localhost:3001",
+        "http://localhost:3456",
     ],
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
