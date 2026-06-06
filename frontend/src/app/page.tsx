@@ -930,7 +930,7 @@ export default function LandingPage() {
               className="md:col-span-3 bg-gradient-to-br from-sky-950/25 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-sky-500/20 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
-                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
+                <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-center text-amber-400 mb-4">
                   <TrendingUp size={18} />
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">Pricing Grid Monitoring</h3>
@@ -988,7 +988,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               className="md:col-span-2 bg-gradient-to-br from-emerald-950/20 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-emerald-500/15 transition-colors duration-300"
             >
-              <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
+              <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 mb-4">
                 <MessageSquare size={18} />
               </div>
               <h3 className="text-sm font-bold text-white mb-2">Review Site Intelligence</h3>
@@ -1045,7 +1045,7 @@ export default function LandingPage() {
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
+                <div className="w-9 h-9 bg-violet-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center text-violet-400 mb-4">
                   <ShieldCheck size={18} />
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
@@ -1077,7 +1077,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
             >
-              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
+              <div className="w-9 h-9 bg-zinc-500/10 border border-zinc-500/20 rounded-lg flex items-center justify-center text-zinc-400 mb-4">
                 <Calendar size={18} />
               </div>
               <h3 className="text-sm font-bold text-white mb-2">Historical Changelog</h3>
