@@ -1471,9 +1471,9 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Links</h4>
               <ul className="space-y-2 text-xs text-zinc-500">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Status</li>
+                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
+                <li><a href="https://status.rivalscope.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Status</a></li>
                 <li>
                   <a href="mailto:manssjones@gmail.com" className="hover:text-white transition-colors">
                     Contact
