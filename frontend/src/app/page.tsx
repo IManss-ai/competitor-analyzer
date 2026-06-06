@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard, Check } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
-import { Github, Twitter, Linkedin, Instagram } from '@/components/ui/brand-icons';
+import { Github, Instagram } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { InteractiveDotCanvas } from '@/components/ui/interactive-dot-canvas';
-import { fadeUpVariants, staggerContainerVariants, cardHoverVariants } from '@/lib/animations';
+import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
 import { PlatformRoadmap } from '@/components/ui/platform-roadmap';
 
@@ -153,11 +153,6 @@ function TypewriterComplaint({ text, delay }: { text: string; delay: number }) {
   return <>{displayedText}</>;
 }
 
-const iconRotateVariants = {
-  rest: { rotate: 0 },
-  hover: { rotate: 360, transition: { duration: 0.5 } }
-};
-
 const navItems = [
   { label: 'How it works', href: '#how-it-works', key: 'how-it-works' },
   { label: 'Command Center', href: '#dashboard-showcase', key: 'dashboard-showcase' },
@@ -200,11 +195,7 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const [card1Hovered, setCard1Hovered] = useState(false);
-  const [card2Hovered, setCard2Hovered] = useState(false);
   const [card3Hovered, setCard3Hovered] = useState(false);
-  const [card4Hovered, setCard4Hovered] = useState(false);
-  const [card5Hovered, setCard5Hovered] = useState(false);
 
   const [typewriterText, setTypewriterText] = useState("");
 
@@ -402,7 +393,7 @@ export default function LandingPage() {
       </AnimatePresence>
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
-      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-24 px-6 overflow-hidden">
+      <section className="relative pt-24 pb-20 lg:pt-28 lg:pb-24 px-6 overflow-hidden">
         {/* Interactive dot canvas background */}
         <motion.div
           style={{ y: useTransform(scrollY, [0, 500], [0, 60]) }}
@@ -561,23 +552,23 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center
                         justify-center gap-8 text-center">
           <div>
-            <div className="text-2xl font-bold text-white tabular-nums">1,200+</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">sales teams</div>
+            <div className="text-2xl font-bold text-white tabular-nums">Every 4h</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">scan frequency</div>
           </div>
           <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
           <div>
-            <div className="text-2xl font-bold text-white tabular-nums">8,400+</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">competitors tracked</div>
+            <div className="text-2xl font-bold text-white tabular-nums">7</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">competitors per plan</div>
           </div>
           <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
           <div>
-            <div className="text-2xl font-bold text-white tabular-nums">24/7</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">automated scanning</div>
+            <div className="text-2xl font-bold text-white tabular-nums">5 min</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">setup time</div>
           </div>
           <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
           <div>
-            <div className="text-2xl font-bold text-white tabular-nums">4h</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">avg detection time</div>
+            <div className="text-2xl font-bold text-white tabular-nums">Monday</div>
+            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">weekly playbook</div>
           </div>
         </div>
       </motion.section>
@@ -926,18 +917,6 @@ export default function LandingPage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.06 }}
-            custom={0}
-            className="mb-3"
-          >
-            <span className="text-[10px] font-mono text-sky-400 uppercase tracking-widest border border-sky-500/20 bg-sky-500/5 px-3 py-1 rounded-full inline-block">
-              Core capabilities
-            </span>
-          </motion.div>
-          <motion.div
-            variants={fadeUpVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.06 }}
             custom={1}
             className="mb-12"
           >
@@ -947,31 +926,21 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Asymmetric bento: full width, then 2+1, then 1+2 */}
-          <motion.div
-            variants={staggerContainerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.06 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-            {/* Row 1: Full width feature */}
+            {/* Row 1: Full width — Pricing Grid Monitoring */}
             <motion.div
-              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              variants={fadeUpVariants}
               custom={0}
-              whileHover="hover"
-              initial="rest"
-              onMouseEnter={() => setCard1Hovered(true)}
-              onMouseLeave={() => setCard1Hovered(false)}
-              className="md:col-span-3 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              className="md:col-span-3 bg-gradient-to-br from-sky-950/25 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-sky-500/20 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
-                <motion.div
-                  variants={iconRotateVariants}
-                  className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
-                >
+                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                   <TrendingUp size={18} />
-                </motion.div>
+                </div>
                 <h3 className="text-sm font-bold text-white mb-2">Pricing Grid Monitoring</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
@@ -986,23 +955,27 @@ export default function LandingPage() {
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     initial={{ pathLength: 0 }}
-                    animate={{ pathLength: card1Hovered ? 1 : 0 }}
-                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    whileInView={{ pathLength: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.3 }}
                   />
                   <motion.path
                     d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4 L 175 64 L 8 64Z"
                     fill="url(#chartFill)"
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: card1Hovered ? 1 : 0 }}
-                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.5 }}
                   />
                   <motion.circle
                     cx="175"
                     cy="4"
                     r="3"
                     fill="#38bdf8"
-                    animate={card1Hovered ? { scale: [1, 1.4, 1] } : { scale: 1 }}
-                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 1.2, type: 'spring', stiffness: 300 }}
                   />
                   <defs>
                     <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="64">
@@ -1014,60 +987,46 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Row 2: 2 + 1 */}
+            {/* Row 2: 2-col — Review Site Intelligence */}
             <motion.div
-              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              variants={fadeUpVariants}
               custom={1}
-              whileHover="hover"
-              initial="rest"
-              onMouseEnter={() => setCard2Hovered(true)}
-              onMouseLeave={() => setCard2Hovered(false)}
-              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              className="md:col-span-2 bg-gradient-to-br from-emerald-950/20 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-emerald-500/15 transition-colors duration-300"
             >
-              <motion.div
-                variants={iconRotateVariants}
-                className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4"
-              >
+              <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
                 <MessageSquare size={18} />
-              </motion.div>
+              </div>
               <h3 className="text-sm font-bold text-white mb-2">Review Site Intelligence</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn away from competitors.
               </p>
               <div className="mt-4 space-y-2">
-                {['G2 · Trustpilot', 'Capterra · Reddit', 'App Store · Play'].map((src, idx) => (
-                  <motion.div
-                    key={src}
-                    animate={card2Hovered ? { x: 0 } : { x: -4 }}
-                    transition={{ delay: idx * 0.06, duration: 0.2, ease: 'easeOut' }}
-                    className="flex items-center gap-2 text-[10px] font-mono text-zinc-500"
-                  >
-                    <motion.span
-                      animate={card2Hovered ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-                      transition={{ delay: idx * 0.06, duration: 0.3 }}
-                      className="w-1.5 h-1.5 rounded-full bg-emerald-500"
-                    />
+                {['G2 · Trustpilot', 'Capterra · Reddit', 'App Store · Play'].map((src) => (
+                  <div key={src} className="flex items-center gap-2 text-[10px] font-mono text-zinc-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                     {src}
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </motion.div>
 
+            {/* 1-col — AI Copilot Playbooks */}
             <motion.div
-              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              variants={fadeUpVariants}
               custom={2}
-              whileHover="hover"
-              initial="rest"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
+              className="md:col-span-1 bg-[#020810] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
             >
-              <motion.div
-                variants={iconRotateVariants}
-                className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
-              >
+              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <Zap size={18} />
-              </motion.div>
+              </div>
               <h3 className="text-sm font-bold text-white mb-2">AI Copilot Playbooks</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Generates targeted email scripts and landing page copy built around the competitor changes detected today.
@@ -1084,23 +1043,19 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Row 3: 1 + 2 */}
+            {/* Row 3: 1-col — Zero-Access Crawling */}
             <motion.div
-              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              variants={fadeUpVariants}
               custom={3}
-              whileHover="hover"
-              initial="rest"
-              onMouseEnter={() => setCard4Hovered(true)}
-              onMouseLeave={() => setCard4Hovered(false)}
-              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300 flex flex-col justify-between"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300 flex flex-col justify-between"
             >
               <div>
-                <motion.div
-                  variants={iconRotateVariants}
-                  className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
-                >
+                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                   <ShieldCheck size={18} />
-                </motion.div>
+                </div>
                 <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">
                   100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
@@ -1110,51 +1065,34 @@ export default function LandingPage() {
                 <div className="flex-1 h-[2px] bg-white/[0.04] rounded-full overflow-hidden relative">
                   <motion.div
                     initial={{ scaleX: 0 }}
-                    animate={{ scaleX: card4Hovered ? 1 : 0 }}
-                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.0, ease: 'easeInOut', delay: 0.4 }}
                     style={{ transformOrigin: 'left' }}
                     className="absolute inset-0 bg-sky-500"
                   />
                 </div>
-                <AnimatePresence>
-                  {card4Hovered && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.5 }}
-                      transition={{ delay: 0.7, duration: 0.2 }}
-                      className="text-sky-400 flex-shrink-0"
-                    >
-                      <CheckCircle2 size={12} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <CheckCircle2 size={12} className="text-sky-400 flex-shrink-0" />
               </div>
             </motion.div>
 
+            {/* 2-col — Historical Changelog */}
             <motion.div
-              variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+              variants={fadeUpVariants}
               custom={4}
-              whileHover="hover"
-              initial="rest"
-              onMouseEnter={() => setCard5Hovered(true)}
-              onMouseLeave={() => setCard5Hovered(false)}
-              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-all duration-300"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
             >
-              <motion.div
-                variants={iconRotateVariants}
-                className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4"
-              >
+              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <Calendar size={18} />
-              </motion.div>
+              </div>
               <h3 className="text-sm font-bold text-white mb-2">Historical Changelog</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments over time.
               </p>
-              <div
-                key={card5Hovered ? 'hover' : 'rest'}
-                className="mt-5 flex items-center gap-0"
-              >
+              <div className="mt-5 flex items-center gap-0">
                 {Array.from({ length: 12 }).map((_, i) => (
                   <div
                     key={i}
@@ -1162,12 +1100,9 @@ export default function LandingPage() {
                   >
                     <motion.div
                       initial={{ height: 0 }}
-                      animate={{ height: `${20 + Math.sin(i * 1.3) * 14}px` }}
-                      transition={{
-                        duration: 0.4,
-                        ease: 'easeOut',
-                        delay: i * 0.04,
-                      }}
+                      whileInView={{ height: `${20 + Math.sin(i * 1.3) * 14}px` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, ease: 'easeOut', delay: i * 0.04 }}
                       className="w-full bg-sky-500/30 rounded-sm"
                       style={{ opacity: 0.3 + i * 0.06 }}
                     />
@@ -1176,7 +1111,7 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -1403,13 +1338,7 @@ export default function LandingPage() {
                 See local plan <ArrowRight size={13} />
               </MotionLink>
             </motion.div>
-            <motion.div
-              variants={staggerContainerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.05 }}
-              className="grid grid-cols-1 gap-3"
-            >
+            <div className="grid grid-cols-1 gap-3">
               {[
                 { icon: <Star size={15}  />, title: 'Google Reviews Track', body: 'Weekly alerts when a nearby competitor receives critical reviews.' },
                 { icon: <Instagram size={15}  />, title: 'Social Actions Scan', body: 'Monitor local competitor Instagram and Facebook feeds without credentials.' },
@@ -1417,11 +1346,12 @@ export default function LandingPage() {
               ].map((item, i) => (
                 <motion.div
                   key={i}
-                  variants={{ ...fadeUpVariants, ...cardHoverVariants }}
+                  variants={fadeUpVariants}
                   custom={i}
-                  whileHover="hover"
-                  initial="rest"
-                  className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-all duration-300"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-colors duration-300"
                 >
                   <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
                     {item.icon}
@@ -1432,7 +1362,7 @@ export default function LandingPage() {
                   </div>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -1518,8 +1448,13 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Product</h4>
               <ul className="space-y-2 text-xs text-zinc-400">
-                {['How it works', 'Command Center', 'Features', 'Battle Card'].map((l) => (
-                  <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>
+                {[
+                  { label: 'How it works', href: '#how-it-works' },
+                  { label: 'Command Center', href: '#dashboard-showcase' },
+                  { label: 'Features', href: '#features' },
+                  { label: 'Battle Card', href: '#battle-card' },
+                ].map((l) => (
+                  <li key={l.label}><a href={l.href} className="hover:text-white transition-colors">{l.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -1535,10 +1470,15 @@ export default function LandingPage() {
 
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Links</h4>
-              <ul className="space-y-2 text-xs text-zinc-400">
-                {['Privacy Policy', 'Terms of Service', 'Status', 'Contact'].map((l) => (
-                  <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>
-                ))}
+              <ul className="space-y-2 text-xs text-zinc-500">
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+                <li>Status</li>
+                <li>
+                  <a href="mailto:manssjones@gmail.com" className="hover:text-white transition-colors">
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -1549,9 +1489,15 @@ export default function LandingPage() {
               &copy; {new Date().getFullYear()} Rivalscope. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-zinc-500">
-              <a href="#" className="hover:text-white transition-colors"><Twitter size={14} /></a>
-              <a href="#" className="hover:text-white transition-colors"><Linkedin size={14} /></a>
-              <a href="#" className="hover:text-white transition-colors"><Github size={14} /></a>
+              <a
+                href="https://github.com/IManss-ai/competitor-analyzer"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub repository"
+                className="hover:text-white transition-colors"
+              >
+                <Github size={14} />
+              </a>
             </div>
           </div>
         </div>
