@@ -123,19 +123,3 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok", "version": "v5-bg-init"}
-
-@app.get("/diagnostic-db")
-def diagnostic_db():
-    from app.db import get_session
-    from app.models import User
-    db = next(get_session())
-    try:
-        users = db.query(User).all()
-        return {
-            "status": "ok",
-            "users_count": len(users),
-            "users": [{"id": str(u.id), "email": u.email, "has_password": u.password_hash is not None} for u in users]
-        }
-    except Exception as e:
-        import traceback
-        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
