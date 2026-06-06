@@ -1,7 +1,7 @@
-# Competitor Analyzer — Design System
+# Rival Scope — Design System v2
 
-**Direction:** Clean/Editorial — Trusted Analyst  
-**Personality:** A premium intelligence report delivered by someone who also ships great software.
+**Direction:** Premium Dark Intelligence Platform  
+**Personality:** Sharp, data-forward, authoritative. Feels like a Bloomberg terminal with taste.
 
 ---
 
@@ -9,138 +9,157 @@
 
 | Role | Font | Weight | Usage |
 |------|------|--------|-------|
-| Headings | Plus Jakarta Sans | 700 / 800 | Page titles, section headers |
-| Body / UI | Inter | 400 / 500 / 600 | All UI text, labels, descriptions |
-| Data / Mono | JetBrains Mono | 400 / 500 | URLs, change metrics, diffs |
+| Headings / UI | Geist Sans | 500 / 600 | Page titles, section headers, body labels |
+| Data / Mono | Geist Mono | 400 / 500 | URLs, metrics, diffs, timestamps, labels |
 
-Google Fonts import:
-```
-Plus Jakarta Sans: 400, 500, 600, 700, 800
-Inter: 400, 500, 600
-JetBrains Mono: 400, 500
-```
+Loaded via `next/font` (GeistSans + GeistMono variables).
 
 ---
 
 ## Color Palette
 
-### Base
-| Token | Hex | Tailwind | Usage |
-|-------|-----|----------|-------|
-| Background | `#FAFAFA` | `bg-zinc-50` | Page background |
-| Surface | `#FFFFFF` | `bg-white` | Cards, sidebar |
-| Border | `#E4E4E7` | `border-zinc-200` | All borders |
-| Text primary | `#18181B` | `text-zinc-900` | Headings, main text |
-| Text muted | `#71717A` | `text-zinc-500` | Descriptions, labels |
-| Text faint | `#A1A1AA` | `text-zinc-400` | Timestamps, hints |
+### Surfaces
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--surface-base` | `#070b14` | Page background |
+| `--surface-raised` | `#0c1120` | Cards, panels |
+| `--surface-overlay` | `#111827` | Modals, popovers |
 
-### Interactive
-| Token | Hex | Tailwind | Usage |
-|-------|-----|----------|-------|
-| CTA primary | `#09090B` | `bg-zinc-950` | Black buttons |
-| Accent / links | `#2563EB` | `text-blue-600` | Links, focus rings |
-| Hover bg | `#F4F4F5` | `bg-zinc-100` | Nav hover, soft hover |
+### Borders
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--border-default` | `rgba(255,255,255,0.07)` | Standard borders |
+| `--border-subtle` | `rgba(255,255,255,0.04)` | Dividers |
+| `--border-strong` | `rgba(255,255,255,0.12)` | Hover/active states |
+
+### Text
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--text-primary` | `#e8eaf0` | Headings, main content |
+| `--text-secondary` | `#8892a4` | Body, descriptions |
+| `--text-muted` | `#4e5a6e` | Labels, timestamps |
+
+### Accent — Electric Violet
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--accent-primary` | `#7c3aed` | Buttons, active state, CTA |
+| `--accent-hover` | `#6d28d9` | Button hover |
+| `--accent-subtle` | `rgba(124,58,237,0.10)` | Icon backgrounds, nav active |
+| `--accent-border` | `rgba(124,58,237,0.25)` | Accent borders |
+| `--accent-glow` | `rgba(124,58,237,0.15)` | Focus ring, button glow |
 
 ### Change-Type Semantic Colors
-| Change Type | Background | Text | Border |
-|-------------|-----------|------|--------|
-| `pricing_change` | `#FEF3C7` | `#92400E` | `#FDE68A` |
-| `feature_add` | `#ECFDF5` | `#065F46` | `#A7F3D0` |
-| `repositioning` | `#EFF6FF` | `#1E40AF` | `#BFDBFE` |
-| `minor_copy` | `#F4F4F5` | `#52525B` | `#E4E4E7` |
-| `no_change` | `#F4F4F5` | `#A1A1AA` | `#E4E4E7` |
+| Change Type | Text | Background | Border |
+|-------------|------|------------|--------|
+| `pricing_change` | `#f59e0b` | `rgba(245,158,11,0.10)` | `rgba(245,158,11,0.20)` |
+| `feature_add` | `#10b981` | `rgba(16,185,129,0.10)` | `rgba(16,185,129,0.20)` |
+| `repositioning` | `#a78bfa` | `rgba(124,58,237,0.12)` | `rgba(124,58,237,0.24)` |
+| `review_trend` | `#38bdf8` | `rgba(14,165,233,0.10)` | `rgba(14,165,233,0.20)` |
+| `minor_copy` | `#64748b` | `rgba(148,163,184,0.08)` | `rgba(148,163,184,0.15)` |
+
+---
+
+## Radius Scale — ONE system, consistent everywhere
+| Context | Value |
+|---------|-------|
+| Buttons | `8px` (`--radius-md`) |
+| Inputs | `8px` (`--radius-md`) |
+| Cards | `12px` (`--radius-lg`) |
+| Modals | `12px` (`--radius-lg`) |
+| Badges | `6px` (`--radius-sm`) |
+| Avatars / Pills | `9999px` (`--radius-pill`) |
 
 ---
 
 ## Layout
 
-### Dashboard Layout (authenticated pages)
-- **Left sidebar:** 240px fixed, white bg, `1px solid #E4E4E7` right border
-- **Content area:** `margin-left: 240px`, max-width 1120px centered
+### Dashboard (authenticated pages)
+- **Sidebar:** `240px` fixed left, `var(--surface-base)` background
+- **Content area:** `margin-left: 240px`, max-width `1140px`
 - **Content padding:** `32px` horizontal, `32px` top
 
 ### Sidebar anatomy
-1. Logo block: 56px tall, `1px solid #E4E4E7` bottom border
-2. Navigation: stacked links with icon + label
-3. Account footer: email + settings/logout links
-
-### Login page
-- Full-page centered layout (no sidebar)
-- Max-width `400px` card, centered vertically
+1. Brand block: logo + wordmark + user email pill (with plan badge)
+2. Navigation: icon + label, violet active rail indicator (3px left)
+3. Bottom: Scan All button, trial banner, sign out
 
 ---
 
 ## Components
 
-### Cards
+### Cards (`.rs-card`)
 ```
-bg-white
-border: 1px solid #E4E4E7
+background: var(--surface-raised)
+border: 1px solid var(--border-default)
 border-radius: 12px
-padding: 24px
-box-shadow: 0 1px 2px rgba(0,0,0,0.04)
-hover: box-shadow: 0 4px 12px rgba(0,0,0,0.06)
-transition: 150ms ease-out
+box-shadow: var(--shadow-card)
+hover: box-shadow var(--shadow-card-hover), border var(--border-strong)
+transition: 180ms cubic-bezier(0.16,1,0.3,1)
 ```
 
 ### Buttons
-**Primary (black):**
+**Primary (`.rs-btn-primary`):**
 ```
-bg: #09090B  text: white  font-weight: 500
-padding: 10px 16px  border-radius: 8px
-hover: opacity 90%  active: scale 98%
-```
-
-**Secondary:**
-```
-bg: white  border: 1px solid #E4E4E7
-text: #18181B  font-weight: 500
-padding: 10px 16px  border-radius: 8px
-hover: bg #F4F4F5
+background: var(--accent-primary) = #7c3aed
+color: white  font-weight: 600  font-size: 13px
+padding: 9px 16px  border-radius: 8px
+hover: background var(--accent-hover) + box-shadow glow
+active: translateY(1px) scale(0.99)
 ```
 
-**Destructive:**
+**Ghost (`.rs-btn-ghost`):**
 ```
-bg: #FEF2F2  text: #DC2626  border: 1px solid #FECACA
-font-weight: 500  padding: 10px 16px  border-radius: 8px
-hover: bg #FEE2E2
+background: transparent  color: var(--text-secondary)
+border: 1px solid var(--border-default)  border-radius: 8px
+padding: 8px 14px  font-size: 13px
+hover: bg rgba(255,255,255,0.04), color var(--text-primary), border-strong
 ```
 
-### Badges / Change-type tags
+### Inputs (`.rs-input`)
 ```
-font-size: 11px  font-weight: 600  letter-spacing: 0.04em
+background: rgba(255,255,255,0.03)
+border: 1px solid var(--border-default)
+border-radius: 8px  padding: 9px 13px  font-size: 13px
+focus: border var(--accent-primary) + box-shadow 0 0 0 3px var(--accent-glow)
+```
+
+### Badges (`.badge + .badge-{type}`)
+```
+font-size: 10px  font-weight: 700  letter-spacing: 0.06em
 text-transform: uppercase  border-radius: 6px
-padding: 3px 8px  border: 1px solid
-Color: semantic per change type (see above)
+padding: 2px 8px  border: 1px solid  font-family: mono
 ```
 
-### Form inputs
+### Labels (`.rs-label`)
 ```
-bg: #FAFAFA  border: 1px solid #E4E4E7  border-radius: 8px
-padding: 10px 14px  font-size: 14px
-focus: border-color #2563EB  ring: 2px blue-600/20
-```
-
-### Nav items (sidebar)
-```
-Active:   bg #F4F4F5  text #18181B  font-weight: 600
-Inactive: text #71717A  hover bg #F4F4F5/50  hover text #18181B
-padding: 8px 10px  border-radius: 8px  font-size: 14px
+font-size: 11px  font-weight: 500  letter-spacing: 0.04em
+text-transform: uppercase  color: var(--text-muted)  font-family: mono
 ```
 
 ---
 
 ## Motion
 
-- All transitions: `150ms ease-out`
-- No bounce or spring animations
-- HTMX swaps: simple opacity fade
-- Hover state: immediate (0ms delay), 150ms out
+- Entry transitions: `duration: 0.2–0.6s, ease: [0.16, 1, 0.3, 1]`
+- Hover lifts: `whileHover: { y: -2 }` — subtle, not aggressive
+- Active presses: `translateY(1px) scale(0.99)` — tactile feedback
+- Animated indicators: Spring physics `stiffness: 480, damping: 38`
+- `prefers-reduced-motion`: all animations collapse to instant/static
 
 ---
 
-## Creative Risks
+## Spacing Rhythm (8pt scale)
+```
+4px  8px  12px  16px  24px  32px  40px  48px  64px
+```
+Gaps, padding, and margin MUST use this scale. No arbitrary values.
 
-1. **Left sidebar layout** — breaks from top-nav convention. Rationale: dashboard products need vertical space for long AI briefs; sidebar = Linear/Vercel energy.
-2. **Amber/emerald semantic badges** — change type carries color meaning. Rationale: makes intelligence items feel like flagged signals, not generic tags.
-3. **JetBrains Mono for competitor data** — URLs and diff metrics in monospace. Rationale: signals technical precision, differentiates from spreadsheet-style tools.
+---
+
+## Creative Decisions
+
+1. **Violet accent** — `#7c3aed` instead of generic AI-blue (sky-500). Intentional, distinctive.
+2. **Left nav rail indicator** — 3px glowing violet bar with spring animation. Stolen from Linear. Earns it.
+3. **Accent top-border on stat cards** — colored 2px accent stripe at top of each card communicates data type at a glance without cluttering the card body.
+4. **All-dark theme locked** — no section-level light mode inversions. One theme, everywhere.
+5. **Geist mono for all data** — URLs, metrics, timestamps, labels. Signals precision.

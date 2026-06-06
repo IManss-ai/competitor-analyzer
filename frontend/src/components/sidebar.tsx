@@ -5,7 +5,18 @@ import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
-import { LayoutDashboard, Building2, FileText, Shield, TrendingUp, CheckSquare, Settings, LogOut, RefreshCw, ArrowRight } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Building2,
+  FileText,
+  Shield,
+  TrendingUp,
+  CheckSquare,
+  Settings,
+  LogOut,
+  RefreshCw,
+  ChevronRight,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface SidebarProps {
@@ -13,6 +24,16 @@ interface SidebarProps {
   userId: string;
   pendingCount?: number;
 }
+
+const navItems = [
+  { href: '/dashboard',             label: 'Dashboard',    Icon: LayoutDashboard },
+  { href: '/competitors',           label: 'Competitors',  Icon: Building2 },
+  { href: '/dashboard#feed',        label: 'Intel Feed',   Icon: FileText },
+  { href: '/dashboard#battlecards', label: 'Battle Cards', Icon: Shield },
+  { href: '/trends',                label: 'Trends',       Icon: TrendingUp },
+  { href: '/queue',                 label: 'Action Queue', Icon: CheckSquare },
+  { href: '/settings',              label: 'Settings',     Icon: Settings },
+];
 
 export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const pathname = usePathname();
@@ -24,7 +45,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
   useEffect(() => {
     fetch(`${apiUrl}/api/v1/settings`, {
-      headers: { Authorization: `Bearer ${userId}` }
+      headers: { Authorization: `Bearer ${userId}` },
     })
       .then(res => {
         if (!res.ok) throw new Error();
@@ -35,7 +56,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         setSettings({
           subscription_status: 'trialing',
           trial_ends_at: new Date(Date.now() + 10 * 24 * 3600 * 1000).toISOString(),
-          business_type: 'saas'
+          business_type: 'saas',
         });
       });
   }, [userId, apiUrl]);
@@ -49,8 +70,8 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`
-        }
+          Authorization: `Bearer ${userId}`,
+        },
       });
       if (res.ok) {
         setScanDone(true);
@@ -79,47 +100,79 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const trialDays = getTrialDaysLeft();
   const planBadge = getPlanBadge();
   const isOnTrial = settings?.subscription_status === 'trialing';
-
-  const navItems = [
-    { href: '/dashboard',           label: 'Dashboard',    Icon: LayoutDashboard },
-    { href: '/competitors',         label: 'Competitors',  Icon: Building2 },
-    { href: '/dashboard#feed',      label: 'Intel Feed',   Icon: FileText },
-    { href: '/dashboard#battlecards', label: 'Battle Card', Icon: Shield },
-    { href: '/trends',              label: 'Trends',       Icon: TrendingUp },
-    { href: '/queue',               label: 'Action Queue', Icon: CheckSquare },
-    { href: '/settings',            label: 'Settings',     Icon: Settings },
-  ];
+  const trialProgress = Math.min(100, ((14 - trialDays) / 14) * 100);
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-[220px] flex flex-col z-40 bg-[#06030c] border-r border-white/[0.055]">
-
-      {/* ── Brand ─────────────────────────────────────────────────────────── */}
-      <div className="px-4 pt-5 pb-4 border-b border-white/[0.055]">
-        <div className="flex items-center gap-2.5 mb-4">
-          {/* Lettermark */}
-          <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center flex-shrink-0">
-            <RivalscopeLogo size={12} className="text-sky-400" />
+    <aside
+      style={{
+        width: 'var(--sidebar-width)',
+        background: 'var(--surface-base)',
+        borderRight: '1px solid var(--border-default)',
+      }}
+      className="fixed top-0 left-0 h-full flex flex-col z-40"
+    >
+      {/* ── Brand ──────────────────────────────────────────────────── */}
+      <div
+        className="px-5 pt-5 pb-4"
+        style={{ borderBottom: '1px solid var(--border-default)' }}
+      >
+        {/* Logo + wordmark */}
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{
+              background: 'var(--accent-subtle)',
+              border: '1px solid var(--accent-border)',
+            }}
+          >
+            <RivalscopeLogo size={14} className="text-violet-400" />
           </div>
           <div className="leading-none">
-            <span className="text-[13px] font-bold text-white tracking-tight">Rival</span><span className="text-[13px] font-bold text-sky-400 tracking-tight">scope</span>
+            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              Rival
+            </span>
+            <span className="text-[15px] font-bold tracking-tight text-violet-400">scope</span>
           </div>
         </div>
 
-        {/* User profile */}
-        <div className="flex items-center justify-between gap-2 rounded-lg px-2.5 py-2 bg-white/[0.025] border border-white/[0.055]">
-          <p className="text-[11px] font-medium text-zinc-300 truncate min-w-0" title={email}>
+        {/* User profile pill */}
+        <div
+          className="flex items-center justify-between gap-2 rounded-lg px-3 py-2"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid var(--border-default)',
+          }}
+        >
+          <p
+            className="text-[12px] font-medium truncate min-w-0"
+            style={{ color: 'var(--text-secondary)' }}
+            title={email}
+          >
             {email}
           </p>
-          <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 uppercase tracking-wide">
+          <span
+            className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+            style={{
+              background: planBadge === 'Pro'
+                ? 'rgba(124,58,237,0.15)'
+                : 'rgba(255,255,255,0.06)',
+              color: planBadge === 'Pro' ? '#a78bfa' : 'var(--text-muted)',
+              border: planBadge === 'Pro'
+                ? '1px solid rgba(124,58,237,0.28)'
+                : '1px solid var(--border-default)',
+            }}
+          >
             {planBadge}
           </span>
         </div>
       </div>
 
-      {/* ── Nav ───────────────────────────────────────────────────────────── */}
-      <nav className="flex-1 py-3 px-2.5 space-y-0.5 overflow-y-auto">
+      {/* ── Navigation ─────────────────────────────────────────────── */}
+      <nav className="flex-1 py-3 px-3 space-y-0.5 overflow-y-auto">
         {navItems.map(({ href, label, Icon }) => {
-          const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+          const isActive =
+            pathname === href ||
+            (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
           const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
 
           return (
@@ -127,88 +180,132 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               key={href}
               href={href}
               className={clsx(
-                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all relative',
+                'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150',
                 isActive
-                  ? 'bg-sky-500/8 text-sky-400'
-                  : 'text-zinc-500 hover:bg-white/[0.025] hover:text-zinc-200'
+                  ? 'text-violet-300'
+                  : 'hover:text-[var(--text-primary)]'
               )}
+              style={
+                isActive
+                  ? { background: 'rgba(124,58,237,0.10)', color: '#c4b5fd' }
+                  : { color: 'var(--text-secondary)' }
+              }
             >
+              {/* Active left rail */}
               {isActive && (
                 <motion.div
-                  layoutId="activeNavIndicator"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-sky-400 rounded-full"
-                  transition={{ type: 'spring', stiffness: 500, damping: 36 }}
+                  layoutId="activeNavRail"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full"
+                  style={{
+                    width: '3px',
+                    height: '18px',
+                    background: 'var(--accent-primary)',
+                    boxShadow: '0 0 8px var(--accent-primary)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 480, damping: 38 }}
                 />
               )}
+
               <Icon
                 size={15}
                 className="flex-shrink-0"
+                strokeWidth={isActive ? 2 : 1.75}
               />
               <span className="flex-1 truncate">{label}</span>
+
               {hasBadge && (
-                <span className="bg-sky-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                <span
+                  className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none"
+                  style={{ background: 'var(--accent-primary)' }}
+                >
                   {pendingCount}
                 </span>
+              )}
+
+              {/* Subtle hover arrow for non-active */}
+              {!isActive && (
+                <ChevronRight
+                  size={11}
+                  className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
+                  style={{ color: 'var(--text-muted)' }}
+                />
               )}
             </Link>
           );
         })}
       </nav>
 
-      {/* ── Bottom ────────────────────────────────────────────────────────── */}
-      <div className="px-3 pb-4 pt-3 border-t border-white/[0.055] space-y-2">
-
-        {/* Scan button */}
+      {/* ── Bottom actions ──────────────────────────────────────────── */}
+      <div
+        className="px-3 pb-4 pt-3 space-y-2"
+        style={{ borderTop: '1px solid var(--border-default)' }}
+      >
+        {/* Scan all button */}
         <button
           onClick={handleScanAll}
           disabled={scanning}
-          className={clsx(
-            'w-full py-2 rounded-lg text-[12px] font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60',
+          className="w-full py-2.5 rounded-lg text-[12px] font-semibold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          style={
             scanDone
-              ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
-              : 'bg-sky-600 hover:bg-sky-500 text-white border border-sky-500/30'
-          )}
+              ? {
+                  background: 'rgba(16,185,129,0.10)',
+                  border: '1px solid rgba(16,185,129,0.22)',
+                  color: '#34d399',
+                }
+              : {
+                  background: 'var(--accent-primary)',
+                  border: '1px solid rgba(124,58,237,0.4)',
+                  color: '#fff',
+                }
+          }
         >
-          {scanning ? (
-            <>
-              <RefreshCw size={13} className="animate-spin" />
-              Scanning...
-            </>
-          ) : scanDone ? (
-            <>Scan queued!</>
-          ) : (
-            <>
-              <RefreshCw size={13} />
-              Scan all now
-            </>
-          )}
+          <RefreshCw
+            size={12}
+            className={scanning ? 'animate-spin' : ''}
+          />
+          {scanning ? 'Scanning…' : scanDone ? 'Queued!' : 'Scan all now'}
         </button>
-
-        {/* Add competitor */}
-        <Link
-          href="/competitors"
-          className="w-full border border-white/[0.07] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12] text-zinc-400 hover:text-zinc-200 py-2 rounded-lg text-[12px] font-medium text-center flex items-center justify-center gap-1.5 transition-all"
-        >
-          Add competitor
-          <ArrowRight size={11} />
-        </Link>
 
         {/* Trial upgrade banner */}
         {isOnTrial && (
-          <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-2.5 space-y-2">
+          <div
+            className="rounded-lg p-3 space-y-2"
+            style={{
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid var(--border-default)',
+            }}
+          >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-zinc-500 font-medium">{trialDays} days left in trial</span>
-              <span className="text-[9px] font-mono text-zinc-600">Trial</span>
+              <span
+                className="text-[11px] font-medium"
+                style={{ color: 'var(--text-secondary)' }}
+              >
+                {trialDays} days left
+              </span>
+              <span
+                className="text-[9px] font-mono uppercase tracking-wider"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                Trial
+              </span>
             </div>
-            <div className="w-full h-0.5 bg-white/[0.04] rounded-full overflow-hidden">
+            {/* Progress bar */}
+            <div
+              className="w-full rounded-full overflow-hidden"
+              style={{ height: '2px', background: 'rgba(255,255,255,0.06)' }}
+            >
               <div
-                className="h-full bg-sky-500/40 rounded-full transition-all"
-                style={{ width: `${Math.min(100, ((14 - trialDays) / 14) * 100)}%` }}
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${trialProgress}%`,
+                  background: 'var(--accent-primary)',
+                }}
               />
             </div>
             <Link
               href="/settings"
-              className="w-full bg-sky-600 hover:bg-sky-500 text-white py-1.5 rounded-md text-[10px] font-semibold text-center block transition-colors"
+              className="block w-full py-1.5 rounded-md text-[11px] font-semibold text-center text-white transition-colors"
+              style={{ background: 'var(--accent-primary)' }}
             >
               Upgrade to Pro
             </Link>
@@ -219,7 +316,16 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-[11px] text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-[12px] cursor-pointer transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';
+              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)';
+              (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+            }}
           >
             <LogOut size={13} />
             <span>Sign out</span>

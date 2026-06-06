@@ -30,7 +30,7 @@ export default function RootLayout({
       lang="en"
       className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
     >
-      <body className={`${GeistSans.variable} font-sans antialiased min-h-full bg-[#06030c] text-zinc-100 selection:bg-sky-600/30 selection:text-zinc-50`}>
+      <body className={`${GeistSans.variable} font-sans antialiased min-h-full text-zinc-100 selection:bg-violet-600/25 selection:text-zinc-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
         {children}
       </body>
     </html>

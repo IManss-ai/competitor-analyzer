@@ -562,66 +562,53 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   }
   return (
     <div className="space-y-6">
-      {/* A) HEADER ROW */}
+      {/* A) STATS ROW */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Competitors Tracked */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Competitors Tracked</span>
-            <Building2 size={20} className="text-zinc-500" />
+        {[{
+          label: 'Competitors',
+          value: dashboardData.competitor_count,
+          sub: 'Active targets',
+          accent: '#7c3aed',
+        },{
+          label: 'Changes / week',
+          value: dashboardData.changes_this_week || 0,
+          sub: 'Past 7 days',
+          accent: '#f59e0b',
+        },{
+          label: 'Pending alerts',
+          value: dashboardData.pending_count,
+          sub: 'Requires review',
+          accent: '#f87171',
+        },{
+          label: 'Avg review',
+          value: dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '--',
+          sub: 'Across integrations',
+          accent: '#10b981',
+        }].map(({ label, value, sub, accent }) => (
+          <div key={label} className="rs-card relative overflow-hidden p-5 group">
+            <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-lg" style={{ background: accent }} />
+            <p className="rs-label mb-3 pt-1">{label}</p>
+            <p className="text-[28px] font-semibold leading-none tracking-tight font-mono" style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>{value}</p>
+            <p className="text-[11px] mt-2 font-mono" style={{ color: 'var(--text-muted)' }}>{sub}</p>
           </div>
-          <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.competitor_count}</div>
-          <p className="text-xs text-zinc-500 mt-1">Active targets</p>
-        </div>
-
-        {/* Changes This Week */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Changes This Week</span>
-            <Zap size={20} className="text-sky-400" />
-          </div>
-          <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.changes_this_week || 0}</div>
-          <p className="text-xs text-zinc-500 mt-1">Past 7 days</p>
-        </div>
-
-        {/* Alerts Pending */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Alerts Pending</span>
-            <CheckSquare size={20} className="text-amber-500" />
-          </div>
-          <div className="text-2xl font-bold text-white tracking-tight">{dashboardData.pending_count}</div>
-          <p className="text-xs text-zinc-500 mt-1">Requires review</p>
-        </div>
-
-        {/* Avg Review Score */}
-        <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md hover:border-sky-500/15 hover:scale-[1.01] transition-all duration-300">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-zinc-400 tracking-wide uppercase">Avg Review Score</span>
-            <Star size={20} className="text-amber-500"  />
-          </div>
-          <div className="text-2xl font-bold text-white tracking-tight">
-            {dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '--'}
-          </div>
-          <p className="text-xs text-zinc-500 mt-1">Across integrations</p>
-        </div>
+        ))}
       </div>
 
       {/* B) ACTIVITY CHART (28-day bar chart) */}
-      <div className="bg-[#0b0819]/50 border border-white/[0.06] p-5 shadow-lg rounded-2xl backdrop-blur-md">
+      <div className="rs-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-sm font-bold text-white">Daily Activity (28 Days)</h2>
-            <p className="text-xs text-zinc-400">Scans and detected changes</p>
+            <h2 className="rs-heading-md">Daily Activity</h2>
+            <p className="rs-body-sm mt-0.5">28-day scan + change history</p>
           </div>
-          <div className="flex items-center gap-4 text-xs font-medium">
+          <div className="flex items-center gap-4 text-[11px] font-mono">
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-white/5 rounded-sm"></div>
-              <span className="text-zinc-500">Quiet scan</span>
+              <div className="w-2 h-2 rounded-sm" style={{ background: 'rgba(255,255,255,0.06)' }} />
+              <span style={{ color: 'var(--text-muted)' }}>Quiet</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-sky-500 rounded-sm"></div>
-              <span className="text-zinc-300">Changes detected</span>
+              <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent-primary)' }} />
+              <span style={{ color: 'var(--text-secondary)' }}>Changes</span>
             </div>
           </div>
         </div>
@@ -629,26 +616,22 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           {activityDays.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={activityDays} barSize={10} barGap={2}>
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={(val) => {
-                    const parts = val.split('-');
-                    return `${parts[1]}/${parts[2]}`;
-                  }}
-                  tick={{ fill: '#71717a', fontSize: 10 }}
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(val) => { const p = val.split('-'); return `${p[1]}/${p[2]}`; }}
+                  tick={{ fill: '#4e5a6e', fontSize: 10, fontFamily: 'var(--font-mono)' }}
                   axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
-                  tickLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                  tickLine={false}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      const dateObj = new Date(data.date);
-                      const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      const d = payload[0].payload;
+                      const fmt = new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                       return (
-                        <div className="bg-[#130f2c]/90 border border-white/[0.08] backdrop-blur-md text-white text-xs px-3 py-2 rounded-xl shadow-2xl font-sans">
-                          <p className="font-semibold text-zinc-200">{formattedDate}</p>
-                          <p className="text-sky-400 font-medium mt-0.5">{data.change_count} changes detected</p>
+                        <div className="text-[12px] px-3 py-2 rounded-lg" style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }}>
+                          <p className="font-semibold">{fmt}</p>
+                          <p className="mt-0.5 font-mono" style={{ color: 'var(--accent-primary)' }}>{d.change_count} changes</p>
                         </div>
                       );
                     }
@@ -657,23 +640,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                   cursor={{ fill: 'rgba(255,255,255,0.02)' }}
                 />
                 <Bar dataKey="change_count" radius={[3, 3, 0, 0]}>
-                  {activityDays.map((entry, idx) => {
-                    const todayStr = new Date().toISOString().split('T')[0];
-                    const isToday = entry.date === todayStr;
-                    const hasChanges = entry.change_count > 0;
-                    return (
-                      <Cell 
-                        key={idx} 
-                        fill={hasChanges ? (isToday ? '#38bdf8' : '#0ea5e9') : 'rgba(255,255,255,0.06)'}
-                      />
-                    );
-                  })}
+                  {activityDays.map((entry, idx) => (
+                    <Cell key={idx} fill={entry.change_count > 0 ? '#7c3aed' : 'rgba(255,255,255,0.05)'} />
+                  ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full flex items-center justify-center text-xs text-zinc-500">
-              <Loader2 size={20} className="animate-spin text-sky-500" />
+            <div className="h-full flex items-center justify-center">
+              <Loader2 size={18} className="animate-spin" style={{ color: 'var(--text-muted)' }} />
             </div>
           )}
         </div>
@@ -681,10 +656,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* C) INTEL FEED */}
-        <div id="feed" className="lg:col-span-2 bg-[#0b0819]/45 border border-white/[0.06] shadow-lg rounded-2xl flex flex-col backdrop-blur-md">
-          <div className="px-5 py-4 border-b border-white/[0.06]">
-            <h2 className="text-sm font-bold text-white">Intel Feed</h2>
-            <p className="text-xs text-zinc-400">Chronological timeline of competitor events</p>
+        <div id="feed" className="rs-card lg:col-span-2 flex flex-col">
+          <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
+            <h2 className="rs-heading-md">Intel Feed</h2>
+            <p className="rs-body-sm mt-0.5">Chronological timeline of competitor changes</p>
           </div>
 
           <div className="divide-y divide-white/[0.04] flex-1">
@@ -695,53 +670,50 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             ) : (
               feedEvents.map((event) => {
                 const isExpanded = expandedEventId === event.id;
-                const changeTypeStyles: Record<string, string> = {
-                  pricing_change: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-                  new_feature: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-                  positioning_shift: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-                  review_trend: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-                  minor_copy: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-                };
-                
-                const typeStyle = changeTypeStyles[event.change_type] || changeTypeStyles.minor_copy;
                 const hostname = (event.competitor_url.split('://')[1] || event.competitor_url).split('/')[0].replace('www.', '');
 
                 return (
-                  <div key={event.id} className="p-5 hover:bg-white/[0.02] transition-colors duration-200">
+                  <div
+                    key={event.id}
+                    className="p-5 transition-colors duration-150"
+                    style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
                     <div className="flex items-start gap-4">
-                      {/* Favicon */}
-                      <img 
-                        src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`} 
-                        alt="" 
-                        className="w-8 h-8 rounded-md bg-[#130f2c] border border-white/[0.08] p-1 flex-shrink-0"
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
+                        alt=""
+                        className="w-7 h-7 rounded-md flex-shrink-0"
+                        style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-default)', padding: '3px' }}
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <span className="text-sm font-bold text-white">{event.competitor_name || hostname}</span>
-                          <span className="text-xs text-zinc-500 whitespace-nowrap">{formatTimeAgo(event.detected_at)}</span>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>{event.competitor_name || hostname}</span>
+                          <time className="text-[11px] font-mono flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(event.detected_at)}</time>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 mb-2">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${typeStyle}`}>
+                          <span className={`badge badge-${event.change_type}`}>
                             {event.change_type.replace(/_/g, ' ')}
                           </span>
                         </div>
 
-                        <p 
+                        <p
                           onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                          className={`text-sm text-zinc-300 leading-relaxed cursor-pointer hover:text-sky-400 transition-colors ${
-                            isExpanded ? '' : 'line-clamp-2'
-                          }`}
+                          className={`text-[13px] leading-relaxed cursor-pointer transition-colors ${isExpanded ? '' : 'line-clamp-2'}`}
+                          style={{ color: 'var(--text-secondary)' }}
                         >
-                          {event.brief_text || "Website copy updated."}
+                          {event.brief_text || 'Website copy updated.'}
                         </p>
-                        
-                        <div className="flex items-center gap-4 mt-3">
-                          <Link 
+
+                        <div className="flex items-center gap-4 mt-2.5">
+                          <Link
                             href={`/competitors/${event.competitor_id}`}
-                            className="text-xs font-semibold text-sky-400 hover:text-sky-300 inline-flex items-center gap-1 hover:underline"
+                            className="text-[12px] font-semibold inline-flex items-center gap-1 transition-colors"
+                            style={{ color: 'var(--accent-primary)' }}
                           >
-                            View Battle Card <ArrowRight size={12} />
+                            Battle Card <ArrowRight size={11} />
                           </Link>
                           {event.brief_text && event.brief_text.length > 120 && (
                             <button 
@@ -781,85 +753,90 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {/* D) COMPETITOR HEALTH TABLE */}
-        <div className="bg-[#0b0819]/45 border border-white/[0.06] shadow-lg rounded-2xl flex flex-col backdrop-blur-md">
-          <div className="px-5 py-4 border-b border-white/[0.06]">
-            <h2 className="text-sm font-bold text-white">Tracked Competitors</h2>
-            <p className="text-xs text-zinc-400">Landscape health and review averages</p>
+        <div className="rs-card flex flex-col">
+          <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
+            <h2 className="rs-heading-md">Tracked Competitors</h2>
+            <p className="rs-body-sm mt-0.5">Health and review averages</p>
           </div>
 
           <div className="divide-y divide-white/[0.04] flex-1 overflow-x-auto">
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
-                const statusStyles = {
-                  Active: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-                  'No changes': 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
-                  Error: 'bg-red-500/10 text-red-400 border-red-500/20',
-                };
-                
-                const statusStyle = statusStyles[comp.status] || statusStyles['No changes'];
+                const statusColor = comp.status === 'Active'
+                  ? { color: '#10b981', bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.22)' }
+                  : comp.status === 'Error'
+                  ? { color: '#f87171', bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.22)' }
+                  : { color: 'var(--text-muted)', bg: 'rgba(255,255,255,0.04)', border: 'var(--border-default)' };
 
                 return (
-                  <div key={comp.id} className="p-5 hover:bg-white/[0.02] transition-colors duration-200 space-y-3">
+                  <div
+                    key={comp.id}
+                    className="p-5 space-y-3 transition-colors duration-150"
+                    style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-white truncate">{comp.name}</h3>
-                        <a 
-                          href={comp.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-xs text-zinc-400 hover:underline truncate block"
+                        <h3 className="text-[13px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{comp.name}</h3>
+                        <a
+                          href={comp.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] font-mono truncate block transition-colors"
+                          style={{ color: 'var(--text-muted)' }}
                         >
                           {comp.url}
                         </a>
                       </div>
-                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold border ${statusStyle}`}>
+                      <span
+                        className="flex-shrink-0 text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border"
+                        style={{ color: statusColor.color, background: statusColor.bg, borderColor: statusColor.border }}
+                      >
                         {comp.status}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-xs py-1">
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-zinc-500 block mb-0.5">Last Scanned</span>
-                        <span className="font-semibold text-zinc-300">{formatTimeAgo(comp.last_scanned)}</span>
+                        <span className="rs-label block mb-0.5">Last Scanned</span>
+                        <span className="text-[12px] font-mono" style={{ color: 'var(--text-secondary)' }}>{formatTimeAgo(comp.last_scanned)}</span>
                       </div>
                       <div>
-                        <span className="text-zinc-500 block mb-0.5">Reviews Avg</span>
-                        <span className="font-semibold text-zinc-300 inline-flex items-center gap-1">
+                        <span className="rs-label block mb-0.5">Reviews Avg</span>
+                        <span className="text-[12px] font-mono inline-flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
                           {comp.avg_rating !== null ? (
-                            <>
-                              <Star size={12}  className="text-amber-500" />
-                              {comp.avg_rating.toFixed(1)}
-                            </>
-                          ) : (
-                            '--'
-                          )}
+                            <><Star size={11} className="text-amber-400" />{comp.avg_rating.toFixed(1)}</>
+                          ) : '--'}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-white/[0.04] pt-3">
+                    <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">4-Week Activity</span>
+                        <span className="rs-label">4-Week Activity</span>
                         <div className="h-6 flex items-center">{renderSparkline(comp.trend)}</div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => scanNow(comp.id)}
                           disabled={!!scanningCompId}
-                          className="inline-flex items-center justify-center p-1.5 border border-white/10 hover:bg-white/[0.05] text-zinc-300 rounded-lg cursor-pointer transition-colors bg-white/[0.01]"
+                          className="inline-flex items-center justify-center p-1.5 rounded-lg cursor-pointer transition-colors"
+                          style={{ border: '1px solid var(--border-default)', background: 'transparent', color: 'var(--text-muted)' }}
                           title="Scan now"
                         >
                           {scanningCompId === comp.id ? (
-                            <Loader2 size={14} className="animate-spin text-sky-400" />
+                            <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
                           ) : scanDoneCompId === comp.id ? (
-                            <CheckCircle2 size={14} className="text-emerald-400" />
+                            <CheckCircle2 size={13} className="text-emerald-400" />
                           ) : (
-                            <RefreshCw size={14} />
+                            <RefreshCw size={13} />
                           )}
                         </button>
-                        <Link 
+                        <Link
                           href={`/competitors/${comp.id}`}
-                          className="text-xs font-semibold text-sky-400 hover:text-sky-300 hover:underline"
+                          className="text-[12px] font-semibold transition-colors"
+                          style={{ color: 'var(--accent-primary)' }}
                         >
                           Details
                         </Link>
@@ -869,8 +846,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 );
               })
             ) : (
-              <div className="p-8 text-center text-sm text-zinc-500">
-                No competitors tracked.
+              <div className="p-8 text-center text-[13px]" style={{ color: 'var(--text-muted)' }}>
+                No competitors tracked yet.
               </div>
             )}
           </div>

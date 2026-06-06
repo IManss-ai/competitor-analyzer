@@ -8,43 +8,84 @@ interface TopbarProps {
 
 function getRelativeTime(dateString: string) {
   const diff = Date.now() - new Date(dateString).getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days === 0) return 'today';
-  if (days === 1) return 'yesterday';
-  return `${days} days ago`;
+  const mins  = Math.floor(diff / 60000);
+  const hours = Math.floor(mins / 60);
+  const days  = Math.floor(hours / 24);
+
+  if (mins < 60)   return `${mins}m ago`;
+  if (hours < 24)  return `${hours}h ago`;
+  if (days === 1)  return 'yesterday';
+  return `${days}d ago`;
 }
 
 export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {
   return (
-    <header className="flex items-start justify-between mb-8">
+    <header
+      className="flex items-start justify-between mb-8 pb-6"
+      style={{ borderBottom: '1px solid var(--border-default)' }}
+    >
+      {/* Left — page title */}
       <div>
-        <h1 className="text-[22px] font-semibold text-white tracking-tight leading-none">
+        <h1
+          className="text-[24px] font-semibold leading-tight tracking-tight"
+          style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}
+        >
           {title}
         </h1>
         {subtitle && (
-          <p className="text-sm text-zinc-400 mt-1.5 font-normal">{subtitle}</p>
+          <p
+            className="text-[13px] mt-1 font-normal"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            {subtitle}
+          </p>
         )}
       </div>
-      <div className="flex items-center gap-6 pt-0.5">
-        {actions && (
-          <div className="flex items-center">
-            {actions}
-          </div>
-        )}
+
+      {/* Right — meta + actions */}
+      <div className="flex items-center gap-4 pt-0.5 flex-shrink-0">
+        {/* Monitoring status */}
         <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <span className="status-dot-active" />
+          <span
+            className="text-[12px] font-medium"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            Monitoring active
           </span>
-          <span className="text-xs font-medium text-zinc-300">Monitoring active</span>
         </div>
-        <div className="h-4 w-px bg-white/10"></div>
+
+        {/* Divider */}
+        <div
+          style={{ width: '1px', height: '16px', background: 'var(--border-default)' }}
+        />
+
+        {/* Last scan */}
         {lastScan ? (
-          <time className="text-xs text-zinc-500 font-mono" dateTime={lastScan}>
+          <time
+            className="text-[11px] font-mono"
+            style={{ color: 'var(--text-muted)' }}
+            dateTime={lastScan}
+          >
             Last scan: {getRelativeTime(lastScan)}
           </time>
         ) : (
-          <span className="text-xs text-zinc-500 font-mono">No scans yet</span>
+          <span
+            className="text-[11px] font-mono"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            No scans yet
+          </span>
+        )}
+
+        {/* Actions slot */}
+        {actions && (
+          <>
+            <div
+              style={{ width: '1px', height: '16px', background: 'var(--border-default)' }}
+            />
+            <div>{actions}</div>
+          </>
         )}
       </div>
     </header>
