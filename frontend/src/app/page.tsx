@@ -818,10 +818,6 @@ export default function LandingPage() {
                               }}
                               exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
                               className="bg-white/[0.02] border border-white/[0.05] p-3 rounded-xl"
-                              style={{
-                                borderLeftWidth: 2,
-                                borderLeftColor: i === 0 ? 'rgba(56,189,248,0.25)' : 'transparent',
-                              }}
                             >
                               <div className="flex items-center gap-2 mb-1.5">
                                 <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>
