@@ -288,7 +288,7 @@ export default function LandingPage() {
           }`}
         >
           {/* Brand */}
-          <Link href="#" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
               <RivalscopeLogo size={13} className="text-sky-400" />
             </div>
