@@ -1400,7 +1400,7 @@ export default function LandingPage() {
             className="border border-sky-500/20 bg-gradient-to-br from-sky-950/30 via-[#040812] to-[#040812] rounded-3xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_80px_rgba(14,165,233,0.06)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
-            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.05] mb-4">
+            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4">
               Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
             <p className="text-zinc-400 text-base max-w-sm mx-auto leading-relaxed mb-10">
