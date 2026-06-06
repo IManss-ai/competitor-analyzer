@@ -424,7 +424,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[52px] sm:text-[60px] lg:text-[64px] font-bold tracking-tight leading-[1.02] mb-6 text-white"
+                className="text-[56px] sm:text-[68px] lg:text-[82px] font-bold tracking-tight leading-[0.97] mb-6 text-white"
               >
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
@@ -545,31 +545,24 @@ export default function LandingPage() {
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="py-10 border-y border-white/[0.04]"
+        className="py-16 border-y border-white/[0.05]"
       >
-        <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center
-                        justify-center gap-8 text-center">
-          <div>
-            <div className="text-2xl font-bold text-white tabular-nums">Every 4h</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">scan frequency</div>
-          </div>
-          <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
-          <div>
-            <div className="text-2xl font-bold text-white tabular-nums">7</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">competitors per plan</div>
-          </div>
-          <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
-          <div>
-            <div className="text-2xl font-bold text-white tabular-nums">5 min</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">setup time</div>
-          </div>
-          <div className="w-px h-8 bg-white/[0.06] hidden sm:block" />
-          <div>
-            <div className="text-2xl font-bold text-white tabular-nums">Monday</div>
-            <div className="text-[11px] text-zinc-500 font-mono mt-0.5">weekly playbook</div>
-          </div>
+        <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+          {[
+            { value: 'Every 4h', label: 'scan frequency' },
+            { value: '7', label: 'competitors per plan' },
+            { value: '5 min', label: 'setup time' },
+            { value: 'Monday', label: 'weekly playbook' },
+          ].map((stat, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <div className="text-4xl sm:text-5xl font-bold text-white tabular-nums tracking-tight leading-none">
+                {stat.value}
+              </div>
+              <div className="text-xs text-zinc-500 font-mono">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </motion.section>
 
@@ -611,14 +604,15 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, amount: 0 }}
             custom={0}
             className="mb-16"
           >
-            <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight mb-4">
+            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">01 — How it works</p>
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0] mb-5">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
-            <p className="text-zinc-400 text-base max-w-lg">
+            <p className="text-zinc-400 text-base max-w-lg leading-relaxed">
               No SDK integrations. No permissions needed. We crawl public competitor surfaces and synthesize them into actionable intelligence.
             </p>
           </motion.div>
@@ -637,14 +631,15 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.08 }}
+            viewport={{ once: true, amount: 0 }}
             custom={0}
             className="mb-12"
           >
-            <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight mb-4">
-              The Intelligence Command Center
+            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">02 — Command Center</p>
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0] mb-5">
+              The Intelligence<br className="hidden md:block" /> Command Center
             </h2>
-            <p className="text-zinc-400 text-base max-w-md">
+            <p className="text-zinc-400 text-base max-w-md leading-relaxed">
               One view for every competitor movement. Pricing updates, review signals, and AI playbooks in a single dashboard.
             </p>
           </motion.div>
@@ -653,7 +648,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.08 }}
+            viewport={{ once: true, amount: 0 }}
             custom={1}
             className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] bg-[#060b18]"
           >
@@ -916,11 +911,12 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.06 }}
+            viewport={{ once: true, amount: 0 }}
             custom={1}
             className="mb-12"
           >
-            <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight">
+            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">03 — Features</p>
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0]">
               Deep intelligence.<br className="hidden md:block" /> Built for your sales team.
             </h2>
           </motion.div>
@@ -934,7 +930,7 @@ export default function LandingPage() {
               custom={0}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               className="md:col-span-3 bg-gradient-to-br from-sky-950/25 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-sky-500/20 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
             >
               <div className="flex-1">
@@ -993,7 +989,7 @@ export default function LandingPage() {
               custom={1}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               className="md:col-span-2 bg-gradient-to-br from-emerald-950/20 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-emerald-500/15 transition-colors duration-300"
             >
               <div className="w-9 h-9 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-4">
@@ -1019,7 +1015,7 @@ export default function LandingPage() {
               custom={2}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
               className="md:col-span-1 bg-[#020810] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
@@ -1049,7 +1045,7 @@ export default function LandingPage() {
               custom={3}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300 flex flex-col justify-between"
             >
               <div>
@@ -1082,7 +1078,7 @@ export default function LandingPage() {
               custom={4}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
@@ -1131,13 +1127,14 @@ export default function LandingPage() {
               variants={fadeUpVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               custom={0}
             >
-              <h2 className="text-3xl lg:text-[42px] font-bold tracking-tight text-white leading-tight mb-3">
-                Explore a live Battle Card
+              <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-3">04 — Battle Cards</p>
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0] mb-3">
+                Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
-              <p className="text-zinc-400 text-sm max-w-sm">
+              <p className="text-zinc-400 text-sm max-w-sm leading-relaxed">
                 Generated every Monday for sales enablement, summarized into four actionable quadrants.
               </p>
             </motion.div>
@@ -1178,7 +1175,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, amount: 0 }}
             custom={1}
             className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden bg-[#060b18]"
           >
@@ -1320,11 +1317,12 @@ export default function LandingPage() {
               variants={fadeUpVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               custom={0}
             >
-              <h2 className="text-2xl lg:text-3xl font-bold tracking-tight text-white mb-4">
-                Built for local businesses too
+              <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">05 — Local</p>
+              <h2 className="text-[36px] lg:text-[46px] font-bold tracking-tight text-white leading-[1.0] mb-5">
+                Built for local<br className="hidden lg:block" /> businesses too
               </h2>
               <p className="text-zinc-400 text-sm leading-relaxed mb-6">
                 Not just SaaS. Crawl Google Maps reviews, social activity, and pricing for physical salons, cafes, gyms, and nearby competitors.
@@ -1350,7 +1348,7 @@ export default function LandingPage() {
                   custom={i}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
+                  viewport={{ once: true, amount: 0 }}
                   className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-colors duration-300"
                 >
                   <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
@@ -1376,7 +1374,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, amount: 0 }}
             custom={0}
             className="mb-3"
           >
@@ -1391,20 +1389,21 @@ export default function LandingPage() {
       <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
       {/* ── CTA ─────────────────────────────────────────────────────────── */}
-      <section className="py-28 px-6 bg-[#040812] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-950/5 to-transparent pointer-events-none" />
-        <div className="max-w-2xl mx-auto text-center relative z-10">
+      <section className="py-24 px-6 bg-[#040812] relative overflow-hidden">
+        <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true, amount: 0 }}
             custom={0}
+            className="border border-sky-500/20 bg-gradient-to-br from-sky-950/30 via-[#040812] to-[#040812] rounded-3xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_80px_rgba(14,165,233,0.06)]"
           >
-            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-[1.05] mb-5">
-              Start tracking competitor movements today.
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
+            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.05] mb-4">
+              Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
-            <p className="text-zinc-400 text-base max-w-sm mx-auto leading-relaxed mb-8">
+            <p className="text-zinc-400 text-base max-w-sm mx-auto leading-relaxed mb-10">
               14-day free trial. Monitor up to 7 competitors. Cancel with one click.
             </p>
             <MotionLink
@@ -1423,6 +1422,7 @@ export default function LandingPage() {
                 <ArrowRight size={13} />
               </motion.span>
             </MotionLink>
+            <p className="text-xs text-zinc-600 font-mono mt-5">No credit card required · Cancel anytime</p>
           </motion.div>
         </div>
       </section>

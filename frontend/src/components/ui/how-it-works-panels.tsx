@@ -411,7 +411,7 @@ export default function HowItWorksPanels() {
               variants={fadeUpVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
+              viewport={{ once: true, amount: 0 }}
               custom={idx}
               className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-slate-stretch"
             >

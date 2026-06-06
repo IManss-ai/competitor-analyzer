@@ -7,7 +7,7 @@ import { CheckCircle2, ArrowRight } from 'lucide-react';
 const reveal = (delay = 0) => ({
   initial: { opacity: 0, y: 28 } as const,
   whileInView: { opacity: 1, y: 0 } as const,
-  viewport: { once: true, amount: 0.15 as number },
+  viewport: { once: true, amount: 0 as number },
   transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 });
 
