@@ -320,12 +320,12 @@ export default function LandingPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <MotionLink
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1.5"
+              className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1.5 whitespace-nowrap"
             >
               Sign in
             </MotionLink>
@@ -333,7 +333,7 @@ export default function LandingPage() {
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 transition-all"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 transition-all whitespace-nowrap"
             >
               Get started
               <ArrowRight size={10} />
@@ -424,7 +424,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[56px] sm:text-[68px] lg:text-[82px] font-bold tracking-tight leading-[0.97] mb-6 text-white"
+                className="text-[56px] sm:text-[68px] lg:text-[82px] font-bold tracking-tight leading-[1.1] mb-6 text-white"
               >
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
@@ -609,7 +609,7 @@ export default function LandingPage() {
             className="mb-16"
           >
             <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">01 — How it works</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0] mb-5">
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
             <p className="text-zinc-400 text-base max-w-lg leading-relaxed">
@@ -636,7 +636,7 @@ export default function LandingPage() {
             className="mb-12"
           >
             <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">02 — Command Center</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0] mb-5">
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5">
               The Intelligence<br className="hidden md:block" /> Command Center
             </h2>
             <p className="text-zinc-400 text-base max-w-md leading-relaxed">
@@ -916,7 +916,7 @@ export default function LandingPage() {
             className="mb-12"
           >
             <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">03 — Features</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0]">
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1]">
               Deep intelligence.<br className="hidden md:block" /> Built for your sales team.
             </h2>
           </motion.div>
@@ -1131,7 +1131,7 @@ export default function LandingPage() {
               custom={0}
             >
               <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-3">04 — Battle Cards</p>
-              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.0] mb-3">
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-3">
                 Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
               <p className="text-zinc-400 text-sm max-w-sm leading-relaxed">
@@ -1321,7 +1321,7 @@ export default function LandingPage() {
               custom={0}
             >
               <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">05 — Local</p>
-              <h2 className="text-[36px] lg:text-[46px] font-bold tracking-tight text-white leading-[1.0] mb-5">
+              <h2 className="text-[36px] lg:text-[46px] font-bold tracking-tight text-white leading-[1.1] mb-5">
                 Built for local<br className="hidden lg:block" /> businesses too
               </h2>
               <p className="text-zinc-400 text-sm leading-relaxed mb-6">
