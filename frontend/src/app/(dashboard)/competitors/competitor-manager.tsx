@@ -24,6 +24,7 @@ export default function CompetitorManager({
   const [name, setName] = useState('');
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   // Local business fields
   const [isLocalBusiness, setIsLocalBusiness] = useState(false);
@@ -44,6 +45,7 @@ export default function CompetitorManager({
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdding(true);
+    setError('');
     try {
       const res = await fetch(`${apiUrl}/api/v1/competitors`, {
         method: 'POST',
@@ -87,10 +89,14 @@ export default function CompetitorManager({
         setFacebookPage('');
         setShowLocalFields(false);
         setShowAdd(false);
+        setError('');
         if (competitors.length + 1 >= 7) setAtLimit(true);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setError(errData.detail || 'Failed to add competitor.');
       }
     } catch {
-      // ignore
+      setError('Connection error. Please try again.');
     } finally {
       setAdding(false);
     }
@@ -180,6 +186,10 @@ export default function CompetitorManager({
                   {adding ? 'Adding...' : 'Add to watchlist'}
                 </button>
               </form>
+
+              {error && (
+                <p className="text-xs text-red-400 font-medium font-mono mt-3">{error}</p>
+              )}
 
               {/* Local Business Details (collapsible) */}
               {isLocalBusiness && (

@@ -44,6 +44,23 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+  const refreshDashboard = async () => {
+    try {
+      const dbRes = await fetch(`${apiUrl}/api/v1/dashboard`, {
+        headers: { Authorization: `Bearer ${userId}` }
+      });
+      if (dbRes.ok) {
+        const freshData = await dbRes.json();
+        setDashboardData(freshData);
+        if (freshData.events) {
+          setFeedEvents(freshData.events.slice(0, 20));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to refresh dashboard data:', e);
+    }
+  };
+
   // Fetch 28-day activity
   useEffect(() => {
     fetch(`${apiUrl}/api/v1/dashboard/activity`, {
@@ -84,14 +101,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             clearInterval(intervalId);
             setOnboardingStep(2);
             // Re-fetch dashboard data to update the background counts
-            const dbRes = await fetch(`${apiUrl}/api/v1/dashboard`, {
-              headers: { Authorization: `Bearer ${userId}` }
-            });
-            if (dbRes.ok) {
-              const freshData = await dbRes.json();
-              setDashboardData(freshData);
-              setFeedEvents(freshData.events.slice(0, 20));
-            }
+            await refreshDashboard();
           } else if (data.status === 'error') {
             clearInterval(intervalId);
             setOnboardingStep(2); // Still move to Step 3 so they see error and can proceed
@@ -216,7 +226,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       });
       if (res.ok) {
         setScanDoneCompId(competitorId);
-        setTimeout(() => setScanDoneCompId(null), 3000);
+        setTimeout(() => {
+          setScanDoneCompId(null);
+          refreshDashboard();
+        }, 3000);
       }
     } catch (e) {
       console.error(e);
