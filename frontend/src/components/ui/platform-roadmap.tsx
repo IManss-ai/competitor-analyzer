@@ -146,7 +146,7 @@ function Step3Preview({ isHovered }: { isHovered: boolean }) {
             phase >= 1 ? 'text-red-500/50' : 'text-zinc-400'
           }`}
         >
-          Starter: $99/mo
+          Starter: $49/mo
         </span>
         <motion.div
           initial={{ scaleX: 0 }}
