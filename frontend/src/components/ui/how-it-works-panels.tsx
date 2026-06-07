@@ -105,8 +105,8 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
     <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
       <div className="space-y-3 relative z-10">
         {/* Row 1 */}
-        <div className="flex items-center gap-2 bg-white/[0.02] border border-white/[0.06] rounded-lg px-3 py-2">
-          <span className="text-[10px] text-zinc-500 font-mono">domain:</span>
+        <div className="flex items-center gap-2 bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5">
+          <span className="text-[10px] text-zinc-400 font-mono">domain:</span>
           <div className="flex-1 flex items-center text-xs text-white font-mono min-h-[16px]">
             {text1}
             {isHovered && !showCheck1 && (
@@ -132,8 +132,8 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
         </div>
 
         {/* Row 2 */}
-        <div className="flex items-center gap-2 bg-white/[0.02] border border-white/[0.06] rounded-lg px-3 py-2">
-          <span className="text-[10px] text-zinc-500 font-mono">domain:</span>
+        <div className="flex items-center gap-2 bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5">
+          <span className="text-[10px] text-zinc-400 font-mono">domain:</span>
           <div className="flex-1 flex items-center text-xs text-white font-mono min-h-[16px]">
             {text2}
             {isHovered && showCheck1 && !showCheck2 && (
@@ -264,8 +264,8 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
               key={url}
               className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md border transition-all duration-200 ${
                 isScanned
-                  ? 'bg-sky-950/10 border-sky-500/15 text-sky-300'
-                  : 'bg-white/[0.01] border-white/[0.03] text-zinc-500'
+                  ? 'bg-sky-950/20 border-sky-500/25 text-sky-300'
+                  : 'bg-white/[0.04] border-white/[0.10] text-zinc-400'
               }`}
             >
               <motion.span
@@ -424,7 +424,7 @@ export default function HowItWorksPanels() {
                     backgroundColor: isHovered ? '#040a18' : 'rgba(56, 189, 248, 0.05)',
                   }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  className="w-7 h-7 md:w-8 md:h-8 rounded-full border bg-[#040812] flex items-center justify-center text-[10px] md:text-xs font-mono font-bold text-sky-400"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-[#040812] flex items-center justify-center text-xs md:text-sm font-mono font-bold text-sky-400"
                 >
                   {step.n}
                 </motion.div>
@@ -435,15 +435,15 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-base)]/80 border border-white/[0.12] rounded-xl p-6 md:p-8 gap-6 md:gap-8 hover:border-white/[0.22] shadow-xl transition-all duration-300 cursor-pointer"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-white/[0.18] rounded-xl p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 shadow-xl transition-all duration-300 cursor-pointer"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">
                   <div>
-                    <h3 className="text-lg md:text-xl font-bold text-white mb-3 tracking-tight">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight">
                       {step.title}
                     </h3>
-                    <p className="text-zinc-400 text-xs leading-relaxed md:max-w-sm">
+                    <p className="text-zinc-300 text-sm leading-relaxed md:max-w-sm">
                       {step.body}
                     </p>
                   </div>
