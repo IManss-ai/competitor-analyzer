@@ -102,10 +102,10 @@ async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str |
                 text_content = re.sub(r'<[^>]+>', ' ', text_content)
                 text_content = re.sub(r'\s+', ' ', text_content).strip()
                 return text_content[:10000], None
-        except Exception:
-            return generate_mock_webpage(url, snapshot_count), None
+        except Exception as e:
+            return "", f"Direct fetch fallback failed: {str(e)}"
     except Exception as e:
-        return generate_mock_webpage(url, snapshot_count), None
+        return "", f"Jina fetch failed: {str(e)}"
 
 def extract_main_content(raw_text: str) -> str:
     """

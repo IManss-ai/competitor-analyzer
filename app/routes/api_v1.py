@@ -157,35 +157,57 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
     ratings = []
     competitors_health = []
     
-    for c in active_competitors:
-        # Last scanned (latest snapshot fetched_at)
-        last_snap = db.execute(
+    if active_competitors:
+        from sqlalchemy import and_
+        comp_ids = [c.id for c in active_competitors]
+        
+        # 1. Latest Snapshot per competitor
+        latest_fetched_sub = (
+            select(Snapshot.competitor_id, func.max(Snapshot.fetched_at).label("max_fetched"))
+            .where(Snapshot.competitor_id.in_(comp_ids))
+            .group_by(Snapshot.competitor_id)
+            .subquery()
+        )
+        latest_snaps = db.execute(
             select(Snapshot)
-            .where(Snapshot.competitor_id == c.id)
-            .order_by(Snapshot.fetched_at.desc())
-            .limit(1)
-        ).scalar_one_or_none()
+            .join(
+                latest_fetched_sub,
+                and_(
+                    Snapshot.competitor_id == latest_fetched_sub.c.competitor_id,
+                    Snapshot.fetched_at == latest_fetched_sub.c.max_fetched
+                )
+            )
+        ).scalars().all()
+        latest_snap_map = {snap.competitor_id: snap for snap in latest_snaps}
         
-        last_scanned = last_snap.fetched_at.isoformat() if last_snap else None
+        # 2. Total change count per competitor
+        change_counts = db.execute(
+            select(ChangeEvent.competitor_id, func.count(ChangeEvent.id))
+            .where(ChangeEvent.competitor_id.in_(comp_ids))
+            .group_by(ChangeEvent.competitor_id)
+        ).all()
+        change_count_map = {comp_id: count for comp_id, count in change_counts}
         
-        # Total changes count
-        total_changes = db.execute(
-            select(func.count(ChangeEvent.id)).where(ChangeEvent.competitor_id == c.id)
-        ).scalar() or 0
-        
-        # Reviews: avg rating from latest ReviewSnapshot
-        latest_review_snap = db.execute(
+        # 3. Latest ReviewSnapshot per competitor
+        latest_review_sub = (
+            select(ReviewSnapshot.competitor_id, func.max(ReviewSnapshot.snapshot_at).label("max_snap_at"))
+            .where(ReviewSnapshot.competitor_id.in_(comp_ids))
+            .group_by(ReviewSnapshot.competitor_id)
+            .subquery()
+        )
+        latest_review_snaps = db.execute(
             select(ReviewSnapshot)
-            .where(ReviewSnapshot.competitor_id == c.id)
-            .order_by(ReviewSnapshot.snapshot_at.desc())
-            .limit(1)
-        ).scalar_one_or_none()
+            .join(
+                latest_review_sub,
+                and_(
+                    ReviewSnapshot.competitor_id == latest_review_sub.c.competitor_id,
+                    ReviewSnapshot.snapshot_at == latest_review_sub.c.max_snap_at
+                )
+            )
+        ).scalars().all()
+        review_snap_map = {r.competitor_id: r for r in latest_review_snaps}
         
-        avg_rating = latest_review_snap.avg_rating if latest_review_snap else None
-        if avg_rating is not None:
-            ratings.append(avg_rating)
-        
-        # Trend: last 4 change_counts per week
+        # 4. Weekly change count trend
         now = datetime.now(timezone.utc)
         weeks = []
         for i in range(3, -1, -1):
@@ -193,34 +215,51 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
             iso = dt.isocalendar()
             weeks.append(f"{iso.year}-W{iso.week:02d}")
             
-        trend = []
-        for week_label in weeks:
-            count = db.execute(
-                select(func.count(ChangeEvent.id))
-                .where(ChangeEvent.competitor_id == c.id, ChangeEvent.week_label == week_label)
-            ).scalar() or 0
-            trend.append(count)
+        weekly_counts = db.execute(
+            select(ChangeEvent.competitor_id, ChangeEvent.week_label, func.count(ChangeEvent.id))
+            .where(ChangeEvent.competitor_id.in_(comp_ids))
+            .where(ChangeEvent.week_label.in_(weeks))
+            .group_by(ChangeEvent.competitor_id, ChangeEvent.week_label)
+        ).all()
+        
+        trend_map = {comp_id: {w: 0 for w in weeks} for comp_id in comp_ids}
+        for comp_id, week_label, count in weekly_counts:
+            if comp_id in trend_map and week_label in trend_map[comp_id]:
+                trend_map[comp_id][week_label] = count
+
+        for c in active_competitors:
+            last_snap = latest_snap_map.get(c.id)
+            last_scanned = last_snap.fetched_at.isoformat() if last_snap else None
             
-        # Status badge
-        status = "Active"
-        if last_snap:
-            if last_snap.fetch_error:
-                status = "Error"
-            elif total_changes == 0:
+            total_changes = change_count_map.get(c.id, 0)
+            
+            latest_review_snap = review_snap_map.get(c.id)
+            avg_rating = latest_review_snap.avg_rating if latest_review_snap else None
+            if avg_rating is not None:
+                ratings.append(avg_rating)
+                
+            trend = [trend_map[c.id][w] for w in weeks]
+            
+            # Status badge
+            status = "Active"
+            if last_snap:
+                if last_snap.fetch_error:
+                    status = "Error"
+                elif total_changes == 0:
+                    status = "No changes"
+            else:
                 status = "No changes"
-        else:
-            status = "No changes"
-            
-        competitors_health.append({
-            "id": str(c.id),
-            "name": c.name or c.url,
-            "url": c.url,
-            "last_scanned": last_scanned,
-            "total_changes": total_changes,
-            "avg_rating": avg_rating,
-            "trend": trend,
-            "status": status
-        })
+                
+            competitors_health.append({
+                "id": str(c.id),
+                "name": c.name or c.url,
+                "url": c.url,
+                "last_scanned": last_scanned,
+                "total_changes": total_changes,
+                "avg_rating": avg_rating,
+                "trend": trend,
+                "status": status
+            })
 
     avg_review_score = sum(ratings) / len(ratings) if ratings else None
 

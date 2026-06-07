@@ -118,7 +118,7 @@ Known customer complaints/weaknesses:
 
         try:
             response = client.messages.create(
-                model="claude-sonnet-4-6",
+                model="claude-3-5-sonnet-20241022",
                 max_tokens=1024,
                 betas=["prompt-caching-2024-07-31"],
                 messages=[
@@ -140,8 +140,11 @@ Known customer complaints/weaknesses:
             weaknesses = parsed.get("weaknesses", weaknesses)
             strategic_signals = parsed.get("strategic_signals", [])
             playbook = parsed.get("playbook", [])
-        except Exception:
-            pass
+        except Exception as e:
+            import sys
+            import traceback
+            print(f"[ERROR] Failed to generate battlecard using Anthropic API: {e}", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
 
     # Heuristic fallback if API key is dummy or request fails
     if not playbook:

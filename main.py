@@ -35,24 +35,41 @@ def _run_migrations():
         _apply_column_guards()
 
 def _apply_column_guards():
-    """Idempotent ALTER TABLE statements for columns alembic can't add."""
-    stmts = [
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS scan_schedule VARCHAR DEFAULT 'weekly'",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT TRUE",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS digest_email VARCHAR",
-        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS business_type VARCHAR DEFAULT 'saas'",
-        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS google_maps_url VARCHAR",
-        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS instagram_handle VARCHAR",
-        "ALTER TABLE competitors ADD COLUMN IF NOT EXISTS facebook_page VARCHAR",
-    ]
-    for stmt in stmts:
-        try:
-            with engine.begin() as conn:
-                conn.execute(__import__("sqlalchemy").text(stmt))
-        except Exception as e:
-            print(f"[startup] Column guard statement failed (non-fatal): {stmt} - Error: {e}")
+    """Idempotent checks to add columns if they don't already exist, compatible with SQLite & PostgreSQL."""
+    from sqlalchemy import inspect
+    columns_to_add = {
+        "users": [
+            ("password_hash", "VARCHAR", None),
+            ("business_type", "VARCHAR", "'saas'"),
+            ("scan_schedule", "VARCHAR", "'weekly'"),
+            ("email_notifications", "BOOLEAN", "TRUE"),
+            ("digest_email", "VARCHAR", None),
+        ],
+        "competitors": [
+            ("business_type", "VARCHAR", "'saas'"),
+            ("google_maps_url", "VARCHAR", None),
+            ("instagram_handle", "VARCHAR", None),
+            ("facebook_page", "VARCHAR", None),
+        ]
+    }
+    try:
+        inspector = inspect(engine)
+        for table, cols in columns_to_add.items():
+            if not inspector.has_table(table):
+                continue
+            existing_cols = {col["name"] for col in inspector.get_columns(table)}
+            for col_name, col_type, default_val in cols:
+                if col_name not in existing_cols:
+                    default_clause = f" DEFAULT {default_val}" if default_val is not None else ""
+                    stmt = f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}{default_clause}"
+                    try:
+                        with engine.begin() as conn:
+                            conn.execute(__import__("sqlalchemy").text(stmt))
+                        print(f"[startup] Column guard: Added column {table}.{col_name}")
+                    except Exception as e:
+                        print(f"[startup] Column guard statement failed (non-fatal): {stmt} - Error: {e}")
+    except Exception as e:
+        print(f"[startup] Column guard check failed: {e}")
     print("[startup] Column guards applied")
 
 async def _init_db():
