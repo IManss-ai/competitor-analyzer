@@ -25,7 +25,7 @@ export default async function CompetitorDetailPage({ params }: PageProps) {
       <div className="mb-4">
         <Link 
           href="/competitors" 
-          className="text-xs font-semibold text-[#737373] hover:text-[#171717] inline-flex items-center gap-1 transition-colors"
+          className="text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] inline-flex items-center gap-1 transition-colors"
         >
           <ChevronLeft size={14} /> Back to Competitors
         </Link>
