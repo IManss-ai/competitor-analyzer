@@ -350,7 +350,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                     return (
                       <div key={event.id} className="relative">
                         {/* Timeline Bullet */}
-                        <div className="absolute -left-[31px] top-1.5 bg-[#070b14] p-0.5 rounded-full">
+                        <div className="absolute -left-[32px] top-1.5 bg-[#070b14] p-0.5 rounded-full">
                           <Circle size={10} style={{ color: 'var(--accent-primary)' }} />
                         </div>
 

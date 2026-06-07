@@ -312,7 +312,7 @@ export function PlatformRoadmap() {
         {/* Steps container */}
         <div className="relative">
           {/* Connecting lines for Desktop */}
-          <div className="absolute top-10 left-0 w-full h-[2px] hidden md:block z-0 pointer-events-none">
+          <div className="absolute top-[41px] left-0 w-full h-[2px] hidden md:block z-0 pointer-events-none">
             {/* Segment 1 */}
             <div className="absolute left-[calc(12.5%-12px)] right-[calc(62.5%+4px)] h-full bg-white/[0.04]">
               <motion.div
@@ -363,7 +363,7 @@ export function PlatformRoadmap() {
           </div>
 
           {/* Connecting line for Mobile */}
-          <div className="absolute left-9 top-10 bottom-10 w-[2px] bg-white/[0.04] md:hidden z-0 pointer-events-none">
+          <div className="absolute left-[37px] top-10 bottom-10 w-[2px] bg-white/[0.04] md:hidden z-0 pointer-events-none">
             <motion.div
               style={{ scaleY: scaleYMobile }}
               className="w-full h-full bg-gradient-to-b from-sky-500/20 via-sky-500/40 to-sky-500/50 origin-top"

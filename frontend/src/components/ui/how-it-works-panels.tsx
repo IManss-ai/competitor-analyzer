@@ -416,7 +416,7 @@ export default function HowItWorksPanels() {
               className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-slate-stretch"
             >
               {/* Left Side: Node Circle (floating offset to vertical line) */}
-              <div className="absolute -left-[30px] md:-left-[48px] top-4 z-20 flex items-center justify-center">
+              <div className="absolute left-[-15px] md:left-[-31px] -translate-x-1/2 top-4 z-20 flex items-center justify-center">
                 <motion.div
                   animate={{
                     scale: isHovered ? 1.15 : 1,
