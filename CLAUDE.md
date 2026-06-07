@@ -43,3 +43,13 @@ Key variables:
 - **APScheduler**: Booted ambiently inside the lifespan context (`main.py`). The weekly brief cron job runs on `weekly_brief` trigger matching every Monday at 8:00 AM UTC.
 - **On-Demand Scan**: Submits immediately using FastAPI `BackgroundTasks` via `/scan/now` (POST) to avoid locking response threads.
 - **Brand Voice Capture**: The approval queue updates record the custom edited response text inside `ApprovedAction.edited_text` only if it differs from `ApprovedAction.original_draft`.
+
+## Production Deployments
+
+- **Frontend (Vercel)**:
+  - **Production Domain**: `https://competitor-analyzer-zeta.vercel.app`
+  - **Project Name**: `competitor-analyzer`
+  - **Last Verified Deployment**: `competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app`
+- **Backend (Railway)**:
+  - **URL**: `https://competitor-analyzer-production-62ee.up.railway.app`
+  - **Health Path**: `/health`
