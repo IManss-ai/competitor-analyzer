@@ -540,7 +540,7 @@ export default function LandingPage() {
             className="mb-16"
           >
             <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">01 — How it works</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5">
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5 text-balance">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
             <p className="text-zinc-400 text-base max-w-lg leading-relaxed">
@@ -567,7 +567,7 @@ export default function LandingPage() {
             className="mb-12"
           >
             <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">02 — Command Center</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5">
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5 text-balance">
               The Intelligence<br className="hidden md:block" /> Command Center
             </h2>
             <p className="text-zinc-400 text-base max-w-md leading-relaxed">
@@ -839,7 +839,7 @@ export default function LandingPage() {
             className="mb-12"
           >
             <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">03 — Features</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1]">
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] text-balance">
               Deep intelligence.<br className="hidden md:block" /> Built for your sales team.
             </h2>
           </motion.div>
@@ -1049,7 +1049,7 @@ export default function LandingPage() {
               custom={0}
             >
               <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-3">04 — Battle Cards</p>
-              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-3">
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-3 text-balance">
                 Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
               <p className="text-zinc-400 text-sm max-w-sm leading-relaxed">
@@ -1064,8 +1064,6 @@ export default function LandingPage() {
                   onClick={() => setActiveComp(comp)}
                   onMouseEnter={() => setHoveredBattleTab(comp)}
                   onMouseLeave={() => setHoveredBattleTab(null)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
                   className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors cursor-pointer relative"
                   style={{ color: activeComp === comp ? '#ffffff' : '#6b7280' }}
                 >
@@ -1239,7 +1237,7 @@ export default function LandingPage() {
               custom={0}
             >
               <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">05 — Local</p>
-              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5">
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5 text-balance">
                 Built for local<br className="hidden lg:block" /> businesses too
               </h2>
               <p className="text-zinc-400 text-sm leading-relaxed mb-6">
@@ -1316,7 +1314,7 @@ export default function LandingPage() {
             className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_100px_rgba(14,165,233,0.12),0_0_0_1px_rgba(56,189,248,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
-            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4">
+            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4 text-balance">
               Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
             <p className="text-zinc-400 text-base max-w-sm mx-auto leading-relaxed mb-10">
