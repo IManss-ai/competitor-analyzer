@@ -53,7 +53,13 @@ const BATTLE_CARDS_DATA = {
       'Lead EMEA sales conversations highlighting flat-rate pricing advantage.',
       'Add "24h instant Slack/phone support" to your landing page hero.',
       'Deploy a dedicated "Stripe Comparison & Migration Guide" page to capture enterprise churn.',
-    ]
+    ],
+    hiring: {
+      total: 47,
+      new: 6,
+      closed: 2,
+      read: 'Six new Enterprise Sales and Solutions Engineer roles in EMEA — a clear upmarket push.',
+    },
   },
   paypal: {
     company: 'PayPal',
@@ -76,7 +82,13 @@ const BATTLE_CARDS_DATA = {
       'Target PayPal developers with ads promoting a 99.9% sandbox uptime guarantee.',
       'Highlight "No hidden percentage increases, simple flat rates" in your checkout flows.',
       'Write blog post "Why developer sandbox speed is critical for product launch".',
-    ]
+    ],
+    hiring: {
+      total: 31,
+      new: 3,
+      closed: 4,
+      read: 'Heavy applied-ML and mobile SDK hiring — a biometric-checkout product launch is imminent.',
+    },
   },
   square: {
     company: 'Square',
@@ -99,7 +111,13 @@ const BATTLE_CARDS_DATA = {
       'Offer UK local shops zero-contract terminal rentals to target locked-in users.',
       'Advertise "Dual-band Wi-Fi backup POS terminal integration" to counter connection drops.',
       'Target Square merchants with "Contract-free hardware replacement program".',
-    ]
+    ],
+    hiring: {
+      total: 22,
+      new: 4,
+      closed: 1,
+      read: 'Four new UK retail partnership and hardware roles in two weeks — European expansion is funded.',
+    },
   },
   adyen: {
     company: 'Adyen',
@@ -1108,6 +1126,35 @@ export default function LandingPage() {
               </div>
               <span className="text-[10px] font-mono text-zinc-600">{currentCard.date}</span>
             </div>
+
+            {/* Hiring strip */}
+            {currentCard.hiring && (
+              <div className="px-5 py-4 border-b border-white/[0.10] bg-white/[0.01]">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Hiring</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base font-bold font-mono text-white">{currentCard.hiring.total}</span>
+                      <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">open</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base font-bold font-mono text-emerald-400">+{currentCard.hiring.new}</span>
+                      <span className="text-[10px] font-mono text-emerald-400/70 uppercase tracking-wider">new</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base font-bold font-mono text-zinc-400">−{currentCard.hiring.closed}</span>
+                      <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">closed</span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] leading-snug text-zinc-300 italic max-w-md">
+                    <span className="text-sky-400 not-italic font-mono uppercase tracking-wider text-[9px] mr-1.5">Pattern</span>
+                    {currentCard.hiring.read}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* 4 quadrants */}
             <AnimatePresence mode="wait">
