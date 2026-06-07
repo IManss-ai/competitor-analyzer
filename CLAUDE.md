@@ -73,12 +73,40 @@ alembic revision --autogenerate -m "description_of_changes"
 
 ---
 
-## ☁️ Production Deployments
+## ☁️ Production Deployments & Workflows
 
-- **Frontend (Vercel)**:
-  - **Live URL**: [https://competitor-analyzer-zeta.vercel.app](https://competitor-analyzer-zeta.vercel.app)
-  - **Project Name**: `competitor-analyzer`
-  - **Active Deployment**: `competitor-analyzer-qimiy216i-imanss-ais-projects.vercel.app`
-- **Backend (Railway)**:
-  - **Live URL**: [https://competitor-analyzer-production-62ee.up.railway.app](https://competitor-analyzer-production-62ee.up.railway.app)
-  - **Health check path**: `/health` (checks migrations, DB connections, and table status)
+### 1. GitHub Remote & Push Workflow
+- **Repository URL**: [github.com/IManss-ai/competitor-analyzer](https://github.com/IManss-ai/competitor-analyzer.git)
+- **Deployment Branch**: `main`
+- **Workflow**:
+  ```bash
+  git add .
+  git commit -m "your description"
+  git push origin main
+  ```
+
+### 2. Frontend Deployment (Vercel)
+- **Production URL**: [https://competitor-analyzer-zeta.vercel.app](https://competitor-analyzer-zeta.vercel.app)
+- **Secondary Deployment Domain**: [https://competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app](https://competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app)
+- **Vercel Project**: `competitor-analyzer` (Owner: `imanss-ais-projects`)
+- **CI/CD Triggers**: Pushes to `origin/main` automatically build and deploy the frontend production build.
+- **Manual Vercel Deploy CLI**:
+  ```bash
+  cd frontend
+  vercel --prod
+  ```
+
+### 3. Backend Deployment (Railway)
+- **Production URL**: [https://competitor-analyzer-production-62ee.up.railway.app](https://competitor-analyzer-production-62ee.up.railway.app)
+- **Health Check Endpoint**: `/health` (verifies SQLite/Postgres connections, applied tables, and alembic migrations)
+- **Service Name**: `competitor-analyzer`
+- **CLI Deployment Command** (runs from the workspace root):
+  ```bash
+  railway up
+  ```
+- **Check Status / Logs**:
+  ```bash
+  railway status
+  railway deployment list
+  railway logs
+  ```
