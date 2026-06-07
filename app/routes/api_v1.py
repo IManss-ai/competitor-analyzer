@@ -600,6 +600,19 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
     except Exception:
         battlecard_data = None
 
+    # Latest hiring snapshot (within the last 30 days)
+    from app.pipeline.job_tracker import get_latest_hiring_signal
+    hiring = get_latest_hiring_signal(competitor_id, db, max_age_days=30)
+    hiring_signal = None
+    if hiring:
+        hiring_signal = {
+            "snapshot_at": hiring.snapshot_at.isoformat() if hiring.snapshot_at else None,
+            "total_jobs": hiring.total_jobs or 0,
+            "new_postings": hiring.new_postings or 0,
+            "closed_postings": hiring.closed_postings or 0,
+            "strategic_signal": hiring.strategic_signal,
+        }
+
     return {
         "competitor": {
             "id": str(comp.id),
@@ -611,11 +624,16 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
             "google_maps_url": comp.google_maps_url,
             "instagram_handle": comp.instagram_handle,
             "facebook_page": comp.facebook_page,
+            "g2_url": comp.g2_url,
+            "trustpilot_url": comp.trustpilot_url,
+            "capterra_url": comp.capterra_url,
+            "careers_url": comp.careers_url,
         },
         "change_events": change_events,
         "review_snapshots": review_snapshots,
         "scan_history": scan_history,
-        "battlecard": battlecard_data
+        "battlecard": battlecard_data,
+        "hiring_signal": hiring_signal,
     }
 
 

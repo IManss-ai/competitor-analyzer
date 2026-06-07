@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Eye, EyeOff, Star, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
+import DataSourcesPanel from '@/components/data-sources-panel';
+import HiringSignalCard from '@/components/hiring-signal-card';
 
 const formatTimeAgo = (dateStr: string | null) => {
   if (!dateStr) return 'Never';
@@ -735,6 +737,31 @@ ${card.win_conditions && card.win_conditions.length > 0
               </div>
             )}
           </div>
+
+          {comp.business_type !== 'local' && (
+            <>
+              <HiringSignalCard
+                signal={detail.hiring_signal ?? null}
+                careersUrl={comp.careers_url ?? null}
+              />
+              <DataSourcesPanel
+                competitorId={comp.id}
+                userId={userId}
+                initialValues={{
+                  g2_url: comp.g2_url ?? '',
+                  trustpilot_url: comp.trustpilot_url ?? '',
+                  capterra_url: comp.capterra_url ?? '',
+                  careers_url: comp.careers_url ?? '',
+                }}
+                onSaved={(updated) =>
+                  setDetail((prev: any) => ({
+                    ...prev,
+                    competitor: { ...prev.competitor, ...updated },
+                  }))
+                }
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
