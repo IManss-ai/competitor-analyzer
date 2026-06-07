@@ -1,25 +1,34 @@
 import json
 import httpx
+import logging
 import os
 import re
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from app.models import Review, ReviewSnapshot
+from app.models import Review, ReviewSnapshot, Competitor
 import anthropic
 import uuid as _uuid
 
+logger = logging.getLogger(__name__)
+
 JINA_BASE = "https://r.jina.ai/"
 
-def _get_platform_urls(competitor_url: str) -> dict:
+def _get_platform_urls(competitor_url: str, overrides: dict | None = None) -> dict:
+    """Build review-platform URLs, preferring explicit overrides set on the Competitor."""
     domain = competitor_url.split("://")[-1].split("/")[0].replace("www.", "")
     slug = domain.split(".")[0]
-    
-    return {
+
+    derived = {
         "g2": f"https://www.g2.com/products/{slug}/reviews",
         "trustpilot": f"https://www.trustpilot.com/review/{domain}",
-        "capterra": f"https://www.capterra.com/p/{slug}/"
+        "capterra": f"https://www.capterra.com/p/{slug}/",
     }
+    if overrides:
+        for platform, url in overrides.items():
+            if url:
+                derived[platform] = url
+    return derived
 
 async def fetch_page_text(url: str) -> str:
     headers = {"Accept": "text/plain"}
@@ -106,14 +115,26 @@ def _parse_date(date_str: str):
 
 async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db: Session) -> dict:
     """Returns {platform: {avg_rating, total_reviews, complaint_count, top_complaints}}"""
-    urls = _get_platform_urls(competitor_url)
-    results = {}
     comp_uuid = _uuid.UUID(competitor_id)
-    
+
+    comp = db.execute(select(Competitor).where(Competitor.id == comp_uuid)).scalar_one_or_none()
+    overrides = {}
+    if comp:
+        if comp.g2_url:
+            overrides["g2"] = comp.g2_url
+        if comp.trustpilot_url:
+            overrides["trustpilot"] = comp.trustpilot_url
+        if comp.capterra_url:
+            overrides["capterra"] = comp.capterra_url
+
+    urls = _get_platform_urls(competitor_url, overrides=overrides)
+    results = {}
+
     for platform, url in urls.items():
         try:
             page_text = await fetch_page_text(url)
             if not page_text or len(page_text) < 100:
+                logger.info("review scrape %s: empty or too-short page for %s", platform, url)
                 continue
                 
             extracted = await _extract_reviews_with_claude(page_text)
@@ -183,8 +204,8 @@ async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db:
             }
             
         except Exception as e:
-            print(f"Error scraping {platform} for {competitor_url}: {e}")
+            logger.warning("review scrape %s failed for %s: %s", platform, competitor_url, e)
             db.rollback()
             continue
-            
+
     return results

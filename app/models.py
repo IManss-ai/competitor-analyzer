@@ -30,6 +30,9 @@ class Competitor(Base):
     google_maps_url = Column(String, nullable=True)   # for local: full Google Maps URL
     instagram_handle = Column(String, nullable=True)  # e.g. "starbucks" (no @)
     facebook_page = Column(String, nullable=True)     # e.g. "starbucks"
+    g2_url = Column(String, nullable=True)            # explicit G2 reviews URL override
+    trustpilot_url = Column(String, nullable=True)    # explicit Trustpilot review URL override
+    capterra_url = Column(String, nullable=True)      # explicit Capterra reviews URL override
 
 class Snapshot(Base):
     __tablename__ = "snapshots"

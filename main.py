@@ -50,6 +50,9 @@ def _apply_column_guards():
             ("google_maps_url", "VARCHAR", None),
             ("instagram_handle", "VARCHAR", None),
             ("facebook_page", "VARCHAR", None),
+            ("g2_url", "VARCHAR", None),
+            ("trustpilot_url", "VARCHAR", None),
+            ("capterra_url", "VARCHAR", None),
         ]
     }
     try:

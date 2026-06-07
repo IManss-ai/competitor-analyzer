@@ -1,3 +1,4 @@
+import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import select
@@ -9,6 +10,8 @@ from app.pipeline.google_reviews_scraper import scrape_google_reviews
 from app.pipeline.social_tracker import scrape_social_posts
 from app.mailer import send_weekly_brief
 from datetime import datetime, timezone
+
+logger = logging.getLogger(__name__)
 
 scheduler = AsyncIOScheduler()
 
@@ -38,21 +41,21 @@ async def run_weekly_scan_and_brief():
                 for comp in competitors:
                     try:
                         await scrape_competitor_reviews(str(comp.id), comp.url, db)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("scheduler: review scrape failed for competitor %s: %s", comp.id, e)
 
                     # Only for local business competitors
                     if comp.business_type == "local":
                         if comp.google_maps_url:
                             try:
                                 await scrape_google_reviews(str(comp.id), comp.google_maps_url, db)
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                logger.warning("scheduler: google reviews scrape failed for competitor %s: %s", comp.id, e)
                         if comp.instagram_handle or comp.facebook_page:
                             try:
                                 await scrape_social_posts(str(comp.id), comp.instagram_handle, comp.facebook_page, db)
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                logger.warning("scheduler: social scrape failed for competitor %s: %s", comp.id, e)
 
                 # 2. Gather this week's change events
                 week_label = datetime.now(timezone.utc).strftime("%Y-W%V")
@@ -119,21 +122,21 @@ async def run_midweek_scan_and_brief():
                 for comp in competitors:
                     try:
                         await scrape_competitor_reviews(str(comp.id), comp.url, db)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("scheduler: review scrape failed for competitor %s: %s", comp.id, e)
 
                     # Only for local business competitors
                     if comp.business_type == "local":
                         if comp.google_maps_url:
                             try:
                                 await scrape_google_reviews(str(comp.id), comp.google_maps_url, db)
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                logger.warning("scheduler: google reviews scrape failed for competitor %s: %s", comp.id, e)
                         if comp.instagram_handle or comp.facebook_page:
                             try:
                                 await scrape_social_posts(str(comp.id), comp.instagram_handle, comp.facebook_page, db)
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                logger.warning("scheduler: social scrape failed for competitor %s: %s", comp.id, e)
 
                 # 2. Gather this week's change events
                 week_label = datetime.now(timezone.utc).strftime("%Y-W%V")
