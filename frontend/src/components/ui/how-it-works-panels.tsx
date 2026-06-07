@@ -417,7 +417,7 @@ export default function HowItWorksPanels() {
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
               custom={idx}
-              className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-slate-stretch"
+              className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-stretch"
             >
               {/* Left Side: Node Circle (floating offset to vertical line) */}
               <div className="absolute left-[-15px] md:left-[-31px] -translate-x-1/2 top-4 z-20 flex items-center justify-center">

@@ -261,7 +261,7 @@ export default function LandingPage() {
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
   return (
-    <div className="min-h-[100dvh] bg-[var(--surface-base)] text-[#f8fafc] font-sans overflow-x-hidden antialiased">
+    <div className="min-h-[100dvh] bg-[var(--surface-base)] text-[var(--text-primary)] font-sans overflow-x-hidden antialiased">
 
       {/* Scroll sentinel */}
       <div ref={sentinelRef} className="absolute top-0 h-px w-full pointer-events-none" />

@@ -115,6 +115,7 @@
 }
 
 html {
+  color-scheme: dark;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -408,16 +409,6 @@ code, pre, .font-mono {
   animation: shimmer 1.8s infinite;
   border-radius: var(--radius-sm);
 }
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   HERO / LANDING PAGE ANIMATIONS
-───────────────────────────────────────────────────────────────────────────── */
-
-@keyframes hero-marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 
 /* ─────────────────────────────────────────────────────────────────────────────
    REDUCED MOTION — mandatory
