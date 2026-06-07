@@ -136,7 +136,7 @@ async def send_weekly_brief(
 
     try:
         payload = {
-            "from": f"Competitor Analyzer <{FROM_EMAIL}>",
+            "from": f"Rivalscope <{FROM_EMAIL}>",
             "to": [user_email],
             "subject": subject,
             "text": text_body,

@@ -61,9 +61,9 @@ async def send_magic_link_email(email: str, magic_link_url: str, resend_api_key:
             "https://api.resend.com/emails",
             headers={"Authorization": f"Bearer {resend_api_key}", "Content-Type": "application/json"},
             json={
-                "from": f"Competitor Analyzer <{from_email}>",
+                "from": f"Rivalscope <{from_email}>",
                 "to": [email],
-                "subject": "Your login link — Competitor Analyzer",
+                "subject": "Your login link — Rivalscope",
                 "text": f"Click here to log in (link expires in 30 minutes):\n\n{magic_link_url}\n\nIf you didn't request this, ignore this email.",
             },
         )
