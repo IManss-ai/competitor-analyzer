@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[var(--surface-base)] text-zinc-300 py-16 px-6 font-sans">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-prose mx-auto">
         {/* Back Link */}
         <div className="mb-12">
           <Link
