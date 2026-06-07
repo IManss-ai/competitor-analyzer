@@ -70,7 +70,7 @@ function AnimatedHero({ titles }: AnimatedHeroProps) {
           </p>
         </div>
         <div className="flex flex-row gap-3">
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded border border-white/15 text-white/70 text-sm font-medium hover:border-white/30 hover:text-white transition-all">
+          <button className="inline-flex items-center gap-2 px-6 py-3 rounded border border-white/15 text-white/70 text-sm font-medium hover:border-white/30 hover:text-white transition-colors">
             See a demo <Phone size={14} />
           </button>
           <button className="inline-flex items-center gap-2 px-6 py-3 rounded bg-[var(--accent-primary)] text-white text-sm font-bold hover:bg-[var(--accent-hover)] transition-colors">

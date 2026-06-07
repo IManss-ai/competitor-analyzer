@@ -25,7 +25,7 @@ function DisplayCard({
   return (
     <div
       className={cn(
-        "relative flex h-36 w-[22rem] select-none flex-col justify-between rounded-xl border border-white/[0.08] bg-white/[0.06] px-4 py-3 transition-all duration-300 hover:border-white/20 hover:-translate-y-1",
+        "relative flex h-36 w-[22rem] select-none flex-col justify-between rounded-xl border border-white/[0.08] bg-white/[0.06] px-4 py-3 transition-[border-color,transform] duration-300 hover:border-white/20 hover:-translate-y-1",
         className
       )}
     >
@@ -99,7 +99,7 @@ export default function DisplayCards({ cards = defaultCards }: DisplayCardsProps
           <DisplayCard
             key={i}
             {...card}
-            className="w-full md:w-[22rem] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-lg"
+            className="w-full md:w-[22rem] hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-300 shadow-lg"
           />
         );
       })}

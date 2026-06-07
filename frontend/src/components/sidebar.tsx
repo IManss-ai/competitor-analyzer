@@ -192,7 +192,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               key={href}
               href={href}
               className={clsx(
-                'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150',
+                'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors duration-150',
                 isActive
                   ? 'text-sky-300'
                   : 'hover:text-[var(--text-primary)]'
@@ -303,7 +303,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               style={{ height: '2px', background: 'rgba(255,255,255,0.06)' }}
             >
               <div
-                className="h-full rounded-full transition-all"
+                className="h-full rounded-full transition-[width] duration-500 ease-out"
                 style={{
                   width: `${trialProgress}%`,
                   background: 'var(--accent-primary)',

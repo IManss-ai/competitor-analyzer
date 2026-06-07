@@ -24,9 +24,8 @@ export const staggerContainerVariants: Variants = {
 };
 
 export const cardHoverVariants = {
-  rest: { scale: 1, y: 0 },
+  rest: { y: 0 },
   hover: {
-    scale: 1.015,
     y: -2,
     transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
   },
