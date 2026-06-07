@@ -42,7 +42,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
   const hasData = reviewsData.some(d => d.snapshots && d.snapshots.length > 0);
 
   return (
-    <div className="bg-[#0b0819]/45 border border-white/[0.06] shadow-lg rounded-2xl backdrop-blur-md overflow-hidden">
+    <div className="rs-card overflow-hidden">
       <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
         <Star size={15} className="text-amber-400" />
         <h2 className="text-sm font-bold text-white">Review Intelligence</h2>
