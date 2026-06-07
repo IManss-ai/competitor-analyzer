@@ -515,11 +515,11 @@ export default function LandingPage() {
             { value: '5 min', label: 'setup time' },
             { value: 'Monday', label: 'weekly playbook' },
           ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center gap-3">
+            <div key={i} className="flex flex-col items-center gap-2">
               <div className="text-[42px] sm:text-[56px] font-bold text-white tabular-nums tracking-tight leading-none">
                 {stat.value}
               </div>
-              <div className="text-[11px] text-zinc-500 font-mono uppercase tracking-widest">{stat.label}</div>
+              <div className="text-xs text-zinc-400 font-mono uppercase tracking-[0.1em]">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -860,8 +860,8 @@ export default function LandingPage() {
                 <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-center text-amber-400 mb-4">
                   <TrendingUp size={18} />
                 </div>
-                <h3 className="text-sm font-bold text-white mb-2">Pricing Grid Monitoring</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
+                <h3 className="text-base font-bold text-white mb-2">Pricing Grid Monitoring</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
                 </p>
               </div>
@@ -918,8 +918,8 @@ export default function LandingPage() {
               <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 mb-4">
                 <MessageSquare size={18} />
               </div>
-              <h3 className="text-sm font-bold text-white mb-2">Review Site Intelligence</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <h3 className="text-base font-bold text-white mb-2">Review Site Intelligence</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
                 Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn away from competitors.
               </p>
               <div className="mt-4 space-y-2">
@@ -946,8 +946,8 @@ export default function LandingPage() {
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <Zap size={18} />
               </div>
-              <h3 className="text-sm font-bold text-white mb-2">AI Copilot Playbooks</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <h3 className="text-base font-bold text-white mb-2">AI Copilot Playbooks</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
                 Generates targeted email scripts and landing page copy built around the competitor changes detected today.
               </p>
               <div className="mt-4 font-mono text-[9px] text-sky-400 bg-sky-950/10 border border-sky-500/10 p-2.5 rounded-lg min-h-[36px] flex items-center">
@@ -975,8 +975,8 @@ export default function LandingPage() {
                 <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                   <ShieldCheck size={18} />
                 </div>
-                <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <h3 className="text-base font-bold text-white mb-2">Zero-Access Crawling</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">
                   100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
                 </p>
               </div>
@@ -1007,8 +1007,8 @@ export default function LandingPage() {
               <div className="w-9 h-9 bg-zinc-500/10 border border-zinc-500/20 rounded-lg flex items-center justify-center text-zinc-400 mb-4">
                 <Calendar size={18} />
               </div>
-              <h3 className="text-sm font-bold text-white mb-2">Historical Changelog</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <h3 className="text-base font-bold text-white mb-2">Historical Changelog</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">
                 Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments over time.
               </p>
               <div className="mt-5 flex items-center gap-0">
