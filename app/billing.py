@@ -1,5 +1,5 @@
 import os
-from app.config import POLAR_ACCESS_TOKEN, POLAR_SAAS_PRODUCT_ID, POLAR_LOCAL_PRODUCT_ID
+from app.config import POLAR_ACCESS_TOKEN, POLAR_SAAS_PRODUCT_ID, POLAR_LOCAL_PRODUCT_ID, APP_BASE_URL
 
 def _get_polar():
     from polar_sdk import Polar
@@ -22,11 +22,13 @@ async def create_checkout_session(
     if not POLAR_ACCESS_TOKEN:
         raise ValueError("POLAR_ACCESS_TOKEN not configured")
 
+    resolved_success_url = success_url or f"{APP_BASE_URL}/billing/success"
+
     with _get_polar() as polar:
         checkout = polar.checkouts.create(request=models.CheckoutCreate(
             products=[product_id],
             customer_email=user_email,
-            success_url=success_url,
+            success_url=resolved_success_url,
             metadata={"user_id": user_id, "plan_type": plan_type},
         ))
     return checkout.url
