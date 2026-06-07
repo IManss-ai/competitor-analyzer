@@ -395,37 +395,14 @@ export default function CompetitorManager({
                       </div>
                     </div>
 
-                    {/* Middle row: Stats */}
-                    <div className="grid grid-cols-3 gap-3 mb-5 py-3.5 border-y border-white/5">
-                      <div>
-                        <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>Changes</div>
-                        <div className="text-sm font-semibold font-mono" style={{ color: 'var(--text-primary)' }}>—</div>
-                      </div>
-                      <div>
-                        <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>Last change</div>
-                        <div className="text-sm font-medium font-mono" style={{ color: 'var(--text-secondary)' }}>—</div>
-                      </div>
-                      <div>
-                        <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>Created</div>
-                        <div className="text-sm font-medium font-mono" style={{ color: 'var(--text-secondary)' }}>
-                          {comp.created_at ? new Date(comp.created_at).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }) : 'Now'}
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                   {/* Bottom row */}
-                  <div className="flex items-end justify-between gap-4 mt-2">
+                  <div className="flex items-end justify-between gap-4 mt-4 pt-3.5 border-t border-white/5">
                     <div className="min-w-0">
-                      <div className="text-[9px] uppercase tracking-wider font-mono mb-2" style={{ color: 'var(--text-muted)' }}>Activity timeline</div>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3].map((i) => (
-                          <div key={i} className={`flex items-center gap-1.5 ${i === 2 ? 'opacity-50' : ''} ${i === 3 ? 'opacity-20' : ''}`}>
-                            <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                            <span className="text-[10px] font-mono whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>Scan {i}</span>
-                            {i !== 3 && <div className="w-3 h-px bg-white/5" />}
-                          </div>
-                        ))}
+                      <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>Monitoring since</div>
+                      <div className="text-sm font-medium font-mono" style={{ color: 'var(--text-secondary)' }}>
+                        {comp.created_at ? new Date(comp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now'}
                       </div>
                     </div>
 
