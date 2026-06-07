@@ -22,15 +22,16 @@ Loaded via `next/font` (GeistSans + GeistMono variables).
 | Token | Value | Usage |
 |-------|-------|-------|
 | `--surface-base` | `#070b14` | Page background |
-| `--surface-raised` | `#0c1120` | Cards, panels |
-| `--surface-overlay` | `#111827` | Modals, popovers |
+| `--surface-raised` | `#0e1628` | Cards, panels |
+| `--surface-overlay` | `#141f35` | Modals, popovers |
+| `--surface-subtle` | `#111c30` | Hover tints |
 
 ### Borders
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--border-default` | `rgba(255,255,255,0.07)` | Standard borders |
-| `--border-subtle` | `rgba(255,255,255,0.04)` | Dividers |
-| `--border-strong` | `rgba(255,255,255,0.12)` | Hover/active states |
+| `--border-default` | `rgba(255,255,255,0.10)` | Standard borders |
+| `--border-subtle` | `rgba(255,255,255,0.06)` | Dividers |
+| `--border-strong` | `rgba(255,255,255,0.18)` | Hover/active states |
 
 ### Text
 | Token | Value | Usage |
@@ -80,7 +81,7 @@ Loaded via `next/font` (GeistSans + GeistMono variables).
 
 ### Sidebar anatomy
 1. Brand block: logo + wordmark + user email pill (with plan badge)
-2. Navigation: icon + label, violet active rail indicator (3px left)
+2. Navigation: icon + label, sky-blue active rail indicator (3px left)
 3. Bottom: Scan All button, trial banner, sign out
 
 ---
