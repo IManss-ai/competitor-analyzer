@@ -34,6 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
     >
       <body className={`${GeistSans.variable} font-sans antialiased min-h-full text-zinc-100 selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
