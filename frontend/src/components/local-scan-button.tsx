@@ -39,21 +39,28 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
       <button
         onClick={handleScan}
         disabled={loading}
-        className="inline-flex items-center gap-2 bg-[#0a0a0a] text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#1a1a1a] transition-all disabled:opacity-50 cursor-pointer"
+        className="rs-btn-primary text-[12px]"
       >
-        <Search size={16} className={loading ? 'animate-spin' : ''} />
-        Scan local competitors
+        <Search size={14} className={loading ? 'animate-spin' : ''} />
+        {loading ? 'Scanning…' : 'Scan local competitors'}
       </button>
 
       <AnimatePresence>
         {showToast && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 right-6 bg-[#0a0a0a] text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50 flex items-center gap-3"
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl text-[13px] font-medium shadow-2xl"
+            style={{
+              background: 'var(--surface-overlay)',
+              border: '1px solid var(--border-strong)',
+              color: 'var(--text-primary)',
+              boxShadow: 'var(--shadow-elevated)',
+            }}
           >
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="status-dot-active" />
             Local scan started — results ready in a few minutes
           </motion.div>
         )}
