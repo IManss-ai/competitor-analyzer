@@ -356,7 +356,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                           <Circle size={10} style={{ color: 'var(--accent-primary)' }} />
                         </div>
 
-                        <div className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
+                        <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
                           {/* Event Header */}
                           <div 
                             onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
