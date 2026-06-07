@@ -418,6 +418,30 @@ def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depe
     }
 
 
+@router.post("/competitors/{competitor_id}/probe-careers")
+async def api_probe_careers(
+    competitor_id: str,
+    user_id: str = Depends(require_api_user),
+    db: Session = Depends(get_session),
+):
+    """Walk common careers paths against the competitor homepage; save and return the first match."""
+    from app.pipeline.job_tracker import probe_careers_url
+
+    user_uuid = uuid.UUID(user_id)
+    comp = db.execute(
+        select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
+    ).scalar_one_or_none()
+    if not comp:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    detected = await probe_careers_url(comp.url)
+    if detected:
+        comp.careers_url = detected
+        db.commit()
+        return {"found": True, "careers_url": detected}
+    return {"found": False, "careers_url": None}
+
+
 SCAN_JOBS = {}
 
 

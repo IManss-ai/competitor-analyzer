@@ -6,6 +6,7 @@ import uuid as _uuid
 from datetime import datetime, timedelta
 
 import anthropic
+import httpx
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,79 @@ from app.models import JobPosting, JobSnapshot
 from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response
 
 logger = logging.getLogger(__name__)
+
+
+CAREERS_PATH_CANDIDATES = [
+    "/careers",
+    "/jobs",
+    "/about/careers",
+    "/company/careers",
+    "/about/jobs",
+    "/company/jobs",
+    "/work-with-us",
+    "/join",
+    "/join-us",
+    "/join-our-team",
+    "/team/careers",
+]
+
+CAREERS_KEYWORDS = (
+    "career",
+    "open positions",
+    "open roles",
+    "we're hiring",
+    "we are hiring",
+    "join our team",
+    "current openings",
+    "apply now",
+    "view jobs",
+    "all jobs",
+    "hiring",
+)
+
+
+def _normalize_homepage(homepage_url: str) -> str:
+    """Strip path/query, return scheme://host. Returns empty string if URL is unusable."""
+    if not homepage_url:
+        return ""
+    url = homepage_url.strip()
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+    scheme_split = url.split("://", 1)
+    if len(scheme_split) != 2:
+        return ""
+    host = scheme_split[1].split("/", 1)[0]
+    if not host:
+        return ""
+    return f"{scheme_split[0]}://{host}"
+
+
+async def probe_careers_url(homepage_url: str) -> str | None:
+    """Walk common careers paths, return the first URL that 200s with hiring keywords."""
+    base = _normalize_homepage(homepage_url)
+    if not base:
+        return None
+
+    async with httpx.AsyncClient(
+        timeout=6.0,
+        follow_redirects=True,
+        headers={"User-Agent": "Mozilla/5.0 RivalscopeBot/1.0"},
+    ) as client:
+        for path in CAREERS_PATH_CANDIDATES:
+            candidate = f"{base}{path}"
+            try:
+                resp = await client.get(candidate)
+            except Exception as e:
+                logger.debug("careers probe %s errored: %s", candidate, e)
+                continue
+            if resp.status_code != 200:
+                continue
+            body = (resp.text or "").lower()
+            if any(kw in body for kw in CAREERS_KEYWORDS):
+                logger.info("careers probe matched %s for %s", candidate, base)
+                return str(resp.url)
+    logger.info("careers probe found no match for %s", base)
+    return None
 
 
 async def _extract_jobs_with_claude(text: str) -> dict:

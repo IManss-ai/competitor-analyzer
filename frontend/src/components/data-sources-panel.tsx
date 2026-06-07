@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Database, Pencil, Check, X, ExternalLink, Loader2 } from 'lucide-react';
+import { Database, Pencil, Check, X, ExternalLink, Loader2, Wand2 } from 'lucide-react';
 
 interface DataSourceField {
   key: 'g2_url' | 'trustpilot_url' | 'capterra_url' | 'careers_url';
@@ -57,6 +57,8 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
     careers_url: initialValues.careers_url ?? '',
   });
   const [draft, setDraft] = useState<FieldValues>(values);
+  const [probingCareers, setProbingCareers] = useState(false);
+  const [probeResult, setProbeResult] = useState<'idle' | 'found' | 'not-found'>('idle');
 
   const startEdit = () => {
     setDraft(values);
@@ -106,6 +108,33 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
     setDraft(prev => ({ ...prev, [key]: value }));
   };
 
+  const detectCareers = async () => {
+    setProbingCareers(true);
+    setProbeResult('idle');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const res = await fetch(`${apiUrl}/api/v1/competitors/${competitorId}/probe-careers`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${userId}` },
+      });
+      if (!res.ok) throw new Error('probe failed');
+      const data = await res.json();
+      if (data.found && data.careers_url) {
+        const next: FieldValues = { ...values, careers_url: data.careers_url };
+        setValues(next);
+        setDraft(prev => ({ ...prev, careers_url: data.careers_url }));
+        setProbeResult('found');
+        onSaved?.(next);
+      } else {
+        setProbeResult('not-found');
+      }
+    } catch {
+      setProbeResult('not-found');
+    } finally {
+      setProbingCareers(false);
+    }
+  };
+
   const connectedCount = Object.values(values).filter(Boolean).length;
 
   return (
@@ -139,23 +168,42 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
         {SAAS_FIELDS.map(field => {
           const currentValue = values[field.key];
           const draftValue = draft[field.key];
+          const isCareers = field.key === 'careers_url';
           return (
             <div key={field.key} className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                   {field.label}
                 </label>
-                {!editing && currentValue && (
-                  <a
-                    href={currentValue}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline"
-                    style={{ color: 'var(--accent-primary)' }}
-                  >
-                    Open <ExternalLink size={9} />
-                  </a>
-                )}
+                <div className="flex items-center gap-2">
+                  {isCareers && !currentValue && (
+                    <button
+                      onClick={detectCareers}
+                      disabled={probingCareers}
+                      className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline disabled:opacity-50 cursor-pointer"
+                      style={{ color: 'var(--accent-primary)' }}
+                    >
+                      {probingCareers ? <Loader2 size={9} className="animate-spin" /> : <Wand2 size={9} />}
+                      {probingCareers ? 'Detecting' : 'Detect'}
+                    </button>
+                  )}
+                  {isCareers && probeResult === 'not-found' && (
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
+                      No common path matched
+                    </span>
+                  )}
+                  {!editing && currentValue && (
+                    <a
+                      href={currentValue}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline"
+                      style={{ color: 'var(--accent-primary)' }}
+                    >
+                      Open <ExternalLink size={9} />
+                    </a>
+                  )}
+                </div>
               </div>
               {editing ? (
                 <input
