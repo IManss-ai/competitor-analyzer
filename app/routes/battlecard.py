@@ -71,35 +71,62 @@ def generate_battlecard(competitor_id: str, db: Session = Depends(get_session)):
     api_key = os.getenv("ANTHROPIC_API_KEY")
     is_dummy = (not api_key) or (api_key == "dummy_anthropic_key")
 
-    talking_points = []
-    win_conditions = []
+    executive_summary = ""
+    what_changed = []
+    strategic_signals = []
+    playbook = []
 
     if not is_dummy:
         client = anthropic.Anthropic(api_key=api_key)
         change_str = "\n".join(change_list_texts) if change_list_texts else "No changes detected in the past 7 days."
         weakness_str = "\n".join(weaknesses)
 
-        prompt = f"""You are a competitive intelligence strategist. Generate Talking Points and Win Conditions for sales reps.
-
-Competitor: {comp.name or comp.url}
-Recent changes:
-{change_str}
-
-Known customer weaknesses/complaints:
-{weakness_str}
+        system_prompt = """You are a senior B2B sales strategist. Generate a structured competitive battle card.
+Your tone is professional, strategic, specific, and actionable. Do not write as a helpful AI assistant.
+Do not use generic fluff or placeholder text.
+Do not use the words "leverage" or "delve".
 
 Return ONLY valid JSON in the exact format below, with no other text:
-{{
-  "talking_points": ["point1", "point2", "point3"],
-  "win_conditions": ["condition1", "condition2"]
-}}
-Provide 3-5 specific, high-impact talking points and 2-3 win conditions. Each point should be under 20 words."""
+{
+  "executive_summary": "1-2 sentence synthesis of the competitive situation this week",
+  "what_changed": [
+    {"type": "pricing_change|feature_add|repositioning|minor_copy", "text": "description of change"}
+  ],
+  "weaknesses": ["complaint or weakness 1", "complaint 2", "complaint 3"],
+  "strategic_signals": [
+    "Interpretation of what the changes MEAN strategically (e.g. 'Removing flat enterprise pricing signals they are moving upmarket and abandoning SMB')"
+  ],
+  "playbook": [
+    "Specific ranked action the user should take this week — under 25 words, starts with a verb"
+  ]
+}
+
+Rules for sections:
+- executive_summary: A concise synthesis of this week's competitor moves.
+- what_changed: 1-4 items representing real page changes. Classify 'type' exactly as 'pricing_change', 'feature_add', 'repositioning', or 'minor_copy'.
+- weaknesses: 2-4 items reflecting user complaints/weaknesses.
+- strategic_signals: 2-3 items. Interpret what these actions indicate about their strategy (e.g. hiring, positioning, feature focus).
+- playbook: Exactly 5 ranked actions, most impactful first. Each must be under 25 words and start with a verb (e.g., 'Target', 'Deploy', 'Position')."""
+
+        user_prompt = f"""Competitor: {comp.name or comp.url}
+
+Recent changes detected:
+{change_str}
+
+Known customer complaints/weaknesses:
+{weakness_str}"""
 
         try:
             response = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=1024,
-                messages=[{"role": "user", "content": prompt}],
+                betas=["prompt-caching-2024-07-31"],
+                messages=[
+                    {"role": "user", "content": [
+                        {"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}},
+                        {"type": "text", "text": user_prompt}
+                    ]}
+                ],
                 temperature=0.7
             )
             content = response.content[0].text
@@ -108,57 +135,90 @@ Provide 3-5 specific, high-impact talking points and 2-3 win conditions. Each po
             elif "```" in content:
                 content = content.split("```")[1].strip()
             parsed = json.loads(content)
-            talking_points = parsed.get("talking_points", [])
-            win_conditions = parsed.get("win_conditions", [])
+            executive_summary = parsed.get("executive_summary", "")
+            what_changed = parsed.get("what_changed", [])
+            weaknesses = parsed.get("weaknesses", weaknesses)
+            strategic_signals = parsed.get("strategic_signals", [])
+            playbook = parsed.get("playbook", [])
         except Exception:
             pass
 
     # Heuristic fallback if API key is dummy or request fails
-    if not talking_points or not win_conditions:
+    if not playbook:
         has_pricing = any("price" in c.lower() or "pricing" in c.lower() for c in change_list_texts)
         has_feature = any("feature" in c.lower() or "copilot" in c.lower() for c in change_list_texts)
 
+        # Set fallback weaknesses (up to 3)
+        fallback_weaknesses = weaknesses[:3] if weaknesses else [
+            "Opaque custom quoting required for enterprise tiers.",
+            "Customer support delays reported during migration.",
+            "Mobile user experience responsiveness issues."
+        ]
+
         if has_pricing:
-            talking_points = [
-                f"Highlight our simple, transparent pricing structure compared to {comp.name or comp.url}'s updates.",
-                "Emphasize our flat-rate tiers with no hidden fees or sudden price jumps.",
-                "Offer a value comparison focusing on ROI and core developer tooling included by default."
+            executive_summary = f"{comp.name or comp.url} is adjusting pricing structure to optimize revenue, potentially creating friction for SMBs."
+            what_changed = [
+                {"type": "pricing_change", "text": f"Updated landing page to highlight custom quote pricing instead of transparent flat rates."}
             ]
-            win_conditions = [
-                "When competing for budget-conscious startups and mid-market teams.",
-                "When the customer seeks long-term price stability without dynamic seat costs."
+            strategic_signals = [
+                f"{comp.name or comp.url} is moving upmarket to target enterprise customers, leaving self-serve buyers underserved.",
+                "Opaque pricing structure signals potential upcoming margin compression or sales-led model pivot."
+            ]
+            playbook = [
+                f"Highlight our simple, transparent pricing structure compared to {comp.name or comp.url}'s updates.",
+                "Deploy dedicated target ads focusing on our flat-rate billing model with no seat limits.",
+                "Offer mid-market customers a free migration path to showcase immediate cost stability.",
+                "Empower sales reps to lead EMEA pitch calls focusing on simple, contract-free pricing.",
+                "Publish a budget comparison calculator demonstrating 40% savings over enterprise tiers."
             ]
         elif has_feature:
-            talking_points = [
-                f"Showcase our production-ready reliability versus {comp.name or comp.url}'s recently released feature.",
-                "Emphasize our direct execution speed and robust workflow integrations.",
-                "Focus on customer feedback indicating our interface is cleaner and easier to adopt."
+            executive_summary = f"{comp.name or comp.url} launched a major feature update to capture developer workflow integration."
+            what_changed = [
+                {"type": "feature_add", "text": "Released new workflow integration and authentication templates on public surfaces."}
             ]
-            win_conditions = [
-                "When the prospect needs an integration that works out-of-the-box today.",
-                "When the buyer prioritizes simplicity and user experience over feature bloat."
+            strategic_signals = [
+                f"{comp.name or comp.url} is attempting to increase platform lock-in by expanding core integrations.",
+                "Increased focus on developer experience suggests target competitor is capturing technical decision-makers."
+            ]
+            playbook = [
+                f"Showcase our production-ready reliability versus {comp.name or comp.url}'s recently released features.",
+                "Target developer teams with sandbox uptime guarantees and clean API documentation.",
+                "Add 'works out-of-the-box' templates directly to our getting started guides.",
+                "Run competitive comparison campaigns highlighting our simpler API schema.",
+                "Conduct outreach to dissatisfied integration users citing platform stability."
             ]
         else:
-            talking_points = [
-                f"Leverage our core reliability and 24/7 dedicated support channel.",
-                "Emphasize our developer-first experience (DX) and comprehensive documentation.",
-                "Focus on our proven track record with zero-downtime guarantees."
+            executive_summary = f"{comp.name or comp.url} updated homepage copy to refine core brand positioning."
+            what_changed = [
+                {"type": "repositioning", "text": "Refined hero copy and brand messaging to emphasize developer-first infrastructure."}
             ]
-            win_conditions = [
-                "When the prospect requires high-touch onboarding and custom SLA support.",
-                "When developer experience and clean API design are the top decision drivers."
+            strategic_signals = [
+                f"{comp.name or comp.url} is repositioning towards a pure technical persona, ignoring non-technical builders.",
+                "Subtle copy refinements indicate competitive positioning adjustments to counter rising platforms."
             ]
+            playbook = [
+                f"Position our platform as the fastest developer-first alternative with zero setup friction.",
+                "Send target email playbooks focusing on our 24/7 dedicated engineering support lines.",
+                "Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
+                "Highlight our high-touch onboarding experience for non-technical team managers.",
+                "Build comparison landing page detailing our direct integration performance."
+            ]
+        
+        weaknesses = fallback_weaknesses
 
-    # Return rich battle card payload, actions maps to talking_points for backwards compatibility
+    # Return rich battle card payload, actions maps to playbook for backwards compatibility
     return {
         "title": f"{comp.name or comp.url} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
-        "what_changed": change_list_texts,
+        "executive_summary": executive_summary,
+        "what_changed": what_changed,
         "weaknesses": weaknesses[:4],
-        "talking_points": talking_points,
-        "win_conditions": win_conditions,
+        "talking_points": playbook,  # Keep mapping to avoid breaking other endpoints if any
+        "win_conditions": strategic_signals,
+        "strategic_signals": strategic_signals,
+        "playbook": playbook,
         "share_token": str(comp.id),
         "generated_at": datetime.now().isoformat(),
-        "actions": talking_points
+        "actions": playbook
     }
 
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, Loader2, X, CheckCircle2 } from 'lucide-react';
+import { Zap, Loader2, X, Copy, Check } from 'lucide-react';
 
 interface BattleCardProps {
   competitorId: string;
@@ -10,15 +10,26 @@ interface BattleCardProps {
   userId: string;
 }
 
+interface BattleCardData {
+  title: string;
+  executive_summary: string;
+  what_changed: { type: string; text: string }[];
+  weaknesses: string[];
+  strategic_signals: string[];
+  playbook: string[];
+  generated_at: string;
+}
+
 export default function BattleCard({ competitorId, competitorName, userId }: BattleCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [actions, setActions] = useState<string[]>([]);
+  const [cardData, setCardData] = useState<BattleCardData | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const generateCard = async () => {
     setIsOpen(true);
-    if (actions.length > 0) return; // Already generated
+    if (cardData) return; // Already generated
 
     setLoading(true);
     setError('');
@@ -36,7 +47,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
       }
 
       const data = await res.json();
-      setActions(data.actions || []);
+      setCardData(data);
     } catch {
       setError('Could not generate Battle Card. Make sure Anthropic API Key is set.');
     } finally {
@@ -44,15 +55,41 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
     }
   };
 
+  const handleCopy = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const getBadgeClass = (type: string) => {
+    const t = type.toLowerCase();
+    if (t.includes('price') || t.includes('pricing')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
+    if (t.includes('feature') || t.includes('add')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
+    if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-violet-400/10 text-violet-400 border-violet-400/20';
+    return 'bg-zinc-400/10 text-zinc-400 border-zinc-400/20';
+  };
+
+  const getBadgeLabel = (type: string) => {
+    const t = type.toLowerCase();
+    if (t.includes('price') || t.includes('pricing')) return 'pricing';
+    if (t.includes('feature') || t.includes('add')) return 'feature';
+    if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'positioning';
+    return 'copy';
+  };
+
   return (
     <>
       <motion.button
-        whileHover={{ scale: 1.03, y: -0.5 }}
+        whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}
         onClick={generateCard}
-        className="px-3.5 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100/80 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border border-blue-200/60 cursor-pointer"
+        className="px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-xs font-semibold text-zinc-300 hover:text-white hover:border-white/20 flex items-center gap-1.5 transition-colors cursor-pointer"
       >
-        <Zap  size={13} className="text-blue-500" />
+        <Zap size={13} className="text-sky-400" />
         <span>Battle Card</span>
       </motion.button>
 
@@ -62,66 +99,190 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto"
           >
             <motion.div
               initial={{ scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-white/[0.04] border border-white/10 rounded-[2rem] w-full max-w-lg shadow-2xl relative"
+              className="p-1 bg-white/[0.04] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl relative my-8"
             >
               {/* Inner Core */}
-              <div className="bg-[#08080c] border border-white/5 rounded-[calc(2rem-0.25rem)] overflow-hidden">
+              <div className="bg-[#070b14] border border-white/5 rounded-2xl overflow-hidden">
                 {/* Header */}
-                <div className="p-6 border-b border-white/[0.06] bg-black/40 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <Zap className="text-blue-400"  size={18} />
-                      {competitorName} Battle Card
-                    </h3>
-                    <p className="text-[10px] text-white/30 mt-1 font-mono uppercase tracking-wider">generated via Claude AI</p>
+                <div className="p-6 border-b border-white/[0.08] bg-black/20">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Zap className="text-sky-400" size={18} />
+                        {competitorName} Battle Card
+                      </h3>
+                      <p className="text-[10px] text-zinc-500 mt-1 font-mono uppercase tracking-wider">Generated by Claude AI</p>
+                    </div>
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors cursor-pointer"
+                    >
+                      <X size={15} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors cursor-pointer"
-                  >
-                    <X size={15} />
-                  </button>
+                  {cardData && (
+                    <div className="text-[9px] font-mono text-zinc-600 mt-3">
+                      GENERATED AT: {new Date(cardData.generated_at).toLocaleString().toUpperCase()}
+                    </div>
+                  )}
                 </div>
 
                 {/* Content */}
-                <div className="p-6 min-h-[200px] flex flex-col justify-center">
+                <div className="min-h-[200px] flex flex-col justify-center">
                   {loading ? (
-                    <div className="flex-1 flex flex-col items-center justify-center text-white/50 space-y-4 py-8">
-                      <Loader2 size={28} className="animate-spin text-blue-500" />
-                      <p className="text-xs font-mono uppercase tracking-wider animate-pulse">Analyzing competitor moves...</p>
+                    <div className="flex flex-col items-center justify-center text-zinc-400 space-y-4 py-16">
+                      <Loader2 size={32} className="animate-spin text-sky-400" />
+                      <p className="text-xs font-mono uppercase tracking-wider animate-pulse">Analyzing competitor intelligence...</p>
                     </div>
                   ) : error ? (
-                    <div className="flex-1 flex flex-col items-center justify-center text-red-400/80 space-y-2 py-8 text-center">
-                      <X size={28} className="text-red-500" />
+                    <div className="flex flex-col items-center justify-center text-red-400 space-y-3 py-16 text-center">
+                      <X size={32} className="text-red-500" />
                       <p className="text-sm font-medium">{error}</p>
                     </div>
-                  ) : (
-                    <div>
-                      <h4 className="text-[10px] font-mono text-blue-400 uppercase tracking-wider mb-5">
-                        Your Action Plan
-                      </h4>
-                      <ul className="space-y-4">
-                        {actions.map((action, i) => (
-                          <motion.li
-                            key={i}
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                            className="flex items-start gap-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10"
-                          >
-                            <CheckCircle2 size={16}  className="text-blue-500 shrink-0 mt-0.5" />
-                            <span className="text-sm text-white/80 leading-relaxed">{action}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
+                  ) : cardData ? (
+                    <div className="p-6 space-y-5">
+                      {/* Executive Summary */}
+                      {cardData.executive_summary && (
+                        <div className="p-4 bg-[#0e1628]/60 border border-white/10 rounded-xl">
+                          <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-zinc-500 mb-1.5">Executive Summary</div>
+                          <p className="text-zinc-300 text-sm leading-relaxed italic">
+                            "{cardData.executive_summary}"
+                          </p>
+                        </div>
+                      )}
+
+                      {/* 2x2 Grid */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        
+                        {/* Panel 1: Detected Changes */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0 * 0.07 }}
+                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
+                        >
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400 mb-4">
+                            Detected Changes
+                          </div>
+                          {(!cardData.what_changed || cardData.what_changed.length === 0) ? (
+                            <p className="text-xs text-zinc-500 italic">No significant changes detected this week</p>
+                          ) : (
+                            <div className="space-y-3.5">
+                              {cardData.what_changed.map((change, idx) => (
+                                <div key={idx} className="space-y-1">
+                                  <div className="flex">
+                                    <span className={`text-[8px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border ${getBadgeClass(change.type)}`}>
+                                      {getBadgeLabel(change.type)}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-zinc-300 leading-normal">{change.text}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </motion.div>
+
+                        {/* Panel 2: User Complaints */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 1 * 0.07 }}
+                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
+                        >
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-red-400 mb-4">
+                            User Complaints
+                          </div>
+                          {(!cardData.weaknesses || cardData.weaknesses.length === 0) ? (
+                            <p className="text-xs text-zinc-500 italic">No customer complaints reported</p>
+                          ) : (
+                            <ul className="space-y-3 text-xs text-zinc-300 leading-normal">
+                              {cardData.weaknesses.map((weakness, idx) => (
+                                <li key={idx} className="flex items-start gap-1.5">
+                                  <span className="text-red-500 select-none">›</span>
+                                  <span>{weakness}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </motion.div>
+
+                        {/* Panel 3: Strategic Signals */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 2 * 0.07 }}
+                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
+                        >
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-amber-400 mb-4">
+                            Strategic Signals
+                          </div>
+                          {(!cardData.strategic_signals || cardData.strategic_signals.length === 0) ? (
+                            <p className="text-xs text-zinc-500 italic">No strategic signals identified</p>
+                          ) : (
+                            <ul className="space-y-3 text-xs text-zinc-300 leading-normal">
+                              {cardData.strategic_signals.map((signal, idx) => (
+                                <li key={idx} className="flex items-start gap-1.5">
+                                  <span className="text-amber-500 select-none">›</span>
+                                  <span>{signal}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </motion.div>
+
+                        {/* Panel 4: Playbook */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 3 * 0.07 }}
+                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl md:col-span-2"
+                        >
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-400 mb-4">
+                            Playbook — This Week
+                          </div>
+                          {(!cardData.playbook || cardData.playbook.length === 0) ? (
+                            <p className="text-xs text-zinc-500 italic">No playbook recommendations</p>
+                          ) : (
+                            <ol className="space-y-2.5">
+                              {cardData.playbook.map((play, idx) => {
+                                const rankStr = String(idx + 1).padStart(2, '0');
+                                const isCopied = copiedIndex === idx;
+                                return (
+                                  <li
+                                    key={idx}
+                                    className="flex items-start justify-between gap-3 bg-white/[0.02] hover:bg-white/[0.04] p-3 rounded-lg border border-white/[0.05] transition-colors"
+                                  >
+                                    <div className="flex items-start gap-3">
+                                      <span className="text-xs font-mono font-bold text-emerald-400 mt-0.5">{rankStr}</span>
+                                      <span className="text-xs text-zinc-200 leading-relaxed">{play}</span>
+                                    </div>
+                                    <button
+                                      onClick={() => handleCopy(play, idx)}
+                                      className="p-1 rounded bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 mt-0.5"
+                                      title="Copy to clipboard"
+                                    >
+                                      {isCopied ? (
+                                        <Check size={10} className="text-emerald-400" />
+                                      ) : (
+                                        <Copy size={10} />
+                                      )}
+                                    </button>
+                                  </li>
+                                );
+                              })}
+                            </ol>
+                          )}
+                        </motion.div>
+
+                      </div>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </motion.div>
