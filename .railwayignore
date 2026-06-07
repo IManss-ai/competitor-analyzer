@@ -7,3 +7,9 @@ __pycache__/
 *.db
 *.sqlite3
 .git/
+frontend/
+node_modules/
+.next/
+.vercel/
+.gstack/
+*.log
