@@ -8,6 +8,7 @@ import anthropic
 
 from app.db import get_session
 from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost
+from app.pipeline.job_tracker import get_latest_hiring_signal
 
 import uuid as _uuid
 
@@ -284,6 +285,18 @@ def generate_battlecard(competitor_id: str, db: Session = Depends(get_session)):
             "Mobile user experience lags behind the desktop site."
         ]
 
+    hiring_snapshot = get_latest_hiring_signal(str(comp_uuid), db)
+    hiring_signal_text = ""
+    if hiring_snapshot:
+        parts = [f"{hiring_snapshot.total_jobs} open roles right now"]
+        if hiring_snapshot.new_postings:
+            parts.append(f"{hiring_snapshot.new_postings} new this week")
+        if hiring_snapshot.closed_postings:
+            parts.append(f"{hiring_snapshot.closed_postings} closed since last scan")
+        hiring_signal_text = "; ".join(parts)
+        if hiring_snapshot.strategic_signal:
+            hiring_signal_text += f". Pattern read: {hiring_snapshot.strategic_signal}"
+
     api_key = os.getenv("ANTHROPIC_API_KEY")
     is_dummy = (not api_key) or (api_key == "dummy_anthropic_key")
 
@@ -324,13 +337,14 @@ Rules for sections:
 - strategic_signals: 2-3 items. Interpret what these actions indicate about their strategy (e.g. hiring, positioning, feature focus).
 - playbook: Exactly 5 ranked actions, most impactful first. Each must be under 25 words and start with a verb (e.g., 'Target', 'Deploy', 'Position')."""
 
+        hiring_block = f"\n\nHiring signals: {hiring_signal_text}" if hiring_signal_text else ""
         user_prompt = f"""Competitor: {comp.name or comp.url}
 
 Recent changes detected:
 {change_str}
 
 Known customer complaints/weaknesses:
-{weakness_str}"""
+{weakness_str}{hiring_block}"""
 
         try:
             response = client.messages.create(

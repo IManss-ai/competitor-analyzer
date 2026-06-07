@@ -8,6 +8,7 @@ from app.pipeline.scanner import scan_user_competitors
 from app.pipeline.review_scraper import scrape_competitor_reviews
 from app.pipeline.google_reviews_scraper import scrape_google_reviews
 from app.pipeline.social_tracker import scrape_social_posts
+from app.pipeline.job_tracker import scrape_job_postings
 from app.mailer import send_weekly_brief
 from datetime import datetime, timezone
 
@@ -43,6 +44,12 @@ async def run_weekly_scan_and_brief():
                         await scrape_competitor_reviews(str(comp.id), comp.url, db)
                     except Exception as e:
                         logger.warning("scheduler: review scrape failed for competitor %s: %s", comp.id, e)
+
+                    if comp.business_type == "saas" and comp.careers_url:
+                        try:
+                            await scrape_job_postings(str(comp.id), comp.careers_url, db, comp.name or "")
+                        except Exception as e:
+                            logger.warning("scheduler: job scrape failed for competitor %s: %s", comp.id, e)
 
                     # Only for local business competitors
                     if comp.business_type == "local":
@@ -124,6 +131,12 @@ async def run_midweek_scan_and_brief():
                         await scrape_competitor_reviews(str(comp.id), comp.url, db)
                     except Exception as e:
                         logger.warning("scheduler: review scrape failed for competitor %s: %s", comp.id, e)
+
+                    if comp.business_type == "saas" and comp.careers_url:
+                        try:
+                            await scrape_job_postings(str(comp.id), comp.careers_url, db, comp.name or "")
+                        except Exception as e:
+                            logger.warning("scheduler: job scrape failed for competitor %s: %s", comp.id, e)
 
                     # Only for local business competitors
                     if comp.business_type == "local":

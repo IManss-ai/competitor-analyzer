@@ -53,6 +53,7 @@ def _apply_column_guards():
             ("g2_url", "VARCHAR", None),
             ("trustpilot_url", "VARCHAR", None),
             ("capterra_url", "VARCHAR", None),
+            ("careers_url", "VARCHAR", None),
         ]
     }
     try:

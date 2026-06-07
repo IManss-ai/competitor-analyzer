@@ -33,6 +33,7 @@ class Competitor(Base):
     g2_url = Column(String, nullable=True)            # explicit G2 reviews URL override
     trustpilot_url = Column(String, nullable=True)    # explicit Trustpilot review URL override
     capterra_url = Column(String, nullable=True)      # explicit Capterra reviews URL override
+    careers_url = Column(String, nullable=True)       # explicit careers / jobs page URL for hiring signals
 
 class Snapshot(Base):
     __tablename__ = "snapshots"
@@ -111,3 +112,28 @@ class SocialPost(Base):
     fetched_at = Column(DateTime, default=func.now())
     sentiment = Column(String, nullable=True)         # "positive" | "negative" | "neutral"
     engagement_hint = Column(String, nullable=True)   # likes/comments count if extractable
+
+
+class JobPosting(Base):
+    __tablename__ = "job_postings"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    posting_id = Column(String, nullable=False)        # stable dedup hash of title+location
+    title = Column(String, nullable=False)
+    location = Column(String, nullable=True)
+    department = Column(String, nullable=True)
+    url = Column(String, nullable=True)
+    first_seen_at = Column(DateTime, default=func.now())   # when we first noticed it
+    last_seen_at = Column(DateTime, default=func.now())    # bumped on each scan that still sees it
+    closed_at = Column(DateTime, nullable=True)            # set when the posting disappears
+
+
+class JobSnapshot(Base):
+    __tablename__ = "job_snapshots"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    snapshot_at = Column(DateTime, default=func.now())
+    total_jobs = Column(Integer, default=0)
+    new_postings = Column(Integer, default=0)              # jobs first seen in this scan
+    closed_postings = Column(Integer, default=0)           # jobs that disappeared since last scan
+    strategic_signal = Column(Text, nullable=True)         # AI interpretation of the hiring pattern

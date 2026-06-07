@@ -401,9 +401,9 @@ def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depe
         c.name = payload["name"]
     if "url" in payload:
         c.url = payload["url"]
-    for review_field in ("g2_url", "trustpilot_url", "capterra_url"):
-        if review_field in payload:
-            setattr(c, review_field, payload[review_field] or None)
+    for url_field in ("g2_url", "trustpilot_url", "capterra_url", "careers_url"):
+        if url_field in payload:
+            setattr(c, url_field, payload[url_field] or None)
     db.commit()
     db.refresh(c)
     return {
@@ -414,6 +414,7 @@ def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depe
         "g2_url": c.g2_url,
         "trustpilot_url": c.trustpilot_url,
         "capterra_url": c.capterra_url,
+        "careers_url": c.careers_url,
     }
 
 
