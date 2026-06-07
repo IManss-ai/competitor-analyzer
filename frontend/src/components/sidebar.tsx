@@ -256,7 +256,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <button
           onClick={handleScanAll}
           disabled={scanning}
-          className="w-full py-2.5 rounded-lg text-[12px] font-semibold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          className="rs-btn-primary w-full text-[12px]"
           style={
             scanDone
               ? {
@@ -264,11 +264,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   border: '1px solid rgba(16,185,129,0.22)',
                   color: '#34d399',
                 }
-              : {
-                  background: 'var(--accent-primary)',
-                  border: '1px solid rgba(14,165,233,0.4)',
-                  color: '#fff',
-                }
+              : undefined
           }
         >
           <RefreshCw
