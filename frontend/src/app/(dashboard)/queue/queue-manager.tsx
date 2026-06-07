@@ -95,7 +95,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
           const borderLeftColor = {
             pricing: '#f59e0b',
             feature: '#10b981',
-            repositioning: '#7c3aed',
+            repositioning: '#a78bfa',
             copy: '#64748b'
           }[action.change_event.change_type] || '#64748b';
 
@@ -116,7 +116,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                     {action.competitor.name}
                   </span>
                   <ChangeBadge type={action.change_event.change_type} />
-                  <span className="ml-auto inline-flex items-center text-[9px] uppercase font-mono tracking-wider px-2.5 py-1 rounded-md border border-purple-500/20 text-purple-400 bg-purple-500/10">
+                  <span className="ml-auto inline-flex items-center text-[9px] uppercase font-mono tracking-wider px-2.5 py-1 rounded-md border border-sky-500/20 text-sky-400 bg-sky-500/10">
                     {action.action_type.replace(/_/g, ' ')}
                   </span>
                   {action.change_event.detected_at && (
@@ -151,7 +151,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                     </div>
                   ) : (
                     <div className="bg-[#0a0a0f] border border-white/5 rounded-lg p-4 mb-4 relative group/code shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
-                      <p className="text-[13px] text-white/95 whitespace-pre-wrap leading-relaxed font-mono selection:bg-purple-500/30 pr-10">
+                      <p className="text-[13px] text-white/95 whitespace-pre-wrap leading-relaxed font-mono selection:bg-sky-500/20 pr-10">
                         {action.edited_text || action.original_draft}
                       </p>
                       <button

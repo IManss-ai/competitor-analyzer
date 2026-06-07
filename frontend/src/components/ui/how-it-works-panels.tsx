@@ -102,7 +102,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-[#03060f] border border-white/[0.04] rounded-2xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
       <div className="space-y-3 relative z-10">
         {/* Row 1 */}
         <div className="flex items-center gap-2 bg-white/[0.02] border border-white/[0.06] rounded-lg px-3 py-2">
@@ -217,7 +217,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex items-center gap-5 p-5 bg-[#03060f] border border-white/[0.04] rounded-2xl relative overflow-hidden">
+    <div className="w-full h-full flex items-center gap-5 p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
       {/* Radar Section */}
       <div className="w-16 h-16 rounded-full border border-white/[0.08] relative flex items-center justify-center flex-shrink-0 bg-white/[0.01]">
         <svg className="absolute inset-0 w-full h-full -rotate-90">
@@ -302,12 +302,12 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-[#03060f] border border-white/[0.04] rounded-2xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
       <motion.div
         key={animKey}
         animate={isHovered ? { y: -4 } : { y: 0 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="bg-[#080d1a] border border-white/[0.08] rounded-xl p-4 shadow-xl relative"
+        className="bg-[var(--surface-base)] border border-white/[0.10] rounded-xl p-4 shadow-xl relative"
       >
         {/* Folded corner effect mock */}
         <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-sky-950 border-l border-b border-white/[0.12] rounded-bl-sm pointer-events-none" />
@@ -435,7 +435,7 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[#080e1c]/45 border border-white/[0.06] rounded-3xl p-6 md:p-8 gap-6 md:gap-8 hover:border-white/[0.12] transition-colors duration-300"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-base)]/80 border border-white/[0.12] rounded-xl p-6 md:p-8 gap-6 md:gap-8 hover:border-white/[0.22] shadow-xl transition-all duration-300 cursor-pointer"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">

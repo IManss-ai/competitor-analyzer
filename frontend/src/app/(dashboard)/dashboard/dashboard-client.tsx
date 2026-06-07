@@ -489,8 +489,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     return (
       <div className="backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-          <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(124,58,237,0.1)' }}></div>
-          <div className="absolute inset-0 border-4 border-t-purple-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
+          <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(14,165,233,0.1)' }}></div>
+          <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
           <Building2 size={36} style={{ color: 'var(--accent-primary)' }} />
         </div>
 
@@ -580,7 +580,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           label: 'Competitors',
           value: dashboardData.competitor_count,
           sub: 'Active targets',
-          accent: '#7c3aed',
+          accent: '#0ea5e9',
         },{
           label: 'Changes / week',
           value: dashboardData.changes_this_week || 0,
@@ -653,7 +653,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 />
                 <Bar dataKey="change_count" radius={[3, 3, 0, 0]}>
                   {activityDays.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.change_count > 0 ? '#7c3aed' : 'rgba(255,255,255,0.05)'} />
+                    <Cell key={idx} fill={entry.change_count > 0 ? '#0ea5e9' : 'rgba(255,255,255,0.05)'} />
                   ))}
                 </Bar>
               </BarChart>

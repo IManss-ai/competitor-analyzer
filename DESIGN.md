@@ -39,14 +39,14 @@ Loaded via `next/font` (GeistSans + GeistMono variables).
 | `--text-secondary` | `#8892a4` | Body, descriptions |
 | `--text-muted` | `#4e5a6e` | Labels, timestamps |
 
-### Accent — Electric Violet
+### Accent — Sky Blue
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--accent-primary` | `#7c3aed` | Buttons, active state, CTA |
-| `--accent-hover` | `#6d28d9` | Button hover |
-| `--accent-subtle` | `rgba(124,58,237,0.10)` | Icon backgrounds, nav active |
-| `--accent-border` | `rgba(124,58,237,0.25)` | Accent borders |
-| `--accent-glow` | `rgba(124,58,237,0.15)` | Focus ring, button glow |
+| `--accent-primary` | `#0ea5e9` | Buttons, active state, CTA |
+| `--accent-hover` | `#0284c7` | Button hover |
+| `--accent-subtle` | `rgba(14,165,233,0.10)` | Icon backgrounds, nav active |
+| `--accent-border` | `rgba(14,165,233,0.25)` | Accent borders |
+| `--accent-glow` | `rgba(14,165,233,0.15)` | Focus ring, button glow |
 
 ### Change-Type Semantic Colors
 | Change Type | Text | Background | Border |
@@ -100,7 +100,7 @@ transition: 180ms cubic-bezier(0.16,1,0.3,1)
 ### Buttons
 **Primary (`.rs-btn-primary`):**
 ```
-background: var(--accent-primary) = #7c3aed
+background: var(--accent-primary) = #0ea5e9
 color: white  font-weight: 600  font-size: 13px
 padding: 9px 16px  border-radius: 8px
 hover: background var(--accent-hover) + box-shadow glow
@@ -158,8 +158,8 @@ Gaps, padding, and margin MUST use this scale. No arbitrary values.
 
 ## Creative Decisions
 
-1. **Violet accent** — `#7c3aed` instead of generic AI-blue (sky-500). Intentional, distinctive.
-2. **Left nav rail indicator** — 3px glowing violet bar with spring animation. Stolen from Linear. Earns it.
+1. **Sky Blue accent** — `#0ea5e9` instead of electric violet. Intentional, clean, data-focused.
+2. **Left nav rail indicator** — 3px glowing sky blue bar with spring animation. Stolen from Linear. Earns it.
 3. **Accent top-border on stat cards** — colored 2px accent stripe at top of each card communicates data type at a glance without cluttering the card body.
 4. **All-dark theme locked** — no section-level light mode inversions. One theme, everywhere.
 5. **Geist mono for all data** — URLs, metrics, timestamps, labels. Signals precision.

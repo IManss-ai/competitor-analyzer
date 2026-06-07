@@ -65,7 +65,7 @@ function PricingBasic() {
   return (
     <div className="text-center">
       <motion.div {...reveal()}>
-        <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-[1.0] mb-4 text-white">
+        <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight leading-[1.1] mb-5 text-white">
           Simple pricing.<br />
           <span className="text-zinc-500">No surprises.</span>
         </h2>
@@ -79,7 +79,7 @@ function PricingBasic() {
           <motion.div
             key={tier.name}
             {...reveal(i * 0.12)}
-            className={`relative bg-[#0b0819]/50 border border-white/[0.06] backdrop-blur-md rounded-3xl p-8 text-left hover:border-white/[0.1] transition-all duration-300 shadow-xl`}
+            className={`relative bg-[var(--surface-raised)]/85 border border-[var(--border-default)] backdrop-blur-md rounded-xl p-8 text-left hover:border-[var(--border-strong)] transition-all duration-300 shadow-xl`}
           >
             {/* Badge */}
             {tier.badge && (

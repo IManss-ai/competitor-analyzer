@@ -125,13 +125,13 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               border: '1px solid var(--accent-border)',
             }}
           >
-            <RivalscopeLogo size={14} className="text-violet-400" />
+            <RivalscopeLogo size={14} className="text-sky-400" />
           </div>
           <div className="leading-none">
             <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
               Rival
             </span>
-            <span className="text-[15px] font-bold tracking-tight text-violet-400">scope</span>
+            <span className="text-[15px] font-bold tracking-tight text-sky-400">scope</span>
           </div>
         </div>
 
@@ -154,11 +154,11 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
             style={{
               background: planBadge === 'Pro'
-                ? 'rgba(124,58,237,0.15)'
+                ? 'rgba(14,165,233,0.15)'
                 : 'rgba(255,255,255,0.06)',
-              color: planBadge === 'Pro' ? '#a78bfa' : 'var(--text-muted)',
+              color: planBadge === 'Pro' ? '#38bdf8' : 'var(--text-muted)',
               border: planBadge === 'Pro'
-                ? '1px solid rgba(124,58,237,0.28)'
+                ? '1px solid rgba(14,165,233,0.28)'
                 : '1px solid var(--border-default)',
             }}
           >
@@ -182,12 +182,12 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               className={clsx(
                 'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150',
                 isActive
-                  ? 'text-violet-300'
+                  ? 'text-sky-300'
                   : 'hover:text-[var(--text-primary)]'
               )}
               style={
                 isActive
-                  ? { background: 'rgba(124,58,237,0.10)', color: '#c4b5fd' }
+                  ? { background: 'rgba(14,165,233,0.10)', color: '#7dd3fc' }
                   : { color: 'var(--text-secondary)' }
               }
             >
@@ -254,7 +254,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                 }
               : {
                   background: 'var(--accent-primary)',
-                  border: '1px solid rgba(124,58,237,0.4)',
+                  border: '1px solid rgba(14,165,233,0.4)',
                   color: '#fff',
                 }
           }

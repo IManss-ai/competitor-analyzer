@@ -2,7 +2,7 @@
 
 /* ─────────────────────────────────────────────────────────────────────────────
    RIVALSCOPE — Design System v2
-   Palette: Deep Slate base (#070b14) + Electric Violet accent (#7c3aed)
+   Palette: Deep Slate base (#070b14) + Sky Blue accent (#0ea5e9)
    Spacing: 8pt scale (4, 8, 12, 16, 24, 32, 40, 48, 64)
    Radius:  Cards = 12px, Inputs = 8px, Buttons = 8px, Pills = 9999px
    Type:    Geist Sans (UI) + Geist Mono (data)
@@ -39,19 +39,19 @@
   --card-foreground:      220 14% 93%;
   --popover:              222 44% 6%;
   --popover-foreground:   220 14% 93%;
-  --primary:              263 70% 58%;
+  --primary:              199 89% 48%;
   --primary-foreground:   0 0% 100%;
   --secondary:            222 30% 10%;
   --secondary-foreground: 220 14% 93%;
   --muted:                222 25% 9%;
   --muted-foreground:     220 10% 55%;
-  --accent:               263 60% 42%;
+  --accent:               199 89% 48%;
   --accent-foreground:    220 14% 93%;
   --destructive:          0 72% 58%;
   --destructive-foreground: 0 0% 100%;
   --border:               222 20% 13%;
   --input:                222 20% 11%;
-  --ring:                 263 70% 58%;
+  --ring:                 199 89% 48%;
 
   /* ── Fonts ────────────────────────────────────────── */
   --font-sans:  var(--font-geist-sans), system-ui, sans-serif;
@@ -76,12 +76,12 @@
   --text-secondary: #8892a4;
   --text-muted:     #4e5a6e;
 
-  /* ── Accent — Electric Violet ────────────────────── */
-  --accent-primary:     #7c3aed;
-  --accent-hover:       #6d28d9;
-  --accent-subtle:      rgba(124,58,237,0.10);
-  --accent-border:      rgba(124,58,237,0.25);
-  --accent-glow:        rgba(124,58,237,0.15);
+  /* ── Accent — Sky Blue ───────────────────────────── */
+  --accent-primary:     #0ea5e9;
+  --accent-hover:       #0284c7;
+  --accent-subtle:      rgba(14,165,233,0.10);
+  --accent-border:      rgba(14,165,233,0.25);
+  --accent-glow:        rgba(14,165,233,0.15);
 
   /* ── Radius scale (8px base) ─────────────────────── */
   --radius-sm:   6px;

@@ -429,12 +429,12 @@ const ScannerCardStream = ({
           {cards.map((card) => (
             <div
               key={card.id}
-              className="card-wrapper relative shrink-0 rounded-2xl"
+              className="card-wrapper relative shrink-0 rounded-xl"
               style={{ width: '400px', height: `${height}px` }}
             >
               {/* Normal image layer */}
               <div
-                className="card-normal absolute inset-0 rounded-2xl overflow-hidden z-[2]"
+                className="card-normal absolute inset-0 rounded-xl overflow-hidden z-[2]"
                 style={{ clipPath: 'inset(0 0 0 var(--clip-right, 0%))' }}
               >
                 <img
@@ -443,12 +443,12 @@ const ScannerCardStream = ({
                   className="w-full h-full object-cover brightness-[0.65] contrast-110 saturate-[0.55]"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/30 rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/30 rounded-xl" />
               </div>
-
+ 
               {/* ASCII scan layer */}
               <div
-                className="card-ascii absolute inset-0 rounded-2xl overflow-hidden z-[1] bg-[#040812]"
+                className="card-ascii absolute inset-0 rounded-xl overflow-hidden z-[1] bg-[var(--surface-base)]"
                 style={{ clipPath: 'inset(0 calc(100% - var(--clip-left, 0%)) 0 0)' }}
               >
                 <pre

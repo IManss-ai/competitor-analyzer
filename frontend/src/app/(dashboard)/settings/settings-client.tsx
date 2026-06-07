@@ -27,10 +27,10 @@ const statusConfig: Record<
   },
   trialing: {
     label: 'Trial',
-    dot: 'bg-[#7c3aed]',
-    text: 'text-purple-400',
-    bg: 'bg-purple-500/10',
-    border: 'border-purple-500/20',
+    dot: 'bg-sky-500',
+    text: 'text-sky-400',
+    bg: 'bg-sky-500/10',
+    border: 'border-sky-500/20',
   },
   canceled: {
     label: 'Canceled',

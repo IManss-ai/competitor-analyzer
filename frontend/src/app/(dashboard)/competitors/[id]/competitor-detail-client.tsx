@@ -721,9 +721,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                     <Line 
                       type="monotone" 
                       dataKey="rating" 
-                      stroke="#7c3aed" 
+                      stroke="#0ea5e9" 
                       strokeWidth={2} 
-                      dot={{ r: 3, fill: '#7c3aed' }} 
+                      dot={{ r: 3, fill: '#0ea5e9' }} 
                       activeDot={{ r: 5 }}
                     />
                   </LineChart>

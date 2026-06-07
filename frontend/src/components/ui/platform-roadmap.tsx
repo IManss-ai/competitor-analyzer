@@ -37,7 +37,7 @@ function Step1Preview({ isHovered }: { isHovered: boolean }) {
 
   return (
     <div className="w-full h-full flex flex-col justify-center px-4 font-mono text-[11px]">
-      <div className="bg-[#040812] border border-white/[0.06] rounded-lg p-2.5 flex items-center gap-1.5 shadow-inner">
+      <div className="bg-[var(--surface-base)] border border-white/[0.08] rounded-md p-2.5 flex items-center gap-1.5 shadow-inner">
         <span className="text-zinc-500 select-none">https://</span>
         <div className="flex items-center flex-1 min-w-0">
           <span className="text-sky-400 font-medium truncate">{text}</span>
@@ -214,7 +214,7 @@ function Step4Preview({ isHovered }: { isHovered: boolean }) {
 
   return (
     <div className="w-full h-full flex flex-col justify-center px-3 font-mono text-[9px]">
-      <div className="bg-[#040812] border border-white/[0.06] rounded-lg p-2 shadow-lg">
+      <div className="bg-[var(--surface-base)] border border-white/[0.08] rounded-md p-2 shadow-lg">
         <div className="text-[9px] font-semibold text-white mb-1.5 flex items-center gap-1">
           <span className="text-sky-400">⚡</span> Weekly Intel
         </div>
@@ -284,7 +284,7 @@ export function PlatformRoadmap() {
     <section
       ref={sectionRef}
       id="roadmap"
-      className="py-24 px-6 bg-[#040812] relative overflow-hidden"
+      className="py-24 px-6 bg-[var(--surface-base)] relative overflow-hidden"
     >
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
@@ -294,7 +294,7 @@ export function PlatformRoadmap() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[38px] font-bold tracking-tight text-white mb-3"
+            className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5"
           >
             How the platform works
           </motion.h2>
@@ -385,8 +385,8 @@ export function PlatformRoadmap() {
                   viewport={{ once: true, amount: 0.08 }}
                   transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   animate={isHovered ? { y: -3 } : { y: 0 }}
-                  className={`bg-[#050c1a] border rounded-3xl p-5 pl-16 md:pl-5 flex flex-col gap-4 transition-colors duration-300 cursor-default select-none relative w-full md:max-w-[280px] ${
-                    isHovered ? 'border-white/[0.15]' : 'border-white/[0.06]'
+                  className={`bg-[var(--surface-raised)] border rounded-xl p-5 pl-16 md:pl-5 flex flex-col gap-4 transition-colors duration-300 cursor-pointer select-none relative w-full md:max-w-[280px] ${
+                    isHovered ? 'border-[var(--border-strong)]' : 'border-[var(--border-default)]'
                   }`}
                 >
                   {/* Circle Node Container */}
@@ -410,7 +410,7 @@ export function PlatformRoadmap() {
                   </div>
 
                   {/* Mini-Preview Panel */}
-                  <div className="h-[120px] bg-[#060e1e] border border-white/[0.04] rounded-2xl overflow-hidden relative mt-auto">
+                  <div className="h-[120px] bg-[var(--surface-base)] border border-white/[0.06] rounded-xl overflow-hidden relative mt-auto">
                     {step.renderPreview(isHovered)}
                   </div>
                 </motion.div>

@@ -27,8 +27,8 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
 
   const heatClasses = [
     'bg-white/5 text-[#8892a4] border border-white/[0.04]',
-    'bg-purple-900/30 text-purple-300 border border-purple-800/20',
-    'bg-purple-800/60 text-purple-200 border border-purple-700/30',
+    'bg-sky-950/40 text-sky-300 border border-sky-900/30',
+    'bg-sky-900/60 text-sky-200 border border-sky-800/30',
     'bg-[var(--accent-primary)] text-white border border-[var(--accent-border)]',
   ];
 
@@ -103,7 +103,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                         transition={{ delay: (compIndex * 0.04) + (i * 0.01), duration: 0.35, type: "spring" }}
                         title={`${count} change${count !== 1 ? 's' : ''} in week of ${weeks[i]}`}
                         className={clsx(
-                          'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer transition-shadow hover:shadow-[0_2px_8px_rgba(124,58,237,0.15)]',
+                          'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer transition-shadow hover:shadow-[0_2px_8px_rgba(14,165,233,0.15)]',
                           heatClasses[heatLevel(count)]
                         )}
                       >

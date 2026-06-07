@@ -972,7 +972,7 @@ export default function LandingPage() {
               className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
-                <div className="w-9 h-9 bg-violet-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center text-violet-400 mb-4">
+                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                   <ShieldCheck size={18} />
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">Zero-Access Crawling</h3>

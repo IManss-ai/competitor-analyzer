@@ -119,7 +119,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
-            style={{ background: 'rgba(124,58,237,0.12)' }}
+            style={{ background: 'rgba(14,165,233,0.12)' }}
             animate={{ x: [0, 40, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
             transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -136,11 +136,11 @@ export default function LoginPage() {
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
           >
-            <RivalscopeLogo size={14} className="text-violet-400" />
+            <RivalscopeLogo size={14} className="text-sky-400" />
           </div>
           <div className="leading-none">
             <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Rival</span>
-            <span className="text-[15px] font-bold tracking-tight text-violet-400">scope</span>
+            <span className="text-[15px] font-bold tracking-tight text-sky-400">scope</span>
           </div>
         </Link>
 
@@ -226,7 +226,7 @@ export default function LoginPage() {
               </p>
               <button
                 onClick={() => { setSent(false); setEmail(''); }}
-                className="mt-6 text-[13px] font-medium transition-colors cursor-pointer text-violet-400 hover:text-violet-300"
+                className="mt-6 text-[13px] font-medium transition-colors cursor-pointer text-sky-400 hover:text-sky-300"
               >
                 Use a different email
               </button>
