@@ -55,6 +55,11 @@ export function InteractiveDotCanvas({ className = '' }: InteractiveDotCanvasPro
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Respect prefers-reduced-motion: render one static frame, no rAF loop.
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const updateSize = () => {
       const parent = canvas.parentElement;
       const w = parent ? parent.clientWidth : window.innerWidth;
@@ -114,7 +119,7 @@ export function InteractiveDotCanvas({ className = '' }: InteractiveDotCanvasPro
         ctx.fill();
       });
 
-      animFrameRef.current = requestAnimationFrame(animate);
+      if (!prefersReducedMotion) animFrameRef.current = requestAnimationFrame(animate);
     };
 
     animFrameRef.current = requestAnimationFrame(animate);

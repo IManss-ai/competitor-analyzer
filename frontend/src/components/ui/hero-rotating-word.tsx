@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 
 interface HeroRotatingWordProps {
   words: string[];
@@ -15,14 +15,16 @@ export function HeroRotatingWord({
   className = '',
 }: HeroRotatingWordProps) {
   const [index, setIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (words.length <= 1) return;
+    // Respect reduced-motion: don't auto-cycle the headline word.
+    if (words.length <= 1 || shouldReduceMotion) return;
     const id = setInterval(() => {
       setIndex((prev) => (prev + 1) % words.length);
     }, interval);
     return () => clearInterval(id);
-  }, [words.length, interval]);
+  }, [words.length, interval, shouldReduceMotion]);
 
   const chars = useMemo(() => {
     return Array.from(words[index] ?? '');
@@ -39,10 +41,10 @@ export function HeroRotatingWord({
           {chars.map((char, i) => (
             <motion.span
               key={`${index}-${i}`}
-              initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-              transition={{
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 14, filter: 'blur(4px)' }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10, filter: 'blur(4px)' }}
+              transition={shouldReduceMotion ? { duration: 0 } : {
                 duration: 0.35,
                 delay: i * 0.022,
                 ease: [0.16, 1, 0.3, 1],
