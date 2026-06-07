@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Zap, Loader2, X, Copy, Check } from 'lucide-react';
 
 interface BattleCardProps {
@@ -27,6 +27,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
   const [error, setError] = useState('');
   const [cardData, setCardData] = useState<BattleCardData | null>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const generateCard = async () => {
     setIsOpen(true);
@@ -90,7 +91,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
     const t = type.toLowerCase();
     if (t.includes('price') || t.includes('pricing')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
     if (t.includes('feature') || t.includes('add')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
-    if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-sky-400/10 text-sky-400 border-sky-400/20';
+    if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-[rgba(124,58,237,0.12)] text-[#a78bfa] border-[rgba(124,58,237,0.24)]';
     if (t.includes('reputation')) return 'bg-red-400/10 text-red-400 border-red-400/20';
     if (t.includes('social') || t.includes('campaign')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
     if (t.includes('review')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
@@ -132,13 +133,13 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto"
           >
             <motion.div
-              initial={{ scale: 0.96, opacity: 0, y: 15 }}
+              initial={shouldReduceMotion ? false : { scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-white/[0.04] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl relative my-8"
+              exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.96, opacity: 0, y: 15 }}
+              className="p-1 bg-white/[0.04] border border-white/10 rounded-xl w-full max-w-2xl shadow-2xl relative my-8"
             >
               {/* Inner Core */}
-              <div className="bg-[#070b14] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#070b14] border border-white/5 rounded-xl overflow-hidden">
                 {/* Header */}
                 <div className="p-6 border-b border-white/[0.08] bg-black/20">
                   <div className="flex items-start justify-between">
@@ -201,9 +202,9 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                         
                         {/* Panel 1: Detected Changes */}
                         <motion.div
-                          initial={{ opacity: 0, y: 8 }}
+                          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0 * 0.07 }}
+                          transition={shouldReduceMotion ? { duration: 0 } : { delay: 0 * 0.07 }}
                           className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400 mb-4">
@@ -233,9 +234,9 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
                         {/* Panel 2: User Complaints */}
                         <motion.div
-                          initial={{ opacity: 0, y: 8 }}
+                          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 1 * 0.07 }}
+                          transition={shouldReduceMotion ? { duration: 0 } : { delay: 1 * 0.07 }}
                           className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-red-400 mb-4">
@@ -257,9 +258,9 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
                         {/* Panel 3: Strategic Signals */}
                         <motion.div
-                          initial={{ opacity: 0, y: 8 }}
+                          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 2 * 0.07 }}
+                          transition={shouldReduceMotion ? { duration: 0 } : { delay: 2 * 0.07 }}
                           className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-amber-400 mb-4">
@@ -281,9 +282,9 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
                         {/* Panel 4: Playbook */}
                         <motion.div
-                          initial={{ opacity: 0, y: 8 }}
+                          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 3 * 0.07 }}
+                          transition={shouldReduceMotion ? { duration: 0 } : { delay: 3 * 0.07 }}
                           className="bg-[#0e1628] border border-white/10 p-5 rounded-xl md:col-span-2"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-400 mb-4">
