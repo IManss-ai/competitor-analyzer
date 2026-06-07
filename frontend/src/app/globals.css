@@ -62,14 +62,14 @@
 
   /* ── Surface palette ─────────────────────────────── */
   --surface-base:       #070b14;   /* page background */
-  --surface-raised:     #0c1120;   /* cards, panels */
-  --surface-overlay:    #111827;   /* modals, popovers */
-  --surface-subtle:     #0f172a;   /* hover tints */
+  --surface-raised:     #0e1628;   /* cards, panels */
+  --surface-overlay:    #141f35;   /* modals, popovers */
+  --surface-subtle:     #111c30;   /* hover tints */
 
   /* ── Border palette ──────────────────────────────── */
-  --border-default:     rgba(255,255,255,0.07);
-  --border-subtle:      rgba(255,255,255,0.04);
-  --border-strong:      rgba(255,255,255,0.12);
+  --border-default:     rgba(255,255,255,0.10);
+  --border-subtle:      rgba(255,255,255,0.06);
+  --border-strong:      rgba(255,255,255,0.18);
 
   /* ── Text palette ────────────────────────────────── */
   --text-primary:   #e8eaf0;
@@ -418,20 +418,6 @@ code, pre, .font-mono {
   100% { transform: translateX(-50%); }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.0; }
-  50%       { opacity: 0.18; }
-}
-
-.hero-cta-glow::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, rgba(124,58,237,0.5) 0%, transparent 70%);
-  pointer-events: none;
-  animation: glow-pulse 3s infinite ease-in-out;
-  mix-blend-mode: screen;
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    REDUCED MOTION — mandatory

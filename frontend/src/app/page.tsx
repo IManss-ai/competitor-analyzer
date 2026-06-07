@@ -2,17 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, CheckCircle2, Zap, TrendingUp, ShieldCheck, MessageSquare, Calendar, ArrowUpRight, Copy, Star, CreditCard, Check } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { Github, Instagram } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
-import { ScannerCardStream } from '@/components/ui/scanner-card-stream';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
-import { InteractiveDotCanvas } from '@/components/ui/interactive-dot-canvas';
 import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
-import { PlatformRoadmap } from '@/components/ui/platform-roadmap';
 
 const MotionLink = motion.create(Link);
 
@@ -130,29 +127,6 @@ const COMP_CHANGE_COUNTS: Record<string, number> = {
 
 // ─── Animation helpers ───────────────────────────────────────────────────────
 
-function TypewriterComplaint({ text, delay }: { text: string; delay: number }) {
-  const [displayedText, setDisplayedText] = useState("");
-
-  useEffect(() => {
-    setDisplayedText("");
-    const startTimeout = setTimeout(() => {
-      let i = 0;
-      const interval = setInterval(() => {
-        setDisplayedText(text.slice(0, i + 1));
-        i++;
-        if (i >= text.length) {
-          clearInterval(interval);
-        }
-      }, 30);
-      return () => clearInterval(interval);
-    }, delay);
-
-    return () => clearTimeout(startTimeout);
-  }, [text, delay]);
-
-  return <>{displayedText}</>;
-}
-
 const navItems = [
   { label: 'How it works', href: '#how-it-works', key: 'how-it-works' },
   { label: 'Command Center', href: '#dashboard-showcase', key: 'dashboard-showcase' },
@@ -180,7 +154,6 @@ export default function LandingPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
-  const { scrollY } = useScroll();
 
   useEffect(() => {
     const comps = ['stripe', 'paypal', 'square', 'adyen'] as const;
@@ -270,7 +243,7 @@ export default function LandingPage() {
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
   return (
-    <div className="min-h-[100dvh] bg-[#040812] text-[#f8fafc] font-sans overflow-x-hidden antialiased">
+    <div className="min-h-[100dvh] bg-[var(--surface-base)] text-[#f8fafc] font-sans overflow-x-hidden antialiased">
 
       {/* Scroll sentinel */}
       <div ref={sentinelRef} className="absolute top-0 h-px w-full pointer-events-none" />
@@ -283,8 +256,8 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className={`w-full max-w-5xl rounded-full border px-5 py-2.5 flex items-center justify-between transition-all duration-300 ${
             scrolled
-              ? 'bg-[#040812]/90 border-white/[0.08] shadow-[0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl'
-              : 'bg-[#040812]/60 border-white/[0.05] backdrop-blur-md'
+              ? 'bg-[var(--surface-base)]/90 border-[var(--border-default)] shadow-[0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl'
+              : 'bg-[var(--surface-base)]/60 border-[var(--border-subtle)] backdrop-blur-md'
           }`}
         >
           {/* Brand */}
@@ -321,14 +294,12 @@ export default function LandingPage() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <MotionLink
+            <Link
               href="/auth/login"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
               className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1.5 whitespace-nowrap"
             >
               Sign in
-            </MotionLink>
+            </Link>
             <MotionLink
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
@@ -359,7 +330,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-[#040812]/95 backdrop-blur-xl flex flex-col justify-center px-8 md:hidden"
+            className="fixed inset-0 z-40 bg-[var(--surface-base)]/95 backdrop-blur-xl flex flex-col justify-center px-8 md:hidden"
           >
             <div className="flex flex-col gap-5">
               {[
@@ -376,15 +347,13 @@ export default function LandingPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <MotionLink
+                  <Link
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
                     className="text-2xl font-bold text-zinc-300 hover:text-white transition-colors inline-block"
                   >
                     {item.label}
-                  </MotionLink>
+                  </Link>
                 </motion.div>
               ))}
             </div>
@@ -394,14 +363,6 @@ export default function LandingPage() {
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="relative pt-24 pb-20 lg:pt-28 lg:pb-24 px-6 overflow-hidden">
-        {/* Interactive dot canvas background */}
-        <motion.div
-          style={{ y: useTransform(scrollY, [0, 500], [0, 60]) }}
-          className="absolute inset-0 z-0 pointer-events-none"
-        >
-          <InteractiveDotCanvas className="opacity-70" />
-        </motion.div>
-
         {/* Subtle top glow - static, no animation */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-sky-600/6 rounded-full blur-[120px] pointer-events-none z-0" />
 
@@ -424,7 +385,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[56px] sm:text-[68px] lg:text-[82px] font-bold tracking-tight leading-[1.1] mb-6 text-white"
+                className="text-[48px] sm:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.1] mb-6 text-white"
               >
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
@@ -458,15 +419,13 @@ export default function LandingPage() {
                   Start 14-day free trial
                   <ArrowRight size={12} />
                 </MotionLink>
-                <motion.a
+                <a
                   href="#dashboard-showcase"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors px-2 py-3"
                 >
                   See a live demo
                   <ArrowRight size={12} className="opacity-50" />
-                </motion.a>
+                </a>
               </motion.div>
 
               <motion.div
@@ -494,9 +453,9 @@ export default function LandingPage() {
               transition={{ duration: 0.65, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <div className="bg-[#080e1c] border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.5)]">
+              <div className="bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card)] cursor-pointer">
                 {/* Panel header */}
-                <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
+                <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2">
                     <TrendingUp size={14} className="text-sky-400" />
                     <span className="text-sm font-semibold text-white">Intel Feed</span>
@@ -511,7 +470,7 @@ export default function LandingPage() {
                   {FEED.map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 px-3 py-2.5 rounded-2xl hover:bg-white/[0.025] transition-colors cursor-default"
+                      className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.05] transition-colors cursor-default"
                     >
                       <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                         {item.type}
@@ -526,7 +485,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Panel footer */}
-                <div className="px-4 py-3 border-t border-white/[0.06] flex items-center justify-between bg-white/[0.01]">
+                <div className="px-4 py-3 border-t border-white/[0.08] flex items-center justify-between bg-white/[0.04]">
                   <span className="text-[11px] font-mono text-zinc-500">5 competitors tracked</span>
                   <Link href="/auth/login" className="text-[11px] font-mono text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
                     View full feed <ArrowUpRight size={10} />
@@ -547,7 +506,7 @@ export default function LandingPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="py-16 border-y border-white/[0.05]"
+        className="py-24 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25 backdrop-blur-sm"
       >
         <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
           {[
@@ -556,48 +515,20 @@ export default function LandingPage() {
             { value: '5 min', label: 'setup time' },
             { value: 'Monday', label: 'weekly playbook' },
           ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <div className="text-4xl sm:text-5xl font-bold text-white tabular-nums tracking-tight leading-none">
+            <div key={i} className="flex flex-col items-center gap-3">
+              <div className="text-[42px] sm:text-[56px] font-bold text-white tabular-nums tracking-tight leading-none">
                 {stat.value}
               </div>
-              <div className="text-xs text-zinc-500 font-mono">{stat.label}</div>
+              <div className="text-[11px] text-zinc-500 font-mono uppercase tracking-widest">{stat.label}</div>
             </div>
           ))}
         </div>
       </motion.section>
 
-      {/* ── SCANNER STREAM ──────────────────────────────────────────────── */}
-      <motion.section
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.05 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="py-0 overflow-hidden bg-[#040812] relative"
-      >
-        {/* Top fade */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#040812] to-transparent z-30 pointer-events-none" />
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#040812] to-transparent z-30 pointer-events-none" />
-        {/* Left fade */}
-        <div className="absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-[#040812] to-transparent z-30 pointer-events-none" />
-        {/* Right fade */}
-        <div className="absolute top-0 right-0 bottom-0 w-24 bg-gradient-to-l from-[#040812] to-transparent z-30 pointer-events-none" />
 
-        <ScannerCardStream
-          initialSpeed={100}
-          direction={-1}
-          cardGap={40}
-          friction={0.97}
-          scanEffect="scramble"
-          height={260}
-          repeat={5}
-        />
-      </motion.section>
-
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
       {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-24 px-6 bg-[#050c1a] relative">
+      <section id="how-it-works" className="py-24 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto">
 
           <motion.div
@@ -621,10 +552,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" ref={commandCenterRef} className="py-24 px-6 bg-[#040812] relative">
+      <section id="dashboard-showcase" ref={commandCenterRef} className="py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto">
 
           <motion.div
@@ -650,7 +581,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={1}
-            className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)] bg-[#060b18]"
+            className="border border-[var(--border-default)] rounded-xl hover:border-sky-500/25 transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card-hover)] bg-[var(--surface-raised)]"
           >
             <div className="grid md:grid-cols-[200px_1fr] min-h-[480px]">
 
@@ -658,7 +589,7 @@ export default function LandingPage() {
               <div
                 onMouseEnter={() => { isPausedRef.current = true; }}
                 onMouseLeave={() => { isPausedRef.current = false; }}
-                className="border-r border-white/[0.06] p-4 space-y-6"
+                className="border-r border-white/[0.10] p-4 space-y-6"
               >
                 <div>
                   <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-wider mb-3">Tracked</div>
@@ -669,8 +600,6 @@ export default function LandingPage() {
                         onClick={() => setSelectedDashboardComp(comp)}
                         onMouseEnter={() => setHoveredDashComp(comp)}
                         onMouseLeave={() => setHoveredDashComp(null)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.97 }}
                         className="w-full text-left text-xs px-3 py-2.5 rounded-lg font-medium flex items-center justify-between transition-colors cursor-pointer relative animate-none"
                         style={{ color: selectedDashboardComp === comp ? '#ffffff' : '#6b7280' }}
                       >
@@ -721,7 +650,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/[0.06]">
+                <div className="pt-4 border-t border-white/[0.10]">
                   <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-wider mb-2">Scan rate</div>
                   <div className="text-[10px] text-sky-300 font-mono bg-sky-500/8 border border-sky-500/15 px-2.5 py-1.5 rounded-lg inline-block">
                     Every 4 hours
@@ -757,7 +686,7 @@ export default function LandingPage() {
                     className="flex-1 flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-5">
+                      <div className="flex items-center justify-between border-b border-white/[0.10] pb-4 mb-5">
                         <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                           <TrendingUp size={14} className="text-sky-400" />
                           Intel Feed
@@ -772,7 +701,7 @@ export default function LandingPage() {
                             />
                             <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Live</span>
                           </div>
-                          <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-zinc-500 px-2.5 py-1 rounded-lg">
+                          <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.10] text-zinc-500 px-2.5 py-1 rounded-lg">
                             ALL
                           </span>
                         </div>
@@ -784,7 +713,7 @@ export default function LandingPage() {
                           { label: 'Changes', unit: 'this week', color: 'text-sky-400', trend: '↑ +2', trendColor: 'text-sky-400', idx: 1 },
                           { label: 'Plays', unit: 'ready', color: 'text-emerald-400', trend: '↑ new', trendColor: 'text-emerald-400', idx: 2 },
                         ].map((s) => (
-                          <div key={s.label} className="bg-white/[0.02] border border-white/[0.04] p-3 rounded-2xl">
+                          <div key={s.label} className="bg-white/[0.04] border border-white/[0.04] p-3 rounded-xl">
                             <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
                             <div className={`text-sm font-bold font-mono ${s.color} flex items-baseline gap-1`}>
                               <motion.span
@@ -817,7 +746,7 @@ export default function LandingPage() {
                                 transition: { delay: i * 0.07, duration: 0.22, ease: 'easeOut' },
                               }}
                               exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
-                              className="bg-white/[0.02] border border-white/[0.05] p-3 rounded-xl"
+                              className="bg-white/[0.04] border border-white/[0.05] p-3 rounded-xl"
                             >
                               <div className="flex items-center gap-2 mb-1.5">
                                 <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>
@@ -833,7 +762,7 @@ export default function LandingPage() {
                         </AnimatePresence>
                       </div>
 
-                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-2xl flex items-center justify-between gap-3">
+                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-xl flex items-center justify-between gap-3">
                         <div>
                           <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
@@ -877,16 +806,14 @@ export default function LandingPage() {
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-600 font-mono">
+                    <div className="pt-4 mt-2 border-t border-white/[0.10] flex items-center justify-between text-[10px] text-zinc-600 font-mono">
                       <span>4 pages · 2 API routes · 1 docs path monitored</span>
-                      <MotionLink
+                      <Link
                         href="/auth/login"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.97 }}
                         className="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1"
                       >
                         Export Battle Card <ArrowUpRight size={9} />
-                      </MotionLink>
+                      </Link>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -897,10 +824,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
-      <section id="features" className="py-24 px-6 bg-[#050c1a] relative">
+      <section id="features" className="py-24 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto">
 
           <motion.div
@@ -927,7 +854,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-sky-950/25 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-sky-500/20 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6"
+              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-sky-500/35 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
                 <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-center text-amber-400 mb-4">
@@ -938,7 +865,7 @@ export default function LandingPage() {
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full sm:w-48 h-20 bg-[#030712] rounded-2xl border border-white/[0.04] overflow-hidden relative">
+              <div className="flex-shrink-0 w-full sm:w-48 h-20 bg-[var(--surface-raised)] rounded-xl border border-white/[0.08] overflow-hidden relative">
                 <svg className="w-full h-full p-2" viewBox="0 0 180 64">
                   <motion.path
                     d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
@@ -986,7 +913,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-gradient-to-br from-emerald-950/20 via-white/[0.02] to-transparent border border-white/[0.06] rounded-3xl p-6 hover:border-emerald-500/15 transition-colors duration-300"
+              className="md:col-span-2 bg-gradient-to-br from-emerald-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-emerald-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 mb-4">
                 <MessageSquare size={18} />
@@ -1014,7 +941,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-[#020810] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
+              className="md:col-span-1 bg-gradient-to-b from-sky-950/20 to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
                 <Zap size={18} />
@@ -1042,7 +969,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-1 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300 flex flex-col justify-between"
+              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
                 <div className="w-9 h-9 bg-violet-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center text-violet-400 mb-4">
@@ -1075,7 +1002,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 hover:border-white/[0.1] transition-colors duration-300"
+              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="w-9 h-9 bg-zinc-500/10 border border-zinc-500/20 rounded-lg flex items-center justify-center text-zinc-400 mb-4">
                 <Calendar size={18} />
@@ -1107,15 +1034,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
-      {/* ── ROADMAP ──────────────────────────────────────────────────────── */}
-      <PlatformRoadmap />
-
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
-      <section id="battle-card" className="py-24 px-6 bg-[#050c1a] relative">
+      <section id="battle-card" className="py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-5xl mx-auto">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
@@ -1135,7 +1057,7 @@ export default function LandingPage() {
               </p>
             </motion.div>
 
-            <div className="flex p-1 bg-white/[0.03] border border-white/[0.06] rounded-full gap-0.5 flex-shrink-0">
+            <div className="flex p-1 bg-white/[0.03] border border-white/[0.10] rounded-full gap-0.5 flex-shrink-0">
               {(['stripe', 'paypal', 'square'] as const).map((comp) => (
                 <motion.button
                   key={comp}
@@ -1173,10 +1095,10 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={1}
-            className="border border-white/[0.06] rounded-3xl hover:border-white/[0.1] transition-colors duration-300 overflow-hidden bg-[#060b18]"
+            className="border border-[var(--border-default)] rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]"
           >
             {/* Card header */}
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-white/[0.10] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg ${currentCard.logoColor} flex items-center justify-center`}>
                   <RivalscopeLogo size={13} className="text-white" />
@@ -1231,9 +1153,9 @@ export default function LandingPage() {
                   </div>
                   <div className="space-y-4">
                     {currentCard.complaints.map((c, j) => (
-                      <div key={j} className="border-l-2 border-red-500/20 pl-3">
+                      <div key={j} className="pl-0 space-y-1">
                         <p className="text-xs text-zinc-400 italic leading-relaxed min-h-[32px]">
-                          <TypewriterComplaint text={c.text} delay={200} />
+                          {c.text}
                         </p>
                         <span className="text-[10px] font-mono text-zinc-600 mt-1 block">{c.source}</span>
                       </div>
@@ -1303,10 +1225,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-[#040812] relative">
+      <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -1317,20 +1239,18 @@ export default function LandingPage() {
               custom={0}
             >
               <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">05 — Local</p>
-              <h2 className="text-[36px] lg:text-[46px] font-bold tracking-tight text-white leading-[1.1] mb-5">
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5">
                 Built for local<br className="hidden lg:block" /> businesses too
               </h2>
               <p className="text-zinc-400 text-sm leading-relaxed mb-6">
                 Not just SaaS. Crawl Google Maps reviews, social activity, and pricing for physical salons, cafes, gyms, and nearby competitors.
               </p>
-              <MotionLink
+              <Link
                 href="/auth/login"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-sky-400 hover:text-sky-300 transition-colors"
               >
                 See local plan <ArrowRight size={13} />
-              </MotionLink>
+              </Link>
             </motion.div>
             <div className="grid grid-cols-1 gap-3">
               {[
@@ -1345,7 +1265,7 @@ export default function LandingPage() {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0 }}
-                  className="flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:border-white/[0.1] transition-colors duration-300"
+                  className="flex items-start gap-3 bg-[var(--surface-base)]/80 border border-[var(--border-default)] p-4 rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-md"
                 >
                   <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
                     {item.icon}
@@ -1361,10 +1281,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
 
       {/* ── PRICING ─────────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 px-6 bg-[#050c1a] relative">
+      <section id="pricing" className="py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             variants={fadeUpVariants}
@@ -1382,10 +1302,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
 
       {/* ── CTA ─────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-[#040812] relative overflow-hidden">
+      <section className="py-24 px-6 bg-[var(--surface-base)] relative overflow-hidden">
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}
@@ -1393,7 +1313,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/20 bg-gradient-to-br from-sky-950/30 via-[#040812] to-[#040812] rounded-3xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_80px_rgba(14,165,233,0.06)]"
+            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_100px_rgba(14,165,233,0.12),0_0_0_1px_rgba(56,189,248,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4">
@@ -1424,9 +1344,9 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ──────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/[0.06] py-14 px-6">
+      <footer className="border-t border-[var(--border-default)] py-14 px-6 bg-[var(--surface-base)]">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 pb-10 mb-10 border-b border-white/[0.05]">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 pb-10 mb-10 border-b border-white/[0.08]">
 
             {/* Brand */}
             <div className="col-span-2 space-y-4">
@@ -1469,7 +1389,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-xs text-zinc-500">
                 <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="https://status.rivalscope.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Status</a></li>
+                <li><a href="mailto:manssjones@gmail.com" className="hover:text-white transition-colors">Support</a></li>
                 <li>
                   <a href="mailto:manssjones@gmail.com" className="hover:text-white transition-colors">
                     Contact
