@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContain
 import { ReviewTrend } from '@/lib/types';
 
 export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
-  const colors = ["#0ea5e9", "#10b981", "#f59e0b", "#38bdf8", "#ec4899", "#a78bfa", "#f43f5e"];
+  const colors = ["#0ea5e9", "#10b981", "#f59e0b", "#38bdf8", "#a78bfa", "#64748b", "#0284c7"];
 
   const allDates = Array.from(
     new Set(

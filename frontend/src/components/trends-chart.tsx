@@ -9,7 +9,7 @@ interface ChartCompetitor {
 }
 
 export default function TrendsChart({ data, competitors }: { data: Record<string, string | number>[], competitors: ChartCompetitor[] }) {
-  const colors = ["#0ea5e9", "#10b981", "#f59e0b", "#38bdf8", "#ec4899", "#a78bfa", "#f43f5e"];
+  const colors = ["#0ea5e9", "#10b981", "#f59e0b", "#38bdf8", "#a78bfa", "#64748b", "#0284c7"];
 
   return (
     <div className="h-[220px] w-full group">
