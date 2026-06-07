@@ -46,7 +46,25 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
         throw new Error('Failed to generate Battle Card');
       }
 
-      const data = await res.json();
+      const raw = await res.json();
+      // Normalize old API format (strings in what_changed, talking_points, win_conditions)
+      // vs new format (objects in what_changed, playbook, strategic_signals)
+      const whatChanged: { type: string; text: string }[] = Array.isArray(raw.what_changed)
+        ? raw.what_changed.map((item: unknown) =>
+            typeof item === 'string'
+              ? { type: 'change', text: item }
+              : (item as { type: string; text: string })
+          )
+        : [];
+      const data: BattleCardData = {
+        title: raw.title || '',
+        executive_summary: raw.executive_summary || '',
+        what_changed: whatChanged,
+        weaknesses: raw.weaknesses || [],
+        strategic_signals: raw.strategic_signals || raw.win_conditions || [],
+        playbook: raw.playbook || raw.talking_points || raw.actions || [],
+        generated_at: raw.generated_at || new Date().toISOString(),
+      };
       setCardData(data);
     } catch {
       setError('Could not generate Battle Card. Make sure Anthropic API Key is set.');
