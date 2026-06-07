@@ -83,7 +83,7 @@ const ScannerCardStream = ({
     direction: direction,
     isDragging: false,
     lastMouseX: 0,
-    lastTime: performance.now(),
+    lastTime: 0,
     cardLineWidth: (400 + cardGap) * cardImages.length * repeat,
     friction: friction,
     minVelocity: 20,
@@ -103,6 +103,7 @@ const ScannerCardStream = ({
   }, []);
 
   useEffect(() => {
+    cardStreamState.current.lastTime = performance.now();
     const cardLine = cardLineRef.current;
     const container = containerRef.current;
     const particleCanvas = particleCanvasRef.current;
@@ -170,7 +171,7 @@ const ScannerCardStream = ({
     scannerCanvas.height = cH;
 
     type SParticle = { x: number; y: number; vx: number; vy: number; radius: number; alpha: number; life: number; decay: number };
-    let scannerParticles: SParticle[] = [];
+    const scannerParticles: SParticle[] = [];
     const baseMax = 600;
     let curMax = baseMax;
     const scanMax = 2000;

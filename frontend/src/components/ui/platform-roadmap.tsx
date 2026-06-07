@@ -4,13 +4,20 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { Globe, Search, Zap, FileText, Check, Loader2 } from 'lucide-react';
 
+const PATHS = ['/pricing', '/docs/api', '/changelog'];
+const BULLETS = [
+  'Pricing changed · +14%',
+  '3 new complaints · support',
+  'Recommended: run campaign',
+];
+
 // ─── STEP 1 PREVIEW ──────────────────────────────────────────────────────────
 function Step1Preview({ isHovered }: { isHovered: boolean }) {
   const [text, setText] = useState('');
 
   useEffect(() => {
     if (!isHovered) {
-      setText('');
+      queueMicrotask(() => setText(''));
       return;
     }
 
@@ -51,18 +58,17 @@ function Step1Preview({ isHovered }: { isHovered: boolean }) {
 // ─── STEP 2 PREVIEW ──────────────────────────────────────────────────────────
 function Step2Preview({ isHovered }: { isHovered: boolean }) {
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
-  const paths = ['/pricing', '/docs/api', '/changelog'];
 
   useEffect(() => {
     if (!isHovered) {
-      setActiveIndices([]);
+      queueMicrotask(() => setActiveIndices([]));
       return;
     }
     let active = true;
     const run = async () => {
       while (active) {
         setActiveIndices([]);
-        for (let i = 0; i < paths.length; i++) {
+        for (let i = 0; i < PATHS.length; i++) {
           if (!active) return;
           await new Promise((r) => setTimeout(r, 800));
           if (!active) return;
@@ -79,7 +85,7 @@ function Step2Preview({ isHovered }: { isHovered: boolean }) {
 
   return (
     <div className="w-full h-full flex flex-col justify-center px-4 gap-2 font-mono text-[10px]">
-      {paths.map((path, idx) => {
+      {PATHS.map((path, idx) => {
         const isDone = activeIndices.includes(idx);
         const isCurrent = activeIndices.length === idx;
         return (
@@ -116,7 +122,7 @@ function Step3Preview({ isHovered }: { isHovered: boolean }) {
 
   useEffect(() => {
     if (!isHovered) {
-      setPhase(0);
+      queueMicrotask(() => setPhase(0));
       return;
     }
     let active = true;
@@ -184,7 +190,7 @@ function Step4Preview({ isHovered }: { isHovered: boolean }) {
 
   useEffect(() => {
     if (!isHovered) {
-      setRows(0);
+      queueMicrotask(() => setRows(0));
       return;
     }
     let active = true;
@@ -206,12 +212,6 @@ function Step4Preview({ isHovered }: { isHovered: boolean }) {
     };
   }, [isHovered]);
 
-  const bullets = [
-    'Pricing changed · +14%',
-    '3 new complaints · support',
-    'Recommended: run campaign',
-  ];
-
   return (
     <div className="w-full h-full flex flex-col justify-center px-3 font-mono text-[9px]">
       <div className="bg-[var(--surface-base)] border border-white/[0.08] rounded-md p-2 shadow-lg">
@@ -219,7 +219,7 @@ function Step4Preview({ isHovered }: { isHovered: boolean }) {
           <span className="text-sky-400">⚡</span> Weekly Intel
         </div>
         <div className="space-y-1">
-          {bullets.map((b, i) => (
+          {BULLETS.map((b, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -4 }}

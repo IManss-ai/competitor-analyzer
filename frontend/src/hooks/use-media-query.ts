@@ -10,7 +10,9 @@ export function useMediaQuery(query: string): boolean {
 
     const result = window.matchMedia(query);
     result.addEventListener("change", onChange);
-    setValue(result.matches);
+    queueMicrotask(() => {
+      setValue(result.matches);
+    });
 
     return () => result.removeEventListener("change", onChange);
   }, [query]);

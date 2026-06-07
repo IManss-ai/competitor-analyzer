@@ -87,7 +87,7 @@ export default function LoginPage() {
       const data = await res.json();
       
       if (res.ok && data.session_token) {
-        window.location.href = `/api/auth/callback?session_token=${data.session_token}`;
+        window.location.replace(`/api/auth/callback?session_token=${data.session_token}`);
       } else {
         setError(data.detail || 'Google authentication failed.');
       }
@@ -385,7 +385,7 @@ export default function LoginPage() {
                   </button>
 
                   <p className="text-[11px] text-center leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                    We'll send a one-time sign-in link to your inbox.
+                    We&apos;ll send a one-time sign-in link to your inbox.
                   </p>
                 </form>
               )}

@@ -174,7 +174,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (!card3Hovered) {
-      setTypewriterText("");
+      queueMicrotask(() => setTypewriterText(""));
       return;
     }
     const fullText = "› Email: 'We heard Stripe raised rates...'";

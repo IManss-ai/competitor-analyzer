@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'motion/react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { ArrowLeft } from 'lucide-react';
 
@@ -64,7 +63,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-white">5. Limitation of Liability</h2>
             <p>
-              Rivalscope scans and playbooks are generated using automated algorithms and large language models. We do not warrant the absolute accuracy of classified changes or generated scripts. Rivalscope is provided "as is" with no warranty for specific outcomes.
+              Rivalscope scans and playbooks are generated using automated algorithms and large language models. We do not warrant the absolute accuracy of classified changes or generated scripts. Rivalscope is provided &quot;as is&quot; with no warranty for specific outcomes.
             </p>
           </section>
         </div>

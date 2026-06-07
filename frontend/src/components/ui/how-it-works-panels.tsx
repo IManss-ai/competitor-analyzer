@@ -42,11 +42,13 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
 
   useEffect(() => {
     if (!isHovered) {
-      setText1('');
-      setShowCheck1(false);
-      setText2('');
-      setShowCheck2(false);
-      setShowBadge(false);
+      queueMicrotask(() => {
+        setText1('');
+        setShowCheck1(false);
+        setText2('');
+        setShowCheck2(false);
+        setShowBadge(false);
+      });
       return;
     }
 
@@ -297,7 +299,9 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
 
   useEffect(() => {
     if (isHovered) {
-      setAnimKey((prev) => prev + 1);
+      queueMicrotask(() => {
+        setAnimKey((prev) => prev + 1);
+      });
     }
   }, [isHovered]);
 

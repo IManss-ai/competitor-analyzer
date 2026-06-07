@@ -35,31 +35,50 @@ const navItems = [
   { href: '/settings',              label: 'Settings',     Icon: Settings },
 ];
 
+interface SettingsData {
+  trial_ends_at?: string;
+  business_type?: string;
+  subscription_status?: string;
+}
+
 export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const pathname = usePathname();
-  const [settings, setSettings] = useState<any>(null);
+  const [settings, setSettings] = useState<SettingsData | null>(null);
   const [scanning, setScanning] = useState(false);
   const [scanDone, setScanDone] = useState(false);
+  const [trialDays, setTrialDays] = useState(0);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/v1/settings`, {
-      headers: { Authorization: `Bearer ${userId}` },
-    })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(data => setSettings(data))
-      .catch(() => {
-        setSettings({
-          subscription_status: 'trialing',
-          trial_ends_at: new Date(Date.now() + 10 * 24 * 3600 * 1000).toISOString(),
-          business_type: 'saas',
+    async function fetchSettings() {
+      try {
+        const res = await fetch(`${apiUrl}/api/v1/settings`, {
+          headers: {
+            Authorization: `Bearer ${userId}`,
+          },
         });
-      });
+        if (res.ok) {
+          const data = await res.json();
+          setSettings(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchSettings();
   }, [userId, apiUrl]);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      if (settings?.trial_ends_at) {
+        const diff = new Date(settings.trial_ends_at).getTime() - Date.now();
+        setTrialDays(Math.max(0, Math.ceil(diff / (1000 * 3600 * 24))));
+      } else {
+        setTrialDays(0);
+      }
+    });
+  }, [settings?.trial_ends_at]);
 
   const handleScanAll = async () => {
     if (scanning) return;
@@ -84,12 +103,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     }
   };
 
-  const getTrialDaysLeft = () => {
-    if (!settings?.trial_ends_at) return 0;
-    const diff = new Date(settings.trial_ends_at).getTime() - Date.now();
-    return Math.max(0, Math.ceil(diff / (1000 * 3600 * 24)));
-  };
-
   const getPlanBadge = () => {
     if (!settings) return 'Trial';
     if (settings.business_type === 'local') return 'Local';
@@ -97,7 +110,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     return 'Trial';
   };
 
-  const trialDays = getTrialDaysLeft();
   const planBadge = getPlanBadge();
   const isOnTrial = settings?.subscription_status === 'trialing';
   const trialProgress = Math.min(100, ((14 - trialDays) / 14) * 100);

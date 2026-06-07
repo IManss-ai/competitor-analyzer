@@ -172,7 +172,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                         <div className="p-4 bg-[#0e1628]/60 border border-white/10 rounded-xl">
                           <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-zinc-500 mb-1.5">Executive Summary</div>
                           <p className="text-zinc-300 text-sm leading-relaxed italic">
-                            "{cardData.executive_summary}"
+                            &quot;{cardData.executive_summary}&quot;
                           </p>
                         </div>
                       )}
