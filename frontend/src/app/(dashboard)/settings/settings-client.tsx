@@ -182,10 +182,10 @@ export default function SettingsClient({
 
   const statusCfg = statusConfig[settings.subscription_status] ?? {
     label: settings.subscription_status,
-    dot: 'bg-zinc-400',
-    text: 'text-zinc-600',
-    bg: 'bg-zinc-100',
-    border: 'border-zinc-200',
+    dot: 'bg-zinc-500',
+    text: 'text-zinc-400',
+    bg: 'bg-white/[0.04]',
+    border: 'border-white/10',
   };
 
   return (

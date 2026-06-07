@@ -108,7 +108,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
             >
               <div 
                 className={`rs-card p-5 flex flex-col border-l-[4px] ${approvedId === action.id ? 'bg-emerald-500/5 border-emerald-500/20' : ''}`}
-                style={{ borderLeftColor }}
+                style={{ borderLeftColor: approvedId === action.id ? 'rgba(16,185,129,0.5)' : borderLeftColor }}
               >
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-5 flex-wrap">

@@ -79,7 +79,7 @@ export default function OnboardingModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="relative z-10 rounded-2xl shadow-2xl p-8 md:p-10 max-w-xl w-full mx-4 border border-white/5"
+            className="relative z-10 rounded-xl shadow-2xl p-8 md:p-10 max-w-xl w-full mx-4 border border-white/5"
             style={{ backgroundColor: 'var(--surface-overlay)' }}
           >
             <div className="text-center mb-8">
