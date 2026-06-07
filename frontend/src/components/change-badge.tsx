@@ -1,39 +1,28 @@
 import { clsx } from 'clsx';
 
-const badgeConfig: Record<
-  string,
-  { bg: string; text: string; border: string; label: string }
-> = {
-  pricing_change: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-700',
-    border: 'border-amber-200',
-    label: 'Pricing',
-  },
-  feature_add: {
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-700',
-    border: 'border-emerald-200',
-    label: 'Feature',
-  },
-  repositioning: {
-    bg: 'bg-blue-50',
-    text: 'text-blue-700',
-    border: 'border-blue-200',
-    label: 'Positioning',
-  },
-  minor_copy: {
-    bg: 'bg-zinc-100',
-    text: 'text-zinc-500',
-    border: 'border-zinc-200',
-    label: 'Copy',
-  },
-  no_change: {
-    bg: 'bg-zinc-50',
-    text: 'text-zinc-400',
-    border: 'border-zinc-200',
-    label: 'No change',
-  },
+// Human-readable labels per change type. Visual styling (color, radius, mono,
+// uppercase) comes from the locked .badge / .badge-{type} classes in globals.css
+// so badges are identical everywhere they render (queue, dashboard, battle card).
+const LABELS: Record<string, string> = {
+  pricing_change: 'Pricing',
+  feature_add: 'Feature',
+  new_feature: 'Feature',
+  repositioning: 'Positioning',
+  positioning_shift: 'Positioning',
+  review_trend: 'Reviews',
+  minor_copy: 'Copy',
+  no_change: 'No change',
+};
+
+const BADGE_CLASS: Record<string, string> = {
+  pricing_change: 'badge-pricing_change',
+  feature_add: 'badge-feature_add',
+  new_feature: 'badge-new_feature',
+  repositioning: 'badge-repositioning',
+  positioning_shift: 'badge-positioning_shift',
+  review_trend: 'badge-review_trend',
+  minor_copy: 'badge-minor_copy',
+  no_change: 'badge-no_change',
 };
 
 interface ChangeBadgeProps {
@@ -41,18 +30,8 @@ interface ChangeBadgeProps {
 }
 
 export default function ChangeBadge({ type }: ChangeBadgeProps) {
-  const config = badgeConfig[type] ?? badgeConfig.minor_copy;
+  const label = LABELS[type] ?? LABELS.minor_copy;
+  const badgeClass = BADGE_CLASS[type] ?? 'badge-minor_copy';
 
-  return (
-    <span
-      className={clsx(
-        'inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold tracking-wide',
-        config.bg,
-        config.text,
-        config.border
-      )}
-    >
-      {config.label}
-    </span>
-  );
+  return <span className={clsx('badge', badgeClass)}>{label}</span>;
 }
