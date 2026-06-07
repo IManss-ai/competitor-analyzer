@@ -275,7 +275,7 @@ export function PlatformRoadmap() {
     {
       title: 'Playbook in your inbox Monday',
       icon: FileText,
-      description: 'Every Monday morning, an brief with competitor intel and your exact response scripts.',
+      description: 'Every Monday morning, a brief with competitor intel and your exact response scripts.',
       renderPreview: (hovered: boolean) => <Step4Preview isHovered={hovered} />,
     },
   ];

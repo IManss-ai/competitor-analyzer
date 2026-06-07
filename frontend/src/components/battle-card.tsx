@@ -70,7 +70,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
       };
       setCardData(data);
     } catch {
-      setError('Could not generate Battle Card. Make sure Anthropic API Key is set.');
+      setError('We could not generate this Battle Card right now. Please try again in a moment.');
     } finally {
       setLoading(false);
     }

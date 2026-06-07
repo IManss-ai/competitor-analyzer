@@ -183,7 +183,7 @@ export default function CompetitorManager({
                   disabled={adding}
                   className="rs-btn-primary w-full md:w-auto cursor-pointer"
                 >
-                  {adding ? 'Adding...' : 'Add to watchlist'}
+                  {adding ? 'Adding…' : 'Add to watchlist'}
                 </button>
               </form>
 
