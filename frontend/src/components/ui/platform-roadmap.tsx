@@ -152,7 +152,7 @@ function Step3Preview({ isHovered }: { isHovered: boolean }) {
             phase >= 1 ? 'text-red-500/50' : 'text-zinc-400'
           }`}
         >
-          Starter: $49/mo
+          Pro plan: $100/mo
         </span>
         <motion.div
           initial={{ scaleX: 0 }}
@@ -172,7 +172,7 @@ function Step3Preview({ isHovered }: { isHovered: boolean }) {
               transition={{ duration: 0.3 }}
               className="text-emerald-400 font-semibold flex items-center gap-1.5"
             >
-              <span>+ Starter: $129/mo</span>
+              <span>+ Pro plan: $130/mo</span>
               <span className="text-[8px] bg-emerald-500/10 border border-emerald-500/20 px-1 py-0.5 rounded text-emerald-400 font-normal">
                 +30%
               </span>
