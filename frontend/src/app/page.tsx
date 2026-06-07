@@ -272,7 +272,7 @@ export default function LandingPage() {
           initial={{ y: -24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className={`w-full max-w-5xl rounded-full border px-5 py-2.5 flex items-center justify-between transition-all duration-300 ${
+          className={`w-full max-w-5xl rounded-full border px-5 py-2.5 flex items-center justify-between transition-[background-color,border-color,box-shadow] duration-300 ${
             scrolled
               ? 'bg-[var(--surface-base)]/90 border-[var(--border-default)] shadow-[0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl'
               : 'bg-[var(--surface-base)]/60 border-[var(--border-subtle)] backdrop-blur-md'
@@ -322,7 +322,7 @@ export default function LandingPage() {
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 transition-colors whitespace-nowrap"
             >
               Get started
               <ArrowRight size={10} />
@@ -331,7 +331,7 @@ export default function LandingPage() {
               onClick={() => setMenuOpen(!menuOpen)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="p-1.5 md:hidden flex flex-col gap-1 items-center justify-center w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+              className="md:hidden flex flex-col gap-1 items-center justify-center w-11 h-11 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
               aria-label="Toggle menu"
             >
               <span className={`w-3.5 h-0.5 bg-white transition-transform duration-300 ${menuOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
@@ -432,7 +432,7 @@ export default function LandingPage() {
                   href="/auth/login"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 transition-all hero-trial-btn relative overflow-hidden"
+                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 transition-colors hero-trial-btn relative overflow-hidden"
                 >
                   Start 14-day free trial
                   <ArrowRight size={12} />
@@ -793,7 +793,7 @@ export default function LandingPage() {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
-                          className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-all flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
+                          className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
                         >
                           <AnimatePresence mode="wait">
                             {copiedPlaybook ? (
@@ -1373,7 +1373,7 @@ export default function LandingPage() {
               initial="rest"
               whileTap={{ scale: 0.97 }}
               animate={{ scale: 1 }}
-              className="inline-flex items-center gap-2.5 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 transition-all text-sm relative"
+              className="inline-flex items-center gap-2.5 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 transition-colors text-sm relative"
             >
               <span>Start free trial</span>
               <motion.span
