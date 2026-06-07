@@ -27,5 +27,11 @@ export async function GET(request: NextRequest) {
   };
   await session.save();
 
+  // If user signed up from a pricing CTA, route straight to checkout for that plan
+  const plan = request.nextUrl.searchParams.get('plan');
+  if (plan === 'saas' || plan === 'local') {
+    return NextResponse.redirect(new URL(`/billing/checkout?plan=${plan}`, request.url));
+  }
+
   return NextResponse.redirect(new URL('/dashboard', request.url));
 }

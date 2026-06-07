@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
@@ -14,12 +14,23 @@ export default function LoginPage() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+  const [plan, setPlan] = useState<'saas' | 'local' | null>(null);
+
   // Google Sign-In simulation states
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleEmail, setGoogleEmail] = useState('');
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const p = new URLSearchParams(window.location.search).get('plan');
+    if (p === 'saas' || p === 'local') setPlan(p);
+  }, []);
+
+  const callbackBase = plan
+    ? `/api/auth/callback?plan=${plan}&session_token=`
+    : `/api/auth/callback?session_token=`;
 
   // Handle direct login (Email + Password)
   const handleDirectLogin = async (e: React.FormEvent) => {
@@ -37,7 +48,7 @@ export default function LoginPage() {
       
       if (res.ok && data.session_token) {
         // Exchange session token in Next.js and redirect
-        window.location.href = `/api/auth/callback?session_token=${data.session_token}`;
+        window.location.href = `${callbackBase}${data.session_token}`;
       } else {
         setError(data.detail || 'Failed to authenticate. Please check your credentials.');
       }
@@ -87,7 +98,7 @@ export default function LoginPage() {
       const data = await res.json();
       
       if (res.ok && data.session_token) {
-        window.location.replace(`/api/auth/callback?session_token=${data.session_token}`);
+        window.location.replace(`${callbackBase}${data.session_token}`);
       } else {
         setError(data.detail || 'Google authentication failed.');
       }
@@ -242,9 +253,29 @@ export default function LoginPage() {
               <h1 className="text-[22px] font-semibold mb-1 tracking-tight" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 Welcome back
               </h1>
-              <p className="text-[13px] mb-6" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-[13px] mb-4" style={{ color: 'var(--text-secondary)' }}>
                 Access your intelligence command center.
               </p>
+
+              {plan && (
+                <div
+                  className="mb-5 px-3 py-2 rounded-lg flex items-center gap-2"
+                  style={{
+                    background: plan === 'local' ? 'rgba(34,211,238,0.06)' : 'rgba(14,165,233,0.06)',
+                    border: plan === 'local' ? '1px solid rgba(34,211,238,0.20)' : '1px solid rgba(14,165,233,0.20)',
+                  }}
+                >
+                  <span className={`text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${plan === 'local' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-sky-500/10 text-sky-400'}`}>
+                    Plan
+                  </span>
+                  <span className="text-[12px]" style={{ color: 'var(--text-primary)' }}>
+                    {plan === 'local' ? 'Local Business — $19/mo' : 'SaaS Starter — $49/mo'}
+                  </span>
+                  <span className="ml-auto text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                    Checkout after sign in
+                  </span>
+                </div>
+              )}
 
               {error && (
                 <div
