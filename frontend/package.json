@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "vercel --prod --yes",
+    "deploy:preview": "vercel --yes"
   },
   "dependencies": {
     "@number-flow/react": "^0.6.0",

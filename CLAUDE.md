@@ -90,10 +90,9 @@ alembic revision --autogenerate -m "description_of_changes"
 - **Secondary Deployment Domain**: [https://competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app](https://competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app)
 - **Vercel Project**: `competitor-analyzer` (Owner: `imanss-ais-projects`)
 - **CI/CD Triggers**: Pushes to `origin/main` automatically build and deploy the frontend production build.
-- **Manual Vercel Deploy CLI**:
+- **Quick Deploy Command**:
   ```bash
-  cd frontend
-  vercel --prod
+  npm run deploy
   ```
 
 ### 3. Backend Deployment (Railway)
