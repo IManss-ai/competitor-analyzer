@@ -314,7 +314,7 @@ export function PlatformRoadmap() {
           {/* Connecting lines for Desktop */}
           <div className="absolute top-10 left-0 w-full h-[2px] hidden md:block z-0 pointer-events-none">
             {/* Segment 1 */}
-            <div className="absolute left-[12.5%] right-[62.5%] h-full bg-white/[0.04]">
+            <div className="absolute left-[calc(12.5%-12px)] right-[calc(62.5%+4px)] h-full bg-white/[0.04]">
               <motion.div
                 style={{ scaleX: scaleX1 }}
                 className="h-full bg-gradient-to-r from-sky-500/20 to-sky-500/40 origin-left"
@@ -330,7 +330,7 @@ export function PlatformRoadmap() {
             </div>
 
             {/* Segment 2 */}
-            <div className="absolute left-[37.5%] right-[37.5%] h-full bg-white/[0.04]">
+            <div className="absolute left-[calc(37.5%-4px)] right-[calc(37.5%-4px)] h-full bg-white/[0.04]">
               <motion.div
                 style={{ scaleX: scaleX2 }}
                 className="h-full bg-gradient-to-r from-sky-500/30 to-sky-500/40 origin-left"
@@ -346,7 +346,7 @@ export function PlatformRoadmap() {
             </div>
 
             {/* Segment 3 */}
-            <div className="absolute left-[62.5%] right-[12.5%] h-full bg-white/[0.04]">
+            <div className="absolute left-[calc(62.5%+4px)] right-[calc(12.5%-12px)] h-full bg-white/[0.04]">
               <motion.div
                 style={{ scaleX: scaleX3 }}
                 className="h-full bg-gradient-to-r from-sky-500/40 to-sky-500/50 origin-left"
