@@ -136,7 +136,7 @@ export default function LoginPage() {
           />
           <motion.div
             className="absolute bottom-[-10%] right-[-20%] w-[500px] h-[500px] rounded-full blur-[120px]"
-            style={{ background: 'rgba(99,102,241,0.08)' }}
+            style={{ background: 'rgba(14,165,233,0.08)' }}
             animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1] }}
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -211,11 +211,15 @@ export default function LoginPage() {
           
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 hover:opacity-85 transition-opacity max-w-fit">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-              <RivalscopeLogo size={14} className="text-white" />
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center"
+              style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
+            >
+              <RivalscopeLogo size={14} className="text-sky-400" />
             </div>
-            <span className="text-sm font-semibold text-[#0a0a0a] tracking-tight">
-              Rivalscope
+            <span className="text-sm font-semibold tracking-tight">
+              <span style={{ color: 'var(--text-primary)' }}>Rival</span>
+              <span className="text-sky-400">scope</span>
             </span>
           </Link>
 
