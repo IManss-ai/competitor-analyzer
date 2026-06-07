@@ -110,6 +110,12 @@ const ScannerCardStream = ({
     const scannerCanvas = scannerCanvasRef.current;
     if (!cardLine || !container || !particleCanvas || !scannerCanvas) return;
 
+    // Respect prefers-reduced-motion: a JS rAF loop can't be stopped by the
+    // global CSS reduced-motion rule, so gate it here and render one static frame.
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     cards.forEach((card) => originalAscii.current.set(card.id, card.ascii));
     let animationFrameId: number;
 
@@ -219,7 +225,7 @@ const ScannerCardStream = ({
 
         if (rl < sr && rr > sl) {
           any = true;
-          if (scanEffect === 'scramble' && wrapper.dataset.scanned !== 'true') runScramble(asciiPre, idx);
+          if (scanEffect === 'scramble' && !prefersReducedMotion && wrapper.dataset.scanned !== 'true') runScramble(asciiPre, idx);
           wrapper.dataset.scanned = 'true';
           const iL = Math.max(sl - rl, 0);
           const iR = Math.min(sr - rl, rect.width);
@@ -331,7 +337,7 @@ const ScannerCardStream = ({
         ctx.fill();
       });
 
-      animationFrameId = requestAnimationFrame(animate);
+      if (!prefersReducedMotion) animationFrameId = requestAnimationFrame(animate);
     };
 
     animationFrameId = requestAnimationFrame(animate);
