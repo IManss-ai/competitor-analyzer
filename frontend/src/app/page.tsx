@@ -524,7 +524,7 @@ export default function LandingPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="py-24 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25 backdrop-blur-sm"
+        className="py-16 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25 backdrop-blur-sm"
       >
         <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
           {[
@@ -570,11 +570,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
-
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" ref={commandCenterRef} className="py-24 px-6 bg-[var(--surface-base)] relative">
-        <div className="max-w-7xl mx-auto">
+      <section id="dashboard-showcase" ref={commandCenterRef} className="py-28 px-6 bg-[var(--surface-base)] relative">
+        <div className="pointer-events-none absolute top-24 left-[15%] w-[420px] h-[420px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
+        <div className="max-w-7xl mx-auto relative z-10">
 
           <motion.div
             variants={fadeUpVariants}
@@ -842,11 +841,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
-
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
-      <section id="features" className="py-24 px-6 bg-[var(--surface-raised)] relative">
-        <div className="max-w-5xl mx-auto">
+      <section id="features" className="py-28 px-6 bg-[var(--surface-raised)] relative">
+        <div className="pointer-events-none absolute top-24 right-[12%] w-[420px] h-[420px] bg-emerald-600/[0.05] rounded-full blur-[120px] z-0" />
+        <div className="max-w-5xl mx-auto relative z-10">
 
           <motion.div
             variants={fadeUpVariants}
@@ -872,18 +870,21 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-sky-500/35 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-sky-500/20 rounded-xl p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
-                <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-center text-amber-400 mb-4">
-                  <TrendingUp size={18} />
+                <div className="flex items-center gap-3 mb-5">
+                  <TrendingUp size={18} className="text-amber-400 flex-shrink-0" />
+                  <div className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent" />
+                  <span className="text-[10px] font-mono text-zinc-600">01</span>
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">Pricing Grid Monitoring</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full sm:w-48 h-20 bg-[var(--surface-raised)] rounded-xl border border-white/[0.08] overflow-hidden relative">
+              <div className="flex-shrink-0 w-full sm:w-56 h-20 bg-[var(--surface-raised)] rounded-xl border border-white/[0.08] overflow-hidden relative">
+                <span className="absolute top-1.5 right-2 z-10 text-[9px] font-mono text-sky-400">▲ +12%</span>
                 <svg className="w-full h-full p-2" viewBox="0 0 180 64">
                   <motion.path
                     d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
@@ -933,8 +934,10 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               className="md:col-span-2 bg-gradient-to-br from-emerald-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-emerald-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
-              <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 mb-4">
-                <MessageSquare size={18} />
+              <div className="flex items-center gap-3 mb-4">
+                <MessageSquare size={18} className="text-emerald-400 flex-shrink-0" />
+                <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent" />
+                <span className="text-[10px] font-mono text-zinc-600">02</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">Review Site Intelligence</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -961,8 +964,10 @@ export default function LandingPage() {
               onMouseLeave={() => setCard3Hovered(false)}
               className="md:col-span-1 bg-gradient-to-b from-sky-950/20 to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
             >
-              <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                <Zap size={18} />
+              <div className="flex items-center gap-3 mb-4">
+                <Zap size={18} className="text-sky-400 flex-shrink-0" />
+                <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
+                <span className="text-[10px] font-mono text-zinc-600">03</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">AI Copilot Playbooks</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -990,8 +995,10 @@ export default function LandingPage() {
               className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
-                <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 mb-4">
-                  <ShieldCheck size={18} />
+                <div className="flex items-center gap-3 mb-4">
+                  <ShieldCheck size={18} className="text-violet-400 flex-shrink-0" />
+                  <div className="h-px flex-1 bg-gradient-to-r from-violet-500/30 to-transparent" />
+                  <span className="text-[10px] font-mono text-zinc-600">04</span>
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">Zero-Access Crawling</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed">
@@ -1022,8 +1029,10 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
             >
-              <div className="w-9 h-9 bg-zinc-500/10 border border-zinc-500/20 rounded-lg flex items-center justify-center text-zinc-400 mb-4">
-                <Calendar size={18} />
+              <div className="flex items-center gap-3 mb-4">
+                <Calendar size={18} className="text-zinc-300 flex-shrink-0" />
+                <div className="h-px flex-1 bg-gradient-to-r from-zinc-500/30 to-transparent" />
+                <span className="text-[10px] font-mono text-zinc-600">05</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">Historical Changelog</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -1055,8 +1064,9 @@ export default function LandingPage() {
 
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
-      <section id="battle-card" className="py-24 px-6 bg-[var(--surface-base)] relative">
-        <div className="max-w-5xl mx-auto">
+      <section id="battle-card" className="py-28 px-6 bg-[var(--surface-base)] relative">
+        <div className="pointer-events-none absolute top-20 left-[10%] w-[420px] h-[420px] bg-amber-500/[0.04] rounded-full blur-[120px] z-0" />
+        <div className="max-w-5xl mx-auto relative z-10">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
             <motion.div
@@ -1270,11 +1280,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
-
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
       <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
-        <div className="max-w-5xl mx-auto">
+        <div className="pointer-events-none absolute top-20 right-[10%] w-[420px] h-[420px] bg-violet-600/[0.05] rounded-full blur-[120px] z-0" />
+        <div className="max-w-5xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               variants={fadeUpVariants}
@@ -1326,8 +1335,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
-
       {/* ── PRICING ─────────────────────────────────────────────────────── */}
       <section id="pricing" className="py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto">
@@ -1347,10 +1354,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
-
       {/* ── CTA ─────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-[var(--surface-base)] relative overflow-hidden">
+      <section className="py-28 px-6 bg-[var(--surface-base)] relative overflow-hidden">
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}
