@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface ChartCompetitor {
@@ -11,8 +12,16 @@ interface ChartCompetitor {
 export default function TrendsChart({ data, competitors }: { data: Record<string, string | number>[], competitors: ChartCompetitor[] }) {
   const colors = ["#0ea5e9", "#10b981", "#f59e0b", "#38bdf8", "#a78bfa", "#64748b", "#0284c7"];
 
+  // ResponsiveContainer measures its parent; rendering before the client lays
+  // out this fixed-height wrapper makes it read -1x-1 and log a Recharts
+  // warning (with an empty-chart flash). Gate on mount so it only measures the
+  // real 220px box.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     <div className="h-[220px] w-full group">
+      {mounted && (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
@@ -47,6 +56,7 @@ export default function TrendsChart({ data, competitors }: { data: Record<string
           ))}
         </LineChart>
       </ResponsiveContainer>
+      )}
     </div>
   );
 }
