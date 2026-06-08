@@ -425,10 +425,10 @@ export default function HowItWorksPanels() {
                   animate={{
                     scale: isHovered ? 1.15 : 1,
                     borderColor: isHovered ? '#6a96c8' : 'rgba(79, 124, 176, 0.2)',
-                    backgroundColor: isHovered ? '#040a18' : 'rgba(79, 124, 176, 0.05)',
+                    backgroundColor: isHovered ? 'rgba(79, 124, 176, 0.12)' : 'rgba(79, 124, 176, 0.05)',
                   }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-[#040812] flex items-center justify-center text-xs md:text-sm font-mono font-bold text-sky-400"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-[var(--surface-raised)] flex items-center justify-center text-xs md:text-sm font-mono font-bold text-sky-400"
                 >
                   {step.n}
                 </motion.div>
