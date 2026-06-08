@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const session = request.cookies.get('rivalscope-session');
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't need auth
-  const publicRoutes = ['/', '/auth/login', '/auth/verify', '/api/auth/callback'];
+  // Public routes that don't need auth ('/share' = public battle-card links)
+  const publicRoutes = ['/', '/share', '/auth/login', '/auth/verify', '/api/auth/callback'];
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
   if (!session && !isPublicRoute) {
