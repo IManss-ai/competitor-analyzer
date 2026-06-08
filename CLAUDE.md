@@ -36,12 +36,11 @@ Rivalscope is a premium competitive intelligence SaaS for founders and sales tea
 
 ## 🎨 Design System & Brand Guidelines
 
-Rivalscope uses a locked dark theme that mimics a Bloomberg terminal with taste:
-- **Base Surfaces**: Page background `--surface-base` (`#070b14`), Card backgrounds `--surface-raised` (`#0e1628`).
-- **Brand Accent**: Sky Blue (`#0ea5e9` for primary, `#38bdf8` for hover, `#0284c7` for shadow/glow/border).
-- **Typography**: Geist Sans for page titles and main UI, Geist Mono for raw data, URL paths, stats, and badges.
-- **Border Radiuses**: Buttons & inputs = `8px` (`rounded-lg`), Cards & modals = `12px` (`rounded-xl`).
-- **Spacing**: Predictable 8pt rhythm scale (`4px`, `8px`, `12px`, `16px`, `24px`, `32px`, `48px`, `64px`). No random spacing values.
+**Always read `DESIGN.md` before any visual or UI work.** The design system is mid-migration:
+
+- **Target (v3 "Intelligence Desk"):** institutional authority. Paper-light default + ink-dark alt, oxblood `#8b2c2c` accent, Archivo grotesk + IBM Plex Mono (no serif), sharp `4px` corners, broadsheet hairline rules. Full spec in `DESIGN.md`; rollout in `DESIGN-REBUILD-PLAN.md`.
+- **Current code (v2, still shipping):** locked dark theme — `--surface-base` `#070b14`, `--surface-raised` `#0e1628`, Sky Blue `#0ea5e9` accent, Geist Sans/Mono, `8`/`12px` radius.
+- **During migration:** for screens already cut over to v3, follow `DESIGN.md`. For screens still on v2, match the existing v2 code — do NOT mix v2 and v3 in one view. The 8pt spacing scale (`4 8 12 16 24 32 48 64`) is unchanged across both.
 
 ---
 

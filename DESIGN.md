@@ -1,166 +1,163 @@
-# Rival Scope — Design System v2
+# Rivalscope — Design System v3 ("Intelligence Desk")
 
-**Direction:** Premium Dark Intelligence Platform  
-**Personality:** Sharp, data-forward, authoritative. Feels like a Bloomberg terminal with taste.
+**Direction:** Institutional authority. A primary-source research terminal you'd trust with revenue decisions.
+**Personality:** Calm, serious, precise. Reads like an institutional briefing or a financial ledger, not a colorful SaaS dashboard.
+**Memorable thing:** "This is a primary source." Authority through restraint, editorial-grotesk typography, and dense data presented cleanly.
+
+> Supersedes v2 ("Premium Dark Intelligence Platform", sky-blue on blue-black). v3 is a deliberate fresh direction chosen 2026-06-08. **Migration status: SPEC ONLY.** The live app still renders v2 until the rebuild in `DESIGN-REBUILD-PLAN.md` lands. Until then, code and this doc intentionally diverge.
+
+The headline departures from v2: a warm **paper-light** default surface (v2 was all-dark), an **oxblood** accent (v2 was sky blue), a **grotesk + mono** type system with no serif (v2 was Geist), and **sharp 4px** corners with hairline "ledger" rules instead of heavy cards.
 
 ---
 
-## Typography
+## Surfaces — dual mode, paper leads
+
+Paper-light is the **default** brand environment; ink-dark is a first-class alternate.
+
+### Paper (default / light)
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--paper` | `#f5f2ec` | Page background (warm off-white briefing paper) |
+| `--panel` | `#ffffff` | Cards / panels |
+| `--raised` | `#fbf9f5` | Hover / inset tints |
+| `--ink` | `#1a1714` | Primary text, headlines |
+| `--secondary` | `#6b6258` | Body, descriptions |
+| `--muted` | `#9a9186` | Labels, datelines, timestamps |
+| `--rule` | `rgba(26,23,20,0.12)` | Section + container rules |
+| `--rule-soft` | `rgba(26,23,20,0.07)` | Row dividers |
+
+### Ink (dark)
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--paper` | `#16140f` | Page background (warm near-black, not blue-black) |
+| `--panel` | `#1f1c16` | Cards / panels |
+| `--raised` | `#211e17` | Hover / inset |
+| `--ink` | `#eae6dd` | Primary text |
+| `--secondary` | `#a8a094` | Body |
+| `--muted` | `#6f685c` | Labels |
+| `--rule` | `rgba(234,230,221,0.14)` | Rules |
+| `--rule-soft` | `rgba(234,230,221,0.07)` | Dividers |
+
+---
+
+## Accent — Oxblood (one color, used sparingly)
+
+Oxblood is the only brand color. It appears on the wordmark mark, the active nav item, the primary button, key tags, and thin section rules. Nowhere else. It is **not** an error color (errors get their own semantic red).
+
+| Token | Paper | Ink |
+|-------|-------|-----|
+| `--oxblood` | `#8b2c2c` | `#c0524f` |
+| `--oxblood-hover` | `#722525` | `#cf6360` |
+| `--oxblood-subtle` | `rgba(139,44,44,0.08)` | `rgba(192,82,79,0.12)` |
+| `--oxblood-rule` | `rgba(139,44,44,0.30)` | `rgba(192,82,79,0.34)` |
+
+Alternates considered and rejected for now: Brass `#9a6a2f` (premium but drifts luxury-crypto), Ledger green `#1f5d3f` (less ownable).
+
+---
+
+## Change-Type Semantic Colors (re-tuned, low saturation)
+
+Kept as semantic indicators, retuned to read as "ledger ink colors," not neon. Each renders as a small mono uppercase tag with a 1px border.
+
+| Change Type | Paper | Ink | Tag |
+|-------------|-------|-----|-----|
+| `pricing_change` | `#8a5a12` (amber) | `#c79a4e` | bg 10% / border 35% |
+| `feature_add` | `#1f5d3f` (green) | `#5aa07a` | bg 10% / border 35% |
+| `repositioning` | `--oxblood` | `--oxblood` | uses oxblood-subtle |
+| `review_trend` | `#2c5a8b` (slate-blue) | `#6f9bce` | bg 10% / border 35% |
+| `minor_copy` | `#5b6470` (slate) | `#9aa3af` | bg 10% / border 30% |
+
+---
+
+## Typography — grotesk + mono, no serif
 
 | Role | Font | Weight | Usage |
 |------|------|--------|-------|
-| Headings / UI | Geist Sans | 500 / 600 | Page titles, section headers, body labels |
-| Data / Mono | Geist Mono | 400 / 500 | URLs, metrics, diffs, timestamps, labels |
+| Display / Headlines | **Archivo** | 800 / 900 | Page titles, big statements. Institutional grotesk masthead. |
+| UI / Body | **Archivo** | 400 / 500 / 600 | Nav, labels, descriptions. One family, weight does the contrast. |
+| Data / Mono | **IBM Plex Mono** | 400 / 500 / 600 | URLs, metric numerals, diffs, timestamps, datelines, tags. `tabular-nums` always. |
 
-Loaded via `next/font` (GeistSans + GeistMono variables).
-
----
-
-## Color Palette
-
-### Surfaces
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--surface-base` | `#070b14` | Page background |
-| `--surface-raised` | `#0e1628` | Cards, panels |
-| `--surface-overlay` | `#141f35` | Modals, popovers |
-| `--surface-subtle` | `#111c30` | Hover tints |
-
-### Borders
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--border-default` | `rgba(255,255,255,0.10)` | Standard borders |
-| `--border-subtle` | `rgba(255,255,255,0.06)` | Dividers |
-| `--border-strong` | `rgba(255,255,255,0.18)` | Hover/active states |
-
-### Text
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--text-primary` | `#e8eaf0` | Headings, main content |
-| `--text-secondary` | `#8892a4` | Body, descriptions |
-| `--text-muted` | `#4e5a6e` | Labels, timestamps |
-
-### Accent — Sky Blue
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--accent-primary` | `#0ea5e9` | Buttons, active state, CTA |
-| `--accent-hover` | `#0284c7` | Button hover |
-| `--accent-subtle` | `rgba(14,165,233,0.10)` | Icon backgrounds, nav active |
-| `--accent-border` | `rgba(14,165,233,0.25)` | Accent borders |
-| `--accent-glow` | `rgba(14,165,233,0.15)` | Focus ring, button glow |
-
-### Change-Type Semantic Colors
-| Change Type | Text | Background | Border |
-|-------------|------|------------|--------|
-| `pricing_change` | `#f59e0b` | `rgba(245,158,11,0.10)` | `rgba(245,158,11,0.20)` |
-| `feature_add` | `#10b981` | `rgba(16,185,129,0.10)` | `rgba(16,185,129,0.20)` |
-| `repositioning` | `#a78bfa` | `rgba(124,58,237,0.12)` | `rgba(124,58,237,0.24)` |
-| `review_trend` | `#38bdf8` | `rgba(14,165,233,0.10)` | `rgba(14,165,233,0.20)` |
-| `minor_copy` | `#64748b` | `rgba(148,163,184,0.08)` | `rgba(148,163,184,0.15)` |
+- Load via `next/font/google` (`Archivo`, `IBM_Plex_Mono`) as CSS variables.
+- No serif. The authority comes from weight, scale, tight tracking, and mono precision.
+- Self-host alternate (optional): **Mona Sans** can replace Archivo for display+UI if a more neutral grotesk is wanted; not on Google Fonts, so it needs fontsource/self-host.
+- Display tracking: `-0.02em`. Mono uppercase labels: `+0.12em`.
 
 ---
 
-## Radius Scale — ONE system, consistent everywhere
-| Context | Value |
-|---------|-------|
-| Buttons | `8px` (`--radius-md`) |
-| Inputs | `8px` (`--radius-md`) |
-| Cards | `12px` (`--radius-lg`) |
-| Modals | `12px` (`--radius-lg`) |
-| Badges | `6px` (`--radius-sm`) |
-| Avatars / Pills | `9999px` (`--radius-pill`) |
+## Radius — sharp
+
+| Context | Value | Token |
+|---------|-------|-------|
+| Badges / tags | `2px` | `--r-sm` |
+| Buttons / inputs / cards | `4px` | `--r` |
+| Large panels | `6px` | `--r-lg` |
+| Avatars / pills | `9999px` | `--r-pill` |
+
+Sharp corners are a core institutional signal. Do not round past 6px on containers.
 
 ---
 
-## Layout
+## Layout — broadsheet / ledger
 
-### Dashboard (authenticated pages)
-- **Sidebar:** `240px` fixed left, `var(--surface-base)` background
-- **Content area:** `margin-left: 240px`, max-width `1140px`
-- **Content padding:** `32px` horizontal, `32px` top
-
-### Sidebar anatomy
-1. Brand block: logo + wordmark + user email pill (with plan badge)
-2. Navigation: icon + label, sky-blue active rail indicator (3px left)
-3. Bottom: Scan All button, trial banner, sign out
+- **Sidebar:** `236px` fixed left, `--paper` background, 1px `--rule` right edge. Mono section dividers ("DESK", "SIGNAL").
+- **Content:** max-width `~1180px`, `30px 40px` padding.
+- **Rules over cards:** prefer 1px hairline `--rule` / `--rule-soft` dividers and a single outer container rule over heavy bordered cards everywhere. Broadsheet, not bubble-wrap.
+- **Headers:** Archivo display headline + a 2px `--ink` underline rule, with a mono **dateline** beneath (e.g. `MON 08 JUN 2026 · 14 SOURCES · LIVE`).
+- **Data:** tables and stat tiles use IBM Plex Mono with `tabular-nums`, right-aligned figures.
 
 ---
 
 ## Components
 
-### Cards (`.rs-card`)
-```
-background: var(--surface-raised)
-border: 1px solid var(--border-default)
-border-radius: 12px
-box-shadow: var(--shadow-card)
-hover: box-shadow var(--shadow-card-hover), border var(--border-strong)
-transition: 180ms cubic-bezier(0.16,1,0.3,1)
-```
+### Stat tile (ledger row)
+Mono uppercase label, big Plex Mono numeral (`--ink`), small mono delta (oxblood for up). Tiles sit in one bordered container divided by `--rule-soft`, not separate cards.
 
-### Buttons
-**Primary (`.rs-btn-primary`):**
-```
-background: var(--accent-primary) = #0ea5e9
-color: white  font-weight: 600  font-size: 13px
-padding: 9px 16px  border-radius: 8px
-hover: background var(--accent-hover) + box-shadow glow
-active: translateY(1px) scale(0.99)
-```
+### Feed row
+Grid `1fr auto`. Left: change-type tag, mono URL, body description, a mono `→ OPEN BATTLE CARD` link in oxblood. Right: mono timestamp. Rows divided by `--rule-soft`.
 
-**Ghost (`.rs-btn-ghost`):**
-```
-background: transparent  color: var(--text-secondary)
-border: 1px solid var(--border-default)  border-radius: 8px
-padding: 8px 14px  font-size: 13px
-hover: bg rgba(255,255,255,0.04), color var(--text-primary), border-strong
-```
+### Button — primary (`.rs-btn-primary`)
+`background:--oxblood; color:#fff` (ink mode: dark ink text); `font: Archivo 600 12.5px`; `padding:8px 14px`; `radius:4px`; hover `--oxblood-hover`. No glow.
 
-### Inputs (`.rs-input`)
-```
-background: rgba(255,255,255,0.03)
-border: 1px solid var(--border-default)
-border-radius: 8px  padding: 9px 13px  font-size: 13px
-focus: border var(--accent-primary) + box-shadow 0 0 0 3px var(--accent-glow)
-```
+### Button — ghost (`.rs-btn-ghost`)
+`transparent`, `color:--secondary`, `border:1px solid --rule`, `radius:4px`; hover `--raised` + `--ink`.
 
-### Badges (`.badge + .badge-{type}`)
-```
-font-size: 10px  font-weight: 700  letter-spacing: 0.06em
-text-transform: uppercase  border-radius: 6px
-padding: 2px 8px  border: 1px solid  font-family: mono
-```
+### Tag / badge
+`font: IBM Plex Mono 600 9.5px`; `letter-spacing:.08em`; uppercase; `padding:2px 7px`; `radius:2px`; 1px colored border; subtle tinted bg.
 
-### Labels (`.rs-label`)
-```
-font-size: 11px  font-weight: 500  letter-spacing: 0.04em
-text-transform: uppercase  color: var(--text-muted)  font-family: mono
-```
+### Card / panel (`.rs-card`)
+`background:--panel`; `border:1px solid --rule`; `radius:4–6px`; **no drop shadow** (paper uses rules + flatness, not elevation). Hover: border `--oxblood-rule` or `--ink`-tinted, no lift.
 
 ---
 
-## Motion
+## Motion — minimal and crisp
 
-- Entry transitions: `duration: 0.2–0.6s, ease: [0.16, 1, 0.3, 1]`
-- Hover lifts: `whileHover: { y: -2 }` — subtle, not aggressive
-- Active presses: `translateY(1px) scale(0.99)` — tactile feedback
-- Animated indicators: Spring physics `stiffness: 480, damping: 38`
-- `prefers-reduced-motion`: all animations collapse to instant/static
+- Durations: micro `80–120ms`, short `150–200ms`. Nothing slow.
+- Easing: `ease-out` for enter, `ease-in` for exit.
+- **No spring bounce, no hover lift.** v2's spring nav rail and `y:-2` lifts are dropped. Institutional = still.
+- State change = crisp fade/cut. Active nav = instant oxblood rule.
+- `prefers-reduced-motion`: all transitions collapse to instant.
 
 ---
 
-## Spacing Rhythm (8pt scale)
+## Spacing (8pt scale, unchanged)
 ```
 4px  8px  12px  16px  24px  32px  40px  48px  64px
 ```
-Gaps, padding, and margin MUST use this scale. No arbitrary values.
+Gaps, padding, margins MUST use this scale. No arbitrary values.
 
 ---
 
-## Creative Decisions
+## Creative Decisions (v3)
 
-1. **Sky Blue accent** — `#0ea5e9` instead of electric violet. Intentional, clean, data-focused.
-2. **Left nav rail indicator** — 3px glowing sky blue bar with spring animation. Stolen from Linear. Earns it.
-3. **Accent top-border on stat cards** — colored 2px accent stripe at top of each card communicates data type at a glance without cluttering the card body.
-4. **All-dark theme locked** — no section-level light mode inversions. One theme, everywhere.
-5. **Geist mono for all data** — URLs, metrics, timestamps, labels. Signals precision.
+1. **Paper-light briefing primary + ink terminal alt.** The biggest swing. Reads as a printed institutional report. Differentiates hard from Crayon (loud) and from v2 (dark neon).
+2. **Oxblood accent, not blue.** Serious, editorial, quietly adversarial — you track rivals to beat them. Nobody in the category uses it.
+3. **Grotesk-only (Archivo) + IBM Plex Mono, no serif.** Swiss/precision-instrument authority. Single sans family; weight and scale carry hierarchy.
+4. **Sharp 4px corners + hairline ledger rules** instead of heavy shadowed cards. Precise, dense, broadsheet.
+5. **Mono datelines + tabular figures everywhere data lives.** Signals a primary source.
+
+---
+
+## Decisions Log
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-06-08 | v3 "Intelligence Desk" created via /design-consultation | Fresh institutional-authority direction; grounded in research (Crayon, AlphaSense, Mercury). Supersedes v2 sky/dark. Rebuild planned, not yet implemented. |
