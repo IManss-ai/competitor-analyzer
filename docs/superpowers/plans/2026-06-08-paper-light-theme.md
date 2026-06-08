@@ -478,7 +478,14 @@ Paper will still show hardcoded dark bits (invisible gray text, dark chart canva
 - inline `rgba(255,255,255,0.0X)` → `var(--hairline)` (borders/strokes) or `var(--fill-subtle)` (fills).
 - Chart hex → import from `chart-theme.ts` (Task 6).
 
-**Per-file verification:** `npm run build` green, then a grep guard proving the dark literals are gone from that file (shown per task), then a `browse` spot-check of that screen in **both** themes.
+**White/black opacity-modifier utilities (DISCOVERED during Task 7 — applies to every sweep). These are dark-assuming and pervasive (`text-white` ×83, `border-white/N`, `bg-white/[0.0X]`, `divide-white/[0.0X]`). Judgment required, NOT blind replace:**
+- `text-white` / `text-white/NN`: **KEEP** when the text sits on the accent button (`--accent-primary` bg), a `.badge-*`, or any saturated colored chip — white is correct there in both themes. **REPLACE** with `text-[var(--text-primary)]` (or `--text-secondary` for dimmed `text-white/50`) when it sits on a theme surface (page/card/inset).
+- `bg-white/[0.0X]`, `hover:bg-white/[0.0X]`, `active:bg-white/[0.0X]` → `bg-[var(--fill-subtle)]`, `hover:bg-[var(--fill-subtle-hover)]`.
+- `border-white/N`, `border-white/[0.0X]` → `border-[var(--border-default)]` (faintest dividers → `--border-subtle`).
+- `divide-white/[0.0X]`, `divide-white/N` → `divide-[var(--border-subtle)]`.
+- `bg-black/NN` used as a modal scrim/overlay → **KEEP** (a translucent dark scrim reads fine on both themes). `text-black` on a colored chip → usually keep.
+
+**Per-file verification:** `npm run build` green, then a grep guard proving the numeric-gray + inline-white literals are gone (shown per task). Because white/black utilities require judgment, they can't be "must be empty" — instead, after the sweep ANY remaining `-white`/`-black` utility in the file must be individually JUSTIFIED (on-accent text or dark scrim); the implementer lists them. Then a `browse` spot-check of that screen in **both** themes.
 
 ---
 
@@ -789,9 +796,16 @@ git commit -m "fix(theme): paper sweep — landing, legal, public share"
 
 Run:
 ```bash
-cd frontend && grep -rnE 'rgba\(255,\s*255,\s*255' src --include=*.tsx | grep -v node_modules
+cd frontend
+# (a) inline white rgba — expect empty
+grep -rnE 'rgba\(255,\s*255,\s*255' src --include=*.tsx | grep -v node_modules
+# (b) numeric dark grays — expect empty
+grep -rnE '(text|bg|border)-(zinc|neutral|slate|gray|stone)-(300|400|500|600|700|800|900|950)' src --include=*.tsx
+# (c) white/black opacity utilities — NOT expected empty; every remaining hit must be a
+#     justified on-accent text-white or a dark modal scrim (bg-black/NN). Review the list.
+grep -rnE '(text|bg|border|divide|ring)-(white|black)(/[^ "'"'"']*)?' src --include=*.tsx
 ```
-Expected: empty (or only intentional, theme-neutral cases — justify each in the commit if any remain).
+Expected: (a) and (b) empty; (c) only justified cases (white text on accent/colored surfaces, dark scrims) — eyeball each.
 
 - [ ] **Step 2: Every screen, both themes, via `browse`**
 

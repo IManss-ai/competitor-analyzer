@@ -15,7 +15,7 @@ const PLATFORM_STYLES: Record<string, { label: string; badge: string }> = {
 };
 
 function StarRating({ rating }: { rating: number | null }) {
-  if (rating === null) return <span className="text-zinc-500 text-xs">—</span>;
+  if (rating === null) return <span className="text-[var(--text-muted)] text-xs">—</span>;
   const full = Math.floor(rating);
   const half = rating - full >= 0.5;
   return (
@@ -29,11 +29,11 @@ function StarRating({ rating }: { rating: number | null }) {
               ? 'text-amber-400 fill-amber-400'
               : i === full && half
               ? 'text-amber-400 fill-amber-400/40'
-              : 'text-zinc-700 fill-zinc-700'
+              : 'text-[var(--border-default)] fill-[var(--border-default)]'
           }
         />
       ))}
-      <span className="ml-1 text-[11px] font-mono text-zinc-300">{rating.toFixed(1)}</span>
+      <span className="ml-1 text-[11px] font-mono text-[var(--text-primary)]">{rating.toFixed(1)}</span>
     </span>
   );
 }
@@ -43,31 +43,31 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
 
   return (
     <div className="rs-card overflow-hidden">
-      <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
+      <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center gap-2">
         <Star size={15} className="text-amber-400" />
-        <h2 className="text-sm font-bold text-white">Review Intelligence</h2>
-        <span className="ml-auto text-[10px] text-zinc-500 font-mono">G2 · Trustpilot · Capterra</span>
+        <h2 className="text-sm font-bold text-[var(--text-primary)]">Review Intelligence</h2>
+        <span className="ml-auto text-[10px] text-[var(--text-muted)] font-mono">G2 · Trustpilot · Capterra</span>
       </div>
 
       {!hasData ? (
         <div className="px-6 py-10 text-center">
-          <AlertCircle size={20} className="text-zinc-600 mx-auto mb-3" />
-          <p className="text-sm text-zinc-500">Run a scan to populate review intelligence</p>
+          <AlertCircle size={20} className="text-[var(--text-muted)] mx-auto mb-3" />
+          <p className="text-sm text-[var(--text-muted)]">Run a scan to populate review intelligence</p>
         </div>
       ) : (
-        <div className="divide-y divide-white/[0.04]">
+        <div className="divide-y divide-[var(--border-subtle)]">
           {competitors.map((comp, index) => {
             const data = reviewsData[index];
             if (!data || !data.snapshots || data.snapshots.length === 0) return null;
 
             return (
               <div key={comp.id} className="px-5 py-4">
-                <p className="text-xs font-bold text-white mb-3 truncate">{comp.name || comp.url}</p>
+                <p className="text-xs font-bold text-[var(--text-primary)] mb-3 truncate">{comp.name || comp.url}</p>
                 <div className="space-y-3">
                   {data.snapshots.map((snap, sIdx) => {
                     const style = PLATFORM_STYLES[snap.platform] ?? {
                       label: snap.platform,
-                      badge: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+                      badge: 'bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-[var(--border-default)]',
                     };
 
                     return (
@@ -78,7 +78,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                           </span>
                           <StarRating rating={snap.avg_rating} />
                           {snap.total_reviews !== null && (
-                            <span className="text-[11px] text-zinc-500 font-mono">
+                            <span className="text-[11px] text-[var(--text-muted)] font-mono">
                               {snap.total_reviews.toLocaleString()} reviews
                             </span>
                           )}
@@ -94,7 +94,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                             {snap.top_complaints.map((c, cIdx) => (
                               <span
                                 key={cIdx}
-                                className="text-[11px] text-zinc-400 bg-white/[0.04] border border-white/[0.07] px-2.5 py-1 rounded-lg"
+                                className="text-[11px] text-[var(--text-secondary)] bg-[var(--fill-subtle)] border border-[var(--border-subtle)] px-2.5 py-1 rounded-lg"
                               >
                                 {c}
                               </span>

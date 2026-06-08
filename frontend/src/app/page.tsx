@@ -10,6 +10,8 @@ import { PricingBasic } from '@/components/ui/pricing-demo';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
+import { useChartPalette } from '@/lib/chart-theme';
+import ThemeToggle from '@/components/theme-toggle';
 
 const MotionLink = motion.create(Link);
 
@@ -28,7 +30,7 @@ const TAG_STYLE: Record<string, string> = {
   feature:   'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20',
   copy:      'bg-sky-400/10 text-sky-400 border border-sky-400/20',
   messaging: 'bg-violet-400/10 text-violet-400 border border-violet-400/20',
-  content:   'bg-zinc-400/10 text-zinc-400 border border-zinc-400/20',
+  content:   'bg-[var(--fill-subtle)] text-[var(--text-secondary)] border border-[var(--border-default)]',
 };
 
 const BATTLE_CARDS_DATA = {
@@ -92,7 +94,7 @@ const BATTLE_CARDS_DATA = {
   },
   square: {
     company: 'Square',
-    logoColor: 'bg-zinc-700',
+    logoColor: 'bg-[var(--text-muted)]',
     date: 'Updated 2 days ago',
     changes: [
       { tag: 'pricing',   tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Flat rate subscription fee changed to dynamic pricing on point-of-sale.' },
@@ -172,6 +174,7 @@ export default function LandingPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
+  const p = useChartPalette();
 
   useEffect(() => {
     const comps = ['stripe', 'paypal', 'square', 'adyen'] as const;
@@ -274,7 +277,7 @@ export default function LandingPage() {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className={`w-full max-w-5xl rounded-full border px-5 py-2.5 flex items-center justify-between transition-[background-color,border-color,box-shadow] duration-300 ${
             scrolled
-              ? 'bg-[var(--surface-base)]/90 border-[var(--border-default)] shadow-[0_1px_0_0_rgba(255,255,255,0.04)] backdrop-blur-xl'
+              ? 'bg-[var(--surface-base)]/90 border-[var(--border-default)] shadow-[0_1px_0_0_var(--hairline)] backdrop-blur-xl'
               : 'bg-[var(--surface-base)]/60 border-[var(--border-subtle)] backdrop-blur-md'
           }`}
         >
@@ -283,18 +286,18 @@ export default function LandingPage() {
             <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
               <RivalscopeLogo size={13} className="text-sky-400" />
             </div>
-            <span className="text-sm font-semibold text-white tracking-tight">Rivalscope</span>
+            <span className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">Rivalscope</span>
           </Link>
 
           {/* Links */}
-          <div className="hidden md:flex items-center gap-7 text-[11px] font-medium text-zinc-400">
+          <div className="hidden md:flex items-center gap-7 text-[11px] font-medium text-[var(--text-secondary)]">
             {navItems.map((item) => (
               <Link
                 key={item.key}
                 href={item.href}
                 onMouseEnter={() => setHoveredNav(item.key)}
                 onMouseLeave={() => setHoveredNav(null)}
-                className="relative py-1 hover:text-white transition-colors duration-200"
+                className="relative py-1 hover:text-[var(--text-primary)] transition-colors duration-200"
               >
                 <span>{item.label}</span>
                 {hoveredNav === item.key && (
@@ -312,9 +315,10 @@ export default function LandingPage() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link
               href="/auth/login"
-              className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-white transition-colors px-3 py-1.5 whitespace-nowrap"
+              className="hidden sm:block text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 py-1.5 whitespace-nowrap"
             >
               Sign in
             </Link>
@@ -322,7 +326,7 @@ export default function LandingPage() {
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-zinc-100 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded-full hover:bg-[var(--accent-hover)] transition-colors whitespace-nowrap"
             >
               Get started
               <ArrowRight size={10} />
@@ -331,11 +335,11 @@ export default function LandingPage() {
               onClick={() => setMenuOpen(!menuOpen)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="md:hidden flex flex-col gap-1 items-center justify-center w-11 h-11 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+              className="md:hidden flex flex-col gap-1 items-center justify-center w-11 h-11 rounded-lg bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] transition-colors"
               aria-label="Toggle menu"
             >
-              <span className={`w-3.5 h-0.5 bg-white transition-transform duration-300 ${menuOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
-              <span className={`w-3.5 h-0.5 bg-white transition-transform duration-300 ${menuOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
+              <span className={`w-3.5 h-0.5 bg-[var(--text-primary)] transition-transform duration-300 ${menuOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
+              <span className={`w-3.5 h-0.5 bg-[var(--text-primary)] transition-transform duration-300 ${menuOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
             </motion.button>
           </div>
         </motion.nav>
@@ -368,7 +372,7 @@ export default function LandingPage() {
                   <Link
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-2xl font-semibold text-zinc-300 hover:text-white transition-colors inline-block"
+                    className="text-2xl font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors inline-block"
                   >
                     {item.label}
                   </Link>
@@ -403,7 +407,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[48px] sm:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.1] mb-6 text-white"
+                className="text-[48px] sm:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.1] mb-6 text-[var(--text-primary)]"
               >
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
@@ -417,7 +421,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-                className="text-zinc-400 text-lg leading-relaxed max-w-md mb-8"
+                className="text-[var(--text-secondary)] text-lg leading-relaxed max-w-md mb-8"
               >
                 We track pricing changes, messaging shifts, and review signals across your competitors 24/7. Get AI-generated sales playbooks every Monday morning.
               </motion.p>
@@ -432,14 +436,14 @@ export default function LandingPage() {
                   href="/auth/login"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 transition-colors"
+                  className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-white font-semibold text-sm px-6 py-3 rounded-full hover:bg-[var(--accent-hover)] transition-colors"
                 >
                   Start 14-day free trial
                   <ArrowRight size={12} />
                 </MotionLink>
                 <a
                   href="#dashboard-showcase"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors px-2 py-3"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-2 py-3"
                 >
                   See a live demo
                   <ArrowRight size={12} className="opacity-50" />
@@ -450,7 +454,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.24 }}
-                className="flex items-center gap-5 text-xs text-zinc-500"
+                className="flex items-center gap-5 text-xs text-[var(--text-muted)]"
               >
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 size={13}  className="text-sky-500" /> No card required
@@ -473,13 +477,13 @@ export default function LandingPage() {
             >
               <div className="bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card)] cursor-pointer">
                 {/* Panel header */}
-                <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between px-4 py-3.5 border-b border-[var(--border-default)]">
                   <div className="flex items-center gap-2">
                     <TrendingUp size={14} className="text-sky-400" />
-                    <span className="text-sm font-semibold text-white">Intel Feed</span>
+                    <span className="text-sm font-semibold text-[var(--text-primary)]">Intel Feed</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-mono text-zinc-500">Updated 8m ago</span>
+                    <span className="text-[11px] font-mono text-[var(--text-muted)]">Updated 8m ago</span>
                   </div>
                 </div>
 
@@ -488,23 +492,23 @@ export default function LandingPage() {
                   {FEED.map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-white/[0.05] transition-colors cursor-default"
+                      className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
                     >
                       <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                         {item.type}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <span className="text-xs font-semibold text-zinc-200">{item.company}</span>
-                        <span className="text-xs text-zinc-400 ml-1.5 leading-snug">{item.action}</span>
+                        <span className="text-xs font-semibold text-[var(--text-primary)]">{item.company}</span>
+                        <span className="text-xs text-[var(--text-secondary)] ml-1.5 leading-snug">{item.action}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-zinc-600 whitespace-nowrap flex-shrink-0 pt-0.5">{item.time}</span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)] whitespace-nowrap flex-shrink-0 pt-0.5">{item.time}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Panel footer */}
-                <div className="px-4 py-3 border-t border-white/[0.08] flex items-center justify-between bg-white/[0.04]">
-                  <span className="text-[11px] font-mono text-zinc-500">5 competitors tracked</span>
+                <div className="px-4 py-3 border-t border-[var(--border-default)] flex items-center justify-between bg-[var(--fill-subtle-hover)]">
+                  <span className="text-[11px] font-mono text-[var(--text-muted)]">5 competitors tracked</span>
                   <Link href="/auth/login" className="text-[11px] font-mono text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
                     View full feed <ArrowUpRight size={10} />
                   </Link>
@@ -534,10 +538,10 @@ export default function LandingPage() {
             { value: 'Monday', label: 'weekly playbook' },
           ].map((stat, i) => (
             <div key={i} className="flex flex-col items-center gap-2">
-              <div className="text-[42px] sm:text-[56px] font-bold text-white tabular-nums tracking-tight leading-none">
+              <div className="text-[42px] sm:text-[56px] font-bold text-[var(--text-primary)] tabular-nums tracking-tight leading-none">
                 {stat.value}
               </div>
-              <div className="text-xs text-zinc-400 font-mono uppercase tracking-[0.1em]">{stat.label}</div>
+              <div className="text-xs text-[var(--text-secondary)] font-mono uppercase tracking-[0.1em]">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -557,11 +561,11 @@ export default function LandingPage() {
             custom={0}
             className="mb-16"
           >
-            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">01 — How it works</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5 text-balance">
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">01 — How it works</p>
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
-            <p className="text-zinc-400 text-base max-w-lg leading-relaxed">
+            <p className="text-[var(--text-secondary)] text-base max-w-lg leading-relaxed">
               No SDK integrations. No permissions needed. We crawl public competitor surfaces and synthesize them into actionable intelligence.
             </p>
           </motion.div>
@@ -583,11 +587,11 @@ export default function LandingPage() {
             custom={0}
             className="mb-12"
           >
-            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">02 — Command Center</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5 text-balance">
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">02 — Command Center</p>
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               The Intelligence<br className="hidden md:block" /> Command Center
             </h2>
-            <p className="text-zinc-400 text-base max-w-md leading-relaxed">
+            <p className="text-[var(--text-secondary)] text-base max-w-md leading-relaxed">
               One view for every competitor movement. Pricing updates, review signals, and AI playbooks in a single dashboard.
             </p>
           </motion.div>
@@ -606,10 +610,10 @@ export default function LandingPage() {
               <div
                 onMouseEnter={() => { isPausedRef.current = true; }}
                 onMouseLeave={() => { isPausedRef.current = false; }}
-                className="border-r border-white/[0.10] p-4 space-y-6"
+                className="border-r border-[var(--border-default)] p-4 space-y-6"
               >
                 <div>
-                  <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-wider mb-3">Tracked</div>
+                  <div className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider mb-3">Tracked</div>
                   <div className="space-y-1">
                     {(['stripe', 'paypal', 'square', 'adyen'] as const).map((comp) => (
                       <motion.button
@@ -618,7 +622,7 @@ export default function LandingPage() {
                         onMouseEnter={() => setHoveredDashComp(comp)}
                         onMouseLeave={() => setHoveredDashComp(null)}
                         className="w-full text-left text-xs px-3 py-2.5 rounded-lg font-medium flex items-center justify-between transition-colors cursor-pointer relative animate-none"
-                        style={{ color: selectedDashboardComp === comp ? '#ffffff' : '#6b7280' }}
+                        style={{ color: selectedDashboardComp === comp ? 'var(--text-primary)' : 'var(--text-muted)' }}
                       >
                         {selectedDashboardComp === comp && (
                           <motion.div
@@ -632,13 +636,13 @@ export default function LandingPage() {
                           <span className={`flex-shrink-0 min-w-[18px] px-1 py-0.5 rounded text-[8px] font-bold font-mono relative z-10 text-center transition-colors ${
                             selectedDashboardComp === comp
                               ? 'bg-sky-500/20 text-sky-300 border border-sky-500/25'
-                              : 'bg-zinc-800 text-zinc-600'
+                              : 'bg-[var(--fill-subtle)] text-[var(--text-muted)]'
                           }`}>
                             {COMP_CHANGE_COUNTS[comp]}
                           </span>
                         ) : (
                           <span className={`w-1.5 h-1.5 rounded-full relative z-10 transition-colors ${
-                            selectedDashboardComp === comp ? 'bg-sky-400' : 'bg-zinc-700'
+                            selectedDashboardComp === comp ? 'bg-sky-400' : 'bg-[var(--border-strong)]'
                           }`} />
                         )}
 
@@ -649,11 +653,11 @@ export default function LandingPage() {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 4, scale: 0.95 }}
                               transition={{ duration: 0.12 }}
-                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[var(--surface-overlay)] border border-white/[0.08] text-white px-3 py-2 rounded-lg shadow-xl text-[10px] w-48 pointer-events-none"
+                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[var(--surface-overlay)] border border-[var(--border-default)] text-[var(--text-primary)] px-3 py-2 rounded-lg shadow-xl text-[10px] w-48 pointer-events-none"
                             >
                               <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-r-[5px] border-r-white/[0.08] border-b-4 border-b-transparent" />
                               <div className="absolute right-[calc(100%-1px)] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-r-[4px] border-r-[var(--surface-overlay)] border-b-[3px] border-b-transparent" />
-                              <p className="leading-snug font-normal text-zinc-300">
+                              <p className="leading-snug font-normal text-[var(--text-primary)]">
                                 {comp === 'stripe' && 'Removed flat enterprise pricing'}
                                 {comp === 'paypal' && 'Merchant card fee increased to 3.49%'}
                                 {comp === 'square' && 'POS dynamic checkout fee update'}
@@ -667,8 +671,8 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/[0.10]">
-                  <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-wider mb-2">Scan rate</div>
+                <div className="pt-4 border-t border-[var(--border-default)]">
+                  <div className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider mb-2">Scan rate</div>
                   <div className="text-[10px] text-sky-300 font-mono bg-sky-500/8 border border-sky-500/15 px-2.5 py-1.5 rounded-lg inline-block">
                     Every 4 hours
                   </div>
@@ -703,11 +707,11 @@ export default function LandingPage() {
                     className="flex-1 flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex items-center justify-between border-b border-white/[0.10] pb-4 mb-5">
-                        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                      <div className="flex items-center justify-between border-b border-[var(--border-default)] pb-4 mb-5">
+                        <h3 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
                           <TrendingUp size={14} className="text-sky-400" />
                           Intel Feed
-                          <span className="text-zinc-600 font-normal text-xs">· last scan 8m ago</span>
+                          <span className="text-[var(--text-muted)] font-normal text-xs">· last scan 8m ago</span>
                         </h3>
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-1.5">
@@ -718,7 +722,7 @@ export default function LandingPage() {
                             />
                             <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Live</span>
                           </div>
-                          <span className="text-[10px] font-mono bg-white/[0.03] border border-white/[0.10] text-zinc-500 px-2.5 py-1 rounded-lg">
+                          <span className="text-[10px] font-mono bg-[var(--fill-subtle)] border border-[var(--border-default)] text-[var(--text-muted)] px-2.5 py-1 rounded-lg">
                             ALL
                           </span>
                         </div>
@@ -726,12 +730,12 @@ export default function LandingPage() {
 
                       <div className="grid grid-cols-3 gap-3 mb-4">
                         {[
-                          { label: 'Monitored', unit: 'targets', color: 'text-white', trend: null, idx: 0 },
+                          { label: 'Monitored', unit: 'targets', color: 'text-[var(--text-primary)]', trend: null, idx: 0 },
                           { label: 'Changes', unit: 'this week', color: 'text-sky-400', trend: '↑ +2', trendColor: 'text-sky-400', idx: 1 },
                           { label: 'Plays', unit: 'ready', color: 'text-emerald-400', trend: '↑ new', trendColor: 'text-emerald-400', idx: 2 },
                         ].map((s) => (
-                          <div key={s.label} className="bg-white/[0.04] border border-white/[0.04] p-3 rounded-lg">
-                            <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
+                          <div key={s.label} className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded-lg">
+                            <div className="text-[9px] font-mono text-[var(--text-muted)] mb-1">{s.label.toUpperCase()}</div>
                             <div className={`text-sm font-bold font-mono ${s.color} flex items-baseline gap-1`}>
                               <motion.span
                                 key={`${selectedDashboardComp}-${s.idx}-${commandCenterInView}`}
@@ -741,7 +745,7 @@ export default function LandingPage() {
                               >
                                 {metricCounters[s.idx]}
                               </motion.span>
-                              <span className="text-[10px] font-normal text-zinc-500">{s.unit}</span>
+                              <span className="text-[10px] font-normal text-[var(--text-muted)]">{s.unit}</span>
                             </div>
                             {s.trend && (
                               <div className={`text-[9px] font-mono mt-1 ${s.trendColor}`}>{s.trend}</div>
@@ -763,17 +767,17 @@ export default function LandingPage() {
                                 transition: { delay: i * 0.07, duration: 0.22, ease: 'easeOut' },
                               }}
                               exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
-                              className="bg-white/[0.04] border border-white/[0.05] p-3 rounded-lg"
+                              className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded-lg"
                             >
                               <div className="flex items-center gap-2 mb-1.5">
                                 <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>
                                   {change.tag.toUpperCase()}
                                 </span>
-                                <span className="text-[9px] font-mono text-zinc-600">
+                                <span className="text-[9px] font-mono text-[var(--text-muted)]">
                                   {i === 0 ? 'today' : i === 1 ? '2d ago' : '4d ago'}
                                 </span>
                               </div>
-                              <p className="text-[11px] text-zinc-300 leading-snug">{change.text}</p>
+                              <p className="text-[11px] text-[var(--text-primary)] leading-snug">{change.text}</p>
                             </motion.div>
                           ))}
                         </AnimatePresence>
@@ -784,7 +788,7 @@ export default function LandingPage() {
                           <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
                           </div>
-                          <p className="text-xs text-zinc-300 leading-snug">
+                          <p className="text-xs text-[var(--text-primary)] leading-snug">
                             {BATTLE_CARDS_DATA[selectedDashboardComp].moves[0]}
                           </p>
                         </div>
@@ -823,7 +827,7 @@ export default function LandingPage() {
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-2 border-t border-white/[0.10] flex items-center justify-between text-[10px] text-zinc-600 font-mono">
+                    <div className="pt-4 mt-2 border-t border-[var(--border-default)] flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono">
                       <span>4 pages · 2 API routes · 1 docs path monitored</span>
                       <Link
                         href="/auth/login"
@@ -854,8 +858,8 @@ export default function LandingPage() {
             custom={1}
             className="mb-12"
           >
-            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">03 — Features</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] text-balance">
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">03 — Features</p>
+            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] text-balance">
               Deep intelligence.<br className="hidden md:block" /> Built for your sales team.
             </h2>
           </motion.div>
@@ -870,7 +874,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-5">
@@ -878,18 +882,18 @@ export default function LandingPage() {
                   <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
                   <span className="text-xs font-mono font-bold text-sky-400/80">01</span>
                 </div>
-                <h3 className="text-base font-bold text-white mb-2">Pricing Grid Monitoring</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
+                <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Pricing Grid Monitoring</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-sm">
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full sm:w-56 h-20 bg-[var(--surface-raised)] rounded-xl border border-white/[0.08] overflow-hidden relative">
+              <div className="flex-shrink-0 w-full sm:w-56 h-20 bg-[var(--surface-raised)] rounded-xl border border-[var(--border-default)] overflow-hidden relative">
                 <span className="absolute top-1.5 right-2 z-10 text-[9px] font-mono text-sky-400">▲ +12%</span>
                 <svg className="w-full h-full p-2" viewBox="0 0 180 64">
                   <motion.path
                     d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
                     fill="none"
-                    stroke="#4f7cb0"
+                    stroke={p.accent}
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     initial={{ pathLength: 0 }}
@@ -909,7 +913,7 @@ export default function LandingPage() {
                     cx="175"
                     cy="4"
                     r="3"
-                    fill="#6a96c8"
+                    fill={p.accentSoft}
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
@@ -917,8 +921,8 @@ export default function LandingPage() {
                   />
                   <defs>
                     <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="64">
-                      <stop stopColor="#4f7cb0" stopOpacity="0.15" />
-                      <stop offset="1" stopColor="#4f7cb0" stopOpacity="0" />
+                      <stop stopColor={p.accent} stopOpacity="0.15" />
+                      <stop offset="1" stopColor={p.accent} stopOpacity="0" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -932,20 +936,20 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-gradient-to-br from-sky-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <MessageSquare size={18} className="text-sky-400 flex-shrink-0" />
                 <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
                 <span className="text-xs font-mono font-bold text-sky-400/80">02</span>
               </div>
-              <h3 className="text-base font-bold text-white mb-2">Review Site Intelligence</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
+              <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Review Site Intelligence</h3>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn away from competitors.
               </p>
               <div className="mt-4 space-y-2">
                 {['G2 · Trustpilot', 'Capterra · Reddit', 'App Store · Play'].map((src) => (
-                  <div key={src} className="flex items-center gap-2 text-[10px] font-mono text-zinc-500">
+                  <div key={src} className="flex items-center gap-2 text-[10px] font-mono text-[var(--text-muted)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                     {src}
                   </div>
@@ -962,18 +966,18 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-gradient-to-b from-sky-950/20 to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-gradient-to-b from-[var(--accent-subtle)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Zap size={18} className="text-sky-400 flex-shrink-0" />
                 <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
                 <span className="text-xs font-mono font-bold text-sky-400/80">03</span>
               </div>
-              <h3 className="text-base font-bold text-white mb-2">AI Copilot Playbooks</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
+              <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">AI Copilot Playbooks</h3>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 Generates targeted email scripts and landing page copy built around the competitor changes detected today.
               </p>
-              <div className="mt-4 font-mono text-[9px] text-sky-400 bg-sky-950/10 border border-sky-500/10 p-2.5 rounded-lg min-h-[36px] flex items-center">
+              <div className="mt-4 font-mono text-[9px] text-sky-400 bg-[var(--accent-subtle)] border border-sky-500/10 p-2.5 rounded-lg min-h-[36px] flex items-center">
                 <span>{typewriterText}</span>
                 {card3Hovered && (
                   <motion.span
@@ -1000,13 +1004,13 @@ export default function LandingPage() {
                   <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
                   <span className="text-xs font-mono font-bold text-sky-400/80">04</span>
                 </div>
-                <h3 className="text-base font-bold text-white mb-2">Zero-Access Crawling</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed">
+                <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Zero-Access Crawling</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
                 </p>
               </div>
               <div className="mt-6 flex items-center gap-3">
-                <div className="flex-1 h-[2px] bg-white/[0.04] rounded-full overflow-hidden relative">
+                <div className="flex-1 h-[2px] bg-[var(--fill-subtle-hover)] rounded-full overflow-hidden relative">
                   <motion.div
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: 1 }}
@@ -1030,19 +1034,19 @@ export default function LandingPage() {
               className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-zinc-400/50 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
-                <Calendar size={18} className="text-zinc-300 flex-shrink-0" />
+                <Calendar size={18} className="text-[var(--text-primary)] flex-shrink-0" />
                 <div className="h-px flex-1 bg-gradient-to-r from-zinc-500/30 to-transparent" />
-                <span className="text-xs font-mono font-bold text-zinc-300/90">05</span>
+                <span className="text-xs font-mono font-bold text-[var(--text-primary)]">05</span>
               </div>
-              <h3 className="text-base font-bold text-white mb-2">Historical Changelog</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
+              <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Historical Changelog</h3>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments over time.
               </p>
               <div className="mt-5 flex items-center gap-0">
                 {Array.from({ length: 12 }).map((_, i) => (
                   <div
                     key={i}
-                    className="flex-1 h-8 border-r border-white/[0.04] last:border-r-0 flex items-end pb-1 px-0.5"
+                    className="flex-1 h-8 border-r border-[var(--border-subtle)] last:border-r-0 flex items-end pb-1 px-0.5"
                   >
                     <motion.div
                       initial={{ height: 0 }}
@@ -1076,16 +1080,16 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               custom={0}
             >
-              <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-3">04 — Battle Cards</p>
-              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-3 text-balance">
+              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">04 — Battle Cards</p>
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-3 text-balance">
                 Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
-              <p className="text-zinc-400 text-sm max-w-sm leading-relaxed">
+              <p className="text-[var(--text-secondary)] text-sm max-w-sm leading-relaxed">
                 Generated every Monday for sales enablement, summarized into four actionable quadrants.
               </p>
             </motion.div>
 
-            <div className="flex p-1 bg-white/[0.03] border border-white/[0.10] rounded-full gap-0.5 flex-shrink-0">
+            <div className="flex p-1 bg-[var(--fill-subtle)] border border-[var(--border-default)] rounded-full gap-0.5 flex-shrink-0">
               {(['stripe', 'paypal', 'square'] as const).map((comp) => (
                 <motion.button
                   key={comp}
@@ -1093,12 +1097,12 @@ export default function LandingPage() {
                   onMouseEnter={() => setHoveredBattleTab(comp)}
                   onMouseLeave={() => setHoveredBattleTab(null)}
                   className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors cursor-pointer relative"
-                  style={{ color: activeComp === comp ? '#ffffff' : '#6b7280' }}
+                  style={{ color: activeComp === comp ? '#ffffff' : 'var(--text-muted)' }}
                 >
                   {hoveredBattleTab === comp && activeComp !== comp && (
                     <motion.div
                       layoutId="battleTabHover"
-                      className="absolute inset-0 bg-white/[0.04] rounded-full"
+                      className="absolute inset-0 bg-[var(--fill-subtle-hover)] rounded-full"
                       transition={{ type: 'spring', stiffness: 450, damping: 30 }}
                     />
                   )}
@@ -1124,41 +1128,41 @@ export default function LandingPage() {
             className="border border-[var(--border-default)] rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]"
           >
             {/* Card header */}
-            <div className="px-5 py-4 border-b border-white/[0.10] flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg ${currentCard.logoColor} flex items-center justify-center`}>
                   <RivalscopeLogo size={13} className="text-white" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">{currentCard.company} Battle Card</h4>
-                  <p className="text-[10px] font-mono text-zinc-500">Weekly synthesis</p>
+                  <h4 className="text-xs font-bold text-[var(--text-primary)]">{currentCard.company} Battle Card</h4>
+                  <p className="text-[10px] font-mono text-[var(--text-muted)]">Weekly synthesis</p>
                 </div>
               </div>
-              <span className="text-[10px] font-mono text-zinc-600">{currentCard.date}</span>
+              <span className="text-[10px] font-mono text-[var(--text-muted)]">{currentCard.date}</span>
             </div>
 
             {/* Hiring strip */}
             {currentCard.hiring && (
-              <div className="px-5 py-4 border-b border-white/[0.10] bg-white/[0.01]">
+              <div className="px-5 py-4 border-b border-[var(--border-default)] bg-[var(--fill-subtle)]">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="flex items-center gap-5">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Hiring</span>
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--text-muted)]">Hiring</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-base font-bold font-mono text-white">{currentCard.hiring.total}</span>
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">open</span>
+                      <span className="text-base font-bold font-mono text-[var(--text-primary)]">{currentCard.hiring.total}</span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">open</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-base font-bold font-mono text-emerald-400">+{currentCard.hiring.new}</span>
                       <span className="text-[10px] font-mono text-emerald-400/70 uppercase tracking-wider">new</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-base font-bold font-mono text-zinc-400">−{currentCard.hiring.closed}</span>
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">closed</span>
+                      <span className="text-base font-bold font-mono text-[var(--text-secondary)]">−{currentCard.hiring.closed}</span>
+                      <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">closed</span>
                     </div>
                   </div>
-                  <p className="text-[11px] leading-snug text-zinc-300 italic max-w-md">
+                  <p className="text-[11px] leading-snug text-[var(--text-primary)] italic max-w-md">
                     <span className="text-sky-400 not-italic font-mono uppercase tracking-wider text-[9px] mr-1.5">Pattern</span>
                     {currentCard.hiring.read}
                   </p>
@@ -1170,7 +1174,7 @@ export default function LandingPage() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeComp}
-                className="grid md:grid-cols-2 divide-x divide-y divide-white/[0.05]"
+                className="grid md:grid-cols-2 divide-x divide-y divide-[var(--border-subtle)]"
               >
                 {/* Quadrant 1 */}
                 <motion.div
@@ -1178,7 +1182,7 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2, delay: 0 * 0.06 }}
-                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                  className="p-5 hover:bg-[var(--fill-subtle)] transition-colors"
                 >
                   <div className="text-[10px] font-mono uppercase tracking-widest text-sky-400 bg-sky-500/8 border border-sky-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
                     Detected changes
@@ -1189,7 +1193,7 @@ export default function LandingPage() {
                         <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md uppercase tracking-wide flex-shrink-0 mt-0.5 border ${row.tc}`}>
                           {row.tag}
                         </span>
-                        <span className="text-xs text-zinc-300 leading-snug">{row.text}</span>
+                        <span className="text-xs text-[var(--text-primary)] leading-snug">{row.text}</span>
                       </div>
                     ))}
                   </div>
@@ -1201,7 +1205,7 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2, delay: 1 * 0.06 }}
-                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                  className="p-5 hover:bg-[var(--fill-subtle)] transition-colors"
                 >
                   <div className="text-[10px] font-mono uppercase tracking-widest text-red-400 bg-red-500/8 border border-red-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
                     User complaints
@@ -1209,10 +1213,10 @@ export default function LandingPage() {
                   <div className="space-y-4">
                     {currentCard.complaints.map((c, j) => (
                       <div key={j} className="pl-0 space-y-1">
-                        <p className="text-xs text-zinc-400 italic leading-relaxed min-h-[32px]">
+                        <p className="text-xs text-[var(--text-secondary)] italic leading-relaxed min-h-[32px]">
                           {c.text}
                         </p>
-                        <span className="text-[10px] font-mono text-zinc-600 mt-1 block">{c.source}</span>
+                        <span className="text-[10px] font-mono text-[var(--text-muted)] mt-1 block">{c.source}</span>
                       </div>
                     ))}
                   </div>
@@ -1224,7 +1228,7 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2, delay: 2 * 0.06 }}
-                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                  className="p-5 hover:bg-[var(--fill-subtle)] transition-colors"
                 >
                   <div className="text-[10px] font-mono uppercase tracking-widest text-amber-400 bg-amber-500/8 border border-amber-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
                     Strategic signals
@@ -1233,8 +1237,8 @@ export default function LandingPage() {
                     {currentCard.signals.map((sig, j) => (
                       <div key={j} className="flex gap-2 items-start">
                         <span className="text-amber-500 text-sm mt-0.5 flex-shrink-0">›</span>
-                        <p className="text-xs text-zinc-300 leading-snug">
-                          <strong className="text-white font-semibold">{sig.bold}</strong>{sig.rest}
+                        <p className="text-xs text-[var(--text-primary)] leading-snug">
+                          <strong className="text-[var(--text-primary)] font-semibold">{sig.bold}</strong>{sig.rest}
                         </p>
                       </div>
                     ))}
@@ -1247,7 +1251,7 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2, delay: 3 * 0.06 }}
-                  className="p-5 hover:bg-white/[0.01] transition-colors"
+                  className="p-5 hover:bg-[var(--fill-subtle)] transition-colors"
                 >
                   <div className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 bg-emerald-500/8 border border-emerald-500/15 px-2.5 py-1 rounded-md inline-flex mb-4">
                     Playbook actions
@@ -1268,7 +1272,7 @@ export default function LandingPage() {
                         >
                           <CheckCircle2 size={14} />
                         </motion.div>
-                        <span className="text-xs text-zinc-300 leading-snug">{move}</span>
+                        <span className="text-xs text-[var(--text-primary)] leading-snug">{move}</span>
                       </div>
                     ))}
                   </div>
@@ -1292,11 +1296,11 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               custom={0}
             >
-              <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-4">05 — Local</p>
-              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-white leading-[1.1] mb-5 text-balance">
+              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">05 — Local</p>
+              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
                 Built for local<br className="hidden lg:block" /> businesses too
               </h2>
-              <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+              <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-6">
                 Not just SaaS. Crawl Google Maps reviews, social activity, and pricing for physical salons, cafes, gyms, and nearby competitors.
               </p>
               <Link
@@ -1325,8 +1329,8 @@ export default function LandingPage() {
                     {item.icon}
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-white mb-0.5">{item.title}</h4>
-                    <p className="text-xs text-zinc-500 leading-relaxed">{item.body}</p>
+                    <h4 className="text-xs font-semibold text-[var(--text-primary)] mb-0.5">{item.title}</h4>
+                    <p className="text-xs text-[var(--text-muted)] leading-relaxed">{item.body}</p>
                   </div>
                 </motion.div>
               ))}
@@ -1363,13 +1367,13 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
+            className="border border-sky-500/25 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
-            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4 text-balance">
+            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-4 text-balance">
               Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
-            <p className="text-zinc-400 text-base max-w-sm mx-auto leading-relaxed mb-10">
+            <p className="text-[var(--text-secondary)] text-base max-w-sm mx-auto leading-relaxed mb-10">
               14-day free trial. Monitor up to 7 competitors. Cancel with one click.
             </p>
             <MotionLink
@@ -1378,7 +1382,7 @@ export default function LandingPage() {
               initial="rest"
               whileTap={{ scale: 0.97 }}
               animate={{ scale: 1 }}
-              className="inline-flex items-center gap-2.5 bg-white text-black font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 transition-colors text-sm relative"
+              className="inline-flex items-center gap-2.5 bg-[var(--accent-primary)] text-white font-semibold px-8 py-3.5 rounded-full hover:bg-[var(--accent-hover)] transition-colors text-sm relative"
             >
               <span>Start free trial</span>
               <motion.span
@@ -1388,7 +1392,7 @@ export default function LandingPage() {
                 <ArrowRight size={13} />
               </motion.span>
             </MotionLink>
-            <p className="text-xs text-zinc-600 font-mono mt-5">No credit card required · Cancel anytime</p>
+            <p className="text-xs text-[var(--text-muted)] font-mono mt-5">No credit card required · Cancel anytime</p>
           </motion.div>
         </div>
       </section>
@@ -1396,7 +1400,7 @@ export default function LandingPage() {
       {/* ── FOOTER ──────────────────────────────────────────────────────── */}
       <footer className="border-t border-[var(--border-default)] py-14 px-6 bg-[var(--surface-base)]">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 pb-10 mb-10 border-b border-white/[0.08]">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 pb-10 mb-10 border-b border-[var(--border-default)]">
 
             {/* Brand */}
             <div className="col-span-2 space-y-4">
@@ -1404,30 +1408,30 @@ export default function LandingPage() {
                 <div className="w-6 h-6 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded-lg">
                   <RivalscopeLogo size={11} className="text-sky-400" />
                 </div>
-                <span className="text-sm font-semibold text-white">Rivalscope</span>
+                <span className="text-sm font-semibold text-[var(--text-primary)]">Rivalscope</span>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed max-w-xs">
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-xs">
                 AI-driven competitive intelligence. Track pricing, reviews, and messaging shifts so you can act before the next sales call.
               </p>
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Product</h4>
-              <ul className="space-y-2 text-xs text-zinc-400">
+              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Product</h4>
+              <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
                 {[
                   { label: 'How it works', href: '#how-it-works' },
                   { label: 'Command Center', href: '#dashboard-showcase' },
                   { label: 'Features', href: '#features' },
                   { label: 'Battle Card', href: '#battle-card' },
                 ].map((l) => (
-                  <li key={l.label}><a href={l.href} className="hover:text-white transition-colors">{l.label}</a></li>
+                  <li key={l.label}><a href={l.href} className="hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
                 ))}
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Sources</h4>
-              <ul className="space-y-2 text-xs text-zinc-500">
+              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Sources</h4>
+              <ul className="space-y-2 text-xs text-[var(--text-muted)]">
                 {['Google Reviews', 'G2 & Trustpilot', 'Landing pages', 'Public metadata'].map((l) => (
                   <li key={l}>{l}</li>
                 ))}
@@ -1435,13 +1439,13 @@ export default function LandingPage() {
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-zinc-500">Links</h4>
-              <ul className="space-y-2 text-xs text-zinc-500">
-                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="mailto:manssjones@gmail.com" className="hover:text-white transition-colors">Support</a></li>
+              <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Links</h4>
+              <ul className="space-y-2 text-xs text-[var(--text-muted)]">
+                <li><a href="/privacy" className="hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-[var(--text-primary)] transition-colors">Terms of Service</a></li>
+                <li><a href="mailto:manssjones@gmail.com" className="hover:text-[var(--text-primary)] transition-colors">Support</a></li>
                 <li>
-                  <a href="mailto:manssjones@gmail.com" className="hover:text-white transition-colors">
+                  <a href="mailto:manssjones@gmail.com" className="hover:text-[var(--text-primary)] transition-colors">
                     Contact
                   </a>
                 </li>
@@ -1451,16 +1455,16 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[11px] text-zinc-600 font-mono">
+            <p className="text-[11px] text-[var(--text-muted)] font-mono">
               &copy; {new Date().getFullYear()} Rivalscope. All rights reserved.
             </p>
-            <div className="flex items-center gap-4 text-zinc-500">
+            <div className="flex items-center gap-4 text-[var(--text-muted)]">
               <a
                 href="https://github.com/IManss-ai/competitor-analyzer"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub repository"
-                className="hover:text-white transition-colors"
+                className="hover:text-[var(--text-primary)] transition-colors"
               >
                 <Github size={14} />
               </a>

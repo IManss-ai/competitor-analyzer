@@ -75,14 +75,14 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
           </h3>
         </div>
         {lastUpdated && (
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
             Updated {lastUpdated}
           </span>
         )}
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-3">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
           <div className="text-[10px] font-mono uppercase tracking-wider mb-1" style={{ color: 'var(--text-muted)' }}>
             Open roles
           </div>
@@ -98,11 +98,11 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
             {signal.new_postings}
           </div>
         </div>
-        <div className="rounded-lg border border-zinc-500/15 bg-zinc-500/5 px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mb-1 flex items-center gap-1">
+        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-secondary)] mb-1 flex items-center gap-1">
             <MinusCircle size={9} /> Closed
           </div>
-          <div className="text-2xl font-bold font-mono text-zinc-300">
+          <div className="text-2xl font-bold font-mono text-[var(--text-primary)]">
             {signal.closed_postings}
           </div>
         </div>

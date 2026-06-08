@@ -87,7 +87,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
   };
 
   const getBadgeClass = (type: string | undefined | null) => {
-    if (!type) return 'bg-zinc-400/10 text-zinc-400 border-zinc-400/20';
+    if (!type) return 'bg-[var(--fill-subtle)] text-[var(--text-muted)] border-[var(--border-default)]';
     const t = type.toLowerCase();
     if (t.includes('price') || t.includes('pricing')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
     if (t.includes('feature') || t.includes('add')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
@@ -96,7 +96,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
     if (t.includes('social') || t.includes('campaign')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
     if (t.includes('review')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
     if (t.includes('offer') || t.includes('new')) return 'bg-sky-400/10 text-sky-400 border-sky-400/20';
-    return 'bg-zinc-400/10 text-zinc-400 border-zinc-400/20';
+    return 'bg-[var(--fill-subtle)] text-[var(--text-muted)] border-[var(--border-default)]';
   };
 
   const getBadgeLabel = (type: string | undefined | null) => {
@@ -118,7 +118,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}
         onClick={generateCard}
-        className="px-3 py-1.5 bg-white/[0.04] border border-white/10 rounded-lg text-xs font-semibold text-zinc-300 hover:text-white hover:border-white/20 flex items-center gap-1.5 transition-colors cursor-pointer"
+        className="px-3 py-1.5 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-1.5 transition-colors cursor-pointer"
       >
         <Zap size={13} className="text-sky-400" />
         <span>Battle Card</span>
@@ -136,15 +136,15 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
               initial={shouldReduceMotion ? false : { scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-white/[0.04] border border-white/10 rounded-xl w-full max-w-2xl shadow-2xl relative my-8"
+              className="p-1 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-xl w-full max-w-2xl shadow-2xl relative my-8"
             >
               {/* Inner Core */}
-              <div className="bg-[#070b14] border border-white/5 rounded-xl overflow-hidden">
+              <div className="bg-[var(--surface-overlay)] border border-[var(--border-subtle)] rounded-xl overflow-hidden">
                 {/* Header */}
-                <div className="p-6 border-b border-white/[0.08] bg-black/20">
+                <div className="p-6 border-b border-[var(--border-default)] bg-[var(--fill-subtle)]">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                         <Zap className="text-sky-400" size={18} />
                         {competitorName} Battle Card
                         {cardData?.variant === 'local' && (
@@ -153,7 +153,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           </span>
                         )}
                       </h3>
-                      <p className="text-[10px] text-zinc-500 mt-1 font-mono uppercase tracking-wider">
+                      <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono uppercase tracking-wider">
                         {cardData?.variant === 'local'
                           ? 'Reviews + social + reputation read'
                           : 'Page changes + reviews + hiring read'}
@@ -161,13 +161,13 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                     </div>
                     <button
                       onClick={() => setIsOpen(false)}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/50 transition-colors cursor-pointer"
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] text-[var(--text-secondary)] transition-colors cursor-pointer"
                     >
                       <X size={15} />
                     </button>
                   </div>
                   {cardData && (
-                    <div className="text-[9px] font-mono text-zinc-600 mt-3">
+                    <div className="text-[9px] font-mono text-[var(--text-muted)] mt-3">
                       GENERATED AT: {new Date(cardData.generated_at).toLocaleString().toUpperCase()}
                     </div>
                   )}
@@ -176,7 +176,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                 {/* Content */}
                 <div className="min-h-[200px] flex flex-col justify-center">
                   {loading ? (
-                    <div className="flex flex-col items-center justify-center text-zinc-400 space-y-4 py-16">
+                    <div className="flex flex-col items-center justify-center text-[var(--text-secondary)] space-y-4 py-16">
                       <Loader2 size={32} className="animate-spin text-sky-400" />
                       <p className="text-xs font-mono uppercase tracking-wider animate-pulse">Analyzing competitor intelligence...</p>
                     </div>
@@ -189,9 +189,9 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                     <div className="p-6 space-y-5">
                       {/* Executive Summary */}
                       {cardData.executive_summary && (
-                        <div className="p-4 bg-[#0e1628]/60 border border-white/10 rounded-xl">
-                          <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-zinc-500 mb-1.5">Executive Summary</div>
-                          <p className="text-zinc-300 text-sm leading-relaxed italic">
+                        <div className="p-4 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl">
+                          <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1.5">Executive Summary</div>
+                          <p className="text-[var(--text-primary)] text-sm leading-relaxed italic">
                             &quot;{cardData.executive_summary}&quot;
                           </p>
                         </div>
@@ -205,13 +205,13 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 0 * 0.07 }}
-                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400 mb-4">
                             {cardData.variant === 'local' ? 'Activity This Week' : 'Detected Changes'}
                           </div>
                           {(!cardData.what_changed || cardData.what_changed.length === 0) ? (
-                            <p className="text-xs text-zinc-500 italic">
+                            <p className="text-xs text-[var(--text-muted)] italic">
                               {cardData.variant === 'local'
                                 ? 'Quiet week — no new reviews or social posts'
                                 : 'No significant changes detected this week'}
@@ -225,7 +225,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                                       {getBadgeLabel(change.type)}
                                     </span>
                                   </div>
-                                  <p className="text-xs text-zinc-300 leading-normal">{change.text}</p>
+                                  <p className="text-xs text-[var(--text-primary)] leading-normal">{change.text}</p>
                                 </div>
                               ))}
                             </div>
@@ -237,15 +237,15 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 1 * 0.07 }}
-                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-red-400 mb-4">
                             User Complaints
                           </div>
                           {(!cardData.weaknesses || cardData.weaknesses.length === 0) ? (
-                            <p className="text-xs text-zinc-500 italic">No customer complaints reported</p>
+                            <p className="text-xs text-[var(--text-muted)] italic">No customer complaints reported</p>
                           ) : (
-                            <ul className="space-y-3 text-xs text-zinc-300 leading-normal">
+                            <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
                               {cardData.weaknesses.map((weakness, idx) => (
                                 <li key={idx} className="flex items-start gap-1.5">
                                   <span className="text-red-500 select-none">›</span>
@@ -261,15 +261,15 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 2 * 0.07 }}
-                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-amber-400 mb-4">
                             Strategic Signals
                           </div>
                           {(!cardData.strategic_signals || cardData.strategic_signals.length === 0) ? (
-                            <p className="text-xs text-zinc-500 italic">No strategic signals identified</p>
+                            <p className="text-xs text-[var(--text-muted)] italic">No strategic signals identified</p>
                           ) : (
-                            <ul className="space-y-3 text-xs text-zinc-300 leading-normal">
+                            <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
                               {cardData.strategic_signals.map((signal, idx) => (
                                 <li key={idx} className="flex items-start gap-1.5">
                                   <span className="text-amber-500 select-none">›</span>
@@ -285,13 +285,13 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 3 * 0.07 }}
-                          className="bg-[#0e1628] border border-white/10 p-5 rounded-xl md:col-span-2"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl md:col-span-2"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-400 mb-4">
                             Playbook — This Week
                           </div>
                           {(!cardData.playbook || cardData.playbook.length === 0) ? (
-                            <p className="text-xs text-zinc-500 italic">No playbook recommendations</p>
+                            <p className="text-xs text-[var(--text-muted)] italic">No playbook recommendations</p>
                           ) : (
                             <ol className="space-y-2.5">
                               {cardData.playbook.map((play, idx) => {
@@ -300,15 +300,15 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                                 return (
                                   <li
                                     key={idx}
-                                    className="flex items-start justify-between gap-3 bg-white/[0.02] hover:bg-white/[0.04] p-3 rounded-lg border border-white/[0.05] transition-colors"
+                                    className="flex items-start justify-between gap-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] p-3 rounded-lg border border-[var(--border-subtle)] transition-colors"
                                   >
                                     <div className="flex items-start gap-3">
                                       <span className="text-xs font-mono font-bold text-emerald-400 mt-0.5">{rankStr}</span>
-                                      <span className="text-xs text-zinc-200 leading-relaxed">{play}</span>
+                                      <span className="text-xs text-[var(--text-primary)] leading-relaxed">{play}</span>
                                     </div>
                                     <button
                                       onClick={() => handleCopy(play, idx)}
-                                      className="p-1 rounded bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 mt-0.5"
+                                      className="p-1 rounded bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer shrink-0 mt-0.5"
                                       title="Copy to clipboard"
                                     >
                                       {isCopied ? (

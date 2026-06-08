@@ -1,13 +1,15 @@
 @import 'tailwindcss';
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   RIVALSCOPE — Design System v3 "Intelligence Desk" (INK mode)
-   Palette: warm near-black ink (#16140f) + slate-blue accent (#4f7cb0)
+   RIVALSCOPE — Design System v3 "Intelligence Desk"
+   Dual theme: paper-light is the default (:root); ink-dark is opt-in via
+   html[data-theme="ink"]; a dark-OS visitor with no saved pref gets ink
+   automatically (prefers-color-scheme fallback, zero JS).
+   Accent: slate-blue (#345781 paper / #4f7cb0 ink)
    Spacing: 8pt scale (4, 8, 12, 16, 24, 32, 40, 48, 64)
    Radius:  sharp — cards 6px, buttons/inputs 4px, badges 2px, pills 9999px
    Type:    Archivo (grotesk, UI + display) + IBM Plex Mono (data)
    Motion:  minimal, crisp — no glow, no spring, no hover lift
-   NOTE: paper-light default ships in a later phase (see DESIGN-REBUILD-PLAN.md).
 ───────────────────────────────────────────────────────────────────────────── */
 
 @theme {
@@ -31,15 +33,16 @@
   --color-input:                hsl(var(--input));
   --color-ring:                 hsl(var(--ring));
 
-  /* Remap Tailwind's `sky` scale to oxblood so every legacy sky-* utility
-     becomes the v3 accent with no per-component edits. */
+  /* Remap Tailwind's `sky` scale to the slate-blue accent so every legacy
+     sky-* utility becomes the v3 accent with no per-component edits.
+     Values here are the PAPER defaults; ink overrides live below. */
   --color-sky-50:  #eef3f9;
   --color-sky-100: #dce7f2;
   --color-sky-200: #b9cfe6;
   --color-sky-300: #8fb0d4;
-  --color-sky-400: #6a96c8;
-  --color-sky-500: #4f7cb0;
-  --color-sky-600: #3f6a9c;
+  --color-sky-400: #4f7cb0;
+  --color-sky-500: #345781;
+  --color-sky-600: #2c4868;
   --color-sky-700: #345781;
   --color-sky-800: #2c4868;
   --color-sky-900: #243a54;
@@ -47,76 +50,134 @@
 }
 
 :root {
-  /* ── Tailwind CSS variable bridge (warm ink + oxblood) ─────────────── */
-  --background:           40 22% 7%;
-  --foreground:           40 22% 89%;
-  --card:                 40 16% 11%;
-  --card-foreground:      40 22% 89%;
-  --popover:              40 18% 9%;
-  --popover-foreground:   40 22% 89%;
-  --primary:              212 38% 50%;
+  /* ── Tailwind HSL bridge (paper) ─────────────────────── */
+  --background:           40 30% 94%;   /* #f5f2ec */
+  --foreground:           30 11% 9%;    /* #1a1714 */
+  --card:                 0 0% 100%;
+  --card-foreground:      30 11% 9%;
+  --popover:              0 0% 100%;
+  --popover-foreground:   30 11% 9%;
+  --primary:              212 42% 36%;  /* #345781 */
   --primary-foreground:   40 30% 96%;
-  --secondary:            40 12% 14%;
-  --secondary-foreground: 40 22% 89%;
-  --muted:                40 12% 12%;
-  --muted-foreground:     38 10% 45%;
-  --accent:               212 38% 50%;
-  --accent-foreground:    40 22% 89%;
-  --destructive:          0 60% 50%;
+  --secondary:            40 20% 92%;
+  --secondary-foreground: 30 11% 9%;
+  --muted:                40 20% 92%;
+  --muted-foreground:     30 7% 56%;    /* #9a9186 */
+  --accent:               212 42% 36%;
+  --accent-foreground:    30 11% 9%;
+  --destructive:          0 60% 45%;
   --destructive-foreground: 0 0% 100%;
-  --border:               40 12% 18%;
-  --input:                40 12% 15%;
-  --ring:                 212 38% 50%;
+  --border:               30 12% 86%;
+  --input:                30 12% 88%;
+  --ring:                 212 42% 36%;
 
-  /* ── Fonts ────────────────────────────────────────── */
+  /* ── Fonts (unchanged) ───────────────────────────────── */
   --font-sans:  var(--font-archivo), system-ui, sans-serif;
   --font-mono:  var(--font-ibm-plex-mono), ui-monospace, monospace;
-
-  /* ── Layout ──────────────────────────────────────── */
   --sidebar-width: 240px;
 
-  /* ── Surface palette (warm ink) ───────────────────── */
-  --surface-base:       #16140f;   /* page background */
-  --surface-raised:     #1f1c16;   /* cards, panels */
-  --surface-overlay:    #211e17;   /* modals, popovers */
-  --surface-subtle:     #26221a;   /* hover tints */
+  /* ── Surfaces (paper) ────────────────────────────────── */
+  --surface-base:    #f5f2ec;
+  --surface-raised:  #ffffff;
+  --surface-overlay: #ffffff;
+  --surface-subtle:  #fbf9f5;
 
-  /* ── Border palette (warm hairlines) ──────────────── */
-  --border-default:     rgba(234,230,221,0.14);
-  --border-subtle:      rgba(234,230,221,0.07);
-  --border-strong:      rgba(234,230,221,0.24);
+  /* ── Borders (paper) ─────────────────────────────────── */
+  --border-default: rgba(26,23,20,0.12);
+  --border-subtle:  rgba(26,23,20,0.07);
+  --border-strong:  rgba(26,23,20,0.22);
 
-  /* ── Text palette (warm) ──────────────────────────── */
-  --text-primary:   #eae6dd;
-  --text-secondary: #a8a094;
-  --text-muted:     #6f685c;
+  /* ── Text (paper) ────────────────────────────────────── */
+  --text-primary:   #1a1714;
+  --text-secondary: #6b6258;
+  --text-muted:     #726b5e;   /* darkened from #9a9186 for WCAG AA (~4.8:1 on --surface-base) */
 
-  /* ── Accent — Oxblood ─────────────────────────────── */
-  --accent-primary:     #4f7cb0;
-  --accent-hover:       #6a96c8;
-  --accent-subtle:      rgba(79,124,176,0.12);
-  --accent-border:      rgba(79,124,176,0.34);
-  --accent-glow:        rgba(79,124,176,0.25);
+  /* ── Accent — slate-blue (paper, darker for contrast) ── */
+  --accent-primary: #345781;
+  --accent-hover:   #2c4868;
+  --accent-subtle:  rgba(52,87,129,0.10);
+  --accent-border:  rgba(52,87,129,0.30);
+  --accent-glow:    rgba(52,87,129,0.18);
 
-  /* ── Radius scale (sharp) ─────────────────────────── */
-  --radius-sm:   2px;
-  --radius-md:   4px;
-  --radius-lg:   6px;
-  --radius-xl:   8px;
-  --radius-pill: 9999px;
+  /* ── De-hardcoded fills (new, theme-aware) ───────────── */
+  --hairline:           rgba(26,23,20,0.06);
+  --fill-subtle:        rgba(26,23,20,0.03);
+  --fill-subtle-hover:  rgba(26,23,20,0.05);
 
-  /* ── Shadow scale — flat institutional (cards use rules, not elevation) */
+  /* ── Radius (unchanged) ──────────────────────────────── */
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 6px; --radius-xl: 8px; --radius-pill: 9999px;
+
+  /* ── Shadow — paper stays flat ───────────────────────── */
   --shadow-card:       none;
   --shadow-card-hover: none;
-  --shadow-elevated:   0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
-  --shadow-modal:      0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-elevated:   0 8px 24px rgba(26,23,20,0.10), 0 2px 6px rgba(26,23,20,0.06);
+  --shadow-modal:      0 24px 60px rgba(26,23,20,0.18), 0 4px 14px rgba(26,23,20,0.10);
 
-  /* ── Motion ──────────────────────────────────────── */
-  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1);
-  --duration-fast:   100ms;
-  --duration-base:   160ms;
-  --duration-slow:   240ms;
+  /* ── Motion (unchanged) ──────────────────────────────── */
+  --ease-smooth: cubic-bezier(0.16,1,0.3,1);
+  --ease-out:    cubic-bezier(0.0,0.0,0.2,1);
+  --duration-fast: 100ms; --duration-base: 160ms; --duration-slow: 240ms;
+}
+
+html[data-theme="ink"] {
+  --background: 40 22% 7%;  --foreground: 40 22% 89%;
+  --card: 40 16% 11%;       --card-foreground: 40 22% 89%;
+  --popover: 40 18% 9%;     --popover-foreground: 40 22% 89%;
+  --primary: 212 38% 50%;   --primary-foreground: 40 30% 96%;
+  --secondary: 40 12% 14%;  --secondary-foreground: 40 22% 89%;
+  --muted: 40 12% 12%;      --muted-foreground: 38 10% 45%;
+  --accent: 212 38% 50%;    --accent-foreground: 40 22% 89%;
+  --destructive: 0 60% 50%; --destructive-foreground: 0 0% 100%;
+  --border: 40 12% 18%;     --input: 40 12% 15%;  --ring: 212 38% 50%;
+
+  --surface-base: #16140f;  --surface-raised: #1f1c16;
+  --surface-overlay: #211e17; --surface-subtle: #26221a;
+  --border-default: rgba(234,230,221,0.14);
+  --border-subtle:  rgba(234,230,221,0.07);
+  --border-strong:  rgba(234,230,221,0.24);
+  --text-primary: #eae6dd; --text-secondary: #a8a094; --text-muted: #6f685c;
+  --accent-primary: #4f7cb0; --accent-hover: #6a96c8;
+  --accent-subtle: rgba(79,124,176,0.12);
+  --accent-border: rgba(79,124,176,0.34);
+  --accent-glow:   rgba(79,124,176,0.25);
+  --hairline: rgba(234,230,221,0.06);
+  --fill-subtle: rgba(234,230,221,0.04);
+  --fill-subtle-hover: rgba(234,230,221,0.07);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-modal:    0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
+
+  --color-sky-400: #6a96c8; --color-sky-500: #4f7cb0; --color-sky-600: #3f6a9c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: 40 22% 7%;  --foreground: 40 22% 89%;
+    --card: 40 16% 11%;       --card-foreground: 40 22% 89%;
+    --popover: 40 18% 9%;     --popover-foreground: 40 22% 89%;
+    --primary: 212 38% 50%;   --primary-foreground: 40 30% 96%;
+    --secondary: 40 12% 14%;  --secondary-foreground: 40 22% 89%;
+    --muted: 40 12% 12%;      --muted-foreground: 38 10% 45%;
+    --accent: 212 38% 50%;    --accent-foreground: 40 22% 89%;
+    --destructive: 0 60% 50%; --destructive-foreground: 0 0% 100%;
+    --border: 40 12% 18%;     --input: 40 12% 15%;  --ring: 212 38% 50%;
+    --surface-base: #16140f;  --surface-raised: #1f1c16;
+    --surface-overlay: #211e17; --surface-subtle: #26221a;
+    --border-default: rgba(234,230,221,0.14);
+    --border-subtle:  rgba(234,230,221,0.07);
+    --border-strong:  rgba(234,230,221,0.24);
+    --text-primary: #eae6dd; --text-secondary: #a8a094; --text-muted: #6f685c;
+    --accent-primary: #4f7cb0; --accent-hover: #6a96c8;
+    --accent-subtle: rgba(79,124,176,0.12);
+    --accent-border: rgba(79,124,176,0.34);
+    --accent-glow:   rgba(79,124,176,0.25);
+    --hairline: rgba(234,230,221,0.06);
+    --fill-subtle: rgba(234,230,221,0.04);
+    --fill-subtle-hover: rgba(234,230,221,0.07);
+    --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+    --shadow-modal:    0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
+    --color-sky-400: #6a96c8; --color-sky-500: #4f7cb0; --color-sky-600: #3f6a9c;
+    color-scheme: dark;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -130,12 +191,17 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   height: 100%;
+}
+
+html[data-theme="ink"] { color-scheme: dark; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { color-scheme: dark; }
 }
 
 body {
@@ -168,11 +234,11 @@ code, pre, .font-mono {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(234,230,221,0.10);
+  background: var(--border-strong);
   border-radius: var(--radius-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(234,230,221,0.18);
+  background: var(--border-strong);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -193,7 +259,7 @@ code, pre, .font-mono {
 
 /* Inputs — sharp, subdued fill */
 .rs-input {
-  background: rgba(234,230,221,0.04);
+  background: var(--fill-subtle);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   padding: 9px 13px;
@@ -266,7 +332,7 @@ code, pre, .font-mono {
   white-space: nowrap;
 }
 .rs-btn-ghost:hover:not(:disabled) {
-  background: rgba(234,230,221,0.05);
+  background: var(--fill-subtle-hover);
   color: var(--text-primary);
   border-color: var(--border-strong);
 }
@@ -411,9 +477,9 @@ code, pre, .font-mono {
 .rs-skeleton {
   background: linear-gradient(
     90deg,
-    rgba(234,230,221,0.04) 25%,
-    rgba(234,230,221,0.07) 50%,
-    rgba(234,230,221,0.04) 75%
+    var(--fill-subtle) 25%,
+    var(--fill-subtle-hover) 50%,
+    var(--fill-subtle) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite;

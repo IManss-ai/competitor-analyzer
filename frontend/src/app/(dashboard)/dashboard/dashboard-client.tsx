@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, ShoppingBag } from 'lucide-react';
 import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { DashboardData, Competitor } from '@/lib/types';
+import { useChartPalette } from '@/lib/chart-theme';
 
 interface DashboardClientProps {
   userId: string;
@@ -43,6 +44,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const [onboardingError, setOnboardingError] = useState('');
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const p = useChartPalette();
 
   const refreshDashboard = async () => {
     try {
@@ -254,7 +256,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <svg width={width} height={height} className="overflow-visible">
         <polyline
           fill="none"
-          stroke="#6a96c8"
+          stroke={p.accentSoft}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -286,7 +288,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 backdrop-blur-md rounded-xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md rounded-xl border border-[var(--border-default)] shadow-2xl p-6 md:p-8 max-w-md w-full"
           style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-7">
@@ -320,13 +322,13 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 key={type}
                 onClick={() => setSelectedBusinessType(type)}
                 className={`relative text-left p-4 rounded-xl border transition-all cursor-pointer`}
-                style={selectedBusinessType === type ? borderStyle : { borderColor: 'var(--border-default)', backgroundColor: 'rgba(255,255,255,0.02)' }}
+                style={selectedBusinessType === type ? borderStyle : { borderColor: 'var(--border-default)', backgroundColor: 'var(--fill-subtle)' }}
               >
                 {selectedBusinessType === type && (
                   <CheckCircle2 size={14} className="absolute top-3 right-3" style={{ color: checkColor }} />
                 )}
                 <div className="mb-2">{icon}</div>
-                <p className="text-sm font-bold text-white mb-1">{title}</p>
+                <p className="text-sm font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{title}</p>
                 <p className="text-[11px] leading-snug" style={{ color: 'var(--text-muted)' }}>{desc}</p>
               </button>
             ))}
@@ -362,7 +364,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 backdrop-blur-md rounded-xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md rounded-xl border border-[var(--border-default)] shadow-2xl p-6 md:p-8 max-w-md w-full"
           style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-6">
@@ -398,7 +400,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder={selectedBusinessType === 'local' ? 'e.g. rivalcafe.com' : 'e.g. competitor.com'}
                 value={onboardingUrl}
                 onChange={(e) => setOnboardingUrl(e.target.value)}
-                className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
               />
             </div>
 
@@ -409,7 +411,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder={selectedBusinessType === 'local' ? 'e.g. Rival Cafe Downtown' : 'e.g. Rival Inc'}
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
-                className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
               />
             </div>
 
@@ -422,7 +424,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     placeholder="e.g. maps.google.com/place/..."
                     value={onboardingMapsUrl}
                     onChange={(e) => setOnboardingMapsUrl(e.target.value)}
-                    className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                    className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
                   />
                 </div>
                 <div>
@@ -432,7 +434,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     placeholder="e.g. @rivalcafe"
                     value={onboardingInstagram}
                     onChange={(e) => setOnboardingInstagram(e.target.value)}
-                    className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                    className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
                   />
                 </div>
               </>
@@ -444,7 +446,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                   placeholder="e.g. g2.com/products/competitor/reviews"
                   value={onboardingG2Url}
                   onChange={(e) => setOnboardingG2Url(e.target.value)}
-                  className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                  className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
                 />
               </div>
             )}
@@ -472,14 +474,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <button
                 type="button"
                 onClick={() => setOnboardingStep(-1)}
-                className="text-xs font-medium text-zinc-600 hover:text-zinc-300 hover:underline cursor-pointer"
+                className="text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:underline cursor-pointer"
               >
                 ← Change type
               </button>
               <button
                 type="button"
                 onClick={() => setOnboardingStep(3)}
-                className="text-xs font-medium text-zinc-500 hover:text-white hover:underline cursor-pointer"
+                className="text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:underline cursor-pointer"
               >
                 Skip & go to dashboard
               </button>
@@ -500,7 +502,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     };
 
     return (
-      <div className="backdrop-blur-md rounded-xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
+      <div className="backdrop-blur-md rounded-xl border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
           <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(79, 124, 176,0.1)' }}></div>
           <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
@@ -508,15 +510,15 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-bold tracking-tight text-white">Running your initial scan...</h2>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+          <h2 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Running your initial scan...</h2>
+          <p className="text-xs max-w-sm mx-auto" style={{ color: 'var(--text-secondary)' }}>
             We are analyzing the competitor homepage for copy structures, pricing, and reviews.
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-white/[0.08] rounded-xl p-4 bg-white/[0.02]">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-500">Live Status</span>
-          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-[var(--border-default)] rounded-xl p-4" style={{ background: 'var(--fill-subtle)' }}>
+          <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>Live Status</span>
+          <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             <Loader2 size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
             {statusMessages[onboardingStatus] || statusMessages.fetching}
           </div>
@@ -529,7 +531,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   if (onboardingStep === 2) {
     const isError = onboardingStatus === 'error';
     return (
-      <div className="backdrop-blur-md rounded-xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
+      <div className="backdrop-blur-md rounded-xl border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
           {isError ? (
             <AlertTriangle size={32} className="text-red-400" />
@@ -539,11 +541,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-bold tracking-tight text-white">
+          <h2 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
             {isError ? 'Scan had an issue' : 'First scan complete!'}
           </h2>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-            {isError 
+          <p className="text-xs max-w-sm mx-auto" style={{ color: 'var(--text-secondary)' }}>
+            {isError
               ? "We added your competitor but couldn't scan their page. Check their URL or try again."
               : "We've captured their current landing page snapshot and scheduled the monitor."
             }
@@ -551,10 +553,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {!isError && (
-          <div className="border border-white/[0.08] rounded-xl p-4 bg-white/[0.02] max-w-md mx-auto text-left space-y-2 text-xs">
-            <p className="font-bold text-white">{onboardingName || onboardingUrl}</p>
-            <p className="text-zinc-400 truncate">{onboardingUrl}</p>
-            <p className="text-zinc-500 border-t border-white/[0.06] pt-2 mt-2 leading-relaxed">
+          <div className="border border-[var(--border-default)] rounded-xl p-4 max-w-md mx-auto text-left space-y-2 text-xs" style={{ background: 'var(--fill-subtle)' }}>
+            <p className="font-bold" style={{ color: 'var(--text-primary)' }}>{onboardingName || onboardingUrl}</p>
+            <p className="truncate" style={{ color: 'var(--text-secondary)' }}>{onboardingUrl}</p>
+            <p className="border-t border-[var(--border-subtle)] pt-2 mt-2 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               We will automatically check this competitor every Monday and email you changes.
             </p>
           </div>
@@ -568,7 +570,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               setOnboardingG2Url('');
               setOnboardingStep(0);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 bg-white/[0.02] text-zinc-300 border border-white/10 hover:bg-white/[0.05] text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 border border-[var(--border-default)] hover:bg-[var(--fill-subtle-hover)] text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            style={{ background: 'var(--fill-subtle)', color: 'var(--text-primary)' }}
           >
             Add another competitor
           </button>
@@ -593,22 +596,22 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           label: 'Competitors',
           value: dashboardData.competitor_count,
           sub: 'Active targets',
-          accent: '#4f7cb0',
+          accent: p.accent,
         },{
           label: 'Changes / week',
           value: dashboardData.changes_this_week || 0,
           sub: 'Past 7 days',
-          accent: '#c79a4e',
+          accent: p.warning,
         },{
           label: 'Pending alerts',
           value: dashboardData.pending_count,
           sub: 'Requires review',
-          accent: '#f87171',
+          accent: p.danger,
         },{
           label: 'Avg review',
           value: dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '--',
           sub: 'Across integrations',
-          accent: '#5aa07a',
+          accent: p.positive,
         }].map(({ label, value, sub, accent }) => (
           <div key={label} className="rs-card relative overflow-hidden p-5 group">
             <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-lg" style={{ background: accent }} />
@@ -628,7 +631,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </div>
           <div className="flex items-center gap-4 text-[11px] font-mono">
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-sm" style={{ background: 'rgba(255,255,255,0.06)' }} />
+              <div className="w-2 h-2 rounded-sm" style={{ background: p.grid }} />
               <span style={{ color: 'var(--text-muted)' }}>Quiet</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -644,8 +647,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 <XAxis
                   dataKey="date"
                   tickFormatter={(val) => { const p = val.split('-'); return `${p[1]}/${p[2]}`; }}
-                  tick={{ fill: '#4e5a6e', fontSize: 10, fontFamily: 'var(--font-mono)' }}
-                  axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                  tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
+                  axisLine={{ stroke: p.axis }}
                   tickLine={false}
                 />
                 <Tooltip
@@ -662,11 +665,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     }
                     return null;
                   }}
-                  cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                  cursor={{ fill: p.cursor }}
                 />
                 <Bar dataKey="change_count" radius={[3, 3, 0, 0]}>
                   {activityDays.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.change_count > 0 ? '#4f7cb0' : 'rgba(255,255,255,0.05)'} />
+                    <Cell key={idx} fill={entry.change_count > 0 ? p.accent : p.grid} />
                   ))}
                 </Bar>
               </BarChart>
@@ -687,9 +690,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <p className="rs-body-sm mt-0.5">Chronological timeline of competitor changes</p>
           </div>
 
-          <div className="divide-y divide-white/[0.04] flex-1">
+          <div className="divide-y divide-[var(--border-subtle)] flex-1">
             {feedEvents.length === 0 ? (
-              <div className="p-8 text-center text-sm text-zinc-500">
+              <div className="p-8 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
                 No change events recorded yet. Run a scan to see data.
               </div>
             ) : (
@@ -702,7 +705,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     key={event.id}
                     className="p-5 transition-colors duration-150"
                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
                     <div className="flex items-start gap-4">
@@ -743,7 +746,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           {event.brief_text && event.brief_text.length > 120 && (
                             <button 
                               onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                              className="text-xs text-zinc-500 hover:text-zinc-300 inline-flex items-center gap-0.5"
+                              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] inline-flex items-center gap-0.5"
                             >
                               {isExpanded ? <>Collapse <ChevronUp size={12} /></> : <>Expand <ChevronDown size={12} /></>}
                             </button>
@@ -758,11 +761,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </div>
 
           {hasMoreFeed && (
-            <div className="p-4 border-t border-white/[0.06] text-center">
+            <div className="p-4 border-t border-[var(--border-subtle)] text-center">
               <button
                 onClick={loadMoreFeed}
                 disabled={loadingFeed}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/[0.04] active:bg-white/[0.08] text-sm font-semibold rounded-lg text-white transition-colors cursor-pointer bg-white/[0.01]"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-default)] hover:bg-[var(--fill-subtle)] active:bg-[var(--fill-subtle-hover)] text-sm font-semibold rounded-lg text-[var(--text-primary)] transition-colors cursor-pointer bg-[var(--fill-subtle)]"
               >
                 {loadingFeed ? (
                   <>
@@ -784,21 +787,21 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <p className="rs-body-sm mt-0.5">Health and review averages</p>
           </div>
 
-          <div className="divide-y divide-white/[0.04] flex-1 overflow-x-auto">
+          <div className="divide-y divide-[var(--border-subtle)] flex-1 overflow-x-auto">
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
                 const statusColor = comp.status === 'Active'
-                  ? { color: '#5aa07a', bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.22)' }
+                  ? { color: p.positive, bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.22)' }
                   : comp.status === 'Error'
-                  ? { color: '#f87171', bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.22)' }
-                  : { color: 'var(--text-muted)', bg: 'rgba(255,255,255,0.04)', border: 'var(--border-default)' };
+                  ? { color: p.danger, bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.22)' }
+                  : { color: 'var(--text-muted)', bg: 'var(--fill-subtle)', border: 'var(--border-default)' };
 
                 return (
                   <div
                     key={comp.id}
                     className="p-5 space-y-3 transition-colors duration-150"
                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
                     <div className="flex items-start justify-between gap-2">

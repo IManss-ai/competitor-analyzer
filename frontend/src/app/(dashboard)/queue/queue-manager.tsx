@@ -120,16 +120,16 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                     {action.action_type.replace(/_/g, ' ')}
                   </span>
                   {action.change_event.detected_at && (
-                    <span className="text-[10px] font-mono border border-white/5 px-2 py-0.5 rounded bg-white/[0.01]" style={{ color: 'var(--text-muted)' }}>
+                    <span className="text-[10px] font-mono border border-[var(--border-subtle)] px-2 py-0.5 rounded bg-[var(--fill-subtle)]" style={{ color: 'var(--text-muted)' }}>
                       {new Date(action.change_event.detected_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                     </span>
                   )}
                 </div>
 
                 {/* Trigger */}
-                <div className="bg-white/[0.01] border border-white/5 rounded-lg p-3.5 mb-4 relative">
-                  <span 
-                    className="absolute -top-2.5 left-3 border border-white/5 px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-[var(--surface-raised)]"
+                <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-lg p-3.5 mb-4 relative">
+                  <span
+                    className="absolute -top-2.5 left-3 border border-[var(--border-subtle)] px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-[var(--surface-raised)]"
                     style={{ color: 'var(--text-muted)' }}
                   >
                     triggered by
@@ -150,13 +150,13 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       />
                     </div>
                   ) : (
-                    <div className="bg-[#0a0a0f] border border-white/5 rounded-lg p-4 mb-4 relative group/code shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
-                      <p className="text-[13px] text-white/95 whitespace-pre-wrap leading-relaxed font-mono selection:bg-sky-500/20 pr-10">
+                    <div className="bg-[var(--surface-subtle)] border border-[var(--border-subtle)] rounded-lg p-4 mb-4 relative group/code">
+                      <p className="text-[13px] text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed font-mono selection:bg-sky-500/20 pr-10">
                         {action.edited_text || action.original_draft}
                       </p>
                       <button
                         onClick={() => handleCopy(action.id, action.edited_text || action.original_draft)}
-                        className="absolute top-3 right-3 p-1.5 text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded-md transition-colors opacity-0 group-hover/code:opacity-100 cursor-pointer"
+                        className="absolute top-3 right-3 p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] rounded-md transition-colors opacity-0 group-hover/code:opacity-100 cursor-pointer"
                         title="Copy to clipboard"
                       >
                         {copiedId === action.id ? (

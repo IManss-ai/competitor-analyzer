@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { animate, motion } from 'motion/react';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { useChartPalette } from '@/lib/chart-theme';
 
 interface StatsCardProps {
   title: string;
@@ -13,14 +14,6 @@ interface StatsCardProps {
   trend?: 'up' | 'down' | 'flat';
 }
 
-const accentConfig: Record<string, { dot: string; bar: string }> = {
-  violet:  { dot: '#4f7cb0', bar: 'var(--accent-primary)' },
-  blue:    { dot: '#6a96c8', bar: '#4f7cb0' },
-  amber:   { dot: '#c79a4e', bar: '#d97706' },
-  emerald: { dot: '#5aa07a', bar: '#059669' },
-  neutral: { dot: '#4e5a6e', bar: '#374151' },
-};
-
 export default function StatsCard({
   title,
   value,
@@ -29,6 +22,14 @@ export default function StatsCard({
   trend,
 }: StatsCardProps) {
   const [displayValue, setDisplayValue] = useState(0);
+  const p = useChartPalette();
+  const accentConfig: Record<string, { dot: string; bar: string }> = {
+    violet:  { dot: p.accent, bar: 'var(--accent-primary)' },
+    blue:    { dot: p.accentSoft, bar: p.accent },
+    amber:   { dot: p.warning, bar: p.warning },
+    emerald: { dot: p.positive, bar: p.positive },
+    neutral: { dot: p.neutral, bar: p.neutral },
+  };
   const cfg = accentConfig[accent] ?? accentConfig.neutral;
 
   useEffect(() => {
@@ -85,10 +86,10 @@ export default function StatsCard({
             )}
             style={
               trend === 'up'
-                ? { color: '#5aa07a', background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
+                ? { color: p.positive, background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
                 : trend === 'down'
-                ? { color: '#f87171', background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.20)' }
-                : { color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)', borderColor: 'var(--border-default)' }
+                ? { color: p.danger, background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.20)' }
+                : { color: 'var(--text-muted)', background: 'var(--fill-subtle)', borderColor: 'var(--border-default)' }
             }
           >
             {trend === 'up'   && <ArrowUp size={9} />}

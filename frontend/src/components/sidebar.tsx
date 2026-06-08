@@ -151,7 +151,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <div
           className="flex items-center justify-between gap-2 rounded-lg px-3 py-2"
           style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'var(--fill-subtle)',
             border: '1px solid var(--border-default)',
           }}
         >
@@ -167,7 +167,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             style={{
               background: planBadge === 'Pro'
                 ? 'rgba(79, 124, 176,0.15)'
-                : 'rgba(255,255,255,0.06)',
+                : 'var(--fill-subtle)',
               color: planBadge === 'Pro' ? '#6a96c8' : 'var(--text-muted)',
               border: planBadge === 'Pro'
                 ? '1px solid rgba(79, 124, 176,0.28)'
@@ -279,7 +279,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
           <div
             className="rounded-lg p-3 space-y-2"
             style={{
-              background: 'rgba(255,255,255,0.02)',
+              background: 'var(--fill-subtle)',
               border: '1px solid var(--border-default)',
             }}
           >
@@ -300,7 +300,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             {/* Progress bar */}
             <div
               className="w-full rounded-full overflow-hidden"
-              style={{ height: '2px', background: 'rgba(255,255,255,0.06)' }}
+              style={{ height: '2px', background: 'var(--fill-subtle-hover)' }}
             >
               <div
                 className="h-full rounded-full transition-[width] duration-500 ease-out"
@@ -328,7 +328,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             style={{ color: 'var(--text-muted)' }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)';
+              (e.currentTarget as HTMLButtonElement).style.background = 'var(--fill-subtle)';
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)';
