@@ -721,7 +721,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1.5">
                           <span className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>{event.competitor_name || hostname}</span>
-                          <time className="text-[11px] font-mono flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(event.detected_at)}</time>
+                          <time suppressHydrationWarning className="text-[11px] font-mono flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(event.detected_at)}</time>
                         </div>
 
                         <div className="flex items-center gap-2 mb-2">
@@ -831,7 +831,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <span className="rs-label block mb-0.5">Last Scanned</span>
-                        <span className="text-[12px] font-mono" style={{ color: 'var(--text-secondary)' }}>{formatTimeAgo(comp.last_scanned)}</span>
+                        <span suppressHydrationWarning className="text-[12px] font-mono" style={{ color: 'var(--text-secondary)' }}>{formatTimeAgo(comp.last_scanned)}</span>
                       </div>
                       <div>
                         <span className="rs-label block mb-0.5">Reviews Avg</span>
