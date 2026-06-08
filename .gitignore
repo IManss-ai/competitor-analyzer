@@ -40,3 +40,9 @@ frontend/out/
 frontend/.env.local
 .vercel
 .gstack/
+
+# Claude Code local state
+.claude/
+
+# Local session notes
+SESSION-CHANGES-*.md
