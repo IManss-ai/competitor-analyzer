@@ -288,7 +288,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 backdrop-blur-md rounded-xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md rounded-xl border border-[var(--border-default)] shadow-2xl p-6 md:p-8 max-w-md w-full"
           style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-7">
@@ -364,7 +364,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 backdrop-blur-md rounded-xl border border-white/[0.08] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md rounded-xl border border-[var(--border-default)] shadow-2xl p-6 md:p-8 max-w-md w-full"
           style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-6">
@@ -502,7 +502,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     };
 
     return (
-      <div className="backdrop-blur-md rounded-xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
+      <div className="backdrop-blur-md rounded-xl border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
           <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(79, 124, 176,0.1)' }}></div>
           <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
@@ -516,7 +516,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-white/[0.08] rounded-xl p-4" style={{ background: 'var(--fill-subtle)' }}>
+        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto border border-[var(--border-default)] rounded-xl p-4" style={{ background: 'var(--fill-subtle)' }}>
           <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--text-muted)' }}>Live Status</span>
           <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             <Loader2 size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
@@ -531,7 +531,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   if (onboardingStep === 2) {
     const isError = onboardingStatus === 'error';
     return (
-      <div className="backdrop-blur-md rounded-xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
+      <div className="backdrop-blur-md rounded-xl border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
           {isError ? (
             <AlertTriangle size={32} className="text-red-400" />
@@ -553,10 +553,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         {!isError && (
-          <div className="border border-white/[0.08] rounded-xl p-4 max-w-md mx-auto text-left space-y-2 text-xs" style={{ background: 'var(--fill-subtle)' }}>
+          <div className="border border-[var(--border-default)] rounded-xl p-4 max-w-md mx-auto text-left space-y-2 text-xs" style={{ background: 'var(--fill-subtle)' }}>
             <p className="font-bold" style={{ color: 'var(--text-primary)' }}>{onboardingName || onboardingUrl}</p>
             <p className="truncate" style={{ color: 'var(--text-secondary)' }}>{onboardingUrl}</p>
-            <p className="border-t border-white/[0.06] pt-2 mt-2 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+            <p className="border-t border-[var(--border-subtle)] pt-2 mt-2 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               We will automatically check this competitor every Monday and email you changes.
             </p>
           </div>
@@ -570,7 +570,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               setOnboardingG2Url('');
               setOnboardingStep(0);
             }}
-            className="w-full sm:w-auto px-5 py-2.5 border border-white/10 hover:bg-white/[0.05] text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 border border-[var(--border-default)] hover:bg-[var(--fill-subtle-hover)] text-sm font-semibold rounded-lg transition-colors cursor-pointer"
             style={{ background: 'var(--fill-subtle)', color: 'var(--text-primary)' }}
           >
             Add another competitor
@@ -690,7 +690,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <p className="rs-body-sm mt-0.5">Chronological timeline of competitor changes</p>
           </div>
 
-          <div className="divide-y divide-white/[0.04] flex-1">
+          <div className="divide-y divide-[var(--border-subtle)] flex-1">
             {feedEvents.length === 0 ? (
               <div className="p-8 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
                 No change events recorded yet. Run a scan to see data.
@@ -761,11 +761,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </div>
 
           {hasMoreFeed && (
-            <div className="p-4 border-t border-white/[0.06] text-center">
+            <div className="p-4 border-t border-[var(--border-subtle)] text-center">
               <button
                 onClick={loadMoreFeed}
                 disabled={loadingFeed}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/[0.04] active:bg-white/[0.08] text-sm font-semibold rounded-lg text-white transition-colors cursor-pointer bg-white/[0.01]"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-default)] hover:bg-[var(--fill-subtle)] active:bg-[var(--fill-subtle-hover)] text-sm font-semibold rounded-lg text-[var(--text-primary)] transition-colors cursor-pointer bg-[var(--fill-subtle)]"
               >
                 {loadingFeed ? (
                   <>
@@ -787,7 +787,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <p className="rs-body-sm mt-0.5">Health and review averages</p>
           </div>
 
-          <div className="divide-y divide-white/[0.04] flex-1 overflow-x-auto">
+          <div className="divide-y divide-[var(--border-subtle)] flex-1 overflow-x-auto">
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
                 const statusColor = comp.status === 'Active'
