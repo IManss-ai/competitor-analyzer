@@ -27,7 +27,7 @@ const TAG_STYLE: Record<string, string> = {
   pricing:   'bg-amber-400/10 text-amber-400 border border-amber-400/20',
   feature:   'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20',
   copy:      'bg-sky-400/10 text-sky-400 border border-sky-400/20',
-  messaging: 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20',
+  messaging: 'bg-violet-400/10 text-violet-400 border border-violet-400/20',
   content:   'bg-zinc-400/10 text-zinc-400 border border-zinc-400/20',
 };
 
@@ -97,7 +97,7 @@ const BATTLE_CARDS_DATA = {
     changes: [
       { tag: 'pricing',   tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Flat rate subscription fee changed to dynamic pricing on point-of-sale.' },
       { tag: 'feature',   tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Launched POS v3 firmware with offline sync capabilities for retail terminals.' },
-      { tag: 'messaging', tc: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20', text: 'Hero changed from "Simple local commerce" to "The complete software & hardware platform".' },
+      { tag: 'messaging', tc: 'text-violet-400 bg-violet-400/10 border-violet-400/20', text: 'Hero changed from "Simple local commerce" to "The complete software & hardware platform".' },
     ],
     complaints: [
       { text: '"Terminals disconnect from local Wi-Fi during peak sales hours."', source: 'App Store · 2 stars · 6 hours ago' },
@@ -125,7 +125,7 @@ const BATTLE_CARDS_DATA = {
     date: 'Updated 1 day ago',
     changes: [
       { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Changed EMEA support tiers and custom POS redirect APIs' },
-      { tag: 'messaging', tc: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20', text: 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.' }
+      { tag: 'messaging', tc: 'text-violet-400 bg-violet-400/10 border-violet-400/20', text: 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.' }
     ],
     complaints: [],
     signals: [],
@@ -368,7 +368,7 @@ export default function LandingPage() {
                   <Link
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-2xl font-bold text-zinc-300 hover:text-white transition-colors inline-block"
+                    className="text-2xl font-semibold text-zinc-300 hover:text-white transition-colors inline-block"
                   >
                     {item.label}
                   </Link>
@@ -488,7 +488,7 @@ export default function LandingPage() {
                   {FEED.map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.05] transition-colors cursor-default"
+                      className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-white/[0.05] transition-colors cursor-default"
                     >
                       <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                         {item.type}
@@ -650,10 +650,10 @@ export default function LandingPage() {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 4, scale: 0.95 }}
                               transition={{ duration: 0.12 }}
-                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[#080d1a] border border-white/[0.08] text-white px-3 py-2 rounded-lg shadow-xl text-[10px] w-48 pointer-events-none"
+                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[var(--surface-overlay)] border border-white/[0.08] text-white px-3 py-2 rounded-lg shadow-xl text-[10px] w-48 pointer-events-none"
                             >
                               <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-r-[5px] border-r-white/[0.08] border-b-4 border-b-transparent" />
-                              <div className="absolute right-[calc(100%-1px)] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-r-[4px] border-r-[#080d1a] border-b-[3px] border-b-transparent" />
+                              <div className="absolute right-[calc(100%-1px)] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-r-[4px] border-r-[var(--surface-overlay)] border-b-[3px] border-b-transparent" />
                               <p className="leading-snug font-normal text-zinc-300">
                                 {comp === 'stripe' && 'Removed flat enterprise pricing'}
                                 {comp === 'paypal' && 'Merchant card fee increased to 3.49%'}
@@ -731,7 +731,7 @@ export default function LandingPage() {
                           { label: 'Changes', unit: 'this week', color: 'text-sky-400', trend: '↑ +2', trendColor: 'text-sky-400', idx: 1 },
                           { label: 'Plays', unit: 'ready', color: 'text-emerald-400', trend: '↑ new', trendColor: 'text-emerald-400', idx: 2 },
                         ].map((s) => (
-                          <div key={s.label} className="bg-white/[0.04] border border-white/[0.04] p-3 rounded-xl">
+                          <div key={s.label} className="bg-white/[0.04] border border-white/[0.04] p-3 rounded-lg">
                             <div className="text-[9px] font-mono text-zinc-600 mb-1">{s.label.toUpperCase()}</div>
                             <div className={`text-sm font-bold font-mono ${s.color} flex items-baseline gap-1`}>
                               <motion.span
@@ -764,7 +764,7 @@ export default function LandingPage() {
                                 transition: { delay: i * 0.07, duration: 0.22, ease: 'easeOut' },
                               }}
                               exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
-                              className="bg-white/[0.04] border border-white/[0.05] p-3 rounded-xl"
+                              className="bg-white/[0.04] border border-white/[0.05] p-3 rounded-lg"
                             >
                               <div className="flex items-center gap-2 mb-1.5">
                                 <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>
@@ -780,7 +780,7 @@ export default function LandingPage() {
                         </AnimatePresence>
                       </div>
 
-                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-xl flex items-center justify-between gap-3">
+                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-lg flex items-center justify-between gap-3">
                         <div>
                           <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
