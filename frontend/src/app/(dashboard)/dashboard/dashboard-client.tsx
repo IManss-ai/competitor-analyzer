@@ -400,7 +400,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder={selectedBusinessType === 'local' ? 'e.g. rivalcafe.com' : 'e.g. competitor.com'}
                 value={onboardingUrl}
                 onChange={(e) => setOnboardingUrl(e.target.value)}
-                className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
               />
             </div>
 
@@ -411,7 +411,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 placeholder={selectedBusinessType === 'local' ? 'e.g. Rival Cafe Downtown' : 'e.g. Rival Inc'}
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
-                className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
               />
             </div>
 
@@ -424,7 +424,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     placeholder="e.g. maps.google.com/place/..."
                     value={onboardingMapsUrl}
                     onChange={(e) => setOnboardingMapsUrl(e.target.value)}
-                    className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                    className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
                   />
                 </div>
                 <div>
@@ -434,7 +434,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     placeholder="e.g. @rivalcafe"
                     value={onboardingInstagram}
                     onChange={(e) => setOnboardingInstagram(e.target.value)}
-                    className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                    className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
                   />
                 </div>
               </>
@@ -446,7 +446,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                   placeholder="e.g. g2.com/products/competitor/reviews"
                   value={onboardingG2Url}
                   onChange={(e) => setOnboardingG2Url(e.target.value)}
-                  className="rs-input placeholder-zinc-600 focus:outline-none w-full"
+                  className="rs-input placeholder-[var(--text-muted)] focus:outline-none w-full"
                 />
               </div>
             )}

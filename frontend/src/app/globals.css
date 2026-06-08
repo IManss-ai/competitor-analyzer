@@ -90,7 +90,7 @@
   /* ── Text (paper) ────────────────────────────────────── */
   --text-primary:   #1a1714;
   --text-secondary: #6b6258;
-  --text-muted:     #9a9186;
+  --text-muted:     #726b5e;   /* darkened from #9a9186 for WCAG AA (~4.8:1 on --surface-base) */
 
   /* ── Accent — slate-blue (paper, darker for contrast) ── */
   --accent-primary: #345781;
