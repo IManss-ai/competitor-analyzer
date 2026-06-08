@@ -1,10 +1,16 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip } from 'recharts';
 import { ReviewTrend } from '@/lib/types';
 
 export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
   const colors = ["#0ea5e9", "#10b981", "#f59e0b", "#38bdf8", "#a78bfa", "#64748b", "#0284c7"];
+
+  // Gate the ResponsiveContainer on mount so it measures the real 220px box
+  // instead of -1x-1 on first paint (Recharts dimension warning).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const allDates = Array.from(
     new Set(
@@ -33,6 +39,7 @@ export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
 
   return (
     <div className="h-[220px] w-full">
+      {mounted && (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
@@ -69,6 +76,7 @@ export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
           ))}
         </LineChart>
       </ResponsiveContainer>
+      )}
     </div>
   );
 }
