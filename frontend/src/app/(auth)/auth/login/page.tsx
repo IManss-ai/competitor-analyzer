@@ -6,6 +6,7 @@ import { Mail, Lock, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { Chrome } from '@/components/ui/brand-icons';
 import { motion, AnimatePresence } from 'motion/react';
+import ThemeToggle from '@/components/theme-toggle';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -111,18 +112,23 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[100dvh] flex relative">
-      
+
+      {/* Theme toggle — no topbar on this page, pin to a corner for unauthenticated users */}
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* Left panel - Pitch Deck Intro Info */}
       <div
-        className="hidden lg:flex flex-col justify-between w-[45%] text-white p-12 relative overflow-hidden"
-        style={{ background: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)' }}
+        className="hidden lg:flex flex-col justify-between w-[45%] p-12 relative overflow-hidden"
+        style={{ background: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)', color: 'var(--text-primary)' }}
       >
         {/* Subtle grid */}
         <div
           className="absolute inset-0 opacity-[0.035]"
           style={{
             backgroundImage:
-              'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+              'linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)',
             backgroundSize: '40px 40px',
           }}
         />
@@ -186,7 +192,7 @@ export default function LoginPage() {
             ].map((item) => (
               <motion.li 
                 key={item} 
-                className="flex items-center gap-2.5 text-sm text-white/50"
+                className="flex items-center gap-2.5 text-sm"
                 variants={{
                   hidden: { opacity: 0, x: -10 },
                   visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } }
@@ -296,7 +302,7 @@ export default function LoginPage() {
                 whileTap={{ scale: 0.99 }}
                 className="w-full flex items-center justify-center gap-2.5 text-[13px] font-semibold py-2.5 px-4 rounded-lg cursor-pointer mb-5 transition-all"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
+                  background: 'var(--fill-subtle)',
                   border: '1px solid var(--border-strong)',
                   color: 'var(--text-primary)',
                 }}
@@ -314,7 +320,7 @@ export default function LoginPage() {
               {/* Login Method Toggle Tab */}
               <div
                 className="flex p-1 rounded-lg mb-5 gap-1"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-default)' }}
+                style={{ background: 'var(--fill-subtle)', border: '1px solid var(--border-default)' }}
               >
                 <button
                   type="button"
@@ -322,7 +328,7 @@ export default function LoginPage() {
                   className="flex-1 text-[12px] py-1.5 rounded-md font-semibold cursor-pointer transition-all"
                   style={
                     authMethod === 'direct'
-                      ? { background: 'rgba(255,255,255,0.08)', color: 'var(--text-primary)' }
+                      ? { background: 'var(--fill-subtle-hover)', color: 'var(--text-primary)' }
                       : { color: 'var(--text-muted)' }
                   }
                 >
@@ -334,7 +340,7 @@ export default function LoginPage() {
                   className="flex-1 text-[12px] py-1.5 rounded-md font-semibold cursor-pointer transition-all"
                   style={
                     authMethod === 'magic'
-                      ? { background: 'rgba(255,255,255,0.08)', color: 'var(--text-primary)' }
+                      ? { background: 'var(--fill-subtle-hover)', color: 'var(--text-primary)' }
                       : { color: 'var(--text-muted)' }
                   }
                 >
@@ -462,7 +468,7 @@ export default function LoginPage() {
                     onClick={() => handleGoogleLogin(account.email)}
                     className="w-full flex items-center gap-3 p-3 rounded-lg text-left cursor-pointer transition-all"
                     style={{ border: '1px solid var(--border-default)', background: 'transparent' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
                     <div
