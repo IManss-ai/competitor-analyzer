@@ -382,7 +382,7 @@ export default function LandingPage() {
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="relative pt-24 pb-20 lg:pt-28 lg:pb-24 px-6 overflow-hidden">
         {/* Subtle top glow - static, no animation */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-sky-600/6 rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[640px] h-[360px] bg-sky-600/12 rounded-full blur-[120px] pointer-events-none z-0" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -572,7 +572,7 @@ export default function LandingPage() {
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
       <section id="dashboard-showcase" ref={commandCenterRef} className="py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-24 left-[15%] w-[420px] h-[420px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-24 left-[15%] w-[560px] h-[560px] bg-sky-600/[0.12] rounded-full blur-[120px] z-0" />
         <div className="max-w-7xl mx-auto relative z-10">
 
           <motion.div
@@ -843,7 +843,7 @@ export default function LandingPage() {
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
       <section id="features" className="py-28 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-24 right-[12%] w-[420px] h-[420px] bg-emerald-600/[0.05] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-emerald-600/[0.12] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <motion.div
@@ -870,13 +870,13 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-sky-500/20 rounded-xl p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-amber-500/70 rounded-xl p-6 hover:border-amber-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-5">
                   <TrendingUp size={18} className="text-amber-400 flex-shrink-0" />
                   <div className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent" />
-                  <span className="text-[10px] font-mono text-zinc-600">01</span>
+                  <span className="text-xs font-mono font-bold text-amber-400/80">01</span>
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">Pricing Grid Monitoring</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
@@ -932,12 +932,12 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-gradient-to-br from-emerald-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-emerald-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-gradient-to-br from-emerald-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-emerald-500/70 rounded-xl p-6 hover:border-emerald-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <MessageSquare size={18} className="text-emerald-400 flex-shrink-0" />
                 <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent" />
-                <span className="text-[10px] font-mono text-zinc-600">02</span>
+                <span className="text-xs font-mono font-bold text-emerald-400/80">02</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">Review Site Intelligence</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -962,12 +962,12 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-gradient-to-b from-sky-950/20 to-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-gradient-to-b from-sky-950/20 to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Zap size={18} className="text-sky-400 flex-shrink-0" />
                 <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
-                <span className="text-[10px] font-mono text-zinc-600">03</span>
+                <span className="text-xs font-mono font-bold text-sky-400/80">03</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">AI Copilot Playbooks</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -992,13 +992,13 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-violet-500/70 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <ShieldCheck size={18} className="text-violet-400 flex-shrink-0" />
                   <div className="h-px flex-1 bg-gradient-to-r from-violet-500/30 to-transparent" />
-                  <span className="text-[10px] font-mono text-zinc-600">04</span>
+                  <span className="text-xs font-mono font-bold text-violet-400/80">04</span>
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">Zero-Access Crawling</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed">
@@ -1027,12 +1027,12 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-zinc-400/50 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Calendar size={18} className="text-zinc-300 flex-shrink-0" />
                 <div className="h-px flex-1 bg-gradient-to-r from-zinc-500/30 to-transparent" />
-                <span className="text-[10px] font-mono text-zinc-600">05</span>
+                <span className="text-xs font-mono font-bold text-zinc-300/90">05</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">Historical Changelog</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -1065,7 +1065,7 @@ export default function LandingPage() {
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
       <section id="battle-card" className="py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-20 left-[10%] w-[420px] h-[420px] bg-amber-500/[0.04] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-amber-500/[0.10] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
@@ -1282,7 +1282,7 @@ export default function LandingPage() {
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
       <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-20 right-[10%] w-[420px] h-[420px] bg-violet-600/[0.05] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-20 right-[10%] w-[560px] h-[560px] bg-violet-600/[0.12] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
