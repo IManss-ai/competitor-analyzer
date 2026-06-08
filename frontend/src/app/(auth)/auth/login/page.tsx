@@ -130,13 +130,13 @@ export default function LoginPage() {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
-            style={{ background: 'rgba(192, 82, 79,0.12)' }}
+            style={{ background: 'rgba(79, 124, 176,0.12)' }}
             animate={{ x: [0, 40, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
             transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute bottom-[-10%] right-[-20%] w-[500px] h-[500px] rounded-full blur-[120px]"
-            style={{ background: 'rgba(192, 82, 79,0.08)' }}
+            style={{ background: 'rgba(79, 124, 176,0.08)' }}
             animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1] }}
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -265,8 +265,8 @@ export default function LoginPage() {
                 <div
                   className="mb-5 px-3 py-2 rounded-lg flex items-center gap-2"
                   style={{
-                    background: 'rgba(192, 82, 79,0.06)',
-                    border: '1px solid rgba(192, 82, 79,0.20)',
+                    background: 'rgba(79, 124, 176,0.06)',
+                    border: '1px solid rgba(79, 124, 176,0.20)',
                   }}
                 >
                   <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400">

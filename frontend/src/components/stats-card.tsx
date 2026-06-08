@@ -14,8 +14,8 @@ interface StatsCardProps {
 }
 
 const accentConfig: Record<string, { dot: string; bar: string }> = {
-  violet:  { dot: '#c0524f', bar: 'var(--accent-primary)' },
-  blue:    { dot: '#cf6360', bar: '#c0524f' },
+  violet:  { dot: '#4f7cb0', bar: 'var(--accent-primary)' },
+  blue:    { dot: '#6a96c8', bar: '#4f7cb0' },
   amber:   { dot: '#c79a4e', bar: '#d97706' },
   emerald: { dot: '#5aa07a', bar: '#059669' },
   neutral: { dot: '#4e5a6e', bar: '#374151' },

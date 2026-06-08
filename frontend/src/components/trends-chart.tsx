@@ -10,7 +10,7 @@ interface ChartCompetitor {
 }
 
 export default function TrendsChart({ data, competitors }: { data: Record<string, string | number>[], competitors: ChartCompetitor[] }) {
-  const colors = ["#c0524f", "#5aa07a", "#c79a4e", "#cf6360", "#c0524f", "#64748b", "#a8403d"];
+  const colors = ["#4f7cb0", "#5aa07a", "#c79a4e", "#6a96c8", "#4f7cb0", "#64748b", "#3f6a9c"];
 
   // ResponsiveContainer measures its parent; rendering before the client lays
   // out this fixed-height wrapper makes it read -1x-1 and log a Recharts

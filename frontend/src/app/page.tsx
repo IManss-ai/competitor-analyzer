@@ -382,7 +382,7 @@ export default function LandingPage() {
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="relative pt-24 pb-20 lg:pt-28 lg:pb-24 px-6 overflow-hidden">
         {/* Subtle top glow - static, no animation */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[640px] h-[360px] bg-sky-600/12 rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[640px] h-[360px] bg-sky-600/[0.05] rounded-full blur-[120px] pointer-events-none z-0" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -572,7 +572,7 @@ export default function LandingPage() {
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
       <section id="dashboard-showcase" ref={commandCenterRef} className="py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-24 left-[15%] w-[560px] h-[560px] bg-sky-600/[0.12] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-24 left-[15%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-7xl mx-auto relative z-10">
 
           <motion.div
@@ -689,7 +689,7 @@ export default function LandingPage() {
                           className="absolute inset-y-0 left-0 w-32 pointer-events-none z-20"
                           style={{
                             background:
-                              'linear-gradient(to right, transparent, rgba(192, 82, 79,0.07), rgba(192, 82, 79,0.12), rgba(192, 82, 79,0.07), transparent)',
+                              'linear-gradient(to right, transparent, rgba(79, 124, 176,0.07), rgba(79, 124, 176,0.12), rgba(79, 124, 176,0.07), transparent)',
                           }}
                         />
                       )}
@@ -843,7 +843,7 @@ export default function LandingPage() {
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
       <section id="features" className="py-28 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-sky-600/[0.12] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <motion.div
@@ -889,7 +889,7 @@ export default function LandingPage() {
                   <motion.path
                     d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
                     fill="none"
-                    stroke="#c0524f"
+                    stroke="#4f7cb0"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     initial={{ pathLength: 0 }}
@@ -909,7 +909,7 @@ export default function LandingPage() {
                     cx="175"
                     cy="4"
                     r="3"
-                    fill="#cf6360"
+                    fill="#6a96c8"
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
@@ -917,8 +917,8 @@ export default function LandingPage() {
                   />
                   <defs>
                     <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="64">
-                      <stop stopColor="#c0524f" stopOpacity="0.15" />
-                      <stop offset="1" stopColor="#c0524f" stopOpacity="0" />
+                      <stop stopColor="#4f7cb0" stopOpacity="0.15" />
+                      <stop offset="1" stopColor="#4f7cb0" stopOpacity="0" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -1065,7 +1065,7 @@ export default function LandingPage() {
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
       <section id="battle-card" className="py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-sky-600/[0.10] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-sky-600/[0.04] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
@@ -1105,7 +1105,7 @@ export default function LandingPage() {
                   {activeComp === comp && (
                     <motion.div
                       layoutId="activeBattleTab"
-                      className="absolute inset-0 bg-sky-600 rounded-full shadow-[0_2px_8px_rgba(192, 82, 79,0.25)]"
+                      className="absolute inset-0 bg-sky-600 rounded-full shadow-[0_2px_8px_rgba(79, 124, 176,0.25)]"
                       transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                     />
                   )}
@@ -1282,7 +1282,7 @@ export default function LandingPage() {
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
       <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-20 right-[10%] w-[560px] h-[560px] bg-sky-600/[0.12] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-20 right-[10%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -1363,7 +1363,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(192, 82, 79,0.08)]"
+            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4 text-balance">

@@ -95,7 +95,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
           const borderLeftColor = {
             pricing: '#c79a4e',
             feature: '#5aa07a',
-            repositioning: '#c0524f',
+            repositioning: '#9b7fc7',
             copy: '#64748b'
           }[action.change_event.change_type] || '#64748b';
 

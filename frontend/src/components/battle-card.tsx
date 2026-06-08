@@ -91,7 +91,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
     const t = type.toLowerCase();
     if (t.includes('price') || t.includes('pricing')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
     if (t.includes('feature') || t.includes('add')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
-    if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-[rgba(192, 82, 79,0.12)] text-[#c0524f] border-[rgba(192, 82, 79,0.24)]';
+    if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-[rgba(155,127,199,0.12)] text-[#9b7fc7] border-[rgba(155,127,199,0.30)]';
     if (t.includes('reputation')) return 'bg-red-400/10 text-red-400 border-red-400/20';
     if (t.includes('social') || t.includes('campaign')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
     if (t.includes('review')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';

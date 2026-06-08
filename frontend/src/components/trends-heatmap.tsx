@@ -103,7 +103,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                         transition={{ delay: (compIndex * 0.04) + (i * 0.01), duration: 0.35, type: "spring" }}
                         title={`${count} change${count !== 1 ? 's' : ''} in week of ${weeks[i]}`}
                         className={clsx(
-                          'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer transition-shadow hover:shadow-[0_2px_8px_rgba(192, 82, 79,0.15)]',
+                          'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer transition-shadow hover:shadow-[0_2px_8px_rgba(79, 124, 176,0.15)]',
                           heatClasses[heatLevel(count)]
                         )}
                       >

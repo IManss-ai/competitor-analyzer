@@ -166,11 +166,11 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
             style={{
               background: planBadge === 'Pro'
-                ? 'rgba(192, 82, 79,0.15)'
+                ? 'rgba(79, 124, 176,0.15)'
                 : 'rgba(255,255,255,0.06)',
-              color: planBadge === 'Pro' ? '#cf6360' : 'var(--text-muted)',
+              color: planBadge === 'Pro' ? '#6a96c8' : 'var(--text-muted)',
               border: planBadge === 'Pro'
-                ? '1px solid rgba(192, 82, 79,0.28)'
+                ? '1px solid rgba(79, 124, 176,0.28)'
                 : '1px solid var(--border-default)',
             }}
           >
@@ -199,7 +199,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               )}
               style={
                 isActive
-                  ? { background: 'rgba(192, 82, 79,0.10)', color: '#7dd3fc' }
+                  ? { background: 'rgba(79, 124, 176,0.10)', color: '#7dd3fc' }
                   : { color: 'var(--text-secondary)' }
               }
             >

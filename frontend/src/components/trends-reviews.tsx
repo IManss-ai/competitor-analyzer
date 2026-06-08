@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContain
 import { ReviewTrend } from '@/lib/types';
 
 export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
-  const colors = ["#c0524f", "#5aa07a", "#c79a4e", "#cf6360", "#c0524f", "#64748b", "#a8403d"];
+  const colors = ["#4f7cb0", "#5aa07a", "#c79a4e", "#6a96c8", "#4f7cb0", "#64748b", "#3f6a9c"];
 
   // Gate the ResponsiveContainer on mount so it measures the real 220px box
   // instead of -1x-1 on first paint (Recharts dimension warning).

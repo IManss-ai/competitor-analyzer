@@ -8,7 +8,7 @@ export default function MiniActivityChart({ data }: { data: Array<{ value: numbe
       <BarChart data={data} barSize={8} barGap={2}>
         <Bar dataKey="value" radius={[3, 3, 0, 0]}>
           {data.map((entry, i) => (
-            <Cell key={i} fill={entry.active ? '#c0524f' : 'rgba(255,255,255,0.08)'} />
+            <Cell key={i} fill={entry.active ? '#4f7cb0' : 'rgba(255,255,255,0.08)'} />
           ))}
         </Bar>
         <Tooltip

@@ -2,7 +2,7 @@
 
 /* ─────────────────────────────────────────────────────────────────────────────
    RIVALSCOPE — Design System v3 "Intelligence Desk" (INK mode)
-   Palette: warm near-black ink (#16140f) + oxblood accent (#c0524f)
+   Palette: warm near-black ink (#16140f) + slate-blue accent (#4f7cb0)
    Spacing: 8pt scale (4, 8, 12, 16, 24, 32, 40, 48, 64)
    Radius:  sharp — cards 6px, buttons/inputs 4px, badges 2px, pills 9999px
    Type:    Archivo (grotesk, UI + display) + IBM Plex Mono (data)
@@ -33,17 +33,17 @@
 
   /* Remap Tailwind's `sky` scale to oxblood so every legacy sky-* utility
      becomes the v3 accent with no per-component edits. */
-  --color-sky-50:  #f7e9e8;
-  --color-sky-100: #f0d3d1;
-  --color-sky-200: #e3a9a6;
-  --color-sky-300: #d47e7a;
-  --color-sky-400: #c95d59;
-  --color-sky-500: #c0524f;
-  --color-sky-600: #a8403d;
-  --color-sky-700: #8b2c2c;
-  --color-sky-800: #722525;
-  --color-sky-900: #5e1f1f;
-  --color-sky-950: #3d1414;
+  --color-sky-50:  #eef3f9;
+  --color-sky-100: #dce7f2;
+  --color-sky-200: #b9cfe6;
+  --color-sky-300: #8fb0d4;
+  --color-sky-400: #6a96c8;
+  --color-sky-500: #4f7cb0;
+  --color-sky-600: #3f6a9c;
+  --color-sky-700: #345781;
+  --color-sky-800: #2c4868;
+  --color-sky-900: #243a54;
+  --color-sky-950: #172534;
 }
 
 :root {
@@ -54,19 +54,19 @@
   --card-foreground:      40 22% 89%;
   --popover:              40 18% 9%;
   --popover-foreground:   40 22% 89%;
-  --primary:              2 47% 53%;
+  --primary:              212 38% 50%;
   --primary-foreground:   40 30% 96%;
   --secondary:            40 12% 14%;
   --secondary-foreground: 40 22% 89%;
   --muted:                40 12% 12%;
   --muted-foreground:     38 10% 45%;
-  --accent:               2 47% 53%;
+  --accent:               212 38% 50%;
   --accent-foreground:    40 22% 89%;
   --destructive:          0 60% 50%;
   --destructive-foreground: 0 0% 100%;
   --border:               40 12% 18%;
   --input:                40 12% 15%;
-  --ring:                 2 47% 53%;
+  --ring:                 212 38% 50%;
 
   /* ── Fonts ────────────────────────────────────────── */
   --font-sans:  var(--font-archivo), system-ui, sans-serif;
@@ -92,11 +92,11 @@
   --text-muted:     #6f685c;
 
   /* ── Accent — Oxblood ─────────────────────────────── */
-  --accent-primary:     #c0524f;
-  --accent-hover:       #cf6360;
-  --accent-subtle:      rgba(192,82,79,0.12);
-  --accent-border:      rgba(192,82,79,0.34);
-  --accent-glow:        rgba(192,82,79,0.25);
+  --accent-primary:     #4f7cb0;
+  --accent-hover:       #6a96c8;
+  --accent-subtle:      rgba(79,124,176,0.12);
+  --accent-border:      rgba(79,124,176,0.34);
+  --accent-glow:        rgba(79,124,176,0.25);
 
   /* ── Radius scale (sharp) ─────────────────────────── */
   --radius-sm:   2px;
@@ -303,14 +303,14 @@ code, pre, .font-mono {
   border-color: rgba(90,160,122,0.35);
 }
 .badge-repositioning, .badge-positioning_shift {
-  background: rgba(192,82,79,0.12);
-  color: #c0524f;
-  border-color: rgba(192,82,79,0.34);
+  background: rgba(155,127,199,0.12);
+  color: #9b7fc7;
+  border-color: rgba(155,127,199,0.30);
 }
 .badge-review_trend {
-  background: rgba(111,155,206,0.12);
-  color: #6f9bce;
-  border-color: rgba(111,155,206,0.35);
+  background: rgba(79,157,157,0.12);
+  color: #4f9d9d;
+  border-color: rgba(79,157,157,0.35);
 }
 .badge-minor_copy {
   background: rgba(154,163,175,0.10);
