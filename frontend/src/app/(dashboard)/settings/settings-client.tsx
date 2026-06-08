@@ -182,17 +182,17 @@ export default function SettingsClient({
 
   const statusCfg = statusConfig[settings.subscription_status] ?? {
     label: settings.subscription_status,
-    dot: 'bg-zinc-500',
-    text: 'text-zinc-400',
-    bg: 'bg-white/[0.04]',
-    border: 'border-white/10',
+    dot: 'bg-[var(--text-muted)]',
+    text: 'text-[var(--text-secondary)]',
+    bg: 'bg-[var(--fill-subtle-hover)]',
+    border: 'border-[var(--border-default)]',
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pb-12">
       {/* Left Navigation Sidebar */}
       <aside className="lg:w-56 flex-shrink-0">
-        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-white/5">
+        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-[var(--border-subtle)]">
           {[
             { id: 'profile', label: 'Profile', Icon: UserIcon },
             { id: 'schedule', label: 'Scan Schedule', Icon: Calendar },
@@ -207,7 +207,7 @@ export default function SettingsClient({
                 'flex items-center gap-3 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-150 cursor-pointer',
                 activeTab === tab.id
                   ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold rounded-t-lg lg:rounded-r-lg lg:rounded-l-none'
-                  : 'text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--fill-subtle-hover)] hover:text-[var(--text-primary)]'
               )}
             >
               <tab.Icon size={16} />
@@ -260,7 +260,7 @@ export default function SettingsClient({
                         'border p-3.5 rounded-xl text-left cursor-pointer transition-all',
                         settings.business_type === item.id
                           ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
-                          : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03]'
+                          : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
                       )}
                     >
                       <p className="text-sm font-semibold" style={{ color: settings.business_type === item.id ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
@@ -338,7 +338,7 @@ export default function SettingsClient({
                       'flex items-start gap-4 border p-4 rounded-xl cursor-pointer transition-all',
                       (settings as any).scan_schedule === item.id
                         ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
-                        : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03]'
+                        : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
                     )}
                   >
                     <input
@@ -421,7 +421,7 @@ export default function SettingsClient({
 
             {/* Quick List */}
             <div className="rs-card overflow-hidden">
-              <div className="p-4 border-b border-white/5 bg-white/[0.01]">
+              <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--fill-subtle)]">
                 <h3 className="rs-label">Tracked competitors</h3>
               </div>
 
@@ -430,7 +430,7 @@ export default function SettingsClient({
                   No competitors added yet. Use the form below to add one.
                 </div>
               ) : (
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-[var(--border-subtle)]">
                   {competitors.map((comp) => {
                     const cleanUrl = comp.url.replace(/https?:\/\/(www\.)?/, '');
                     const faviconUrl = `https://www.google.com/s2/favicons?domain=${cleanUrl}&sz=32`;
@@ -444,7 +444,7 @@ export default function SettingsClient({
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/favicon.ico';
                             }}
-                            className="w-7 h-7 rounded border border-white/10 bg-white/5 p-0.5"
+                            className="w-7 h-7 rounded border border-[var(--border-default)] bg-[var(--fill-subtle)] p-0.5"
                           />
                           <div className="min-w-0">
                             <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
@@ -463,7 +463,7 @@ export default function SettingsClient({
                               onChange={() => handleToggleCompetitor(comp)}
                               className="sr-only peer"
                             />
-                            <div className="w-9 h-5 bg-white/10 peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#070b14] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent-primary)] relative"></div>
+                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent-primary)] relative"></div>
                             <span className="ml-2 text-xs font-semibold min-w-[48px]" style={{ color: 'var(--text-secondary)' }}>
                               {comp.active ? 'Active' : 'Paused'}
                             </span>
@@ -472,7 +472,7 @@ export default function SettingsClient({
                           {/* Delete Button */}
                           <button
                             onClick={() => handleDeleteCompetitor(comp.id)}
-                            className="text-zinc-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
+                            className="text-[var(--text-secondary)] hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 size={16} />
@@ -578,7 +578,7 @@ export default function SettingsClient({
               </div>
 
               {/* Plan Card Features */}
-              <div className="bg-white/[0.01] border border-white/5 rounded-xl p-5 mb-6">
+              <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-xl p-5 mb-6">
                 <p className="rs-label mb-4">Included in Pro plan:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                   {[

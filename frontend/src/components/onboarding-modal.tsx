@@ -79,7 +79,7 @@ export default function OnboardingModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="relative z-10 rounded-xl shadow-2xl p-8 md:p-10 max-w-xl w-full mx-4 border border-white/5"
+            className="relative z-10 rounded-xl shadow-2xl p-8 md:p-10 max-w-xl w-full mx-4 border border-[var(--border-subtle)]"
             style={{ backgroundColor: 'var(--surface-overlay)' }}
           >
             <div className="text-center mb-8">
@@ -106,13 +106,13 @@ export default function OnboardingModal() {
                     className={`relative p-6 rounded-xl border text-left transition-all cursor-pointer disabled:opacity-60`}
                     style={{
                       borderColor: isSelected ? 'var(--accent-primary)' : 'var(--border-default)',
-                      backgroundColor: isSelected ? 'var(--accent-subtle)' : 'rgba(255,255,255,0.02)',
+                      backgroundColor: isSelected ? 'var(--accent-subtle)' : 'var(--fill-subtle)',
                     }}
                   >
                     <div
                       className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors`}
                       style={{
-                        backgroundColor: isSelected ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)',
+                        backgroundColor: isSelected ? 'var(--accent-primary)' : 'var(--fill-subtle-hover)',
                         color: isSelected ? '#ffffff' : 'var(--text-secondary)',
                       }}
                     >

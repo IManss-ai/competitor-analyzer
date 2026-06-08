@@ -104,12 +104,12 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl relative overflow-hidden">
       <div className="space-y-3 relative z-10">
         {/* Row 1 */}
-        <div className="flex items-center gap-2 bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5">
-          <span className="text-[10px] text-zinc-400 font-mono">domain:</span>
-          <div className="flex-1 flex items-center text-xs text-white font-mono min-h-[16px]">
+        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg px-3 py-2.5">
+          <span className="text-[10px] text-[var(--text-muted)] font-mono">domain:</span>
+          <div className="flex-1 flex items-center text-xs text-[var(--text-primary)] font-mono min-h-[16px]">
             {text1}
             {isHovered && !showCheck1 && (
               <motion.span
@@ -134,9 +134,9 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
         </div>
 
         {/* Row 2 */}
-        <div className="flex items-center gap-2 bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5">
-          <span className="text-[10px] text-zinc-400 font-mono">domain:</span>
-          <div className="flex-1 flex items-center text-xs text-white font-mono min-h-[16px]">
+        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg px-3 py-2.5">
+          <span className="text-[10px] text-[var(--text-muted)] font-mono">domain:</span>
+          <div className="flex-1 flex items-center text-xs text-[var(--text-primary)] font-mono min-h-[16px]">
             {text2}
             {isHovered && showCheck1 && !showCheck2 && (
               <motion.span
@@ -219,9 +219,9 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex items-center gap-5 p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
+    <div className="w-full h-full flex items-center gap-5 p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl relative overflow-hidden">
       {/* Radar Section */}
-      <div className="w-16 h-16 rounded-full border border-white/[0.08] relative flex items-center justify-center flex-shrink-0 bg-white/[0.01]">
+      <div className="w-16 h-16 rounded-full border border-[var(--border-default)] relative flex items-center justify-center flex-shrink-0 bg-[var(--fill-subtle)]">
         <svg className="absolute inset-0 w-full h-full -rotate-90">
           <motion.circle
             cx="32"
@@ -267,12 +267,12 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
               className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md border transition-all duration-200 ${
                 isScanned
                   ? 'bg-sky-950/20 border-sky-500/25 text-sky-300'
-                  : 'bg-white/[0.04] border-white/[0.10] text-zinc-400'
+                  : 'bg-[var(--fill-subtle-hover)] border-[var(--border-default)] text-[var(--text-muted)]'
               }`}
             >
               <motion.span
                 animate={{
-                  backgroundColor: isScanned ? '#6a96c8' : '#3f3f46',
+                  backgroundColor: isScanned ? '#6a96c8' : 'var(--text-muted)',
                 }}
                 className="w-1.5 h-1.5 rounded-full"
               />
@@ -306,21 +306,21 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-white/[0.08] rounded-xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl relative overflow-hidden">
       <motion.div
         key={animKey}
         animate={isHovered ? { y: -4 } : { y: 0 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="bg-[var(--surface-base)] border border-white/[0.10] rounded-xl p-4 shadow-xl relative"
+        className="bg-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-4 shadow-xl relative"
       >
         {/* Folded corner effect mock */}
-        <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-sky-950 border-l border-b border-white/[0.12] rounded-bl-sm pointer-events-none" />
+        <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-sky-950 border-l border-b border-[var(--border-default)] rounded-bl-sm pointer-events-none" />
 
         <div className="flex items-center gap-2 mb-3">
           <div className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
             <Zap size={11} />
           </div>
-          <span className="text-[10px] font-bold text-white font-mono">Stripe Weekly Intel</span>
+          <span className="text-[10px] font-bold text-[var(--text-primary)] font-mono">Stripe Weekly Intel</span>
         </div>
 
         {/* Bullet rows */}
@@ -343,7 +343,7 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
               <span className={`px-1.5 py-0.5 rounded border text-[8px] font-mono font-medium ${row.color}`}>
                 {row.tag}
               </span>
-              <span className="text-zinc-300 truncate">{row.text}</span>
+              <span className="text-[var(--text-secondary)] truncate">{row.text}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -396,7 +396,7 @@ export default function HowItWorksPanels() {
   return (
     <div ref={containerRef} className="relative max-w-4xl mx-auto pl-8 md:pl-16 pr-2">
       {/* Scroll-animated vertical gradient line */}
-      <div className="absolute left-4 md:left-8 top-6 bottom-6 w-[2px] bg-white/[0.04] rounded-full pointer-events-none">
+      <div className="absolute left-4 md:left-8 top-6 bottom-6 w-[2px] bg-[var(--fill-subtle-hover)] rounded-full pointer-events-none">
         <motion.div
           style={{ scaleY, transformOrigin: 'top' }}
           className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-500 to-sky-600 rounded-full"
@@ -439,15 +439,15 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-white/[0.18] rounded-xl p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 shadow-xl transition-all duration-300 cursor-pointer"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-xl p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 shadow-xl transition-all duration-300 cursor-pointer"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">
                   <div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight">
+                    <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-3 tracking-tight">
                       {step.title}
                     </h3>
-                    <p className="text-zinc-300 text-sm leading-relaxed md:max-w-sm">
+                    <p className="text-[var(--text-secondary)] text-sm leading-relaxed md:max-w-sm">
                       {step.body}
                     </p>
                   </div>

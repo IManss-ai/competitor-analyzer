@@ -41,11 +41,11 @@ export default async function TrendsPage() {
       {!hasCompetitors ? (
         <div className="rs-card p-6">
           <div className="px-6 py-24 text-center flex flex-col items-center">
-            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-white/5 border border-white/10">
-              <div className="w-2.5 h-[30%] bg-white/10 rounded-sm"></div>
-              <div className="w-2.5 h-[70%] bg-white/20 rounded-sm"></div>
-              <div className="w-2.5 h-[50%] bg-white/10 rounded-sm"></div>
-              <div className="w-2.5 h-[90%] bg-white/20 rounded-sm"></div>
+            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-[var(--fill-subtle)] border border-[var(--border-default)]">
+              <div className="w-2.5 h-[30%] bg-[var(--fill-subtle-hover)] rounded-sm"></div>
+              <div className="w-2.5 h-[70%] bg-[var(--border-strong)] rounded-sm"></div>
+              <div className="w-2.5 h-[50%] bg-[var(--fill-subtle-hover)] rounded-sm"></div>
+              <div className="w-2.5 h-[90%] bg-[var(--border-strong)] rounded-sm"></div>
             </div>
             
             <h3 className="text-xl font-semibold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>No data to show yet</h3>

@@ -22,10 +22,10 @@ export default function DashboardLoading() {
         <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
           <div className="w-32 h-4 rs-skeleton"></div>
         </div>
-        <div className="divide-y divide-white/[0.06]">
+        <div className="divide-y divide-[var(--border-subtle)]">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="px-6 py-5 flex items-start gap-4">
-              <div className="mt-1.5 w-2.5 h-2.5 rounded-full bg-white/10"></div>
+              <div className="mt-1.5 w-2.5 h-2.5 rounded-full bg-[var(--fill-subtle-hover)]"></div>
               <div className="w-9 h-9 rounded-lg rs-skeleton"></div>
               <div className="flex-1 space-y-2">
                 <div className="w-1/4 h-4 rs-skeleton"></div>

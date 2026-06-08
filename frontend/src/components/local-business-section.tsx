@@ -18,7 +18,7 @@ export default function LocalBusinessSection({
 
   return (
     <div className="rs-card overflow-hidden mb-6">
-      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Store size={18} className="text-sky-400" />
           <h2 className="text-sm font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
@@ -34,7 +34,7 @@ export default function LocalBusinessSection({
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-white/[0.06]">
+        <div className="divide-y divide-[var(--border-subtle)]">
           {competitors.map((comp) => {
             const hasGoogleMaps = !!comp.google_maps_url;
             const hasInstagram = !!comp.instagram_handle;
@@ -44,7 +44,7 @@ export default function LocalBusinessSection({
             return (
               <div key={comp.id} className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] flex items-center justify-center flex-shrink-0">
                     <Store size={14} style={{ color: 'var(--text-muted)' }} />
                   </div>
                   <div className="min-w-0">
@@ -64,7 +64,7 @@ export default function LocalBusinessSection({
                     </span>
                   )}
                   {hasInstagram && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-white/[0.04] border border-white/10 px-2 py-0.5 rounded-md" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] px-2 py-0.5 rounded-md" style={{ color: 'var(--text-secondary)' }}>
                       Instagram
                     </span>
                   )}
@@ -87,7 +87,7 @@ export default function LocalBusinessSection({
           })}
 
           {/* Empty state for social data */}
-          <div className="px-6 py-8 text-center bg-white/[0.02]">
+          <div className="px-6 py-8 text-center bg-[var(--fill-subtle)]">
             <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
               Social posts and Google reviews appear here after your next scan.
             </p>
