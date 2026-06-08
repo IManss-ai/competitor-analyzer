@@ -19,6 +19,9 @@ function applyTheme(next: Theme) {
 export function useTheme() {
   const [theme, setThemeState] = useState<Theme>('paper');
 
+  // DOM is already in the correct theme via the inline pre-paint script + CSS
+  // OS fallback; here we only sync React state. Do NOT add applyTheme() — it would
+  // stamp data-theme and defeat the live OS-change path below for no-preference users.
   useEffect(() => { setThemeState(readEffectiveTheme()); }, []);
 
   useEffect(() => {
