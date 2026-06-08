@@ -4,13 +4,13 @@ import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://rivalscope.com'),
+  metadataBase: new URL('https://competitor-analyzer-zeta.vercel.app'),
   title: 'Rivalscope — Competitor Intelligence for Growing Teams',
   description: 'Track competitor pricing changes, messaging shifts, and customer complaints. AI-generated sales playbooks delivered every Monday morning.',
   openGraph: {
     title: 'Rivalscope — Competitor Intelligence for Growing Teams',
     description: 'Track competitor pricing, reviews, and messaging shifts. AI sales playbooks every Monday.',
-    url: 'https://rivalscope.com',
+    url: 'https://competitor-analyzer-zeta.vercel.app',
     siteName: 'Rivalscope',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Rivalscope — Competitor Intelligence' }],
