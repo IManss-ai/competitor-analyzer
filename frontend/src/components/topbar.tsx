@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/theme-toggle';
 
 interface TopbarProps {
   title: string;
@@ -44,6 +45,9 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
 
       {/* Right — meta + actions */}
       <div className="flex items-center gap-4 pt-0.5 flex-shrink-0">
+        <ThemeToggle />
+        <div style={{ width: '1px', height: '16px', background: 'var(--border-default)' }} />
+
         {/* Monitoring status */}
         <div className="flex items-center gap-2">
           <span className="status-dot-active" />
