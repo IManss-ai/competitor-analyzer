@@ -62,7 +62,7 @@ async def _extract_reviews_with_claude(text: str) -> dict:
     
     try:
         response = await client.messages.create(
-            model="claude-3-5-haiku-20241022",
+            model="claude-haiku-4-5",
             max_tokens=4096,
             messages=[{"role": "user", "content": prompt}],
             temperature=0
@@ -91,7 +91,7 @@ async def _analyze_complaints_with_claude(reviews: list) -> dict:
     
     try:
         response = await client.messages.create(
-            model="claude-3-5-haiku-20241022",
+            model="claude-haiku-4-5",
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt}],
             temperature=0

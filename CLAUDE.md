@@ -14,7 +14,7 @@ Rivalscope is a premium competitive intelligence SaaS for founders and sales tea
    - **Action Generator**: Drafts response playbooks (e.g., email templates, Slack alerts) for the approval queue.
 2. **AI Battle Card Generator (`app/routes/battlecard.py`)**:
    - Aggregates the last 7 days of ChangeEvents, G2/Trustpilot complaints, and strategic signals.
-   - Calls Claude (`claude-3-5-sonnet-20241022`) using **Prompt Caching** to generate a structured 4-quadrant response:
+   - Calls Claude (`claude-sonnet-4-6`) using **Prompt Caching** to generate a structured 4-quadrant response:
      - *Executive Summary*: Short strategic overview.
      - *Detected Changes*: Categorized list of competitor page edits.
      - *User Complaints*: Pain points compiled from G2 & Trustpilot reviews.
@@ -30,7 +30,7 @@ Rivalscope is a premium competitive intelligence SaaS for founders and sales tea
 - **AI Models**:
   - `gpt-4o-mini` (Classification & weekly briefs)
   - `gpt-4o` (Response playbook draft generator)
-  - `claude-3-5-sonnet-20241022` (High-tier Battle Card analyst)
+  - `claude-sonnet-4-6` (High-tier Battle Card analyst)
 
 ---
 

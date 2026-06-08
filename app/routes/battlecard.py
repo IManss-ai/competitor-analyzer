@@ -135,9 +135,8 @@ Known customer complaints:
 
         try:
             response = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=1024,
-                betas=["prompt-caching-2024-07-31"],
                 messages=[
                     {"role": "user", "content": [
                         {"type": "text", "text": LOCAL_SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}},
@@ -348,9 +347,8 @@ Known customer complaints/weaknesses:
 
         try:
             response = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-sonnet-4-6",
                 max_tokens=1024,
-                betas=["prompt-caching-2024-07-31"],
                 messages=[
                     {"role": "user", "content": [
                         {"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}},
