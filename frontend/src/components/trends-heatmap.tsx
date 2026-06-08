@@ -1,7 +1,8 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { motion } from 'motion/react';
-import { clsx } from 'clsx';
+import { useChartPalette } from '@/lib/chart-theme';
 
 interface HeatmapCompetitor {
   id: string;
@@ -16,7 +17,20 @@ interface TrendsHeatmapProps {
   maxCount: number;
 }
 
+function hexToRgb(hex: string): [number, number, number] {
+  const m = hex.replace('#', '');
+  const v = m.length === 3
+    ? m.split('').map((c) => c + c).join('')
+    : m;
+  const n = parseInt(v, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
 export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHeatmapProps) {
+  const p = useChartPalette();
+  const [r, g, b] = hexToRgb(p.accent);
+  const rgba = (a: number) => `rgba(${r}, ${g}, ${b}, ${a})`;
+
   function heatLevel(count: number): 0 | 1 | 2 | 3 {
     if (count === 0) return 0;
     const ratio = count / maxCount;
@@ -25,28 +39,34 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
     return 3;
   }
 
-  const heatClasses = [
-    'bg-white/5 text-[#8892a4] border border-white/[0.04]',
-    'bg-sky-950/40 text-sky-300 border border-sky-900/30',
-    'bg-sky-900/60 text-sky-200 border border-sky-800/30',
-    'bg-[var(--accent-primary)] text-white border border-[var(--accent-border)]',
-  ];
+  // Accent-derived intensity ramp: faint at the low end (faint-on-light in
+  // paper, faint-on-dark in ink), solid accent at the top. Level 0 is an empty
+  // cell, levels 1-3 ramp opacity, level 3 is full accent with on-accent text.
+  const heatStyle = (level: 0 | 1 | 2 | 3): CSSProperties => {
+    if (level === 0) {
+      return { backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)' };
+    }
+    const fills = { 1: 0.16, 2: 0.4, 3: 1 } as const;
+    return {
+      backgroundColor: level === 3 ? p.accent : rgba(fills[level]),
+      color: level === 3 ? '#ffffff' : 'var(--text-primary)',
+      border: `1px solid ${level === 3 ? p.accent : rgba(fills[level] + 0.1)}`,
+    };
+  };
 
   return (
     <div className="rs-card overflow-hidden">
-      <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+      <div className="px-6 py-5 border-b border-[var(--border-subtle)] flex items-center justify-between">
         <h2 className="rs-label">
           Activity density heatmap
         </h2>
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Less</span>
-          {[0, 1, 2, 3].map((level) => (
+          {([0, 1, 2, 3] as const).map((level) => (
             <div
               key={level}
-              className={clsx(
-                'w-3.5 h-3.5 rounded-sm',
-                heatClasses[level].split(' ')[0]
-              )}
+              className="w-3.5 h-3.5 rounded-sm"
+              style={{ backgroundColor: heatStyle(level).backgroundColor, border: heatStyle(level).border }}
             />
           ))}
           <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>More</span>
@@ -56,7 +76,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-white/5 bg-white/[0.01]">
+            <tr className="border-b border-[var(--border-subtle)] bg-[var(--fill-subtle)]">
               <th 
                 className="text-left text-[10px] font-mono uppercase tracking-wider px-6 py-4 sticky left-0 w-[180px] z-10"
                 style={{ color: 'var(--text-muted)', backgroundColor: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)' }}
@@ -83,7 +103,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
               return (
                 <tr
                   key={comp.id}
-                  className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors"
+                  className="border-b border-[var(--border-subtle)] last:border-0 hover:bg-[var(--fill-subtle-hover)] transition-colors"
                 >
                   <td 
                     className="px-6 py-4 sticky left-0 z-10 transition-colors"
@@ -102,10 +122,8 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                         viewport={{ once: true }}
                         transition={{ delay: (compIndex * 0.04) + (i * 0.01), duration: 0.35, type: "spring" }}
                         title={`${count} change${count !== 1 ? 's' : ''} in week of ${weeks[i]}`}
-                        className={clsx(
-                          'w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer transition-shadow hover:shadow-[0_2px_8px_rgba(79, 124, 176,0.15)]',
-                          heatClasses[heatLevel(count)]
-                        )}
+                        className="w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer"
+                        style={heatStyle(heatLevel(count))}
                       >
                         {count > 0 ? count : ''}
                       </motion.div>
