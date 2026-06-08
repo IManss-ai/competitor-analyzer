@@ -393,10 +393,10 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="inline-flex items-center gap-2 bg-sky-500/8 border border-sky-500/20 rounded-full px-3 py-1.5 mb-8"
+                className="inline-flex items-center gap-2 bg-sky-500/15 border border-sky-500/40 rounded-full px-4 py-2 mb-8 shadow-[0_0_24px_rgba(14,165,233,0.18)]"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse flex-shrink-0" />
-                <span className="text-[11px] font-mono text-sky-300 tracking-wide">Live competitor monitoring</span>
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse flex-shrink-0" />
+                <span className="text-xs font-mono text-sky-200 tracking-wide font-semibold">LIVE · Real-time competitor monitoring</span>
               </motion.div>
 
               <motion.h1
@@ -408,7 +408,7 @@ export default function LandingPage() {
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
                   words={['move.', 'pricing change.', 'feature launch.', 'messaging shift.', 'hiring signal.']}
-                  className="text-sky-400"
+                  className="text-sky-300 drop-shadow-[0_0_16px_rgba(56,189,248,0.5)]"
                   interval={2400}
                 />
               </motion.h1>
