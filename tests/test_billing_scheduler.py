@@ -241,6 +241,24 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
         mock_send.assert_called_once()
         self.assertEqual(mock_send.call_args[1]["user_email"], "other@user.com")
 
+    @patch("app.routes.scan.SessionLocal")
+    @patch("app.routes.scan.scan_user_competitors")
+    async def test_run_scan_background_invokes_scanner(self, mock_scan, mock_session_factory):
+        from app.routes.scan import _run_scan_background
+        mock_session_factory.return_value = self.SessionLocal()
+        await _run_scan_background(str(self.user.id))
+        mock_scan.assert_called_once()
+        self.assertEqual(str(mock_scan.call_args[0][0]), str(self.user.id))
+
+    @patch("app.routes.scan.SessionLocal")
+    @patch("app.routes.scan.scan_user_competitors")
+    async def test_run_scan_background_swallows_errors(self, mock_scan, mock_session_factory):
+        from app.routes.scan import _run_scan_background
+        mock_session_factory.return_value = self.SessionLocal()
+        mock_scan.side_effect = RuntimeError("scan boom")
+        # Must not raise — a background scan failure should not crash the worker.
+        await _run_scan_background(str(self.user.id))
+
     @patch("app.routes.scan._run_scan_background")
     def test_trigger_scan_endpoint(self, mock_run_background):
         self.client.cookies.set(SESSION_COOKIE_NAME, self.session_cookie)
