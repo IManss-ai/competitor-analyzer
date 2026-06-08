@@ -7,7 +7,7 @@ Rivalscope is a premium competitive intelligence SaaS for founders and sales tea
 ## 🎯 Project Overview & Core Flows
 
 1. **Scan Pipeline (`app/pipeline/`)**:
-   - **Fetcher**: Monitors competitor URLs using the Jina AI Reader API to pull markdown content.
+   - **Fetcher**: Monitors competitor URLs via the Node Playwright/llm-scraper **sidecar** (`scraper-service/`, `POST /scrape`) — structured extraction serialized to stable markdown. Falls back to mock (local, `SCRAPER_URL` unset) then direct HTTP. Reviews use the sidecar's deterministic `POST /scrape-raw`. Runs in the same container; `SCRAPER_URL=http://localhost:3001`.
    - **Differ**: Performs character-level diff analysis (filtering out minor noise unless >100 characters net change).
    - **Classifier**: Uses `gpt-4o-mini` to categorize changes (`pricing_change`, `feature_add`, `repositioning`, `minor_copy`).
    - **Synthesizer**: Synthesizes changes into weekly email summaries for subscribers.
