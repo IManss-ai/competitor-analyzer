@@ -106,6 +106,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             await refreshDashboard();
           } else if (data.status === 'error') {
             clearInterval(intervalId);
+            // The competitor was still created even if its first scan failed —
+            // refresh so it appears on the dashboard without a manual reload.
+            await refreshDashboard();
             setOnboardingStep(2); // Still move to Step 3 so they see error and can proceed
           }
         }
