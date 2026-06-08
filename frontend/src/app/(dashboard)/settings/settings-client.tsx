@@ -249,7 +249,7 @@ export default function SettingsClient({
                 <p className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>Toggles features specific to your business model.</p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { id: 'saas', title: 'B2B SaaS', desc: 'Price pages, Jina scraping, features' },
+                    { id: 'saas', title: 'B2B SaaS', desc: 'Price pages, feature tracking, plans' },
                     { id: 'local', title: 'Local Business', desc: 'Google Maps, reviews, social tracking' }
                   ].map((item) => (
                     <button
