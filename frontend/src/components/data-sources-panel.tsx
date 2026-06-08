@@ -145,7 +145,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
           <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             Data Sources
           </h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/10 text-zinc-500">
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--border-default)] text-[var(--text-muted)]">
             {connectedCount}/{SAAS_FIELDS.length} connected
           </span>
         </div>
@@ -233,11 +233,11 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
       </div>
 
       {editing && (
-        <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-white/[0.08]">
+        <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-[var(--border-default)]">
           {error ? (
             <span className="text-xs text-red-400">{error}</span>
           ) : (
-            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
               Empty fields clear the override
             </span>
           )}

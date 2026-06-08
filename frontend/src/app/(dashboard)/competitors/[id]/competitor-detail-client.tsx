@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
+import { useChartPalette } from '@/lib/chart-theme';
 
 const formatTimeAgo = (dateStr: string | null) => {
   if (!dateStr) return 'Never';
@@ -51,6 +52,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const comp = detail.competitor;
+  const chart = useChartPalette();
 
   const toggleSection = (section: string) => {
     setCardOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -233,7 +235,7 @@ ${card.win_conditions && card.win_conditions.length > 0
             <img 
               src={`https://www.google.com/s2/favicons?domain=${(comp.url.split('://')[1] || comp.url).split('/')[0]}&sz=64`}
               alt=""
-              className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 p-1.5 flex-shrink-0"
+              className="w-12 h-12 rounded-xl bg-[var(--fill-subtle)] border border-[var(--border-default)] p-1.5 flex-shrink-0"
             />
             <div>
               {editing ? (
@@ -320,18 +322,18 @@ ${card.win_conditions && card.win_conditions.length > 0
         <div className="lg:col-span-2 space-y-6">
           {/* B) CHANGE TIMELINE */}
           <div className="rs-card overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/5">
-              <h2 className="text-sm font-bold text-white">Change History</h2>
-              <p className="text-xs text-zinc-400">Archived snapshots and diff analyzer</p>
+            <div className="px-5 py-4 border-b border-[var(--border-subtle)]">
+              <h2 className="text-sm font-bold text-[var(--text-primary)]">Change History</h2>
+              <p className="text-xs text-[var(--text-secondary)]">Archived snapshots and diff analyzer</p>
             </div>
 
             <div className="p-5">
               {detail.change_events.length === 0 ? (
-                <div className="text-center py-8 text-sm text-zinc-500">
+                <div className="text-center py-8 text-sm text-[var(--text-muted)]">
                   No changes detected yet for this competitor.
                 </div>
               ) : (
-                <div className="relative border-l-2 border-white/5 pl-6 ml-3 space-y-8 py-2">
+                <div className="relative border-l-2 border-[var(--border-subtle)] pl-6 ml-3 space-y-8 py-2">
                   {detail.change_events.map((event: any) => {
                     const isExpanded = expandedEventId === event.id;
                     const changeTypeStyles: Record<string, string> = {
@@ -352,20 +354,20 @@ ${card.win_conditions && card.win_conditions.length > 0
                     return (
                       <div key={event.id} className="relative">
                         {/* Timeline Bullet */}
-                        <div className="absolute -left-[32px] top-1.5 bg-[#070b14] p-0.5 rounded-full">
+                        <div className="absolute -left-[32px] top-1.5 bg-[var(--surface-raised)] p-0.5 rounded-full">
                           <Circle size={10} style={{ color: 'var(--accent-primary)' }} />
                         </div>
 
-                        <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
                           {/* Event Header */}
                           <div 
                             onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-white/[0.04] transition-colors"
+                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-[var(--fill-subtle-hover)] transition-colors"
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-xs font-semibold text-white">{dateFormatted}</span>
-                                <span className="text-[10px] text-zinc-500 font-mono">({event.week_label})</span>
+                                <span className="text-xs font-semibold text-[var(--text-primary)]">{dateFormatted}</span>
+                                <span className="text-[10px] text-[var(--text-muted)] font-mono">({event.week_label})</span>
                               </div>
                               <p className="text-xs mt-0.5 truncate max-w-[280px] md:max-w-[400px]" style={{ color: 'var(--text-secondary)' }}>
                                 {event.brief_text || "Copy differences scanned."}
@@ -387,14 +389,14 @@ ${card.win_conditions && card.win_conditions.length > 0
                                 initial={{ height: 0 }}
                                 animate={{ height: 'auto' }}
                                 exit={{ height: 0 }}
-                                className="border-t border-white/5 overflow-hidden"
+                                className="border-t border-[var(--border-subtle)] overflow-hidden"
                               >
-                                <div className="p-4 bg-white/[0.01]">
-                                  <p className="text-sm font-semibold text-white mb-2">Analysis Summary</p>
-                                  <p className="text-xs text-zinc-400 leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
-                                  
+                                <div className="p-4 bg-[var(--fill-subtle)]">
+                                  <p className="text-sm font-semibold text-[var(--text-primary)] mb-2">Analysis Summary</p>
+                                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
+
                                   <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-semibold text-white">Text Diff Viewer</span>
+                                    <span className="text-xs font-semibold text-[var(--text-primary)]">Text Diff Viewer</span>
                                     {event.net_char_delta !== 0 && (
                                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
                                         event.net_char_delta > 0 ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-red-400 bg-red-500/10 border border-red-500/20'
@@ -419,25 +421,25 @@ ${card.win_conditions && card.win_conditions.length > 0
 
           {/* E) SCAN HISTORY */}
           <div className="rs-card overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/5">
-              <h2 className="text-sm font-bold text-white">Scan Logs</h2>
-              <p className="text-xs text-zinc-400">Full database raw crawl history</p>
+            <div className="px-5 py-4 border-b border-[var(--border-subtle)]">
+              <h2 className="text-sm font-bold text-[var(--text-primary)]">Scan Logs</h2>
+              <p className="text-xs text-[var(--text-secondary)]">Full database raw crawl history</p>
             </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm" style={{ color: 'var(--text-secondary)' }}>
                 <thead>
-                  <tr className="border-b border-white/5 bg-white/[0.01]">
+                  <tr className="border-b border-[var(--border-subtle)] bg-[var(--fill-subtle)]">
                     <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Date</th>
                     <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>File Size</th>
                     <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Status</th>
                     <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Changes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-[var(--border-subtle)]">
                   {detail.scan_history && detail.scan_history.length > 0 ? (
                     detail.scan_history.map((scan: any) => (
-                      <tr key={scan.id} className="hover:bg-white/[0.01] transition-colors">
+                      <tr key={scan.id} className="hover:bg-[var(--fill-subtle)] transition-colors">
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs">
                           {new Date(scan.fetched_at).toLocaleString('en-US', {
                             month: 'short',
@@ -489,7 +491,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-base font-bold text-white">{comp.name || comp.url} Battle Card</h2>
+                    <h2 className="text-base font-bold text-[var(--text-primary)]">{comp.name || comp.url} Battle Card</h2>
                     <p className="text-[11px] mt-0.5 flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
                       <Calendar size={11} /> Week of {new Date(detail.battlecard.generated_at).toLocaleDateString()}
                     </p>
@@ -516,10 +518,10 @@ ${card.win_conditions && card.win_conditions.length > 0
                 {/* Content Accordions */}
                 <div className="space-y-3">
                   {/* Accordion 1: Recent Changes */}
-                  <div className="border border-white/5 rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('changes')}
-                      className="w-full px-4 py-3 bg-white/[0.01] hover:bg-white/[0.03] flex items-center justify-between text-xs font-bold text-white transition-colors"
+                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <Zap size={14} style={{ color: 'var(--accent-primary)' }} /> Recent Changes
@@ -532,17 +534,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white/[0.01] text-zinc-400 border-t border-white/5"
+                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
+                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.what_changed.map((c: string | { text: string }, idx: number) => (
                                   <li key={idx}>{typeof c === 'string' ? c : c.text}</li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="italic text-zinc-500">
+                              <p className="italic text-[var(--text-muted)]">
                                 Your competitor has been quiet this week &mdash; no pricing or feature changes detected.
                               </p>
                             )}
@@ -553,10 +555,10 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 2: Their Weaknesses */}
-                  <div className="border border-white/5 rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('weaknesses')}
-                      className="w-full px-4 py-3 bg-white/[0.01] hover:bg-white/[0.03] flex items-center justify-between text-xs font-bold text-white transition-colors"
+                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <AlertTriangle size={14} className="text-red-400" /> Their Weaknesses
@@ -569,17 +571,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white/[0.01] text-zinc-400 border-t border-white/5"
+                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
+                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.weaknesses.map((w: string, idx: number) => (
                                   <li key={idx}>{w}</li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="italic text-zinc-500">No complaints found in reviews.</p>
+                              <p className="italic text-[var(--text-muted)]">No complaints found in reviews.</p>
                             )}
                           </div>
                         </motion.div>
@@ -588,10 +590,10 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 3: Talking Points */}
-                  <div className="border border-white/5 rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('talkingPoints')}
-                      className="w-full px-4 py-3 bg-white/[0.01] hover:bg-white/[0.03] flex items-center justify-between text-xs font-bold text-white transition-colors"
+                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <MessageSquare size={14} className="text-emerald-400" /> Talking Points
@@ -604,17 +606,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white/[0.01] text-zinc-400 border-t border-white/5"
+                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
-                              <ol className="list-decimal pl-4 space-y-1.5 leading-relaxed text-zinc-200">
+                              <ol className="list-decimal pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.talking_points.map((tp: string, idx: number) => (
                                   <li key={idx}>{tp}</li>
                                 ))}
                               </ol>
                             ) : (
-                              <p className="italic text-zinc-500">No talking points generated.</p>
+                              <p className="italic text-[var(--text-muted)]">No talking points generated.</p>
                             )}
                           </div>
                         </motion.div>
@@ -623,10 +625,10 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 4: Win Conditions */}
-                  <div className="border border-white/5 rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleSection('winConditions')}
-                      className="w-full px-4 py-3 bg-white/[0.01] hover:bg-white/[0.03] flex items-center justify-between text-xs font-bold text-white transition-colors"
+                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <Trophy size={14} className="text-amber-400" /> Win Conditions
@@ -639,17 +641,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="overflow-hidden bg-white/[0.01] text-zinc-400 border-t border-white/5"
+                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
+                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.win_conditions.map((wc: string, idx: number) => (
                                   <li key={idx}>{wc}</li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="italic text-zinc-500">No win conditions generated.</p>
+                              <p className="italic text-[var(--text-muted)]">No win conditions generated.</p>
                             )}
                           </div>
                         </motion.div>
@@ -680,9 +682,9 @@ ${card.win_conditions && card.win_conditions.length > 0
               </div>
             ) : (
               <div className="text-center py-12 space-y-4">
-                <Zap size={32} className="mx-auto text-zinc-600 animate-pulse" />
-                <h3 className="text-sm font-semibold text-white">No Battle Card Generated</h3>
-                <p className="text-xs text-zinc-400 max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
+                <Zap size={32} className="mx-auto text-[var(--text-muted)] animate-pulse" />
+                <h3 className="text-sm font-semibold text-[var(--text-primary)]">No Battle Card Generated</h3>
+                <p className="text-xs text-[var(--text-secondary)] max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
                 <button
                   onClick={handleRegenerateBattlecard}
                   disabled={regenerating}
@@ -698,21 +700,24 @@ ${card.win_conditions && card.win_conditions.length > 0
           {/* D) RATING TREND CHART */}
           <div className="rs-card p-5 space-y-4">
             <div>
-              <h2 className="text-sm font-bold text-white">Rating Trend</h2>
-              <p className="text-xs text-zinc-400">Avg score progression over time</p>
+              <h2 className="text-sm font-bold text-[var(--text-primary)]">Rating Trend</h2>
+              <p className="text-xs text-[var(--text-secondary)]">Avg score progression over time</p>
             </div>
             
             {ratingData.length > 0 ? (
               <div className="h-[120px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={ratingData}>
-                    <XAxis dataKey="date" tick={{ fill: '#71717a', fontSize: 10 }} />
-                    <YAxis domain={[1, 5]} tick={{ fill: '#71717a', fontSize: 10 }} width={15} />
-                    <Tooltip 
+                    <XAxis dataKey="date" tick={{ fill: chart.tick, fontSize: 10 }} />
+                    <YAxis domain={[1, 5]} tick={{ fill: chart.tick, fontSize: 10 }} width={15} />
+                    <Tooltip
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-[var(--surface-raised)] border border-white/10 text-white text-[10px] px-2 py-1 rounded shadow">
+                            <div
+                              className="text-[10px] px-2 py-1 rounded shadow border"
+                              style={{ background: chart.tooltipBg, borderColor: chart.tooltipBorder, color: 'var(--text-primary)' }}
+                            >
                               {payload[0].value} average
                             </div>
                           );
@@ -720,19 +725,19 @@ ${card.win_conditions && card.win_conditions.length > 0
                         return null;
                       }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="rating" 
-                      stroke="#4f7cb0" 
-                      strokeWidth={2} 
-                      dot={{ r: 3, fill: '#4f7cb0' }} 
+                    <Line
+                      type="monotone"
+                      dataKey="rating"
+                      stroke={chart.accent}
+                      strokeWidth={2}
+                      dot={{ r: 3, fill: chart.accent }}
                       activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="text-center py-6 text-xs text-zinc-500 italic">
+              <div className="text-center py-6 text-xs text-[var(--text-muted)] italic">
                 No ratings history available yet.
               </div>
             )}

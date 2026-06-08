@@ -193,7 +193,7 @@ export default function CompetitorManager({
 
               {/* Local Business Details (collapsible) */}
               {isLocalBusiness && (
-                <div className="mt-5 pt-5 border-t border-white/5">
+                <div className="mt-5 pt-5 border-t border-[var(--border-subtle)]">
                   <button
                     type="button"
                     onClick={() => setShowLocalFields(!showLocalFields)}
@@ -204,7 +204,7 @@ export default function CompetitorManager({
                     Local Business Details
                     <ChevronDown
                       size={14}
-                      className="transition-transform text-zinc-500"
+                      className="transition-transform text-[var(--text-muted)]"
                       style={{ transform: showLocalFields ? 'rotate(180deg)' : 'none' }}
                     />
                   </button>
@@ -236,7 +236,7 @@ export default function CompetitorManager({
                               Instagram handle
                             </label>
                             <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">@</span>
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-muted)]">@</span>
                               <input
                                 id="instagram-handle"
                                 type="text"
@@ -275,7 +275,7 @@ export default function CompetitorManager({
       <div className="rs-card mb-8 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>Tracking limit</span>
-          <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="w-24 h-1.5 bg-[var(--fill-subtle-hover)] rounded-full overflow-hidden">
             <div
               className="h-full transition-all duration-500"
               style={{ width: `${filledRatio}%`, backgroundColor: 'var(--accent-primary)' }}
@@ -305,7 +305,7 @@ export default function CompetitorManager({
               {[...Array(9)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-6 h-6 rounded-md bg-white/5 opacity-50"
+                  className="w-6 h-6 rounded-md bg-[var(--fill-subtle)] opacity-50"
                   style={{ animation: `pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite ${i * 0.15}s` }}
                 />
               ))}
@@ -365,7 +365,7 @@ export default function CompetitorManager({
 
                     {/* Top row */}
                     <div className="flex items-start gap-4 mb-5 pr-16">
-                      <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-[var(--fill-subtle)] border border-[var(--border-default)] flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
@@ -398,7 +398,7 @@ export default function CompetitorManager({
                   </div>
 
                   {/* Bottom row */}
-                  <div className="flex items-end justify-between gap-4 mt-4 pt-3.5 border-t border-white/5">
+                  <div className="flex items-end justify-between gap-4 mt-4 pt-3.5 border-t border-[var(--border-subtle)]">
                     <div className="min-w-0">
                       <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>Monitoring since</div>
                       <div className="text-sm font-medium font-mono" style={{ color: 'var(--text-secondary)' }}>
@@ -415,7 +415,7 @@ export default function CompetitorManager({
                       <button
                         onClick={() => handleDelete(comp.id)}
                         disabled={deleting === comp.id}
-                        className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-40"
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-40"
                         title="Remove competitor"
                       >
                         <Trash2 size={16} />
