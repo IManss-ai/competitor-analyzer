@@ -143,4 +143,10 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "v5-bg-init"}
+    import os
+    return {
+        "status": "ok",
+        "version": "v5-bg-init",
+        "commit": (os.environ.get("RAILWAY_GIT_COMMIT_SHA") or "")[:7],
+        "branch": os.environ.get("RAILWAY_GIT_BRANCH") or "local",
+    }
