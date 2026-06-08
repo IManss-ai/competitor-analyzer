@@ -302,7 +302,7 @@ export default function SettingsClient({
                 </div>
 
                 {passwordStatus.type && (
-                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-green-400' : 'text-red-400')}>
+                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400')}>
                     {passwordStatus.message}
                   </p>
                 )}
@@ -396,7 +396,7 @@ export default function SettingsClient({
               </div>
 
               {notifStatus.type && (
-                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-green-400' : 'text-red-400')}>
+                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400')}>
                   {notifStatus.message}
                 </p>
               )}
@@ -516,7 +516,7 @@ export default function SettingsClient({
                 </div>
 
                 {addStatus.type && (
-                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-green-400' : 'text-red-400')}>
+                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400')}>
                     {addStatus.message}
                   </p>
                 )}

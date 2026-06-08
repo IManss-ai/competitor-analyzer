@@ -265,11 +265,11 @@ export default function LoginPage() {
                 <div
                   className="mb-5 px-3 py-2 rounded-lg flex items-center gap-2"
                   style={{
-                    background: plan === 'local' ? 'rgba(34,211,238,0.06)' : 'rgba(14,165,233,0.06)',
-                    border: plan === 'local' ? '1px solid rgba(34,211,238,0.20)' : '1px solid rgba(14,165,233,0.20)',
+                    background: 'rgba(14,165,233,0.06)',
+                    border: '1px solid rgba(14,165,233,0.20)',
                   }}
                 >
-                  <span className={`text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${plan === 'local' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-sky-500/10 text-sky-400'}`}>
+                  <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400">
                     Plan
                   </span>
                   <span className="text-[12px]" style={{ color: 'var(--text-primary)' }}>

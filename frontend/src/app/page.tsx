@@ -843,7 +843,7 @@ export default function LandingPage() {
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
       <section id="features" className="py-28 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-emerald-600/[0.12] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-sky-600/[0.12] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <motion.div
@@ -870,13 +870,13 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-amber-500/70 rounded-xl p-6 hover:border-amber-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-gradient-to-br from-sky-950/40 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-5">
-                  <TrendingUp size={18} className="text-amber-400 flex-shrink-0" />
-                  <div className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent" />
-                  <span className="text-xs font-mono font-bold text-amber-400/80">01</span>
+                  <TrendingUp size={18} className="text-sky-400 flex-shrink-0" />
+                  <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
+                  <span className="text-xs font-mono font-bold text-sky-400/80">01</span>
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">Pricing Grid Monitoring</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
@@ -932,12 +932,12 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-gradient-to-br from-emerald-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-emerald-500/70 rounded-xl p-6 hover:border-emerald-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-gradient-to-br from-sky-950/35 via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
-                <MessageSquare size={18} className="text-emerald-400 flex-shrink-0" />
-                <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent" />
-                <span className="text-xs font-mono font-bold text-emerald-400/80">02</span>
+                <MessageSquare size={18} className="text-sky-400 flex-shrink-0" />
+                <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
+                <span className="text-xs font-mono font-bold text-sky-400/80">02</span>
               </div>
               <h3 className="text-base font-bold text-white mb-2">Review Site Intelligence</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">
@@ -1065,7 +1065,7 @@ export default function LandingPage() {
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
       <section id="battle-card" className="py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-amber-500/[0.10] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-sky-600/[0.10] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
