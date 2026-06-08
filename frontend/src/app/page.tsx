@@ -19,7 +19,7 @@ const FEED = [
   { company: 'Stripe', action: 'Removed flat pricing from enterprise pages', time: '2h ago', type: 'pricing' },
   { company: 'PayPal', action: 'Increased card processing fees to 3.49%', time: '6h ago', type: 'pricing' },
   { company: 'Braintree', action: 'Launched new bio-auth checkouts API v4', time: '1d ago', type: 'feature' },
-  { company: 'Square', action: 'Changed POS hero to "Complete retail platform"', time: '2d ago', type: 'messaging' },
+  { company: 'Square', action: 'Changed POS hero to “Complete retail platform”', time: '2d ago', type: 'messaging' },
   { company: 'Adyen', action: 'Added 3 enterprise retail case studies', time: '3d ago', type: 'content' },
 ];
 
@@ -39,11 +39,11 @@ const BATTLE_CARDS_DATA = {
     changes: [
       { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Removed enterprise flat-rates. Custom contract quote required.' },
       { tag: 'feature', tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Released Stripe Checkout v4.1 with optimized redirect latency.' },
-      { tag: 'copy',    tc: 'text-sky-400 bg-sky-400/10 border-sky-400/20', text: 'Hero updated from "Payments infrastructure" to "Financial operations for global companies".' },
+      { tag: 'copy',    tc: 'text-sky-400 bg-sky-400/10 border-sky-400/20', text: 'Hero updated from “Payments infrastructure” to “Financial operations for global companies”.' },
     ],
     complaints: [
-      { text: '"Support responses took 4 days. Blocked our payment gateway migration."', source: 'Trustpilot · 1 star · 2 days ago' },
-      { text: '"Completely opaque enterprise pricing after their recent site update."', source: 'G2 · 2 stars · 5 days ago' },
+      { text: '“Support responses took 4 days. Blocked our payment gateway migration.”', source: 'Trustpilot · 1 star · 2 days ago' },
+      { text: '“Completely opaque enterprise pricing after their recent site update.”', source: 'G2 · 2 stars · 5 days ago' },
     ],
     signals: [
       { bold: '4 Enterprise Sales roles', rest: ' posted in UK & EMEA. Major market expansion incoming.' },
@@ -51,8 +51,8 @@ const BATTLE_CARDS_DATA = {
     ],
     moves: [
       'Lead EMEA sales conversations highlighting flat-rate pricing advantage.',
-      'Add "24h instant Slack/phone support" to your landing page hero.',
-      'Deploy a dedicated "Stripe Comparison & Migration Guide" page to capture enterprise churn.',
+      'Add “24h instant Slack/phone support” to your landing page hero.',
+      'Deploy a dedicated “Stripe Comparison & Migration Guide” page to capture enterprise churn.',
     ],
     hiring: {
       total: 47,
@@ -68,11 +68,11 @@ const BATTLE_CARDS_DATA = {
     changes: [
       { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Increased merchant checkout card processing fee from 2.9% to 3.49%.' },
       { tag: 'feature', tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Integrated bio-auth verification directly inside the checkout iframe.' },
-      { tag: 'copy',    tc: 'text-sky-400 bg-sky-400/10 border-sky-400/20', text: 'Hero copy focused on "Instant conversion optimization" rather than "Send money".' },
+      { tag: 'copy',    tc: 'text-sky-400 bg-sky-400/10 border-sky-400/20', text: 'Hero copy focused on “Instant conversion optimization” rather than “Send money”.' },
     ],
     complaints: [
-      { text: '"Sandbox environment API endpoints timeout continuously during test mock run."', source: 'Developer Forum · 3 days ago' },
-      { text: '"Merchant fees rose unexpectedly without a clear email warning beforehand."', source: 'Reddit · 4 stars · 1 day ago' },
+      { text: '“Sandbox environment API endpoints timeout continuously during test mock run.”', source: 'Developer Forum · 3 days ago' },
+      { text: '“Merchant fees rose unexpectedly without a clear email warning beforehand.”', source: 'Reddit · 4 stars · 1 day ago' },
     ],
     signals: [
       { bold: 'Patent filed', rest: ' for mobile device biometric tokenization system. Focus on mobile SDK.' },
@@ -80,8 +80,8 @@ const BATTLE_CARDS_DATA = {
     ],
     moves: [
       'Target PayPal developers with ads promoting a 99.9% sandbox uptime guarantee.',
-      'Highlight "No hidden percentage increases, simple flat rates" in your checkout flows.',
-      'Write blog post "Why developer sandbox speed is critical for product launch".',
+      'Highlight “No hidden percentage increases, simple flat rates” in your checkout flows.',
+      'Write blog post “Why developer sandbox speed is critical for product launch”.',
     ],
     hiring: {
       total: 31,
@@ -97,11 +97,11 @@ const BATTLE_CARDS_DATA = {
     changes: [
       { tag: 'pricing',   tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Flat rate subscription fee changed to dynamic pricing on point-of-sale.' },
       { tag: 'feature',   tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Launched POS v3 firmware with offline sync capabilities for retail terminals.' },
-      { tag: 'messaging', tc: 'text-violet-400 bg-violet-400/10 border-violet-400/20', text: 'Hero changed from "Simple local commerce" to "The complete software & hardware platform".' },
+      { tag: 'messaging', tc: 'text-violet-400 bg-violet-400/10 border-violet-400/20', text: 'Hero changed from “Simple local commerce” to “The complete software & hardware platform”.' },
     ],
     complaints: [
-      { text: '"Terminals disconnect from local Wi-Fi during peak sales hours."', source: 'App Store · 2 stars · 6 hours ago' },
-      { text: '"Contract lock-ins make it impossible to upgrade outdated hardware."', source: 'Capterra · 3 stars · 4 days ago' },
+      { text: '“Terminals disconnect from local Wi-Fi during peak sales hours.”', source: 'App Store · 2 stars · 6 hours ago' },
+      { text: '“Contract lock-ins make it impossible to upgrade outdated hardware.”', source: 'Capterra · 3 stars · 4 days ago' },
     ],
     signals: [
       { bold: 'UK Retail Director', rest: ' hired. Launching hardware distribution partnerships.' },
@@ -109,8 +109,8 @@ const BATTLE_CARDS_DATA = {
     ],
     moves: [
       'Offer UK local shops zero-contract terminal rentals to target locked-in users.',
-      'Advertise "Dual-band Wi-Fi backup POS terminal integration" to counter connection drops.',
-      'Target Square merchants with "Contract-free hardware replacement program".',
+      'Advertise “Dual-band Wi-Fi backup POS terminal integration” to counter connection drops.',
+      'Target Square merchants with “Contract-free hardware replacement program”.',
     ],
     hiring: {
       total: 22,
@@ -195,7 +195,7 @@ export default function LandingPage() {
       queueMicrotask(() => setTypewriterText(""));
       return;
     }
-    const fullText = "› Email: 'We heard Stripe raised rates...'";
+    const fullText = "› Email: ‘We heard Stripe raised rates...’";
     let i = 0;
     const interval = setInterval(() => {
       setTypewriterText(fullText.slice(0, i + 1));
