@@ -16,7 +16,7 @@ Rivalscope automatically tracks competitor homepage changes, aggregates customer
 
 Rivalscope turns scattered competitive research into a weekly, actionable brief:
 
-1. **Monitors** competitor URLs on a schedule and pulls clean page content via the Jina AI Reader.
+1. **Monitors** competitor URLs on a schedule and pulls clean page content via the Node Playwright/llm-scraper sidecar.
 2. **Diffs** each scan against the last snapshot (character-level, with noise filtering).
 3. **Classifies** every meaningful change — `pricing_change`, `feature_add`, `repositioning`, or `minor_copy`.
 4. **Aggregates** customer complaints from G2 / Trustpilot / Capterra and detects strategic signals (hiring posts, etc.).
@@ -56,7 +56,7 @@ A single repository with a FastAPI backend at the root and a Next.js app in `fro
                         ┌─────────────────────────────┼─────────────────────────────┐
                         ▼                              ▼                              ▼
               ┌──────────────────┐         ┌──────────────────┐          ┌──────────────────────┐
-              │  Postgres/SQLite │         │  Jina · OpenAI · │          │  Polar.sh (billing)  │
+              │  Postgres/SQLite │         │ Scraper · OpenAI·│          │  Polar.sh (billing)  │
               │  + Alembic       │         │  Anthropic       │          │                      │
               └──────────────────┘         └──────────────────┘          └──────────────────────┘
 ```
@@ -65,7 +65,7 @@ A single repository with a FastAPI backend at the root and a Next.js app in `fro
 
 | Stage | Role |
 |-------|------|
-| **Fetcher** | Pulls competitor page content via the Jina AI Reader API. |
+| **Fetcher** | Pulls competitor page content via the Node Playwright/llm-scraper sidecar. |
 | **Differ** | Character-level diff, filtering noise below a net-change threshold. |
 | **Classifier** | `gpt-4o-mini` categorizes the change type. |
 | **Synthesizer** | Builds weekly email briefs for subscribers. |
@@ -80,7 +80,7 @@ The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy, Alembic, APScheduler, Uvicorn. SQLite for dev, PostgreSQL in production.
 - **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion (`motion/react`), Recharts.
 - **AI models:** `gpt-4o-mini` (classification & briefs), `gpt-4o` (playbook drafts), `claude-3-5-sonnet-20241022` (Battle Cards).
-- **Services:** Jina AI Reader (page fetch), Polar.sh (billing), Resend (transactional email).
+- **Services:** Node Playwright/llm-scraper sidecar (page fetch), Polar.sh (billing), Resend (transactional email).
 
 ---
 
@@ -129,13 +129,25 @@ uvicorn main:app --reload --port 8000
 |----------|---------|
 | `DATABASE_URL` | DB connection (`sqlite:///./test.db` for dev). |
 | `OPENAI_API_KEY` | Change classification + copy drafting. |
-| `JINA_API_KEY` | Jina AI Reader page crawling. |
+| `SCRAPER_URL` | URL of the Node Playwright/llm-scraper sidecar (combined container: `http://localhost:3001`). Unset → mock content in local dev. |
 | `ANTHROPIC_API_KEY` | Battle Card generation. |
 | `POLAR_ACCESS_TOKEN` / `POLAR_WEBHOOK_SECRET` | Subscription billing. |
 | `POLAR_SAAS_PRODUCT_ID` / `POLAR_LOCAL_PRODUCT_ID` | Polar product IDs for the $49 / $19 plans. |
 | `RESEND_API_KEY` | Magic-link / transactional email. |
 | `FROM_EMAIL` | Sender address — must be on a Resend-verified domain (the `onboarding@resend.dev` default only delivers to your own Resend email). |
 | `APP_SECRET_KEY` | Session token signing. |
+
+### Scraper sidecar
+
+`scraper-service/` is a Node/Express + Playwright + [llm-scraper](https://www.npmjs.com/package/llm-scraper) service that fetches and cleans competitor page content. In production it runs **inside the same container as the API** (started automatically by `scripts/start.sh`) and the backend reaches it at `http://localhost:3001`. It needs `OPENAI_API_KEY` for llm-scraper.
+
+To run it standalone for local dev:
+
+```bash
+cd scraper-service && npm install && npx playwright install chromium && npm run build && SCRAPER_PORT=3001 npm start
+```
+
+Then start the backend with `SCRAPER_URL=http://localhost:3001`. If `SCRAPER_URL` is unset, the fetcher falls back to mock content.
 
 ### 2. Frontend (`frontend/`)
 

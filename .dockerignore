@@ -1,0 +1,10 @@
+**/node_modules
+scraper-service/dist
+venv
+__pycache__
+*.pyc
+.git
+.claude
+frontend/node_modules
+frontend/.next
+test.db
