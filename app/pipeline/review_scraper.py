@@ -152,9 +152,10 @@ async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db:
             complaint_count = len(complaint_review_ids)
             
             for rev in reviews:
-                rev_id = str(rev.get("id"))
+                rev_id = rev.get("id")
                 if not rev_id:
                     continue
+                rev_id = str(rev_id)
                     
                 existing = db.execute(
                     select(Review).where(
