@@ -1,8 +1,6 @@
 import httpx
 import re
-from app.config import JINA_API_KEY
-
-JINA_BASE = "https://r.jina.ai/"
+from app.config import SCRAPER_URL
 
 def generate_mock_webpage(url: str, snapshot_count: int) -> str:
     brand_name = url.split("://")[-1].split("/")[0].replace("www.", "").split(".")[0].capitalize()
@@ -67,35 +65,26 @@ Pricing and Plans:
 
 async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str | None]:
     """
-    Fetch page text via Jina AI reader or fall back to mock generation or direct HTTP fetch.
-    Returns (text, error_message).
-    On success: (extracted_text, None)
-    On failure: ("", error_message)
+    Fetch page text via the Playwright/llm-scraper sidecar, falling back to mock
+    (local dev) or a direct HTTP + regex strip (sidecar down).
+    Returns (text, error_message): (extracted_text, None) on success, ("", error) on failure.
     """
-    is_dummy = (not JINA_API_KEY) or (JINA_API_KEY == "dummy_jina_key")
-    
+    is_dummy = (not SCRAPER_URL) or (SCRAPER_URL == "dummy")
     if is_dummy:
-        # Fallback directly to mock content in local development/test environments
         return generate_mock_webpage(url, snapshot_count), None
 
-    headers = {"Accept": "text/plain"}
-    if JINA_API_KEY:
-        headers["Authorization"] = f"Bearer {JINA_API_KEY}"
-
-    target = f"{JINA_BASE}{url}"
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.get(target, headers=headers)
+        async with httpx.AsyncClient(timeout=35.0) as client:
+            resp = await client.post(f"{SCRAPER_URL}/scrape", json={"url": url})
             resp.raise_for_status()
-            text = resp.text.strip()
+            text = (resp.json().get("text") or "").strip()
             return text, None
-    except httpx.HTTPStatusError as e:
-        # Try direct fetch fallback if Jina is rate-limited or fails
+    except Exception as scraper_err:
+        # Sidecar down/failed → direct fetch + regex strip last resort.
         try:
             async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as d_client:
                 d_resp = await d_client.get(url)
                 d_resp.raise_for_status()
-                # Basic tags stripping regex to extract text content
                 html_content = d_resp.text
                 text_content = re.sub(r'<script.*?</script>', ' ', html_content, flags=re.DOTALL)
                 text_content = re.sub(r'<style.*?</style>', ' ', text_content, flags=re.DOTALL)
@@ -103,9 +92,7 @@ async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str |
                 text_content = re.sub(r'\s+', ' ', text_content).strip()
                 return text_content[:10000], None
         except Exception as e:
-            return "", f"Direct fetch fallback failed: {str(e)}"
-    except Exception as e:
-        return "", f"Jina fetch failed: {str(e)}"
+            return "", f"Scraper sidecar failed ({scraper_err}); direct fallback failed: {e}"
 
 def extract_main_content(raw_text: str) -> str:
     """
