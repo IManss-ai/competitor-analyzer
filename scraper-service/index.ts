@@ -10,6 +10,17 @@ import { homepageSchema, serialize } from './src/schema.js';
 const PORT = Number(process.env.SCRAPER_PORT ?? 3001);
 const turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
+// Bound any promise (e.g. the LLM extraction) so a hung upstream can't leak a
+// browser context or hold the HTTP request open forever.
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms),
+    ),
+  ]);
+}
+
 let browser: Browser | null = null;
 async function getBrowser(): Promise<Browser> {
   if (!browser || !browser.isConnected()) {
@@ -71,10 +82,14 @@ app.post('/scrape', async (req, res) => {
       // homepageSchema is a single object (no output:'array'), so data is a one-element
       // array; serialize() takes a single Partial<Homepage>, hence data[0].
       // format 'markdown' pre-processes the page; temperature 0 for determinism.
-      const { data } = await scraper.run(page, homepageSchema, {
-        format: 'markdown',
-        temperature: 0,
-      } as any);
+      const { data } = await withTimeout(
+        scraper.run(page, homepageSchema, {
+          format: 'markdown',
+          temperature: 0,
+        } as any),
+        45000,
+        'llm-scrape',
+      );
       const record = Array.isArray(data) ? data[0] : data;
       res.json({ text: serialize((record ?? {}) as any) });
     } finally { await ctx.close(); }
