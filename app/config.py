@@ -25,3 +25,19 @@ FROM_EMAIL = os.environ.get("FROM_EMAIL", "onboarding@resend.dev")
 APP_SECRET_KEY = os.environ["APP_SECRET_KEY"]
 APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:8000")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
+
+# In production (Railway), warn loudly if transactional email can't actually
+# reach real users. Resend's shared sender (onboarding@resend.dev) only
+# delivers to the Resend account owner's own address, so magic-link logins and
+# weekly briefs to real users silently fail until FROM_EMAIL points at an
+# address on a Resend-verified domain.
+if os.environ.get("RAILWAY_ENVIRONMENT"):
+    if not RESEND_API_KEY:
+        print("[config] WARNING: RESEND_API_KEY is unset in production — login and weekly-brief emails will not be sent.")
+    elif FROM_EMAIL == "onboarding@resend.dev":
+        print(
+            "[config] WARNING: FROM_EMAIL is still the Resend test sender "
+            "(onboarding@resend.dev); magic-link logins to real users will not "
+            "deliver. Set FROM_EMAIL to an address on a Resend-verified domain."
+        )

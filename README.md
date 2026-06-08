@@ -134,6 +134,7 @@ uvicorn main:app --reload --port 8000
 | `POLAR_ACCESS_TOKEN` / `POLAR_WEBHOOK_SECRET` | Subscription billing. |
 | `POLAR_SAAS_PRODUCT_ID` / `POLAR_LOCAL_PRODUCT_ID` | Polar product IDs for the $49 / $19 plans. |
 | `RESEND_API_KEY` | Magic-link / transactional email. |
+| `FROM_EMAIL` | Sender address — must be on a Resend-verified domain (the `onboarding@resend.dev` default only delivers to your own Resend email). |
 | `APP_SECRET_KEY` | Session token signing. |
 
 ### 2. Frontend (`frontend/`)
