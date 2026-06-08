@@ -15,8 +15,11 @@ COPY scraper-service ./scraper-service
 RUN cd scraper-service && npm install typescript tsx --no-save && npm run build
 
 # --- Python backend ---
+# jammy ships pip 22 (no --break-system-packages flag); upgrade pip first so the
+# flag is recognized and harmless regardless of PEP-668 externally-managed state.
 COPY requirements.txt ./
-RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+RUN python3 -m pip install --no-cache-dir --upgrade pip \
+    && python3 -m pip install --no-cache-dir --break-system-packages -r requirements.txt
 COPY . .
 
 RUN chmod +x scripts/start.sh
