@@ -7,12 +7,11 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import Review, ReviewSnapshot, Competitor
+from app.config import SCRAPER_URL
 import anthropic
 import uuid as _uuid
 
 logger = logging.getLogger(__name__)
-
-JINA_BASE = "https://r.jina.ai/"
 
 def _get_platform_urls(competitor_url: str, overrides: dict | None = None) -> dict:
     """Build review-platform URLs, preferring explicit overrides set on the Competitor."""
@@ -31,16 +30,15 @@ def _get_platform_urls(competitor_url: str, overrides: dict | None = None) -> di
     return derived
 
 async def fetch_page_text(url: str) -> str:
-    headers = {"Accept": "text/plain"}
-    jina_key = os.getenv("JINA_API_KEY")
-    if jina_key and jina_key != "dummy_jina_key":
-        headers["Authorization"] = f"Bearer {jina_key}"
-        
-    target = f"{JINA_BASE}{url}"
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.get(target, headers=headers)
+    """Fetch a review page as deterministic markdown via the scraper sidecar.
+    Returns "" when the sidecar is not configured (local dev/tests). Raises on
+    sidecar failure so the per-platform caller skips that platform."""
+    if not SCRAPER_URL or SCRAPER_URL == "dummy":
+        return ""
+    async with httpx.AsyncClient(timeout=35.0) as client:
+        resp = await client.post(f"{SCRAPER_URL}/scrape-raw", json={"url": url})
         resp.raise_for_status()
-        return resp.text.strip()
+        return (resp.json().get("text") or "").strip()
 
 def _extract_json_from_response(content: str) -> dict:
     if "```json" in content:
