@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import JobPosting, JobSnapshot
+from app.observability import note_degraded
 from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response
 
 logger = logging.getLogger(__name__)
@@ -123,7 +124,7 @@ Text:
         )
         return _extract_json_from_response(response.content[0].text)
     except Exception as e:
-        logger.warning("job extraction failed: %s", e)
+        note_degraded("job_tracker.extract", "empty", "api_error", e)
         return {"jobs": []}
 
 
@@ -160,7 +161,7 @@ Output the sentence only, no preamble or quotes."""
         )
         return response.content[0].text.strip().strip('"').strip()
     except Exception as e:
-        logger.warning("hiring interpretation failed: %s", e)
+        note_degraded("job_tracker.interpret", "none", "api_error", e)
         return None
 
 

@@ -1,5 +1,6 @@
 from openai import AsyncOpenAI
 from app.config import OPENAI_API_KEY
+from app.observability import note_degraded
 
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
@@ -44,7 +45,8 @@ async def synthesize_brief(
             temperature=0.3,
         )
         return response.choices[0].message.content.strip()
-    except Exception:
+    except Exception as e:
+        note_degraded("synthesizer", "heuristic", "api_error", e)
         return _synthesize_heuristically(competitor_name or competitor_url, change_type)
 
 def _synthesize_heuristically(name: str, change_type: str) -> str:

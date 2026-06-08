@@ -1,6 +1,7 @@
 import httpx
 import re
 from app.config import SCRAPER_URL
+from app.observability import note_degraded
 
 def generate_mock_webpage(url: str, snapshot_count: int) -> str:
     brand_name = url.split("://")[-1].split("/")[0].replace("www.", "").split(".")[0].capitalize()
@@ -71,6 +72,7 @@ async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str |
     """
     is_dummy = (not SCRAPER_URL) or (SCRAPER_URL == "dummy")
     if is_dummy:
+        note_degraded("fetcher", "mock", "scraper_url_unset")
         return generate_mock_webpage(url, snapshot_count), None
 
     try:
@@ -81,6 +83,7 @@ async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str |
             return text, None
     except Exception as scraper_err:
         # Sidecar down/failed → direct fetch + regex strip last resort.
+        note_degraded("fetcher", "direct_http", "sidecar_down", scraper_err)
         try:
             async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as d_client:
                 d_resp = await d_client.get(url)

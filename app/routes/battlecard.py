@@ -7,6 +7,7 @@ from sqlalchemy import select
 import anthropic
 
 from app.db import get_session
+from app.observability import note_degraded
 from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost
 from app.pipeline.job_tracker import get_latest_hiring_signal
 
@@ -157,9 +158,9 @@ Known customer complaints:
             strategic_signals = parsed.get("strategic_signals", [])
             playbook = parsed.get("playbook", [])
         except Exception as e:
-            import sys, traceback
-            print(f"[ERROR] Local battlecard Anthropic call failed: {e}", file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+            note_degraded("battlecard.local", "heuristic", "api_error", e)
+    elif is_dummy:
+        note_degraded("battlecard.local", "heuristic", "dummy_key")
 
     if not playbook:
         name = comp.name or comp.url
@@ -369,10 +370,9 @@ Known customer complaints/weaknesses:
             strategic_signals = parsed.get("strategic_signals", [])
             playbook = parsed.get("playbook", [])
         except Exception as e:
-            import sys
-            import traceback
-            print(f"[ERROR] Failed to generate battlecard using Anthropic API: {e}", file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
+            note_degraded("battlecard", "heuristic", "api_error", e)
+    elif is_dummy:
+        note_degraded("battlecard", "heuristic", "dummy_key")
 
     # Heuristic fallback if API key is dummy or request fails
     if not playbook:

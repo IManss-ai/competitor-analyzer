@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import Review, ReviewSnapshot, Competitor
 from app.config import SCRAPER_URL
+from app.observability import note_degraded
 import anthropic
 import uuid as _uuid
 
@@ -34,6 +35,7 @@ async def fetch_page_text(url: str) -> str:
     Returns "" when the sidecar is not configured (local dev/tests). Raises on
     sidecar failure so the per-platform caller skips that platform."""
     if not SCRAPER_URL or SCRAPER_URL == "dummy":
+        note_degraded("review_scraper.fetch", "empty", "scraper_url_unset")
         return ""
     async with httpx.AsyncClient(timeout=35.0) as client:
         resp = await client.post(f"{SCRAPER_URL}/scrape-raw", json={"url": url})
@@ -50,6 +52,7 @@ def _extract_json_from_response(content: str) -> dict:
 async def _extract_reviews_with_claude(text: str) -> dict:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key or api_key == "dummy_anthropic_key":
+        note_degraded("review_scraper.extract", "empty", "dummy_key")
         return {"reviews": [], "avg_rating": 0, "total_reviews": 0}
         
     client = anthropic.AsyncAnthropic(api_key=api_key)
@@ -69,12 +72,14 @@ async def _extract_reviews_with_claude(text: str) -> dict:
         )
         return _extract_json_from_response(response.content[0].text)
     except Exception as e:
-        print(f"Error extracting reviews: {e}")
+        note_degraded("review_scraper.extract", "empty", "api_error", e)
         return {"reviews": [], "avg_rating": 0, "total_reviews": 0}
 
 async def _analyze_complaints_with_claude(reviews: list) -> dict:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key or api_key == "dummy_anthropic_key" or not reviews:
+        if reviews and (not api_key or api_key == "dummy_anthropic_key"):
+            note_degraded("review_scraper.complaints", "empty", "dummy_key")
         return {"complaints": [], "complaint_reviews": []}
         
     client = anthropic.AsyncAnthropic(api_key=api_key)
@@ -98,7 +103,7 @@ async def _analyze_complaints_with_claude(reviews: list) -> dict:
         )
         return _extract_json_from_response(response.content[0].text)
     except Exception as e:
-        print(f"Error analyzing complaints: {e}")
+        note_degraded("review_scraper.complaints", "empty", "api_error", e)
         return {"complaints": [], "complaint_reviews": []}
 
 def _parse_date(date_str: str):

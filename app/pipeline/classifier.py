@@ -1,5 +1,6 @@
 from openai import AsyncOpenAI
 from app.config import OPENAI_API_KEY
+from app.observability import note_degraded
 
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
@@ -38,8 +39,10 @@ async def classify_change(text_before: str, text_after: str) -> str:
         result = response.choices[0].message.content.strip().lower()
         if result in VALID_CATEGORIES:
             return result
+        note_degraded("classifier", "heuristic", "unexpected_label")
         return _classify_heuristically(before_trunc, after_trunc)
-    except Exception:
+    except Exception as e:
+        note_degraded("classifier", "heuristic", "api_error", e)
         return _classify_heuristically(before_trunc, after_trunc)
 
 def _classify_heuristically(text_before: str, text_after: str) -> str:

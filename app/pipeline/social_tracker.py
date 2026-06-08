@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import SocialPost
+from app.observability import note_degraded
 from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response, _parse_date
 import anthropic
 import uuid as _uuid
@@ -38,7 +39,7 @@ Text:
         )
         return _extract_json_from_response(response.content[0].text)
     except Exception as e:
-        print(f"Error extracting {platform} posts: {e}")
+        note_degraded(f"social_tracker.extract[{platform}]", "empty", "api_error", e)
         return {"posts": []}
 
 
@@ -69,7 +70,7 @@ Posts:
         )
         return _extract_json_from_response(response.content[0].text)
     except Exception as e:
-        print(f"Error summarizing {platform} sentiment: {e}")
+        note_degraded(f"social_tracker.sentiment[{platform}]", "empty", "api_error", e)
         return {"sentiment_summary": "", "notable_posts": []}
 
 
