@@ -2,7 +2,7 @@
 
 Target spec: `DESIGN.md` (v3). This plan takes the live app from v2 (sky-blue, all-dark, Geist, rounded) to v3 (paper+ink, oxblood, Archivo + IBM Plex Mono, sharp). Preview: `~/.gstack/projects/IManss-ai-competitor-analyzer/designs/intelligence-desk-20260608/preview.html`.
 
-**STATUS (2026-06-08):** the v3 **INK foundation SHIPPED** to prod (commit `094d976`) — globals.css tokens, Archivo + IBM Plex Mono, oxblood accent (sky scale remapped), sharp 4px, flat cards, charts retuned. Remaining: the **paper-light default** (the ~855-utility light-mode sweep + theme toggle) and the bespoke broadsheet relayouts. The phases below still describe that remaining work.
+**STATUS (2026-06-08):** **DUAL THEME SHIPPED** (merged `c250746`). Phases 1–5 below are DONE: `:root`=paper / `html[data-theme="ink"]`=ink + OS-dark fallback, FOUC-free pre-paint script (`layout.tsx`), `useTheme()` hook, `ThemeToggle` (topbar + landing nav + login), theme-aware `useChartPalette()`, and the full per-screen sweep (dashboard, competitors/battle-card, trends charts, queue/settings/sidebar/onboarding, login, landing/legal; share flips for free). New visitors follow OS `prefers-color-scheme`; saved choice persists. Ink unchanged from `094d976`. **Only remaining v3 work: the bespoke broadsheet relayouts** (not started). The phase notes below are kept for history.
 
 **Scale: large.** This is a full visual rebuild, not a recolor. Do it on a dedicated branch, foundation-first, screen-by-screen, public pages last. Gate the merge behind `/qa` + `/design-review`.
 

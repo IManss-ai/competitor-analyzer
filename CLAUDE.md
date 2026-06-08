@@ -36,11 +36,11 @@ Rivalscope is a premium competitive intelligence SaaS for founders and sales tea
 
 ## 🎨 Design System & Brand Guidelines
 
-**Always read `DESIGN.md` before any visual or UI work.** The design system is mid-migration:
+**Always read `DESIGN.md` before any visual or UI work.** The design system now ships **dual-theme**:
 
-- **Live now (v3 "Intelligence Desk", INK mode):** warm-ink surfaces (`--surface-base` `#16140f`, `--surface-raised` `#1f1c16`), **slate-blue accent** (`#4f7cb0`), Archivo grotesk + IBM Plex Mono, sharp `4px` radius, flat cards (rules not shadows), no glow. Tokens live in `frontend/src/app/globals.css`; the Tailwind `sky` scale is remapped to slate-blue, so `sky-*` utilities render as the accent. (Accent was oxblood at first launch but read as a "red theme" once the remap leaked it into landing backgrounds; switched to slate-blue `6fe156a`. Keep the accent OFF decorative backgrounds.)
-- **Remaining (v3 phase 2):** the **paper-light default** (needs a light-mode sweep of ~855 dark-mode Tailwind utilities + theme toggle) and the bespoke broadsheet relayouts. See `DESIGN-REBUILD-PLAN.md`. Until then there is a single ink theme, no toggle.
-- **Rule:** read `DESIGN.md` before UI work. Don't introduce raw sky/violet hex or `8`/`12px` radii (those are v2). The 8pt spacing scale (`4 8 12 16 24 32 48 64`) is unchanged.
+- **Live now (v3 "Intelligence Desk", DUAL THEME):** both **paper-light** (default, `--surface-base` `#f5f2ec`) and **ink-dark** (`--surface-base` `#16140f`) ship, with a **theme toggle** (topbar + landing nav + login). New visitors **follow their OS `prefers-color-scheme`**; a saved choice overrides and persists. Theme = a `data-theme` attribute on `<html>` (`:root` = paper, `html[data-theme="ink"]` = ink, plus an OS-dark CSS fallback); a pre-paint inline script in `layout.tsx` avoids FOUC; `useTheme()` (`lib/use-theme.ts`) drives the toggle. Charts read `useChartPalette()` (`lib/chart-theme.ts`). **Slate-blue accent** (paper `#345781`, ink `#4f7cb0`), Archivo grotesk + IBM Plex Mono, sharp `4px` radius, flat cards, no glow. Tokens in `frontend/src/app/globals.css`; the Tailwind `sky` scale is remapped to the accent, so `sky-*` utilities render as it. (Accent was oxblood at first launch but read as a "red theme"; switched to slate-blue `6fe156a`. Keep the accent OFF decorative backgrounds.)
+- **Remaining (v3 phase 3):** the bespoke broadsheet relayouts. See `DESIGN-REBUILD-PLAN.md`.
+- **Rule:** read `DESIGN.md` before UI work. New components must be **theme-aware** — use CSS-var tokens (`--text-*`, `--surface-*`, `--border-*`, `--fill-subtle*`, `--accent-*`), never hardcoded grays / `text-white` / `bg-white/[…]` / dark hex (those break paper). `text-white` only on accent/badge/colored surfaces. Don't introduce raw sky/violet hex or `8`/`12px` radii (v2). The 8pt spacing scale (`4 8 12 16 24 32 48 64`) is unchanged.
 
 ---
 
