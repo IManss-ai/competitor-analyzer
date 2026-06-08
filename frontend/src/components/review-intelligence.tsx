@@ -73,7 +73,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                     return (
                       <div key={sIdx} className="flex flex-col gap-2">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full border ${style.badge}`}>
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border ${style.badge}`}>
                             {style.label}
                           </span>
                           <StarRating rating={snap.avg_rating} />
@@ -83,7 +83,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                             </span>
                           )}
                           {snap.complaint_count > 0 && (
-                            <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full border bg-red-500/10 text-red-400 border-red-500/20">
+                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border bg-red-500/10 text-red-400 border-red-500/20">
                               {snap.complaint_count} complaints
                             </span>
                           )}
