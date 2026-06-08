@@ -38,9 +38,9 @@ Rivalscope is a premium competitive intelligence SaaS for founders and sales tea
 
 **Always read `DESIGN.md` before any visual or UI work.** The design system is mid-migration:
 
-- **Target (v3 "Intelligence Desk"):** institutional authority. Paper-light default + ink-dark alt, oxblood `#8b2c2c` accent, Archivo grotesk + IBM Plex Mono (no serif), sharp `4px` corners, broadsheet hairline rules. Full spec in `DESIGN.md`; rollout in `DESIGN-REBUILD-PLAN.md`.
-- **Current code (v2, still shipping):** locked dark theme — `--surface-base` `#070b14`, `--surface-raised` `#0e1628`, Sky Blue `#0ea5e9` accent, Geist Sans/Mono, `8`/`12px` radius.
-- **During migration:** for screens already cut over to v3, follow `DESIGN.md`. For screens still on v2, match the existing v2 code — do NOT mix v2 and v3 in one view. The 8pt spacing scale (`4 8 12 16 24 32 48 64`) is unchanged across both.
+- **Live now (v3 "Intelligence Desk", INK mode):** warm-ink surfaces (`--surface-base` `#16140f`, `--surface-raised` `#1f1c16`), oxblood accent (`#c0524f`), Archivo grotesk + IBM Plex Mono, sharp `4px` radius, flat cards (rules not shadows), no glow. Tokens live in `frontend/src/app/globals.css`; the Tailwind `sky` scale is remapped to oxblood, so `sky-*` utilities render as the accent.
+- **Remaining (v3 phase 2):** the **paper-light default** (needs a light-mode sweep of ~855 dark-mode Tailwind utilities + theme toggle) and the bespoke broadsheet relayouts. See `DESIGN-REBUILD-PLAN.md`. Until then there is a single ink theme, no toggle.
+- **Rule:** read `DESIGN.md` before UI work. Don't introduce raw sky/violet hex or `8`/`12px` radii (those are v2). The 8pt spacing scale (`4 8 12 16 24 32 48 64`) is unchanged.
 
 ---
 

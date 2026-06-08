@@ -4,7 +4,7 @@
 **Personality:** Calm, serious, precise. Reads like an institutional briefing or a financial ledger, not a colorful SaaS dashboard.
 **Memorable thing:** "This is a primary source." Authority through restraint, editorial-grotesk typography, and dense data presented cleanly.
 
-> Supersedes v2 ("Premium Dark Intelligence Platform", sky-blue on blue-black). v3 is a deliberate fresh direction chosen 2026-06-08. **Migration status: SPEC ONLY.** The live app still renders v2 until the rebuild in `DESIGN-REBUILD-PLAN.md` lands. Until then, code and this doc intentionally diverge.
+> Supersedes v2 ("Premium Dark Intelligence Platform", sky-blue on blue-black). v3 is a deliberate fresh direction chosen 2026-06-08. **Migration status: INK MODE LIVE (shipped 2026-06-08, commit `094d976`).** The app now renders v3 ink app-wide (warm-dark surfaces, oxblood, Archivo + IBM Plex Mono, sharp). Remaining: the **paper-light default** and the bespoke broadsheet relayouts (see `DESIGN-REBUILD-PLAN.md`). The token values below are written paper-first; the live build currently uses the **ink** set as the single default theme.
 
 The headline departures from v2: a warm **paper-light** default surface (v2 was all-dark), an **oxblood** accent (v2 was sky blue), a **grotesk + mono** type system with no serif (v2 was Geist), and **sharp 4px** corners with hairline "ledger" rules instead of heavy cards.
 
