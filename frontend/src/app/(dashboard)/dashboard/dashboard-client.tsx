@@ -309,7 +309,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               },
               {
                 type: 'local' as const,
-                icon: <MapPin size={22} style={{ color: '#a78bfa' }} />,
+                icon: <MapPin size={22} style={{ color: 'var(--accent-primary)' }} />,
                 title: 'Local Business',
                 desc: 'Track Google Maps reviews, Instagram activity, and nearby competitors.',
                 borderStyle: { borderColor: 'var(--accent-primary)', backgroundColor: 'var(--accent-subtle)' },

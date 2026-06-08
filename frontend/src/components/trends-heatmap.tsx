@@ -98,7 +98,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                       <motion.div
                         initial={{ opacity: 0, scale: 0.5 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.12, y: -0.5 }}
+                        whileHover={{ scale: 1.04 }}
                         viewport={{ once: true }}
                         transition={{ delay: (compIndex * 0.04) + (i * 0.01), duration: 0.35, type: "spring" }}
                         title={`${count} change${count !== 1 ? 's' : ''} in week of ${weeks[i]}`}

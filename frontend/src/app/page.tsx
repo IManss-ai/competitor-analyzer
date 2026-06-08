@@ -393,7 +393,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="inline-flex items-center gap-2 bg-sky-500/15 border border-sky-500/40 rounded-full px-4 py-2 mb-8 shadow-[0_0_24px_rgba(14,165,233,0.18)]"
+                className="inline-flex items-center gap-2 bg-sky-500/15 border border-sky-500/40 rounded-full px-4 py-2 mb-8"
               >
                 <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse flex-shrink-0" />
                 <span className="text-xs font-mono text-sky-200 tracking-wide font-semibold">LIVE · Real-time competitor monitoring</span>
@@ -408,7 +408,7 @@ export default function LandingPage() {
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
                   words={['move.', 'pricing change.', 'feature launch.', 'messaging shift.', 'hiring signal.']}
-                  className="text-sky-300 drop-shadow-[0_0_16px_rgba(56,189,248,0.5)]"
+                  className="text-sky-400"
                   interval={2400}
                 />
               </motion.h1>
@@ -1363,7 +1363,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_100px_rgba(14,165,233,0.12),0_0_0_1px_rgba(56,189,248,0.08)]"
+            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(56,189,248,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4 text-balance">
