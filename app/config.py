@@ -10,7 +10,7 @@ if not os.environ.get("RAILWAY_ENVIRONMENT"):
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-JINA_API_KEY = os.environ.get("JINA_API_KEY", "")
+SCRAPER_URL = os.environ.get("SCRAPER_URL", "")
 # Polar.sh billing — set these in Railway environment variables
 # POLAR_ACCESS_TOKEN: from https://polar.sh/settings/tokens
 # POLAR_WEBHOOK_SECRET: from https://polar.sh/dashboard/[org]/settings/webhooks
