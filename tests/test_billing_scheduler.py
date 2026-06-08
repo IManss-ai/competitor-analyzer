@@ -12,7 +12,7 @@ from app.models import User, Competitor, Snapshot, ChangeEvent, ApprovedAction
 from app.session import serializer, SESSION_COOKIE_NAME
 from app.billing import create_checkout_session, create_portal_session
 from app.mailer import send_weekly_brief
-from app.scheduler import run_weekly_scan_and_brief
+from app.scheduler import run_weekly_scan_and_brief, run_midweek_scan_and_brief
 
 class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
@@ -194,6 +194,52 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(mock_scan.call_args[0][0], str(self.user.id))
         mock_send.assert_called_once()
         self.assertEqual(mock_send.call_args[1]["user_email"], "test@user.com")
+
+    @patch("app.scheduler.SessionLocal")
+    @patch("app.scheduler.send_weekly_brief")
+    @patch("app.scheduler.scan_user_competitors")
+    async def test_midweek_only_runs_for_biweekly_users(self, mock_scan, mock_send, mock_session_factory):
+        mock_db = self.SessionLocal()
+        mock_session_factory.return_value = mock_db
+
+        # self.user defaults to "weekly" — should be excluded from the midweek run.
+        biweekly_user = User(email="biweekly@user.com", subscription_status="active", scan_schedule="biweekly")
+        mock_db.add(biweekly_user)
+        mock_db.commit()
+
+        await run_midweek_scan_and_brief()
+
+        # Only the biweekly user is scanned and briefed.
+        mock_scan.assert_called_once()
+        self.assertEqual(mock_scan.call_args[0][0], str(biweekly_user.id))
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args[1]["user_email"], "biweekly@user.com")
+
+    @patch("app.scheduler.SessionLocal")
+    @patch("app.scheduler.send_weekly_brief")
+    @patch("app.scheduler.scan_user_competitors")
+    async def test_per_user_failure_is_isolated_and_logged(self, mock_scan, mock_send, mock_session_factory):
+        mock_db = self.SessionLocal()
+        mock_session_factory.return_value = mock_db
+
+        other_user = User(email="other@user.com", subscription_status="active")
+        mock_db.add(other_user)
+        mock_db.commit()
+
+        # Scan blows up for self.user only; the other user must still be processed.
+        def scan_side_effect(uid, db):
+            if uid == str(self.user.id):
+                raise RuntimeError("boom")
+        mock_scan.side_effect = scan_side_effect
+
+        with self.assertLogs("app.scheduler", level="WARNING") as cm:
+            await run_weekly_scan_and_brief()
+
+        # The failure is logged (not silently swallowed)...
+        self.assertTrue(any("run failed for user" in line and "boom" in line for line in cm.output))
+        # ...and the healthy user still got their brief.
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args[1]["user_email"], "other@user.com")
 
     @patch("app.routes.scan._run_scan_background")
     def test_trigger_scan_endpoint(self, mock_run_background):
