@@ -227,7 +227,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
             cx="32"
             cy="32"
             r="28"
-            stroke="#0284c7"
+            stroke="#a8403d"
             strokeWidth="1.5"
             fill="none"
             strokeDasharray="176"
@@ -272,7 +272,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
             >
               <motion.span
                 animate={{
-                  backgroundColor: isScanned ? '#38bdf8' : '#3f3f46',
+                  backgroundColor: isScanned ? '#cf6360' : '#3f3f46',
                 }}
                 className="w-1.5 h-1.5 rounded-full"
               />
@@ -424,8 +424,8 @@ export default function HowItWorksPanels() {
                 <motion.div
                   animate={{
                     scale: isHovered ? 1.15 : 1,
-                    borderColor: isHovered ? '#38bdf8' : 'rgba(56, 189, 248, 0.2)',
-                    backgroundColor: isHovered ? '#040a18' : 'rgba(56, 189, 248, 0.05)',
+                    borderColor: isHovered ? '#cf6360' : 'rgba(192, 82, 79, 0.2)',
+                    backgroundColor: isHovered ? '#040a18' : 'rgba(192, 82, 79, 0.05)',
                   }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-[#040812] flex items-center justify-center text-xs md:text-sm font-mono font-bold text-sky-400"

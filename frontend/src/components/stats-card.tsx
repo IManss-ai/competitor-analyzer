@@ -14,10 +14,10 @@ interface StatsCardProps {
 }
 
 const accentConfig: Record<string, { dot: string; bar: string }> = {
-  violet:  { dot: '#0ea5e9', bar: 'var(--accent-primary)' },
-  blue:    { dot: '#38bdf8', bar: '#0ea5e9' },
-  amber:   { dot: '#f59e0b', bar: '#d97706' },
-  emerald: { dot: '#10b981', bar: '#059669' },
+  violet:  { dot: '#c0524f', bar: 'var(--accent-primary)' },
+  blue:    { dot: '#cf6360', bar: '#c0524f' },
+  amber:   { dot: '#c79a4e', bar: '#d97706' },
+  emerald: { dot: '#5aa07a', bar: '#059669' },
   neutral: { dot: '#4e5a6e', bar: '#374151' },
 };
 
@@ -85,7 +85,7 @@ export default function StatsCard({
             )}
             style={
               trend === 'up'
-                ? { color: '#10b981', background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
+                ? { color: '#5aa07a', background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
                 : trend === 'down'
                 ? { color: '#f87171', background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.20)' }
                 : { color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)', borderColor: 'var(--border-default)' }

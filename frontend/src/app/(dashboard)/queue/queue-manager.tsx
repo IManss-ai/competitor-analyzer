@@ -93,9 +93,9 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
       <AnimatePresence initial={false}>
         {actions.map((action) => {
           const borderLeftColor = {
-            pricing: '#f59e0b',
-            feature: '#10b981',
-            repositioning: '#a78bfa',
+            pricing: '#c79a4e',
+            feature: '#5aa07a',
+            repositioning: '#c0524f',
             copy: '#64748b'
           }[action.change_event.change_type] || '#64748b';
 

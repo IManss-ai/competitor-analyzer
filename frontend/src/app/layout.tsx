@@ -1,7 +1,19 @@
 import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
+import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-archivo',
+  weight: ['400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+});
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  variable: '--font-ibm-plex-mono',
+  weight: ['400', '500', '600'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://competitor-analyzer-zeta.vercel.app'),
@@ -35,9 +47,9 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className={`${GeistSans.variable} font-sans antialiased min-h-full text-zinc-100 selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
+      <body className={`${archivo.variable} font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
         {children}
       </body>
     </html>

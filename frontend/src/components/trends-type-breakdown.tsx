@@ -41,9 +41,9 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
             cursor={{ fill: 'rgba(255,255,255,0.02)' }}
           />
           <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }} />
-          <Bar dataKey="pricing_change" name="Pricing Change" stackId="a" fill="#f59e0b" />
-          <Bar dataKey="new_feature" name="New Feature" stackId="a" fill="#10b981" />
-          <Bar dataKey="positioning_shift" name="Positioning Shift" stackId="a" fill="#a78bfa" />
+          <Bar dataKey="pricing_change" name="Pricing Change" stackId="a" fill="#c79a4e" />
+          <Bar dataKey="new_feature" name="New Feature" stackId="a" fill="#5aa07a" />
+          <Bar dataKey="positioning_shift" name="Positioning Shift" stackId="a" fill="#c0524f" />
           <Bar dataKey="minor_copy" name="Minor Copy" stackId="a" fill="#64748b" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

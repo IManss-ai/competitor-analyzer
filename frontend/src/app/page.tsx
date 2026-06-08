@@ -689,7 +689,7 @@ export default function LandingPage() {
                           className="absolute inset-y-0 left-0 w-32 pointer-events-none z-20"
                           style={{
                             background:
-                              'linear-gradient(to right, transparent, rgba(56,189,248,0.07), rgba(56,189,248,0.12), rgba(56,189,248,0.07), transparent)',
+                              'linear-gradient(to right, transparent, rgba(192, 82, 79,0.07), rgba(192, 82, 79,0.12), rgba(192, 82, 79,0.07), transparent)',
                           }}
                         />
                       )}
@@ -889,7 +889,7 @@ export default function LandingPage() {
                   <motion.path
                     d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
                     fill="none"
-                    stroke="#0ea5e9"
+                    stroke="#c0524f"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     initial={{ pathLength: 0 }}
@@ -909,7 +909,7 @@ export default function LandingPage() {
                     cx="175"
                     cy="4"
                     r="3"
-                    fill="#38bdf8"
+                    fill="#cf6360"
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
@@ -917,8 +917,8 @@ export default function LandingPage() {
                   />
                   <defs>
                     <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="64">
-                      <stop stopColor="#0ea5e9" stopOpacity="0.15" />
-                      <stop offset="1" stopColor="#0ea5e9" stopOpacity="0" />
+                      <stop stopColor="#c0524f" stopOpacity="0.15" />
+                      <stop offset="1" stopColor="#c0524f" stopOpacity="0" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -1105,7 +1105,7 @@ export default function LandingPage() {
                   {activeComp === comp && (
                     <motion.div
                       layoutId="activeBattleTab"
-                      className="absolute inset-0 bg-sky-600 rounded-full shadow-[0_2px_8px_rgba(14,165,233,0.25)]"
+                      className="absolute inset-0 bg-sky-600 rounded-full shadow-[0_2px_8px_rgba(192, 82, 79,0.25)]"
                       transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                     />
                   )}
@@ -1363,7 +1363,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(56,189,248,0.08)]"
+            className="border border-sky-500/25 bg-gradient-to-br from-sky-950/40 via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(192, 82, 79,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-white leading-[1.1] mb-4 text-balance">

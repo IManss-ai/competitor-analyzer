@@ -254,7 +254,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <svg width={width} height={height} className="overflow-visible">
         <polyline
           fill="none"
-          stroke="#38bdf8"
+          stroke="#cf6360"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -502,7 +502,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     return (
       <div className="backdrop-blur-md rounded-xl border border-white/[0.08] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-          <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(14,165,233,0.1)' }}></div>
+          <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(192, 82, 79,0.1)' }}></div>
           <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
           <Building2 size={36} style={{ color: 'var(--accent-primary)' }} />
         </div>
@@ -593,12 +593,12 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           label: 'Competitors',
           value: dashboardData.competitor_count,
           sub: 'Active targets',
-          accent: '#0ea5e9',
+          accent: '#c0524f',
         },{
           label: 'Changes / week',
           value: dashboardData.changes_this_week || 0,
           sub: 'Past 7 days',
-          accent: '#f59e0b',
+          accent: '#c79a4e',
         },{
           label: 'Pending alerts',
           value: dashboardData.pending_count,
@@ -608,7 +608,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           label: 'Avg review',
           value: dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '--',
           sub: 'Across integrations',
-          accent: '#10b981',
+          accent: '#5aa07a',
         }].map(({ label, value, sub, accent }) => (
           <div key={label} className="rs-card relative overflow-hidden p-5 group">
             <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-lg" style={{ background: accent }} />
@@ -666,7 +666,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 />
                 <Bar dataKey="change_count" radius={[3, 3, 0, 0]}>
                   {activityDays.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.change_count > 0 ? '#0ea5e9' : 'rgba(255,255,255,0.05)'} />
+                    <Cell key={idx} fill={entry.change_count > 0 ? '#c0524f' : 'rgba(255,255,255,0.05)'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -788,7 +788,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
                 const statusColor = comp.status === 'Active'
-                  ? { color: '#10b981', bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.22)' }
+                  ? { color: '#5aa07a', bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.22)' }
                   : comp.status === 'Error'
                   ? { color: '#f87171', bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.22)' }
                   : { color: 'var(--text-muted)', bg: 'rgba(255,255,255,0.04)', border: 'var(--border-default)' };
