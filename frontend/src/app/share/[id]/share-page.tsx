@@ -6,7 +6,7 @@ import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-r
 
 interface BattleCardData {
   title: string;
-  what_changed: string[];
+  what_changed: (string | { type: string; text: string })[];
   weaknesses: string[];
   talking_points: string[];
   win_conditions: string[];
@@ -95,7 +95,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             <ul className="list-disc ml-4 space-y-2">
               {card.what_changed.map((bullet, i) => (
                 <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  {bullet}
+                  {typeof bullet === 'string' ? bullet : bullet.text}
                 </li>
               ))}
             </ul>

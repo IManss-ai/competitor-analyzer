@@ -180,7 +180,7 @@ Generated at: ${new Date(card.generated_at).toLocaleDateString()}
 
 RECENT CHANGES:
 ${card.what_changed && card.what_changed.length > 0 
-  ? card.what_changed.map((c: string) => `- ${c}`).join('\n') 
+  ? card.what_changed.map((c: string | { text: string }) => `- ${typeof c === 'string' ? c : c.text}`).join('\n')
   : 'No pricing or feature changes detected.'}
 
 THEIR WEAKNESSES:
@@ -537,8 +537,8 @@ ${card.win_conditions && card.win_conditions.length > 0
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
                               <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-zinc-200">
-                                {detail.battlecard.what_changed.map((c: string, idx: number) => (
-                                  <li key={idx}>{c}</li>
+                                {detail.battlecard.what_changed.map((c: string | { text: string }, idx: number) => (
+                                  <li key={idx}>{typeof c === 'string' ? c : c.text}</li>
                                 ))}
                               </ul>
                             ) : (
