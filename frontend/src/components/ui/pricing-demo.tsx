@@ -79,7 +79,7 @@ function PricingBasic() {
           <motion.div
             key={tier.name}
             {...reveal(i * 0.12)}
-            className={`relative bg-[var(--surface-raised)]/85 border border-[var(--border-default)] backdrop-blur-md rounded-xl p-8 text-left hover:border-[var(--border-strong)] transition-all duration-300 shadow-xl`}
+            className={`relative bg-[var(--surface-raised)]/85 border border-[var(--border-default)] backdrop-blur-md rounded-xl p-8 text-left hover:border-[var(--border-strong)] transition-colors duration-300 shadow-xl`}
           >
             {/* Badge */}
             {tier.badge && (
@@ -111,7 +111,7 @@ function PricingBasic() {
             {/* CTA */}
             <Link
               href={tier.href}
-              className="inline-flex items-center justify-between w-full gap-4 bg-white text-black font-semibold pl-5 pr-2 py-2.5 rounded-full cursor-pointer hover:scale-[1.01] hover:shadow-[0_4px_24px_rgba(255,255,255,0.15)] active:scale-[0.98] transition-all"
+              className="inline-flex items-center justify-between w-full gap-4 bg-white text-black font-semibold pl-5 pr-2 py-2.5 rounded-full cursor-pointer hover:bg-zinc-100 transition-colors"
             >
               <span className="text-sm">{tier.cta}</span>
               <span className="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center">

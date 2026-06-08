@@ -320,7 +320,7 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
           <div className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
             <Zap size={11} />
           </div>
-          <span className="text-[10px] font-bold text-white font-mono">⚡ Stripe Weekly Intel</span>
+          <span className="text-[10px] font-bold text-white font-mono">Stripe Weekly Intel</span>
         </div>
 
         {/* Bullet rows */}

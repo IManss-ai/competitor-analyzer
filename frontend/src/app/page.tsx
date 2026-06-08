@@ -432,7 +432,7 @@ export default function LandingPage() {
                   href="/auth/login"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 transition-colors hero-trial-btn relative overflow-hidden"
+                  className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-full hover:bg-zinc-100 transition-colors"
                 >
                   Start 14-day free trial
                   <ArrowRight size={12} />
@@ -804,7 +804,7 @@ export default function LandingPage() {
                                 className="flex items-center gap-1"
                               >
                                 <Check size={10} className="text-emerald-400" />
-                                Copied ✓
+                                Copied
                               </motion.span>
                             ) : (
                               <motion.span
@@ -992,13 +992,13 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-violet-500/70 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <ShieldCheck size={18} className="text-violet-400 flex-shrink-0" />
-                  <div className="h-px flex-1 bg-gradient-to-r from-violet-500/30 to-transparent" />
-                  <span className="text-xs font-mono font-bold text-violet-400/80">04</span>
+                  <ShieldCheck size={18} className="text-sky-400 flex-shrink-0" />
+                  <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
+                  <span className="text-xs font-mono font-bold text-sky-400/80">04</span>
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">Zero-Access Crawling</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed">
@@ -1261,7 +1261,7 @@ export default function LandingPage() {
                           transition={{
                             type: 'spring',
                             stiffness: 400,
-                            damping: 20,
+                            damping: 34,
                             delay: 0.05 + j * 0.05
                           }}
                           className="text-emerald-400 flex-shrink-0 mt-0.5"
@@ -1282,7 +1282,7 @@ export default function LandingPage() {
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
       <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-20 right-[10%] w-[560px] h-[560px] bg-violet-600/[0.12] rounded-full blur-[120px] z-0" />
+        <div className="pointer-events-none absolute top-20 right-[10%] w-[560px] h-[560px] bg-sky-600/[0.12] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
