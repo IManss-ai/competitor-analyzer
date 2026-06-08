@@ -27,7 +27,7 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
             tick={{ fill: 'var(--text-muted)', fontSize: 10, fontFamily: 'var(--font-mono)' }} 
           />
           <Tooltip 
-            contentStyle={{ backgroundColor: '#0c1120', color: '#e8eaf0', borderRadius: '12px', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
+            contentStyle={{ backgroundColor: 'var(--surface-raised)', color: '#e8eaf0', borderRadius: '12px', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
             itemStyle={{ color: '#e8eaf0', padding: '2px 0' }}
             cursor={{ fill: 'rgba(255,255,255,0.02)' }}
           />

@@ -129,7 +129,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                 {/* Trigger */}
                 <div className="bg-white/[0.01] border border-white/5 rounded-lg p-3.5 mb-4 relative">
                   <span 
-                    className="absolute -top-2.5 left-3 border border-white/5 px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-[#0c1120]"
+                    className="absolute -top-2.5 left-3 border border-white/5 px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-[var(--surface-raised)]"
                     style={{ color: 'var(--text-muted)' }}
                   >
                     triggered by

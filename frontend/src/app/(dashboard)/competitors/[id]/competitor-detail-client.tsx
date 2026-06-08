@@ -712,7 +712,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-[#0c1120] border border-white/10 text-white text-[10px] px-2 py-1 rounded shadow">
+                            <div className="bg-[var(--surface-raised)] border border-white/10 text-white text-[10px] px-2 py-1 rounded shadow">
                               {payload[0].value} average
                             </div>
                           );
