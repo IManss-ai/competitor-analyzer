@@ -2,24 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
-import { Chrome } from '@/components/ui/brand-icons';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import ThemeToggle from '@/components/theme-toggle';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authMethod, setAuthMethod] = useState<'direct' | 'magic'>('direct');
-  const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [plan, setPlan] = useState<'saas' | 'local' | null>(null);
-
-  // Google Sign-In simulation states
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
-  const [googleEmail, setGoogleEmail] = useState('');
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -33,12 +26,12 @@ export default function LoginPage() {
     ? `/api/auth/callback?plan=${plan}&session_token=`
     : `/api/auth/callback?session_token=`;
 
-  // Handle direct login (Email + Password)
+  // Email + password sign-in / instant sign-up
   const handleDirectLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
+
     try {
       const res = await fetch(`${apiUrl}/api/v1/auth/direct-login`, {
         method: 'POST',
@@ -46,65 +39,14 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      
+
       if (res.ok && data.session_token) {
-        // Exchange session token in Next.js and redirect
         window.location.href = `${callbackBase}${data.session_token}`;
       } else {
         setError(data.detail || 'Failed to authenticate. Please check your credentials.');
       }
     } catch {
       setError('Could not reach the server. Please check your connection.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle Magic Link login
-  const handleMagicLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    try {
-      const res = await fetch(`${apiUrl}/api/v1/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (res.ok) {
-        setSent(true);
-      } else {
-        setError('Something went wrong. Please check your email and try again.');
-      }
-    } catch {
-      setError('Could not reach the server. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle Google OAuth callback exchange
-  const handleGoogleLogin = async (selectedEmail: string) => {
-    setLoading(true);
-    setError('');
-    setShowGoogleModal(false);
-    
-    try {
-      const res = await fetch(`${apiUrl}/api/v1/auth/google-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: selectedEmail }),
-      });
-      const data = await res.json();
-      
-      if (res.ok && data.session_token) {
-        window.location.replace(`${callbackBase}${data.session_token}`);
-      } else {
-        setError(data.detail || 'Google authentication failed.');
-      }
-    } catch {
-      setError('Could not establish contact with Google login handler.');
     } finally {
       setLoading(false);
     }
@@ -147,7 +89,7 @@ export default function LoginPage() {
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
-        
+
         <Link href="/" className="relative flex items-center gap-3 z-10 hover:opacity-80 transition-opacity max-w-fit">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -176,7 +118,7 @@ export default function LoginPage() {
           </p>
 
           {/* Feature list */}
-          <motion.ul 
+          <motion.ul
             className="mt-8 space-y-3"
             initial="hidden"
             animate="visible"
@@ -188,10 +130,10 @@ export default function LoginPage() {
             {[
               'Tracks up to 7 competitor pages',
               'AI-generated response drafts and strategies',
-              'Instant Google/Gmail or credentials login',
+              'Secure email and password sign-in',
             ].map((item) => (
-              <motion.li 
-                key={item} 
+              <motion.li
+                key={item}
                 className="flex items-center gap-2.5 text-sm"
                 variants={{
                   hidden: { opacity: 0, x: -10 },
@@ -211,10 +153,10 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Right panel - Auth Forms */}
+      {/* Right panel - Auth Form */}
       <div className="flex-1 flex items-center justify-center p-8" style={{ background: 'var(--surface-base)' }}>
         <div className="w-full max-w-[360px]">
-          
+
           {/* Mobile logo */}
           <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 hover:opacity-85 transition-opacity max-w-fit">
             <div
@@ -229,295 +171,97 @@ export default function LoginPage() {
             </span>
           </Link>
 
-          {sent ? (
-            <div className="text-center">
-              <div
-                className="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-5"
-                style={{ background: 'rgba(16,185,129,0.10)', border: '1px solid rgba(16,185,129,0.20)' }}
-              >
-                <CheckCircle2 size={24} className="text-emerald-400" />
-              </div>
-              <h1 className="text-lg font-semibold mb-2 tracking-tight" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-                Check your email
-              </h1>
-              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                We sent a secure magic link to{' '}
-                <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{email}</span>.
-                Click the link in your inbox to continue.
-              </p>
-              <button
-                onClick={() => { setSent(false); setEmail(''); }}
-                className="mt-6 text-[13px] font-medium transition-colors cursor-pointer text-sky-400 hover:text-sky-300"
-              >
-                Use a different email
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* Back to Home Navigation Link */}
-              <Link href="/" className="inline-flex items-center gap-1.5 text-[12px] font-medium mb-6 transition-colors group" style={{ color: 'var(--text-muted)' }}>
-                <span className="group-hover:-translate-x-0.5 transition-transform inline-block">←</span>
-                <span>Back to home</span>
-              </Link>
+          {/* Back to Home Navigation Link */}
+          <Link href="/" className="inline-flex items-center gap-1.5 text-[12px] font-medium mb-6 transition-colors group" style={{ color: 'var(--text-muted)' }}>
+            <span className="group-hover:-translate-x-0.5 transition-transform inline-block">←</span>
+            <span>Back to home</span>
+          </Link>
 
-              <h1 className="text-[22px] font-semibold mb-1 tracking-tight" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-                Welcome back
-              </h1>
-              <p className="text-[13px] mb-4" style={{ color: 'var(--text-secondary)' }}>
-                Access your intelligence command center.
-              </p>
+          <h1 className="text-[22px] font-semibold mb-1 tracking-tight" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            Sign in or create your account
+          </h1>
+          <p className="text-[13px] mb-5" style={{ color: 'var(--text-secondary)' }}>
+            Access your intelligence command center.
+          </p>
 
-              {plan && (
-                <div
-                  className="mb-5 px-3 py-2 rounded-lg flex items-center gap-2"
-                  style={{
-                    background: 'rgba(79, 124, 176,0.06)',
-                    border: '1px solid rgba(79, 124, 176,0.20)',
-                  }}
-                >
-                  <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400">
-                    Plan
-                  </span>
-                  <span className="text-[12px]" style={{ color: 'var(--text-primary)' }}>
-                    {plan === 'local' ? 'Local Business — $19/mo' : 'SaaS Starter — $49/mo'}
-                  </span>
-                  <span className="ml-auto text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                    Checkout after sign in
-                  </span>
-                </div>
-              )}
-
-              {error && (
-                <div
-                  className="mb-5 px-4 py-3 rounded-lg text-[12px] font-medium"
-                  style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.20)', color: '#fca5a5' }}
-                >
-                  {error}
-                </div>
-              )}
-
-              {/* Instant Gmail Sign-In Button */}
-              <motion.button
-                onClick={() => setShowGoogleModal(true)}
-                whileTap={{ scale: 0.99 }}
-                className="w-full flex items-center justify-center gap-2.5 text-[13px] font-semibold py-2.5 px-4 rounded-lg cursor-pointer mb-5 transition-all"
-                style={{
-                  background: 'var(--fill-subtle)',
-                  border: '1px solid var(--border-strong)',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                <Chrome size={16} className="text-red-400" />
-                <span>Continue with Google</span>
-              </motion.button>
-
-              <div className="flex items-center gap-3 mb-5">
-                <div className="h-px flex-1" style={{ background: 'var(--border-default)' }} />
-                <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>or email</span>
-                <div className="h-px flex-1" style={{ background: 'var(--border-default)' }} />
-              </div>
-
-              {/* Login Method Toggle Tab */}
-              <div
-                className="flex p-1 rounded-lg mb-5 gap-1"
-                style={{ background: 'var(--fill-subtle)', border: '1px solid var(--border-default)' }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setAuthMethod('direct')}
-                  className="flex-1 text-[12px] py-1.5 rounded-md font-semibold cursor-pointer transition-all"
-                  style={
-                    authMethod === 'direct'
-                      ? { background: 'var(--fill-subtle-hover)', color: 'var(--text-primary)' }
-                      : { color: 'var(--text-muted)' }
-                  }
-                >
-                  Password
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMethod('magic')}
-                  className="flex-1 text-[12px] py-1.5 rounded-md font-semibold cursor-pointer transition-all"
-                  style={
-                    authMethod === 'magic'
-                      ? { background: 'var(--fill-subtle-hover)', color: 'var(--text-primary)' }
-                      : { color: 'var(--text-muted)' }
-                  }
-                >
-                  Magic Link
-                </button>
-              </div>
-
-              {/* Direct Password Login / Signup form */}
-              {authMethod === 'direct' ? (
-                <form onSubmit={handleDirectLogin} className="space-y-4">
-                  <div>
-                    <label htmlFor="email" className="rs-label block mb-1.5">Email address</label>
-                    <div className="relative">
-                      <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-                      <input
-                        id="email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        className="rs-input pl-9"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="password" className="rs-label block mb-1.5">Password</label>
-                    <div className="relative">
-                      <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-                      <input
-                        id="password"
-                        type="password"
-                        required
-                        minLength={6}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="rs-input pl-9"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="rs-btn-primary w-full py-2.5 text-[13px]"
-                  >
-                    {loading ? 'Authenticating…' : 'Sign in'}
-                    {!loading && <ArrowRight size={13} />}
-                  </button>
-
-                  <p className="text-[11px] text-center leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                    New here? Signing in with a new email creates your account automatically.
-                  </p>
-                </form>
-              ) : (
-                /* Magic Link Form */
-                <form onSubmit={handleMagicLink} className="space-y-4">
-                  <div>
-                    <label htmlFor="magic-email" className="rs-label block mb-1.5">Email address</label>
-                    <div className="relative">
-                      <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-                      <input
-                        id="magic-email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        className="rs-input pl-9"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="rs-btn-primary w-full py-2.5 text-[13px]"
-                  >
-                    {loading ? 'Sending link…' : 'Send magic link'}
-                    {!loading && <ArrowRight size={13} />}
-                  </button>
-
-                  <p className="text-[11px] text-center leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                    We&apos;ll send a one-time sign-in link to your inbox.
-                  </p>
-                </form>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Simulated Premium Google Accounts Picker Modal */}
-      <AnimatePresence>
-        {showGoogleModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-[380px] p-6 rounded-xl"
+          {plan && (
+            <div
+              className="mb-5 px-3 py-2 rounded-lg flex items-center gap-2"
               style={{
-                background: 'var(--surface-overlay)',
-                border: '1px solid var(--border-strong)',
-                boxShadow: 'var(--shadow-modal)',
+                background: 'rgba(79, 124, 176,0.06)',
+                border: '1px solid rgba(79, 124, 176,0.20)',
               }}
             >
-              <div className="flex items-center gap-2 mb-5 pb-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
-                <Chrome size={18} className="text-red-400" />
-                <span className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>Sign in with Google</span>
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400">
+                Plan
+              </span>
+              <span className="text-[12px]" style={{ color: 'var(--text-primary)' }}>
+                {plan === 'local' ? 'Local Business — $19/mo' : 'SaaS Starter — $49/mo'}
+              </span>
+              <span className="ml-auto text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                Checkout after sign in
+              </span>
+            </div>
+          )}
+
+          {error && (
+            <div
+              className="mb-5 px-4 py-3 rounded-lg text-[12px] font-medium"
+              style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.20)', color: '#fca5a5' }}
+            >
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleDirectLogin} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="rs-label block mb-1.5">Email address</label>
+              <div className="relative">
+                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  className="rs-input pl-9"
+                />
               </div>
+            </div>
 
-              <h3 className="text-[14px] font-semibold mb-0.5" style={{ color: 'var(--text-primary)' }}>Choose an account</h3>
-              <p className="text-[12px] mb-4" style={{ color: 'var(--text-secondary)' }}>to continue to Rivalscope</p>
-
-              <div className="space-y-2 mb-4">
-                {[
-                  { name: 'Demo Founder', email: 'demo.founder@gmail.com' },
-                  { name: 'Active Investor', email: 'active.investor@gmail.com' },
-                ].map((account) => (
-                  <button
-                    key={account.email}
-                    onClick={() => handleGoogleLogin(account.email)}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg text-left cursor-pointer transition-all"
-                    style={{ border: '1px solid var(--border-default)', background: 'transparent' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                      style={{ background: 'var(--accent-primary)' }}
-                    >
-                      {account.name[0]}
-                    </div>
-                    <div>
-                      <div className="text-[12px] font-semibold" style={{ color: 'var(--text-primary)' }}>{account.name}</div>
-                      <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{account.email}</div>
-                    </div>
-                  </button>
-                ))}
+            <div>
+              <label htmlFor="password" className="rs-label block mb-1.5">Password</label>
+              <div className="relative">
+                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="rs-input pl-9"
+                />
               </div>
+            </div>
 
-              <div className="space-y-2 pt-3" style={{ borderTop: '1px solid var(--border-default)' }}>
-                <label className="rs-label block">Or enter another Gmail:</label>
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    placeholder="name@gmail.com"
-                    value={googleEmail}
-                    onChange={(e) => setGoogleEmail(e.target.value)}
-                    className="rs-input flex-1 text-[12px]"
-                  />
-                  <button
-                    onClick={() => { if (googleEmail.includes('@')) handleGoogleLogin(googleEmail); }}
-                    className="rs-btn-primary px-3 text-[12px]"
-                  >
-                    Go
-                  </button>
-                </div>
-              </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="rs-btn-primary w-full py-2.5 text-[13px]"
+            >
+              {loading ? 'Authenticating…' : 'Sign in'}
+              {!loading && <ArrowRight size={13} />}
+            </button>
 
-              <div className="flex justify-end mt-5 pt-4" style={{ borderTop: '1px solid var(--border-default)' }}>
-                <button
-                  onClick={() => setShowGoogleModal(false)}
-                  className="text-[12px] font-medium cursor-pointer transition-colors"
-                  style={{ color: 'var(--text-muted)' }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
+            <p className="text-[11px] text-center leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+              New here? Signing in with a new email creates your account automatically.
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

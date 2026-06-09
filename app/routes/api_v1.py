@@ -37,8 +37,12 @@ async def api_login(payload: dict, db: Session = Depends(get_session)):
     link = f"{APP_BASE_URL}/auth/verify?token={token}"
     try:
         await send_magic_link_email(email, link, RESEND_API_KEY, FROM_EMAIL)
-    except Exception:
-        pass
+    except Exception as exc:
+        # Do not pretend the email was sent — surfacing the failure lets the UI
+        # tell the user to use password login instead of waiting for a link that
+        # will never arrive.
+        print(f"[auth] magic-link email send failed for {email}: {exc}")
+        raise HTTPException(status_code=502, detail="Could not send the magic link email.")
     return {"ok": True}
 
 
@@ -69,18 +73,6 @@ async def api_direct_login(payload: dict, db: Session = Depends(get_session)):
             
     session_token = generate_session_token(str(user.id), user.email)
     return {"ok": True, "session_token": session_token}
-
-
-@router.post("/auth/google-login")
-async def api_google_login(payload: dict, db: Session = Depends(get_session)):
-    email = payload.get("email", "").strip().lower()
-    if not email:
-        raise HTTPException(status_code=422, detail="Google email is required")
-        
-    user = get_or_create_user(email, db)
-    session_token = generate_session_token(str(user.id), user.email)
-    return {"ok": True, "session_token": session_token}
-
 
 
 @router.post("/auth/exchange")
