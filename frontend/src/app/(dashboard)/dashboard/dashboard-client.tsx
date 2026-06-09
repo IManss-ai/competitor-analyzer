@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, ShoppingBag } from 'lucide-react';
 import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
@@ -45,6 +46,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const p = useChartPalette();
+  const router = useRouter();
 
   const refreshDashboard = async () => {
     try {
@@ -58,6 +60,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           setFeedEvents(freshData.events.slice(0, 20));
         }
       }
+      // Also re-render the server components (Topbar "Last scan", etc.) which
+      // hold their own copy of this data and won't update from client fetches.
+      router.refresh();
     } catch (e) {
       console.error('Failed to refresh dashboard data:', e);
     }

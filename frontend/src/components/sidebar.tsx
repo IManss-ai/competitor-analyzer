@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import { motion } from 'motion/react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
@@ -29,7 +29,7 @@ const navItems = [
   { href: '/dashboard',             label: 'Dashboard',    Icon: LayoutDashboard },
   { href: '/competitors',           label: 'Competitors',  Icon: Building2 },
   { href: '/dashboard#feed',        label: 'Intel Feed',   Icon: FileText },
-  { href: '/dashboard#battlecards', label: 'Battle Cards', Icon: Shield },
+  { href: '/battlecards',           label: 'Battle Cards', Icon: Shield },
   { href: '/trends',                label: 'Trends',       Icon: TrendingUp },
   { href: '/queue',                 label: 'Action Queue', Icon: CheckSquare },
   { href: '/settings',              label: 'Settings',     Icon: Settings },
@@ -43,9 +43,11 @@ interface SettingsData {
 
 export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [settings, setSettings] = useState<SettingsData | null>(null);
   const [scanning, setScanning] = useState(false);
   const [scanDone, setScanDone] = useState(false);
+  const [scanError, setScanError] = useState(false);
   const [trialDays, setTrialDays] = useState(0);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -84,6 +86,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     if (scanning) return;
     setScanning(true);
     setScanDone(false);
+    setScanError(false);
     try {
       const res = await fetch(`${apiUrl}/api/v1/scan/now`, {
         method: 'POST',
@@ -92,12 +95,19 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
           Authorization: `Bearer ${userId}`,
         },
       });
-      if (res.ok) {
-        setScanDone(true);
-        setTimeout(() => setScanDone(false), 3000);
-      }
+      if (!res.ok) throw new Error(`Scan request failed (${res.status})`);
+      setScanDone(true);
+      // The scan runs in the background; give it a moment, then refresh the
+      // server components (Topbar "Last scan", dashboard data) so the new run
+      // shows without a manual reload.
+      setTimeout(() => {
+        setScanDone(false);
+        router.refresh();
+      }, 3000);
     } catch (e) {
       console.error(e);
+      setScanError(true);
+      setTimeout(() => setScanError(false), 4000);
     } finally {
       setScanning(false);
     }
@@ -264,6 +274,12 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   border: '1px solid rgba(16,185,129,0.22)',
                   color: '#34d399',
                 }
+              : scanError
+              ? {
+                  background: 'rgba(220,38,38,0.10)',
+                  border: '1px solid rgba(220,38,38,0.24)',
+                  color: '#f87171',
+                }
               : undefined
           }
         >
@@ -271,7 +287,13 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             size={12}
             className={scanning ? 'animate-spin' : ''}
           />
-          {scanning ? 'Scanning…' : scanDone ? 'Queued!' : 'Scan all now'}
+          {scanning
+            ? 'Scanning…'
+            : scanError
+            ? 'Scan failed — retry'
+            : scanDone
+            ? 'Queued!'
+            : 'Scan all now'}
         </button>
 
         {/* Trial upgrade banner */}

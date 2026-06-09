@@ -10,6 +10,14 @@ interface ChartCompetitor {
   url: string;
 }
 
+// Series labels fall back to the raw competitor URL when a name is missing,
+// which can overflow and overlap the legend. Strip the protocol/path and cap
+// the length so the legend stays on one tidy line.
+function legendLabel(value: string) {
+  const clean = value.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  return clean.length > 22 ? `${clean.slice(0, 21)}…` : clean;
+}
+
 export default function TrendsChart({ data, competitors }: { data: Record<string, string | number>[], competitors: ChartCompetitor[] }) {
   const p = useChartPalette();
   const colors = [p.accent, p.positive, p.warning, p.accentSoft, p.violet, p.neutral, p.danger];
@@ -44,7 +52,7 @@ export default function TrendsChart({ data, competitors }: { data: Record<string
             itemStyle={{ color: 'var(--text-primary)', padding: '2px 0' }}
             cursor={{ stroke: p.axis, strokeWidth: 1, strokeDasharray: '4 4' }}
           />
-          <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }} />
+          <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }} formatter={(value) => legendLabel(String(value))} />
           {competitors.map((comp, idx) => (
             <Line 
               key={comp.id}
