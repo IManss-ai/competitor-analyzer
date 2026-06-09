@@ -11,10 +11,10 @@ class User(Base):
     polar_customer_id = Column(String, nullable=True)
     polar_subscription_id = Column(String, nullable=True)
     subscription_status = Column(String, default="trialing")  # trialing/active/canceled/past_due
-    # Give every new account a real 14-day trial window. Without this the column
+    # Give every new account a real 2-day trial window. Without this the column
     # stayed NULL on signup and the dashboard showed "0 days left / Upgrade to
     # Pro" the instant a user registered.
-    trial_ends_at = Column(DateTime, nullable=True, default=lambda: datetime.utcnow() + timedelta(days=14))
+    trial_ends_at = Column(DateTime, nullable=True, default=lambda: datetime.utcnow() + timedelta(days=2))
     created_at = Column(DateTime, default=func.now())
     business_type = Column(String, default="saas")  # "saas" | "local"
     scan_schedule = Column(String, default="weekly")  # "weekly" | "biweekly"

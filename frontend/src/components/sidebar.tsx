@@ -122,7 +122,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
   const planBadge = getPlanBadge();
   const isOnTrial = settings?.subscription_status === 'trialing';
-  const trialProgress = Math.min(100, ((14 - trialDays) / 14) * 100);
+  const trialProgress = Math.min(100, ((2 - trialDays) / 2) * 100);
 
   return (
     <aside

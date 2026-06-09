@@ -438,7 +438,7 @@ export default function LandingPage() {
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-white font-semibold text-sm px-6 py-3 rounded-full hover:bg-[var(--accent-hover)] transition-colors"
                 >
-                  Start 14-day free trial
+                  Start 2-day free trial
                   <ArrowRight size={12} />
                 </MotionLink>
                 <a
@@ -1374,7 +1374,7 @@ export default function LandingPage() {
               Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
             <p className="text-[var(--text-secondary)] text-base max-w-sm mx-auto leading-relaxed mb-10">
-              14-day free trial. Monitor up to 7 competitors. Cancel with one click.
+              2-day free trial. Monitor up to 7 competitors. Cancel with one click.
             </p>
             <MotionLink
               href="/auth/login"

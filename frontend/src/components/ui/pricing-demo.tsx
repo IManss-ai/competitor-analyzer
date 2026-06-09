@@ -70,7 +70,7 @@ function PricingBasic() {
           <span className="text-[var(--text-muted)]">No surprises.</span>
         </h2>
         <p className="text-[var(--text-secondary)] max-w-md mx-auto text-base leading-relaxed mb-14">
-          Pick the plan that fits your business. Both include a 14-day free trial, no credit card required.
+          Pick the plan that fits your business. Both include a 2-day free trial, no credit card required.
         </p>
       </motion.div>
 
@@ -121,7 +121,7 @@ function PricingBasic() {
 
             {/* Trial note */}
             <p className="text-[11px] text-[var(--text-muted)] font-mono mt-4 text-center">
-              14-day free trial, no credit card required
+              2-day free trial, no credit card required
             </p>
           </motion.div>
         ))}

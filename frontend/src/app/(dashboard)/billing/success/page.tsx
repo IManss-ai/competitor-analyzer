@@ -10,7 +10,7 @@ export default function BillingSuccessPage() {
         </div>
         <h1 className="text-2xl font-semibold tracking-tight mb-3" style={{ color: 'var(--text-primary)' }}>You&apos;re all set!</h1>
         <p className="text-sm mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          Your 14-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
+          Your 2-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
         </p>
         <Link
           href="/dashboard"
