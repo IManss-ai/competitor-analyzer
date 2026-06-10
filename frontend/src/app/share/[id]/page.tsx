@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { cache } from 'react';
 import SharePage from './share-page';
 
 interface PageProps {
@@ -7,10 +8,13 @@ interface PageProps {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-async function fetchBattlecard(id: string) {
+// react cache() dedupes the generateMetadata + page fetches into one backend
+// hit per request; revalidate caches it at the edge so crawler swarms on
+// share links don't hammer the API.
+const fetchBattlecard = cache(async function fetchBattlecard(id: string) {
   try {
     const res = await fetch(`${API_BASE}/api/v1/battlecards/public/${id}`, {
-      cache: 'no-store',
+      next: { revalidate: 300 },
     });
     if (!res.ok) return null;
     return res.json();
@@ -18,7 +22,7 @@ async function fetchBattlecard(id: string) {
     console.error('Error fetching public battlecard:', err);
     return null;
   }
-}
+});
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;

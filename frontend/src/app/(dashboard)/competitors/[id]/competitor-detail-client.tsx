@@ -91,7 +91,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   const handleRegenerateBattlecard = async () => {
     setRegenerating(true);
     try {
-      const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}`, {
+      const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}?force=true`, {
         headers: { Authorization: `Bearer ${userId}` }
       });
       if (res.ok) {

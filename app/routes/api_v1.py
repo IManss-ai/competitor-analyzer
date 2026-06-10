@@ -629,10 +629,11 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
         for s in snapshots
     ]
     
-    # Get latest battle card
-    from app.routes.battlecard import generate_battlecard
+    # Latest battle card, cache-first: a detail page view only triggers a paid
+    # model call when no fresh AI card exists for this competitor yet.
+    from app.routes.battlecard import get_or_generate_battlecard
     try:
-        battlecard_data = generate_battlecard(competitor_id, db)
+        battlecard_data = get_or_generate_battlecard(comp, db)
     except Exception:
         battlecard_data = None
 

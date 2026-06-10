@@ -132,6 +132,19 @@ class JobPosting(Base):
     closed_at = Column(DateTime, nullable=True)            # set when the posting disappears
 
 
+class BattleCardCache(Base):
+    """Last generated battle card per competitor. Battle cards are expensive
+    (one Claude Sonnet call each), so they are generated at most once per
+    freshness window and served from here — including for the public /share
+    page, which must never trigger a paid model call."""
+    __tablename__ = "battlecard_cache"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False, unique=True, index=True)
+    payload = Column(Text, nullable=False)              # full JSON battle card response
+    ai_generated = Column(Boolean, default=False)       # False = heuristic fallback (eligible for AI upgrade)
+    generated_at = Column(DateTime, default=func.now())
+
+
 class JobSnapshot(Base):
     __tablename__ = "job_snapshots"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)

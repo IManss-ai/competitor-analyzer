@@ -205,7 +205,7 @@ class TestBattleCardIncludesHiringSignal(unittest.TestCase):
         mock_client.messages.create.return_value = mock_msg
 
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}", headers={"Authorization": f"Bearer {self.user.id}"})
         self.assertEqual(resp.status_code, 200)
 
         user_text = mock_client.messages.create.call_args.kwargs["messages"][0]["content"][1]["text"]
@@ -232,7 +232,7 @@ class TestBattleCardIncludesHiringSignal(unittest.TestCase):
             mock_client.messages.create.return_value = mock_msg
 
             with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-                self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}")
+                self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}", headers={"Authorization": f"Bearer {self.user.id}"})
 
             user_text = mock_client.messages.create.call_args.kwargs["messages"][0]["content"][1]["text"]
             self.assertNotIn("Hiring signals", user_text)

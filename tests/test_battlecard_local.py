@@ -57,6 +57,7 @@ class TestLocalBattleCard(unittest.TestCase):
         self.db.commit()
         self.db.refresh(self.local_comp)
         self.db.refresh(self.saas_comp)
+        self.auth = {"Authorization": f"Bearer {self.user.id}"}
 
     def tearDown(self):
         self.db.close()
@@ -99,7 +100,7 @@ class TestLocalBattleCard(unittest.TestCase):
 
     def test_local_business_type_returns_local_variant(self):
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data.get("variant"), "local")
@@ -107,7 +108,7 @@ class TestLocalBattleCard(unittest.TestCase):
 
     def test_saas_business_type_returns_saas_variant(self):
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.saas_comp.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.saas_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data.get("variant"), "saas")
@@ -115,7 +116,7 @@ class TestLocalBattleCard(unittest.TestCase):
     def test_local_fallback_with_complaints_uses_reputation_playbook(self):
         self._seed_complaints()
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         joined_playbook = " ".join(data["playbook"]).lower()
@@ -128,7 +129,7 @@ class TestLocalBattleCard(unittest.TestCase):
     def test_local_fallback_with_active_social_uses_counter_playbook(self):
         self._seed_active_social()
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data["what_changed"][0]["type"], "social_campaign")
@@ -136,7 +137,7 @@ class TestLocalBattleCard(unittest.TestCase):
 
     def test_local_fallback_quiet_competitor(self):
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data["what_changed"][0]["type"], "review_trend")
@@ -164,7 +165,7 @@ class TestLocalBattleCard(unittest.TestCase):
         mock_client.messages.create.return_value = mock_msg
 
         with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data["variant"], "local")
@@ -174,6 +175,78 @@ class TestLocalBattleCard(unittest.TestCase):
         call_kwargs = mock_client.messages.create.call_args.kwargs
         sent_text = call_kwargs["messages"][0]["content"][0]["text"]
         self.assertIn("local business strategist", sent_text)
+
+    def test_generate_requires_auth(self):
+        resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
+        self.assertEqual(resp.status_code, 401)
+
+    def test_generate_rejects_other_users_competitor(self):
+        other = User(email="other@example.com")
+        self.db.add(other)
+        self.db.commit()
+        self.db.refresh(other)
+        resp = self.client.get(
+            f"/api/v1/battlecards/generate/{self.local_comp.id}",
+            headers={"Authorization": f"Bearer {other.id}"},
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    @patch("app.routes.battlecard.anthropic.Anthropic")
+    def test_ai_card_is_cached_and_not_regenerated(self, mock_anthropic_class):
+        self._seed_complaints()
+        mock_client = MagicMock()
+        mock_anthropic_class.return_value = mock_client
+        mock_msg = MagicMock()
+        mock_msg.content = [MagicMock(text=json.dumps({
+            "executive_summary": "Cached summary.",
+            "what_changed": [{"type": "reputation_shift", "text": "complaints"}],
+            "weaknesses": ["w1", "w2"],
+            "strategic_signals": ["s1"],
+            "playbook": ["Run a", "Run b", "Run c", "Run d", "Run e"],
+        }))]
+        mock_client.messages.create.return_value = mock_msg
+
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
+            first = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+            second = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(second.json()["executive_summary"], "Cached summary.")
+        # Two page views, ONE paid model call — the second is served from cache.
+        mock_client.messages.create.assert_called_once()
+
+    @patch("app.routes.battlecard.anthropic.Anthropic")
+    def test_public_endpoint_never_calls_ai(self, mock_anthropic_class):
+        mock_client = MagicMock()
+        mock_anthropic_class.return_value = mock_client
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
+            resp = self.client.get(f"/api/v1/battlecards/public/{self.local_comp.id}")
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(len(data["playbook"]), 5)  # heuristic card still complete
+        mock_client.messages.create.assert_not_called()
+
+    @patch("app.routes.battlecard.anthropic.Anthropic")
+    def test_public_endpoint_serves_cached_ai_card(self, mock_anthropic_class):
+        self._seed_complaints()
+        mock_client = MagicMock()
+        mock_anthropic_class.return_value = mock_client
+        mock_msg = MagicMock()
+        mock_msg.content = [MagicMock(text=json.dumps({
+            "executive_summary": "Owner-generated card.",
+            "what_changed": [{"type": "reputation_shift", "text": "complaints"}],
+            "weaknesses": ["w1", "w2"],
+            "strategic_signals": ["s1"],
+            "playbook": ["Run a", "Run b", "Run c", "Run d", "Run e"],
+        }))]
+        mock_client.messages.create.return_value = mock_msg
+
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
+            self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+            resp = self.client.get(f"/api/v1/battlecards/public/{self.local_comp.id}")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["executive_summary"], "Owner-generated card.")
+        mock_client.messages.create.assert_called_once()
 
 
 if __name__ == "__main__":

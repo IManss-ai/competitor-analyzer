@@ -8,12 +8,61 @@ import anthropic
 
 from app.db import get_session
 from app.observability import note_degraded
-from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost
+from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache
 from app.pipeline.job_tracker import get_latest_hiring_signal
+from app.routes.api_v1 import require_api_user
 
 import uuid as _uuid
 
 router = APIRouter(prefix="/api/v1/battlecards", tags=["battlecards"])
+
+# How long a generated battle card stays valid with no new intel. Cards also
+# refresh early whenever new events/reviews/posts arrive after generation.
+CACHE_MAX_AGE = timedelta(days=7)
+
+
+def _load_cache(comp_id, db: Session) -> BattleCardCache | None:
+    return db.execute(
+        select(BattleCardCache).where(BattleCardCache.competitor_id == comp_id)
+    ).scalar_one_or_none()
+
+
+def _has_new_intel(comp: Competitor, since: datetime, db: Session) -> bool:
+    """True if any intel relevant to this competitor's card variant arrived
+    after the cached card was generated."""
+    if comp.business_type == "local":
+        new_review = db.execute(
+            select(Review.id).where(Review.competitor_id == comp.id, Review.fetched_at > since).limit(1)
+        ).scalar_one_or_none()
+        if new_review:
+            return True
+        new_post = db.execute(
+            select(SocialPost.id).where(SocialPost.competitor_id == comp.id, SocialPost.fetched_at > since).limit(1)
+        ).scalar_one_or_none()
+        return new_post is not None
+    new_event = db.execute(
+        select(ChangeEvent.id).where(ChangeEvent.competitor_id == comp.id, ChangeEvent.detected_at > since).limit(1)
+    ).scalar_one_or_none()
+    return new_event is not None
+
+
+def _cache_is_fresh(cached: BattleCardCache, comp: Competitor, db: Session) -> bool:
+    if cached.generated_at is None:
+        return False
+    if datetime.utcnow() - cached.generated_at > CACHE_MAX_AGE:
+        return False
+    return not _has_new_intel(comp, cached.generated_at, db)
+
+
+def _store_cache(comp_id, payload: dict, ai_generated: bool, db: Session) -> None:
+    cached = _load_cache(comp_id, db)
+    if cached is None:
+        cached = BattleCardCache(competitor_id=comp_id)
+        db.add(cached)
+    cached.payload = json.dumps(payload)
+    cached.ai_generated = ai_generated
+    cached.generated_at = datetime.utcnow()
+    db.commit()
 
 
 LOCAL_SYSTEM_PROMPT = """You are a senior local business strategist advising an independent operator (restaurant, salon, gym, retail shop, etc.) on how to win against a nearby competitor.
@@ -43,8 +92,9 @@ Rules for sections:
 - playbook: Exactly 5 ranked actions for a local operator, most impactful first. Each under 25 words, starts with a verb (e.g., 'Run', 'Target', 'Reply', 'Offer', 'Capture'). Must be concrete and locally executable (Google Local Ads, in-store signage, Instagram reply campaigns, Yelp response, neighborhood flyering, etc.) — NOT abstract B2B sales plays."""
 
 
-def _generate_local_battlecard(comp: Competitor, db: Session) -> dict:
-    """Build a Battle Card tuned for local/B2C operators using reviews + social posts."""
+def _generate_local_battlecard(comp: Competitor, db: Session, allow_ai: bool = True) -> tuple[dict, bool]:
+    """Build a Battle Card tuned for local/B2C operators using reviews + social posts.
+    Returns (payload, ai_generated)."""
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
 
     recent_reviews = db.execute(
@@ -113,7 +163,7 @@ def _generate_local_battlecard(comp: Competitor, db: Session) -> dict:
         rating_line = f"Current avg rating: {latest_snapshot.avg_rating}/5 across {latest_snapshot.total_reviews or '?'} reviews ({latest_snapshot.complaint_count or 0} complaints flagged).\n"
 
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    is_dummy = (not api_key) or (api_key == "dummy_anthropic_key")
+    is_dummy = (not api_key) or (api_key == "dummy_anthropic_key") or not allow_ai
 
     executive_summary = ""
     what_changed = []
@@ -159,9 +209,10 @@ Known customer complaints:
             playbook = parsed.get("playbook", [])
         except Exception as e:
             note_degraded("battlecard.local", "heuristic", "api_error", e)
-    elif is_dummy:
+    elif allow_ai:
         note_degraded("battlecard.local", "heuristic", "dummy_key")
 
+    ai_generated = bool(playbook)
     if not playbook:
         name = comp.name or comp.url
         has_complaints = bool(latest_snapshot and (latest_snapshot.complaint_count or 0) > 0)
@@ -224,23 +275,13 @@ Known customer complaints:
         "generated_at": datetime.now().isoformat(),
         "actions": playbook,
         "variant": "local",
-    }
+    }, ai_generated
 
 
-@router.get("/generate/{competitor_id}")
-def generate_battlecard(competitor_id: str, db: Session = Depends(get_session)):
-    try:
-        comp_uuid = _uuid.UUID(competitor_id)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid competitor UUID format")
-
-    comp = db.execute(select(Competitor).where(Competitor.id == comp_uuid)).scalar_one_or_none()
-    if not comp:
-        raise HTTPException(status_code=404, detail="Competitor not found")
-
-    if comp.business_type == "local":
-        return _generate_local_battlecard(comp, db)
-
+def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = True) -> tuple[dict, bool]:
+    """Build the SaaS Battle Card from change events, complaints, and hiring
+    signals. Returns (payload, ai_generated)."""
+    comp_uuid = comp.id
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
     changes = db.execute(
         select(ChangeEvent)
@@ -298,7 +339,7 @@ def generate_battlecard(competitor_id: str, db: Session = Depends(get_session)):
             hiring_signal_text += f". Pattern read: {hiring_snapshot.strategic_signal}"
 
     api_key = os.getenv("ANTHROPIC_API_KEY")
-    is_dummy = (not api_key) or (api_key == "dummy_anthropic_key")
+    is_dummy = (not api_key) or (api_key == "dummy_anthropic_key") or not allow_ai
 
     executive_summary = ""
     what_changed = []
@@ -371,9 +412,10 @@ Known customer complaints/weaknesses:
             playbook = parsed.get("playbook", [])
         except Exception as e:
             note_degraded("battlecard", "heuristic", "api_error", e)
-    elif is_dummy:
+    elif allow_ai:
         note_degraded("battlecard", "heuristic", "dummy_key")
 
+    ai_generated = bool(playbook)
     # Heuristic fallback if API key is dummy or request fails
     if not playbook:
         has_pricing = any("price" in c.lower() or "pricing" in c.lower() for c in change_list_texts)
@@ -451,11 +493,16 @@ Known customer complaints/weaknesses:
         "generated_at": datetime.now().isoformat(),
         "actions": playbook,
         "variant": "saas",
-    }
+    }, ai_generated
 
 
-@router.get("/public/{competitor_id}")
-def generate_public_battlecard(competitor_id: str, db: Session = Depends(get_session)):
+def _generate(comp: Competitor, db: Session, allow_ai: bool) -> tuple[dict, bool]:
+    if comp.business_type == "local":
+        return _generate_local_battlecard(comp, db, allow_ai=allow_ai)
+    return _generate_saas_battlecard(comp, db, allow_ai=allow_ai)
+
+
+def _resolve_competitor(competitor_id: str, db: Session) -> Competitor:
     try:
         comp_uuid = _uuid.UUID(competitor_id)
     except ValueError:
@@ -464,10 +511,50 @@ def generate_public_battlecard(competitor_id: str, db: Session = Depends(get_ses
     comp = db.execute(select(Competitor).where(Competitor.id == comp_uuid)).scalar_one_or_none()
     if not comp:
         raise HTTPException(status_code=404, detail="Competitor not found")
+    return comp
+
+
+def get_or_generate_battlecard(comp: Competitor, db: Session, force: bool = False) -> dict:
+    """Cache-first battle card access for authenticated owner paths. Generates
+    (one paid call) only when there is no fresh AI card or force=True."""
+    cached = _load_cache(comp.id, db)
+    if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
+        return json.loads(cached.payload)
+
+    payload, ai_generated = _generate(comp, db, allow_ai=True)
+    _store_cache(comp.id, payload, ai_generated, db)
+    return payload
+
+
+@router.get("/generate/{competitor_id}")
+def generate_battlecard(
+    competitor_id: str,
+    force: bool = False,
+    db: Session = Depends(get_session),
+    user_id: str = Depends(require_api_user),
+):
+    comp = _resolve_competitor(competitor_id, db)
+    if str(comp.user_id) != user_id:
+        raise HTTPException(status_code=403, detail="Not your competitor")
+    return get_or_generate_battlecard(comp, db, force=force)
+
+
+@router.get("/public/{competitor_id}")
+def generate_public_battlecard(competitor_id: str, db: Session = Depends(get_session)):
+    """Public share endpoint. Serves the cached card (any age) and NEVER calls
+    a paid model — this URL is reachable by anyone, including OG crawlers and
+    bots, so an AI call here is an unmetered cost leak."""
+    comp = _resolve_competitor(competitor_id, db)
     if not comp.active:
         raise HTTPException(status_code=403, detail="Competitor is inactive")
 
-    res = generate_battlecard(competitor_id, db)
+    cached = _load_cache(comp.id, db)
+    if cached:
+        res = json.loads(cached.payload)
+    else:
+        # No card generated yet: build the free heuristic variant. Don't cache
+        # it, so the owner's first real (AI) generation isn't masked.
+        res, _ = _generate(comp, db, allow_ai=False)
     res["competitor_name"] = comp.name or comp.url
     res["competitor_url"] = comp.url
     return res
