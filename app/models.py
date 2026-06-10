@@ -38,6 +38,7 @@ class Competitor(Base):
     trustpilot_url = Column(String, nullable=True)    # explicit Trustpilot review URL override
     capterra_url = Column(String, nullable=True)      # explicit Capterra reviews URL override
     careers_url = Column(String, nullable=True)       # explicit careers / jobs page URL for hiring signals
+    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id"), nullable=True, index=True)  # discovery App link
 
 class Snapshot(Base):
     __tablename__ = "snapshots"
@@ -154,3 +155,50 @@ class JobSnapshot(Base):
     new_postings = Column(Integer, default=0)              # jobs first seen in this scan
     closed_postings = Column(Integer, default=0)           # jobs that disappeared since last scan
     strategic_signal = Column(Text, nullable=True)         # AI interpretation of the hiring pattern
+
+
+class App(Base):
+    """A web app that exists in the world, independent of any user. Discovery
+    profiles, monitoring subscriptions (Competitor.app_id), and later verified
+    revenue all hang off this entity."""
+    __tablename__ = "apps"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    slug = Column(String, unique=True, nullable=False, index=True)
+    url = Column(String, unique=True, nullable=False, index=True)  # normalized (see app/discovery/normalize.py)
+    name = Column(String, nullable=False)
+    tagline = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+    category = Column(String, nullable=True, index=True)
+    tags = Column(Text, nullable=True)                 # JSON array of strings
+    logo_url = Column(String, nullable=True)
+    screenshot_url = Column(String, nullable=True)
+    source = Column(String, default="seed")            # seed | user_tracked | submitted
+    scan_tier = Column(String, default="cheap")        # cheap | full
+    scan_status = Column(String, default="pending")    # pending | ok | scan_failed
+    first_scanned_at = Column(DateTime, nullable=True)
+    last_scanned_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=func.now())
+    # NOTE: search_vector (tsvector) is added Postgres-only in the Alembic
+    # migration; it is intentionally NOT declared here so SQLite tests work.
+
+
+class AppPricing(Base):
+    __tablename__ = "app_pricing"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id"), nullable=False, index=True)
+    tier_name = Column(String, nullable=False)
+    price = Column(Float, nullable=True)               # null = custom/contact-us
+    currency = Column(String, default="USD")
+    period = Column(String, default="monthly")         # monthly | yearly | one_time | free
+    features = Column(Text, nullable=True)             # JSON array of strings
+    scraped_at = Column(DateTime, default=func.now())
+
+
+class AppTech(Base):
+    __tablename__ = "app_tech"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id"), nullable=False, index=True)
+    technology = Column(String, nullable=False)        # canonical key: nextjs, stripe, intercom...
+    tech_category = Column(String, nullable=True)      # framework | payments | analytics | support
+    detected_at = Column(DateTime, default=func.now())
+    __table_args__ = (Index("ix_app_tech_unique", "app_id", "technology", unique=True),)
