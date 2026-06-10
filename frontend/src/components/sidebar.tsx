@@ -8,6 +8,7 @@ import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import {
   LayoutDashboard,
   Building2,
+  Compass,
   FileText,
   Shield,
   TrendingUp,
@@ -28,6 +29,7 @@ interface SidebarProps {
 const navItems = [
   { href: '/dashboard',             label: 'Dashboard',    Icon: LayoutDashboard },
   { href: '/competitors',           label: 'Competitors',  Icon: Building2 },
+  { href: '/discover',              label: 'Discover',     Icon: Compass },
   { href: '/dashboard#feed',        label: 'Intel Feed',   Icon: FileText },
   { href: '/battlecards',           label: 'Battle Cards', Icon: Shield },
   { href: '/trends',                label: 'Trends',       Icon: TrendingUp },
