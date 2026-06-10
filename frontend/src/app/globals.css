@@ -388,6 +388,16 @@ code, pre, .font-mono {
   color: #6f685c;
   border-color: rgba(111,104,92,0.22);
 }
+.badge-initial_scan {
+  background: rgba(52,87,129,0.12);
+  color: #345781;
+  border-color: rgba(52,87,129,0.32);
+}
+html[data-theme="ink"] .badge-initial_scan {
+  background: rgba(79,124,176,0.14);
+  color: #4f7cb0;
+  border-color: rgba(79,124,176,0.34);
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    STATUS INDICATORS

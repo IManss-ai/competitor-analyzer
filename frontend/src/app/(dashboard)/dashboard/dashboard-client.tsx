@@ -731,7 +731,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
                         <div className="flex items-center gap-2 mb-2">
                           <span className={`badge badge-${event.change_type}`}>
-                            {event.change_type.replace(/_/g, ' ')}
+                            {event.change_type === 'initial_scan' ? 'New' : event.change_type.replace(/_/g, ' ')}
                           </span>
                         </div>
 

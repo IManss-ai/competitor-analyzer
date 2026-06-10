@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 // uppercase) comes from the locked .badge / .badge-{type} classes in globals.css
 // so badges are identical everywhere they render (queue, dashboard, battle card).
 const LABELS: Record<string, string> = {
+  initial_scan: 'New',
   pricing_change: 'Pricing',
   feature_add: 'Feature',
   new_feature: 'Feature',
@@ -15,6 +16,7 @@ const LABELS: Record<string, string> = {
 };
 
 const BADGE_CLASS: Record<string, string> = {
+  initial_scan: 'badge-initial_scan',
   pricing_change: 'badge-pricing_change',
   feature_add: 'badge-feature_add',
   new_feature: 'badge-new_feature',

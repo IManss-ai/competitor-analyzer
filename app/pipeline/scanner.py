@@ -4,7 +4,7 @@ from app.models import Competitor, Snapshot, ChangeEvent, ApprovedAction
 from app.pipeline.fetcher import fetch_page_text, extract_main_content
 from app.pipeline.differ import is_meaningful_change
 from app.pipeline.classifier import classify_change
-from app.pipeline.synthesizer import synthesize_brief
+from app.pipeline.synthesizer import synthesize_brief, summarize_competitor_profile
 from app.pipeline.action_generator import generate_actions_for_change
 from sqlalchemy import select
 
@@ -59,8 +59,32 @@ async def scan_competitor(competitor_id: str, db) -> dict:
     )
 
     if not prev_snapshot:
+        # First time we've seen this competitor. There is no prior snapshot to diff
+        # against, but the user just added them and expects intel immediately — so we
+        # surface an "initial_scan" event summarizing the competitor's CURRENT state
+        # instead of silently storing a hidden baseline (which left the Intel Feed empty).
+        event = ChangeEvent(
+            competitor_id=competitor.id,
+            snapshot_before_id=new_snapshot.id,  # no prior snapshot; self-ref satisfies NOT NULL FK
+            snapshot_after_id=new_snapshot.id,
+            net_char_delta=char_count,
+            change_type="initial_scan",
+            week_label=get_week_label(datetime.now(timezone.utc)),
+        )
+        db.add(event)
+        db.flush()
+        event.brief_text = await summarize_competitor_profile(
+            competitor_name=competitor.name,
+            competitor_url=competitor.url,
+            content=main_content,
+        )
         db.commit()
-        return {"competitor_id": str(competitor.id), "url": competitor.url, "first_scan": True}
+        return {
+            "competitor_id": str(competitor.id),
+            "url": competitor.url,
+            "first_scan": True,
+            "change_detected": True,
+        }
 
     # Compute diff
     changed, delta = is_meaningful_change(prev_snapshot.raw_text, main_content)
