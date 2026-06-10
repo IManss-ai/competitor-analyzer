@@ -82,6 +82,27 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     });
   }, [settings?.trial_ends_at]);
 
+  // In-page anchor links (e.g. Intel Feed -> /dashboard#feed) don't scroll via
+  // Next's <Link> when the pathname already matches and only the hash changes
+  // (App Router treats it as a no-op). Scroll the target into view ourselves so
+  // the button works every time, including repeat clicks.
+  const handleHashNav = (e: React.MouseEvent, href: string) => {
+    const [path, hash] = href.split('#');
+    if (!hash) return;
+    e.preventDefault();
+    const scrollToHash = () => {
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    if (pathname === path) {
+      scrollToHash();
+    } else {
+      router.push(path);
+      // let the destination page render before scrolling to the section
+      setTimeout(scrollToHash, 500);
+    }
+  };
+
   const handleScanAll = async () => {
     if (scanning) return;
     setScanning(true);
@@ -201,6 +222,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             <Link
               key={href}
               href={href}
+              onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
               className={clsx(
                 'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors duration-150',
                 isActive
