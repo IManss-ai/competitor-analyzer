@@ -32,26 +32,40 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
         self.db.close()
         Base.metadata.drop_all(self.engine)
 
+    @patch("app.pipeline.scanner.summarize_competitor_profile")
     @patch("app.pipeline.scanner.fetch_page_text")
-    async def test_scan_competitor_first_scan(self, mock_fetch):
+    async def test_scan_competitor_first_scan(self, mock_fetch, mock_profile):
         # Mock successful fetch with raw text
         long_text = "A" * 250
         mock_fetch.return_value = (long_text, None)
-        
+        mock_profile.return_value = "Now tracking Competitor 1. They sell project management software."
+
         result = await scan_competitor(str(self.competitor.id), self.db)
-        
+
         self.assertTrue(result.get("first_scan"))
-        
+
         # Check snapshot is created
         snapshots = self.db.query(Snapshot).all()
         self.assertEqual(len(snapshots), 1)
         self.assertEqual(snapshots[0].raw_text, long_text)
 
+        # First scan must surface an "initial_scan" intel event so the dashboard
+        # Intel Feed is populated immediately on first add (not empty).
+        events = self.db.query(ChangeEvent).all()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].change_type, "initial_scan")
+        self.assertEqual(events[0].brief_text, "Now tracking Competitor 1. They sell project management software.")
+        self.assertEqual(events[0].snapshot_before_id, snapshots[0].id)
+        self.assertEqual(events[0].snapshot_after_id, snapshots[0].id)
+        mock_profile.assert_called_once()
+
+    @patch("app.pipeline.scanner.summarize_competitor_profile")
     @patch("app.pipeline.scanner.generate_actions_for_change")
     @patch("app.pipeline.scanner.synthesize_brief")
     @patch("app.pipeline.scanner.classify_change")
     @patch("app.pipeline.scanner.fetch_page_text")
-    async def test_scan_competitor_subsequent_scans(self, mock_fetch, mock_classify, mock_synthesize, mock_actions):
+    async def test_scan_competitor_subsequent_scans(self, mock_fetch, mock_classify, mock_synthesize, mock_actions, mock_profile):
+        mock_profile.return_value = "Now tracking Competitor 1."
         # First scan
         mock_fetch.return_value = ("A" * 250, None)
         await scan_competitor(str(self.competitor.id), self.db)
@@ -74,8 +88,8 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(res.get("change_detected"))
         self.assertEqual(res.get("net_delta"), 110)
         
-        # Check change event is created
-        events = self.db.query(ChangeEvent).all()
+        # Check change event is created (excluding the first-scan initial_scan event)
+        events = self.db.query(ChangeEvent).filter(ChangeEvent.change_type != "initial_scan").all()
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0].net_char_delta, 110)
         self.assertEqual(events[0].change_type, "pricing_change")
@@ -98,24 +112,26 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
         mock_synthesize.assert_called_once()
         mock_actions.assert_called_once()
 
+    @patch("app.pipeline.scanner.summarize_competitor_profile")
     @patch("app.pipeline.scanner.generate_actions_for_change")
     @patch("app.pipeline.scanner.synthesize_brief")
     @patch("app.pipeline.scanner.classify_change")
     @patch("app.pipeline.scanner.fetch_page_text")
-    async def test_scan_competitor_minor_copy(self, mock_fetch, mock_classify, mock_synthesize, mock_actions):
+    async def test_scan_competitor_minor_copy(self, mock_fetch, mock_classify, mock_synthesize, mock_actions, mock_profile):
+        mock_profile.return_value = "Now tracking Competitor 1."
         # First scan
         mock_fetch.return_value = ("A" * 250, None)
         await scan_competitor(str(self.competitor.id), self.db)
-        
+
         # Second scan (meaningful change > 100 chars, but classified as minor_copy)
         mock_fetch.return_value = ("A" * 360, None)
         mock_classify.return_value = "minor_copy"
-        
+
         res = await scan_competitor(str(self.competitor.id), self.db)
         self.assertTrue(res.get("change_detected"))
-        
-        # Check event
-        events = self.db.query(ChangeEvent).all()
+
+        # Check event (excluding the first-scan initial_scan event)
+        events = self.db.query(ChangeEvent).filter(ChangeEvent.change_type != "initial_scan").all()
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0].change_type, "minor_copy")
         self.assertIsNone(events[0].brief_text)
