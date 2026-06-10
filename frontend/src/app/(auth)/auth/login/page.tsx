@@ -27,8 +27,23 @@ export default function LoginPage() {
     : `/api/auth/callback?session_token=`;
 
   // Email + password sign-in / instant sign-up
-  const handleDirectLogin = async (e: React.FormEvent) => {
+  const handleDirectLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Read straight from the DOM inputs, falling back to React state. Browser
+    // password-manager autofill (and programmatic fills) set input.value without
+    // firing React's onChange, which left controlled state empty and submitted
+    // blank credentials — landing the user back on the login page.
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const emailVal = ((fd.get('email') as string) || email || '').trim();
+    const passwordVal = (fd.get('password') as string) || password || '';
+
+    if (!emailVal || !passwordVal) {
+      setError('Please enter your email and password.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -36,7 +51,7 @@ export default function LoginPage() {
       const res = await fetch(`${apiUrl}/api/v1/auth/direct-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: emailVal, password: passwordVal }),
       });
       const data = await res.json();
 
@@ -220,8 +235,10 @@ export default function LoginPage() {
                 <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
@@ -236,9 +253,11 @@ export default function LoginPage() {
                 <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
                 <input
                   id="password"
+                  name="password"
                   type="password"
                   required
                   minLength={6}
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
