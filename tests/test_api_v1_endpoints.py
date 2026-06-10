@@ -112,6 +112,35 @@ class TestApiV1Endpoints(unittest.TestCase):
     def test_dashboard_feed_requires_auth(self):
         self.assertEqual(self.client.get("/api/v1/dashboard/feed").status_code, 401)
 
+    def test_dashboard_avg_review_ignores_empty_platforms(self):
+        # Regression: a competitor has one ReviewSnapshot per platform. When the
+        # arbitrary "latest" pick was an empty platform (0 reviews), the dashboard
+        # showed avg 0.0 even though another platform had a real rating. The avg
+        # must now be a review-count-weighted mean over platforms that have reviews.
+        now = datetime.now(timezone.utc)
+        comp2 = Competitor(user_id=self.user.id, url="https://notion.so", name="Notion")
+        self.db.add(comp2)
+        self.db.commit()
+        self.db.refresh(comp2)
+        self.db.add_all([
+            ReviewSnapshot(competitor_id=comp2.id, platform="capterra", snapshot_at=now,
+                           avg_rating=0, total_reviews=0, complaint_count=0, top_complaints=None),
+            ReviewSnapshot(competitor_id=comp2.id, platform="trustpilot", snapshot_at=now,
+                           avg_rating=2.1, total_reviews=20, complaint_count=14, top_complaints=None),
+            ReviewSnapshot(competitor_id=comp2.id, platform="g2", snapshot_at=now,
+                           avg_rating=0, total_reviews=0, complaint_count=0, top_complaints=None),
+        ])
+        self.db.commit()
+
+        resp = self.client.get("/api/v1/dashboard", headers=self.auth)
+        self.assertEqual(resp.status_code, 200)
+        body = resp.json()
+        health = {c["name"]: c for c in body["competitors_health"]}
+        # Notion's only non-empty platform is Trustpilot at 2.1 — must surface 2.1, not 0.0
+        self.assertEqual(health["Notion"]["avg_rating"], 2.1)
+        self.assertIsNotNone(body["avg_review_score"])
+        self.assertGreater(body["avg_review_score"], 0)
+
     # ── competitor detail ─────────────────────────────────────────────────────
     def test_competitor_detail_full_structure(self):
         resp = self.client.get(f"/api/v1/competitors/{self.comp_id}/detail", headers=self.auth)

@@ -180,11 +180,19 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
         ).all()
         change_count_map = {comp_id: count for comp_id, count in change_counts}
         
-        # 3. Latest ReviewSnapshot per competitor
+        # 3. Latest ReviewSnapshot per (competitor, platform). A competitor has one
+        #    snapshot per review site (g2 / trustpilot / capterra), so we must keep
+        #    them all and aggregate — collapsing to a single arbitrary platform meant
+        #    an empty platform (0 reviews) hid a real rating on another (e.g. showed
+        #    "0.0" while Trustpilot had 2.1 across 20 reviews).
         latest_review_sub = (
-            select(ReviewSnapshot.competitor_id, func.max(ReviewSnapshot.snapshot_at).label("max_snap_at"))
+            select(
+                ReviewSnapshot.competitor_id,
+                ReviewSnapshot.platform,
+                func.max(ReviewSnapshot.snapshot_at).label("max_snap_at"),
+            )
             .where(ReviewSnapshot.competitor_id.in_(comp_ids))
-            .group_by(ReviewSnapshot.competitor_id)
+            .group_by(ReviewSnapshot.competitor_id, ReviewSnapshot.platform)
             .subquery()
         )
         latest_review_snaps = db.execute(
@@ -193,11 +201,24 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
                 latest_review_sub,
                 and_(
                     ReviewSnapshot.competitor_id == latest_review_sub.c.competitor_id,
-                    ReviewSnapshot.snapshot_at == latest_review_sub.c.max_snap_at
+                    ReviewSnapshot.platform == latest_review_sub.c.platform,
+                    ReviewSnapshot.snapshot_at == latest_review_sub.c.max_snap_at,
                 )
             )
         ).scalars().all()
-        review_snap_map = {r.competitor_id: r for r in latest_review_snaps}
+        review_snaps_by_comp: dict = {}
+        for r in latest_review_snaps:
+            review_snaps_by_comp.setdefault(r.competitor_id, []).append(r)
+
+        def _weighted_avg_rating(snaps) -> float | None:
+            """Average rating across platforms that actually have reviews, weighted
+            by review count. Returns None when no platform has any reviews."""
+            points, total = 0.0, 0
+            for s in snaps:
+                if s.avg_rating and s.total_reviews and s.total_reviews > 0:
+                    points += s.avg_rating * s.total_reviews
+                    total += s.total_reviews
+            return round(points / total, 1) if total > 0 else None
         
         # 4. Weekly change count trend
         now = datetime.now(timezone.utc)
@@ -225,8 +246,7 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
             
             total_changes = change_count_map.get(c.id, 0)
             
-            latest_review_snap = review_snap_map.get(c.id)
-            avg_rating = latest_review_snap.avg_rating if latest_review_snap else None
+            avg_rating = _weighted_avg_rating(review_snaps_by_comp.get(c.id, []))
             if avg_rating is not None:
                 ratings.append(avg_rating)
                 
