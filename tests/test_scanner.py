@@ -146,14 +146,57 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
     @patch("app.pipeline.scanner.fetch_page_text")
     async def test_scan_competitor_error(self, mock_fetch):
         mock_fetch.return_value = ("", "HTTP 404: Not Found")
-        
+
         res = await scan_competitor(str(self.competitor.id), self.db)
         self.assertEqual(res.get("error"), "HTTP 404: Not Found")
-        
+
         # Verify snapshot exists with error
         snapshots = self.db.query(Snapshot).all()
         self.assertEqual(len(snapshots), 1)
         self.assertEqual(snapshots[0].fetch_error, "HTTP 404: Not Found")
+
+        # Even when the first scrape fails, the user must see *something* in the feed
+        # instead of a silently empty Intel Feed after adding the competitor.
+        events = self.db.query(ChangeEvent).all()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].change_type, "initial_scan")
+        self.assertIn("Now tracking", events[0].brief_text)
+
+    @patch("app.pipeline.scanner.summarize_competitor_profile")
+    @patch("app.pipeline.scanner.fetch_page_text")
+    async def test_scan_backfills_initial_event_for_eventless_competitor(self, mock_fetch, mock_profile):
+        # Simulate a competitor added before initial profiles existed: it has a prior
+        # snapshot but zero events. A re-scan with no meaningful change must backfill
+        # the initial_scan profile so its Intel Feed stops being empty.
+        from app.models import Snapshot as Snap
+        self.db.add(Snap(competitor_id=self.competitor.id, raw_text="A" * 250, char_count=250))
+        self.db.commit()
+        self.assertEqual(self.db.query(ChangeEvent).count(), 0)
+
+        mock_fetch.return_value = ("A" * 250, None)  # identical content => no diff
+        mock_profile.return_value = "Now tracking Competitor 1. They do X."
+
+        res = await scan_competitor(str(self.competitor.id), self.db)
+        self.assertFalse(res.get("change_detected"))
+
+        events = self.db.query(ChangeEvent).filter(ChangeEvent.change_type == "initial_scan").all()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].brief_text, "Now tracking Competitor 1. They do X.")
+        mock_profile.assert_called_once()
+
+    @patch("app.pipeline.scanner.summarize_competitor_profile")
+    @patch("app.pipeline.scanner.fetch_page_text")
+    async def test_scan_backfill_runs_only_once(self, mock_fetch, mock_profile):
+        # Once a competitor has an initial event, later unchanged scans must NOT keep
+        # adding duplicate initial_scan events.
+        mock_fetch.return_value = ("A" * 250, None)
+        mock_profile.return_value = "Now tracking Competitor 1."
+        await scan_competitor(str(self.competitor.id), self.db)  # creates initial
+        await scan_competitor(str(self.competitor.id), self.db)  # unchanged => no new event
+        await scan_competitor(str(self.competitor.id), self.db)  # unchanged => no new event
+        self.assertEqual(
+            self.db.query(ChangeEvent).filter(ChangeEvent.change_type == "initial_scan").count(), 1
+        )
 
 if __name__ == '__main__':
     unittest.main()

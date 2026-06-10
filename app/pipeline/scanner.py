@@ -11,6 +11,24 @@ from sqlalchemy import select
 def get_week_label(dt: datetime) -> str:
     return dt.strftime("%Y-W%V")
 
+
+def _make_initial_event(db, competitor, snapshot, net_char_delta: int, brief: str):
+    """Create the 'initial_scan' intel event for a competitor that has none yet.
+    There is no prior snapshot to diff against, so before/after both reference the
+    new snapshot (satisfies the NOT NULL FK without a schema migration)."""
+    event = ChangeEvent(
+        competitor_id=competitor.id,
+        snapshot_before_id=snapshot.id,
+        snapshot_after_id=snapshot.id,
+        net_char_delta=net_char_delta,
+        change_type="initial_scan",
+        brief_text=brief,
+        week_label=get_week_label(datetime.now(timezone.utc)),
+    )
+    db.add(event)
+    db.flush()
+    return event
+
 async def scan_competitor(competitor_id: str, db) -> dict:
     """
     Fetch current page, compare to last snapshot, store new snapshot.
@@ -42,9 +60,32 @@ async def scan_competitor(competitor_id: str, db) -> dict:
     db.add(new_snapshot)
     db.flush()
 
+    # Does this competitor already have any intel events? Drives whether we still
+    # owe them an initial profile — covers the first scan, scrape failures, and
+    # competitors added before initial profiles existed (backfilled on next scan).
+    existing_event_count = db.execute(
+        select(func.count(ChangeEvent.id)).where(ChangeEvent.competitor_id == competitor.id)
+    ).scalar() or 0
+
     if error:
+        # Couldn't read the page. The first time, still surface a "now tracking" entry
+        # so the Intel Feed isn't silently empty after the user adds the competitor.
+        if existing_event_count == 0:
+            _make_initial_event(
+                db, competitor, new_snapshot, net_char_delta=0,
+                brief=(
+                    f"Now tracking {competitor.name or competitor.url}. We couldn't fully read "
+                    f"their page on the first pass — we'll keep retrying and surface pricing, "
+                    f"feature, and review changes here as they appear."
+                ),
+            )
         db.commit()
-        return {"competitor_id": str(competitor.id), "url": competitor.url, "error": error}
+        return {
+            "competitor_id": str(competitor.id),
+            "url": competitor.url,
+            "error": error,
+            "first_scan": existing_event_count == 0,
+        }
 
     # Get previous snapshot for diffing
     prev_snapshot = (
@@ -58,38 +99,12 @@ async def scan_competitor(competitor_id: str, db) -> dict:
         .scalar_one_or_none()
     )
 
-    if not prev_snapshot:
-        # First time we've seen this competitor. There is no prior snapshot to diff
-        # against, but the user just added them and expects intel immediately — so we
-        # surface an "initial_scan" event summarizing the competitor's CURRENT state
-        # instead of silently storing a hidden baseline (which left the Intel Feed empty).
-        event = ChangeEvent(
-            competitor_id=competitor.id,
-            snapshot_before_id=new_snapshot.id,  # no prior snapshot; self-ref satisfies NOT NULL FK
-            snapshot_after_id=new_snapshot.id,
-            net_char_delta=char_count,
-            change_type="initial_scan",
-            week_label=get_week_label(datetime.now(timezone.utc)),
-        )
-        db.add(event)
-        db.flush()
-        event.brief_text = await summarize_competitor_profile(
-            competitor_name=competitor.name,
-            competitor_url=competitor.url,
-            content=main_content,
-        )
-        db.commit()
-        return {
-            "competitor_id": str(competitor.id),
-            "url": competitor.url,
-            "first_scan": True,
-            "change_detected": True,
-        }
+    changed, delta = (
+        is_meaningful_change(prev_snapshot.raw_text, main_content)
+        if prev_snapshot else (False, char_count)
+    )
 
-    # Compute diff
-    changed, delta = is_meaningful_change(prev_snapshot.raw_text, main_content)
-
-    if changed:
+    if prev_snapshot and changed:
         event = ChangeEvent(
             competitor_id=competitor.id,
             snapshot_before_id=prev_snapshot.id,
@@ -130,13 +145,24 @@ async def scan_competitor(competitor_id: str, db) -> dict:
                         approved_at=None,
                     )
                     db.add(action)
+    elif existing_event_count == 0:
+        # No intel for this competitor yet (first scan, or one added before initial
+        # profiles existed) and no meaningful diff to report — surface their CURRENT
+        # profile so the Intel Feed shows real info immediately instead of sitting empty.
+        brief = await summarize_competitor_profile(
+            competitor_name=competitor.name,
+            competitor_url=competitor.url,
+            content=main_content,
+        )
+        _make_initial_event(db, competitor, new_snapshot, net_char_delta=char_count, brief=brief)
 
     db.commit()
     return {
         "competitor_id": str(competitor.id),
         "url": competitor.url,
-        "change_detected": changed,
+        "change_detected": bool(prev_snapshot and changed),
         "net_delta": delta,
+        "first_scan": not prev_snapshot,
     }
 
 async def scan_user_competitors(user_id: str, db) -> list[dict]:
