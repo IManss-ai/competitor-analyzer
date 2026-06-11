@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Competitor, SettingsData } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
 import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle } from 'lucide-react';
@@ -20,31 +20,31 @@ const statusConfig: Record<
 > = {
   active: {
     label: 'Active',
-    dot: 'bg-emerald-500',
-    text: 'text-emerald-400',
+    dot: 'bg-emerald-600',
+    text: 'text-emerald-600',
     bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/20',
+    border: 'border-emerald-500/25',
   },
   trialing: {
     label: 'Trial',
-    dot: 'bg-sky-500',
-    text: 'text-sky-400',
-    bg: 'bg-sky-500/10',
-    border: 'border-sky-500/20',
+    dot: 'bg-[var(--accent-primary)]',
+    text: 'text-[var(--accent-primary)]',
+    bg: 'bg-[var(--accent-subtle)]',
+    border: 'border-[var(--accent-border)]',
   },
   canceled: {
     label: 'Canceled',
-    dot: 'bg-red-500',
-    text: 'text-red-400',
+    dot: 'bg-red-600',
+    text: 'text-red-600',
     bg: 'bg-red-500/10',
-    border: 'border-red-500/20',
+    border: 'border-red-500/25',
   },
   past_due: {
     label: 'Past due',
-    dot: 'bg-amber-500',
-    text: 'text-amber-400',
+    dot: 'bg-amber-600',
+    text: 'text-amber-600',
     bg: 'bg-amber-500/10',
-    border: 'border-amber-500/20',
+    border: 'border-amber-500/25',
   },
 };
 
@@ -76,6 +76,16 @@ export default function SettingsClient({
   const [addStatus, setAddStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
   const [isAdding, setIsAdding] = useState(false);
 
+  // Transient toast for failures on actions that have no inline status banner
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = (message: string) => {
+    setToast(message);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 4000);
+  };
+  useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
+
   // Update business type or schedule
   const handleUpdateSetting = async (key: string, value: any) => {
     try {
@@ -87,7 +97,7 @@ export default function SettingsClient({
       setSettings(updated);
     } catch (e) {
       console.error(e);
-      alert('Failed to update settings');
+      showToast('Failed to update settings');
     }
   };
 
@@ -140,7 +150,7 @@ export default function SettingsClient({
       setCompetitors(competitors.map(c => c.id === comp.id ? { ...c, active: updatedComp.active } : c));
     } catch (e) {
       console.error(e);
-      alert('Failed to update competitor status');
+      showToast('Failed to update competitor status');
     }
   };
 
@@ -152,7 +162,7 @@ export default function SettingsClient({
       setCompetitors(competitors.filter(c => c.id !== id));
     } catch (e) {
       console.error(e);
-      alert('Failed to delete competitor');
+      showToast('Failed to delete competitor');
     }
   };
 
@@ -190,6 +200,21 @@ export default function SettingsClient({
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pb-12">
+      {toast && (
+        <div
+          role="alert"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 text-[12px] font-medium flex items-center gap-2.5"
+          style={{
+            background: 'var(--surface-raised)',
+            border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
+            color: 'var(--error-text, #b91c1c)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+          }}
+        >
+          <AlertTriangle size={14} />
+          {toast}
+        </div>
+      )}
       {/* Left Navigation Sidebar */}
       <aside className="lg:w-56 flex-shrink-0">
         <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-[var(--border-subtle)]">
@@ -206,7 +231,7 @@ export default function SettingsClient({
               className={clsx(
                 'flex items-center gap-3 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-150 cursor-pointer',
                 activeTab === tab.id
-                  ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold rounded-t-lg lg:rounded-r-lg lg:rounded-l-none'
+                  ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--fill-subtle-hover)] hover:text-[var(--text-primary)]'
               )}
             >
@@ -257,7 +282,7 @@ export default function SettingsClient({
                       type="button"
                       onClick={() => handleUpdateSetting('business_type', item.id)}
                       className={clsx(
-                        'border p-3.5 rounded-xl text-left cursor-pointer transition-all',
+                        'border p-3.5 text-left cursor-pointer transition-all',
                         settings.business_type === item.id
                           ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                           : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -302,7 +327,7 @@ export default function SettingsClient({
                 </div>
 
                 {passwordStatus.type && (
-                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400')}>
+                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-emerald-600' : 'text-red-600')}>
                     {passwordStatus.message}
                   </p>
                 )}
@@ -335,7 +360,7 @@ export default function SettingsClient({
                   <label
                     key={item.id}
                     className={clsx(
-                      'flex items-start gap-4 border p-4 rounded-xl cursor-pointer transition-all',
+                      'flex items-start gap-4 border p-4 cursor-pointer transition-all',
                       (settings as any).scan_schedule === item.id
                         ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                         : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -396,7 +421,7 @@ export default function SettingsClient({
               </div>
 
               {notifStatus.type && (
-                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400')}>
+                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-emerald-600' : 'text-red-600')}>
                   {notifStatus.message}
                 </p>
               )}
@@ -472,7 +497,7 @@ export default function SettingsClient({
                           {/* Delete Button */}
                           <button
                             onClick={() => handleDeleteCompetitor(comp.id)}
-                            className="text-[var(--text-secondary)] hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
+                            className="text-[var(--text-secondary)] hover:text-red-600 p-1.5 hover:bg-red-500/10 transition-colors cursor-pointer"
                             title="Delete"
                           >
                             <Trash2 size={16} />
@@ -516,7 +541,7 @@ export default function SettingsClient({
                 </div>
 
                 {addStatus.type && (
-                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-emerald-400' : 'text-red-400')}>
+                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-emerald-600' : 'text-red-600')}>
                     {addStatus.message}
                   </p>
                 )}
@@ -549,7 +574,7 @@ export default function SettingsClient({
                     <span className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>$49<span className="text-sm font-normal" style={{ color: 'var(--text-secondary)' }}>/mo</span></span>
                     <span
                       className={clsx(
-                        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md border text-[11px] uppercase tracking-wide font-bold',
+                        'inline-flex items-center gap-1.5 px-2.5 py-0.5 border text-[11px] uppercase tracking-wide font-bold',
                         statusCfg.bg,
                         statusCfg.text,
                         statusCfg.border
@@ -578,7 +603,7 @@ export default function SettingsClient({
               </div>
 
               {/* Plan Card Features */}
-              <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-xl p-5 mb-6">
+              <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] p-5 mb-6">
                 <p className="rs-label mb-4">Included in Pro plan:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                   {[
