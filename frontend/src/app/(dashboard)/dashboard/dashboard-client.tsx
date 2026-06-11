@@ -142,9 +142,18 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   };
 
   // Submit onboarding competitor form
-  const submitOnboardingCompetitor = async (e: React.FormEvent) => {
+  const submitOnboardingCompetitor = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!onboardingUrl.trim()) return;
+    // Read straight from the DOM inputs, falling back to React state — same
+    // fix as the login form: password-manager/programmatic fills set
+    // input.value without firing React's onChange, leaving state empty.
+    const fd = new FormData(e.currentTarget);
+    const urlVal = ((fd.get('url') as string) || onboardingUrl || '').trim();
+    const nameVal = (fd.get('name') as string) || onboardingName || '';
+    if (!urlVal) {
+      setOnboardingError('Please enter your competitor’s URL.');
+      return;
+    }
     setSubmittingOnboarding(true);
     setOnboardingError('');
 
@@ -156,8 +165,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           Authorization: `Bearer ${userId}`
         },
         body: JSON.stringify({
-          url: onboardingUrl,
-          name: onboardingName,
+          url: urlVal,
+          name: nameVal,
           g2_url: onboardingG2Url
         })
       });
@@ -404,6 +413,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               </label>
               <input
                 type="text"
+                name="url"
                 required
                 placeholder={selectedBusinessType === 'local' ? 'e.g. rivalcafe.com' : 'e.g. competitor.com'}
                 value={onboardingUrl}
@@ -416,6 +426,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Business Name (Optional)</label>
               <input
                 type="text"
+                name="name"
                 placeholder={selectedBusinessType === 'local' ? 'e.g. Rival Cafe Downtown' : 'e.g. Rival Inc'}
                 value={onboardingName}
                 onChange={(e) => setOnboardingName(e.target.value)}
