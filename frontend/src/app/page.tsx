@@ -26,10 +26,10 @@ const FEED = [
 ];
 
 const TAG_STYLE: Record<string, string> = {
-  pricing:   'bg-amber-400/10 text-amber-400 border border-amber-400/20',
-  feature:   'bg-emerald-400/10 text-emerald-400 border border-emerald-400/20',
-  copy:      'bg-sky-400/10 text-sky-400 border border-sky-400/20',
-  messaging: 'bg-violet-400/10 text-violet-400 border border-violet-400/20',
+  pricing:   'tag-amber border',
+  feature:   'tag-green border',
+  copy:      'tag-blue border',
+  messaging: 'tag-violet border',
   content:   'bg-[var(--fill-subtle)] text-[var(--text-secondary)] border border-[var(--border-default)]',
 };
 
@@ -39,9 +39,9 @@ const BATTLE_CARDS_DATA = {
     logoColor: 'bg-sky-600',
     date: 'Updated today',
     changes: [
-      { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Removed enterprise flat-rates. Custom contract quote required.' },
-      { tag: 'feature', tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Released Stripe Checkout v4.1 with optimized redirect latency.' },
-      { tag: 'copy',    tc: 'text-sky-400 bg-sky-400/10 border-sky-400/20', text: 'Hero updated from “Payments infrastructure” to “Financial operations for global companies”.' },
+      { tag: 'pricing', tc: 'tag-amber', text: 'Removed enterprise flat-rates. Custom contract quote required.' },
+      { tag: 'feature', tc: 'tag-green', text: 'Released Stripe Checkout v4.1 with optimized redirect latency.' },
+      { tag: 'copy',    tc: 'tag-blue', text: 'Hero updated from “Payments infrastructure” to “Financial operations for global companies”.' },
     ],
     complaints: [
       { text: '“Support responses took 4 days. Blocked our payment gateway migration.”', source: 'Trustpilot · 1 star · 2 days ago' },
@@ -68,9 +68,9 @@ const BATTLE_CARDS_DATA = {
     logoColor: 'bg-blue-600',
     date: 'Updated yesterday',
     changes: [
-      { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Increased merchant checkout card processing fee from 2.9% to 3.49%.' },
-      { tag: 'feature', tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Integrated bio-auth verification directly inside the checkout iframe.' },
-      { tag: 'copy',    tc: 'text-sky-400 bg-sky-400/10 border-sky-400/20', text: 'Hero copy focused on “Instant conversion optimization” rather than “Send money”.' },
+      { tag: 'pricing', tc: 'tag-amber', text: 'Increased merchant checkout card processing fee from 2.9% to 3.49%.' },
+      { tag: 'feature', tc: 'tag-green', text: 'Integrated bio-auth verification directly inside the checkout iframe.' },
+      { tag: 'copy',    tc: 'tag-blue', text: 'Hero copy focused on “Instant conversion optimization” rather than “Send money”.' },
     ],
     complaints: [
       { text: '“Sandbox environment API endpoints timeout continuously during test mock run.”', source: 'Developer Forum · 3 days ago' },
@@ -97,9 +97,9 @@ const BATTLE_CARDS_DATA = {
     logoColor: 'bg-[var(--text-muted)]',
     date: 'Updated 2 days ago',
     changes: [
-      { tag: 'pricing',   tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Flat rate subscription fee changed to dynamic pricing on point-of-sale.' },
-      { tag: 'feature',   tc: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', text: 'Launched POS v3 firmware with offline sync capabilities for retail terminals.' },
-      { tag: 'messaging', tc: 'text-violet-400 bg-violet-400/10 border-violet-400/20', text: 'Hero changed from “Simple local commerce” to “The complete software & hardware platform”.' },
+      { tag: 'pricing',   tc: 'tag-amber', text: 'Flat rate subscription fee changed to dynamic pricing on point-of-sale.' },
+      { tag: 'feature',   tc: 'tag-green', text: 'Launched POS v3 firmware with offline sync capabilities for retail terminals.' },
+      { tag: 'messaging', tc: 'tag-violet', text: 'Hero changed from “Simple local commerce” to “The complete software & hardware platform”.' },
     ],
     complaints: [
       { text: '“Terminals disconnect from local Wi-Fi during peak sales hours.”', source: 'App Store · 2 stars · 6 hours ago' },
@@ -126,8 +126,8 @@ const BATTLE_CARDS_DATA = {
     logoColor: 'bg-emerald-700',
     date: 'Updated 1 day ago',
     changes: [
-      { tag: 'pricing', tc: 'text-amber-400 bg-amber-400/10 border-amber-400/20', text: 'Changed EMEA support tiers and custom POS redirect APIs' },
-      { tag: 'messaging', tc: 'text-violet-400 bg-violet-400/10 border-violet-400/20', text: 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.' }
+      { tag: 'pricing', tc: 'tag-amber', text: 'Changed EMEA support tiers and custom POS redirect APIs' },
+      { tag: 'messaging', tc: 'tag-violet', text: 'Focusing on enterprise custom integrations. Small merchant SLA support shifted to ticket system.' }
     ],
     complaints: [],
     signals: [],
