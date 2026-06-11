@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Trash2, Plus, ExternalLink, ChevronDown, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
@@ -344,8 +345,6 @@ export default function CompetitorManager({
                 key={comp.id}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -1 }}
-                whileTap={{ scale: 0.99 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
                 className="group relative"
@@ -358,14 +357,14 @@ export default function CompetitorManager({
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                       </span>
-                      <span className="text-[9px] uppercase font-mono tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                      <span className="tag-green text-[9px] uppercase font-mono tracking-wider px-1.5 py-0.5 rounded-sm border">
                         monitoring
                       </span>
                     </div>
 
                     {/* Top row */}
                     <div className="flex items-start gap-4 mb-5 pr-16">
-                      <div className="w-10 h-10 rounded-lg bg-[var(--fill-subtle)] border border-[var(--border-default)] flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
+                      <div className="w-10 h-10 rounded bg-[var(--fill-subtle)] border border-[var(--border-default)] flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
@@ -379,8 +378,13 @@ export default function CompetitorManager({
                         />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-base font-semibold leading-tight mb-1 truncate" style={{ color: 'var(--text-primary)' }}>
-                          {comp.name || hostname}
+                        <h3 className="text-base font-semibold leading-tight mb-1 truncate">
+                          <Link
+                            href={`/competitors/${comp.id}`}
+                            className="transition-colors text-[var(--text-primary)] hover:text-[var(--accent-primary)]"
+                          >
+                            {comp.name || hostname}
+                          </Link>
                         </h3>
                         <a
                           href={comp.url}
@@ -415,7 +419,7 @@ export default function CompetitorManager({
                       <button
                         onClick={() => handleDelete(comp.id)}
                         disabled={deleting === comp.id}
-                        className="p-1.5 text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-40"
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded transition-all duration-200 cursor-pointer disabled:opacity-40"
                         title="Remove competitor"
                       >
                         <Trash2 size={16} />
