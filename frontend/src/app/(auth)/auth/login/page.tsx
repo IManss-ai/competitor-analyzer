@@ -176,7 +176,7 @@ export default function LoginPage() {
             {[
               ['24/7', 'monitoring'],
               ['76+', 'apps indexed'],
-              ['< 24h', 'to action plan'],
+              ['<24h', 'to action plan'],
             ].map(([num, label]) => (
               <div key={label}>
                 <p className="text-[18px] font-mono font-semibold tabular-nums" style={{ color: 'var(--text-primary)' }}>{num}</p>
@@ -270,7 +270,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Min. 6 characters"
                 className="rs-input"
               />
             </div>
