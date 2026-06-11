@@ -166,19 +166,15 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         {/* Logo + wordmark */}
         <div className="flex items-center gap-3 mb-4">
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{
-              background: 'var(--accent-subtle)',
-              border: '1px solid var(--accent-border)',
-            }}
+            className="w-8 h-8 flex items-center justify-center flex-shrink-0"
+            style={{ background: 'var(--accent-primary)' }}
           >
-            <RivalscopeLogo size={14} className="text-sky-400" />
+            <RivalscopeLogo size={14} className="text-white" />
           </div>
           <div className="leading-none">
             <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-              Rival
+              Rivalscope
             </span>
-            <span className="text-[15px] font-bold tracking-tight text-sky-400">scope</span>
           </div>
         </div>
 
@@ -228,29 +224,22 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               href={href}
               onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
               className={clsx(
-                'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors duration-150',
-                isActive
-                  ? 'text-sky-300'
-                  : 'hover:text-[var(--text-primary)]'
+                'group relative flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors duration-150',
+                !isActive && 'hover:text-[var(--text-primary)]'
               )}
               style={
                 isActive
-                  ? { background: 'rgba(79, 124, 176,0.10)', color: '#7dd3fc' }
+                  ? { background: 'var(--accent-subtle)', color: 'var(--accent-primary)' }
                   : { color: 'var(--text-secondary)' }
               }
             >
-              {/* Active left rail */}
+              {/* Active left rule — sharp, no glow (DESIGN.md) */}
               {isActive && (
                 <motion.div
                   layoutId="activeNavRail"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full"
-                  style={{
-                    width: '3px',
-                    height: '18px',
-                    background: 'var(--accent-primary)',
-                    boxShadow: '0 0 8px var(--accent-primary)',
-                  }}
-                  transition={{ type: 'spring', stiffness: 480, damping: 38 }}
+                  className="absolute left-0 top-0 bottom-0"
+                  style={{ width: '2px', background: 'var(--accent-primary)' }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
                 />
               )}
 
