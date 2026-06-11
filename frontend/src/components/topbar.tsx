@@ -59,27 +59,31 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
           </span>
         </div>
 
-        {/* Divider */}
-        <div
-          style={{ width: '1px', height: '16px', background: 'var(--border-default)' }}
-        />
-
-        {/* Last scan */}
-        {lastScan ? (
-          <time
-            className="text-[11px] font-mono"
-            style={{ color: 'var(--text-muted)' }}
-            dateTime={lastScan}
-          >
-            Last scan: {getRelativeTime(lastScan)}
-          </time>
-        ) : (
-          <span
-            className="text-[11px] font-mono"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            No scans yet
-          </span>
+        {/* Last scan — undefined means the page didn't load scan data, so say
+            nothing rather than falsely claiming "No scans yet"; null means we
+            know there are none. */}
+        {lastScan !== undefined && (
+          <>
+            <div
+              style={{ width: '1px', height: '16px', background: 'var(--border-default)' }}
+            />
+            {lastScan ? (
+              <time
+                className="text-[11px] font-mono"
+                style={{ color: 'var(--text-muted)' }}
+                dateTime={lastScan}
+              >
+                Last scan: {getRelativeTime(lastScan)}
+              </time>
+            ) : (
+              <span
+                className="text-[11px] font-mono"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                No scans yet
+              </span>
+            )}
+          </>
         )}
 
         {/* Actions slot */}
