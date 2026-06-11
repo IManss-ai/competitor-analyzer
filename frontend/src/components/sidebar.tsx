@@ -18,6 +18,8 @@ import {
   LogOut,
   RefreshCw,
   ChevronRight,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -48,6 +50,7 @@ interface SettingsData {
 export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [settings, setSettings] = useState<SettingsData | null>(null);
   const [scanning, setScanning] = useState(false);
   const [scanDone, setScanDone] = useState(false);
@@ -149,14 +152,64 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const isOnTrial = settings?.subscription_status === 'trialing';
   const trialProgress = Math.min(100, ((2 - trialDays) / 2) * 100);
 
+  // Close the drawer whenever navigation lands on a new page
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   return (
+    <>
+    {/* Mobile top bar — the fixed sidebar has no room below md */}
+    <div
+      className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 flex items-center justify-between px-4"
+      style={{
+        background: 'var(--surface-base)',
+        borderBottom: '1px solid var(--border-default)',
+      }}
+    >
+      <div className="flex items-center gap-2.5">
+        <div
+          className="w-7 h-7 flex items-center justify-center"
+          style={{ background: 'var(--accent-primary)' }}
+        >
+          <RivalscopeLogo size={12} className="text-white" />
+        </div>
+        <span className="text-[14px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+          Rivalscope
+        </span>
+      </div>
+      <button
+        onClick={() => setMobileOpen(!mobileOpen)}
+        aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+        aria-expanded={mobileOpen}
+        className="flex items-center justify-center w-11 h-11 -mr-2 cursor-pointer"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+    </div>
+
+    {/* Backdrop for the mobile drawer */}
+    {mobileOpen && (
+      <div
+        className="md:hidden fixed inset-0 z-40"
+        style={{ background: 'rgba(26,23,20,0.45)' }}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden="true"
+      />
+    )}
+
     <aside
       style={{
         width: 'var(--sidebar-width)',
         background: 'var(--surface-base)',
         borderRight: '1px solid var(--border-default)',
       }}
-      className="fixed top-0 left-0 h-full flex flex-col z-40"
+      className={clsx(
+        'fixed top-0 left-0 h-full flex flex-col z-40',
+        'max-md:z-50 max-md:transition-transform max-md:duration-200 max-md:ease-out',
+        !mobileOpen && 'max-md:-translate-x-full'
+      )}
     >
       {/* ── Brand ──────────────────────────────────────────────────── */}
       <div
@@ -378,5 +431,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         </form>
       </div>
     </aside>
+    </>
   );
 }
