@@ -157,6 +157,51 @@ class JobSnapshot(Base):
     strategic_signal = Column(Text, nullable=True)         # AI interpretation of the hiring pattern
 
 
+class Campaign(Base):
+    """A user's standing fight against one competitor: 'Campaign: beat X'.
+    Action plans regenerate inside a campaign when new intel arrives."""
+    __tablename__ = "campaigns"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    name = Column(String, nullable=False)               # "Beat Acme"
+    status = Column(String, default="active")            # active | archived
+    created_at = Column(DateTime, default=func.now())
+
+
+class ActionPlan(Base):
+    __tablename__ = "action_plans"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    campaign_id = Column(UUID(as_uuid=True), ForeignKey("campaigns.id"), nullable=False, index=True)
+    executive_read = Column(Text, nullable=True)         # 1-2 sentence competitive read
+    ai_generated = Column(Boolean, default=False)        # False = heuristic fallback
+    generated_at = Column(DateTime, default=func.now())
+    trigger_summary = Column(Text, nullable=True)        # what intel triggered this plan
+
+
+class ActionPlanItem(Base):
+    __tablename__ = "action_plan_items"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    plan_id = Column(UUID(as_uuid=True), ForeignKey("action_plans.id"), nullable=False, index=True)
+    rank = Column(Integer, nullable=False)                # 1..5, most impactful first
+    title = Column(String, nullable=False)
+    body = Column(Text, nullable=True)                    # concrete first step + drafted copy
+    category = Column(String, nullable=True)              # pricing | feature | content | reputation | geo
+    status = Column(String, default="pending")            # pending | done | dismissed
+
+
+class GeoSnapshot(Base):
+    """AI-engine visibility check: who does the AI recommend for this niche."""
+    __tablename__ = "geo_snapshots"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    campaign_id = Column(UUID(as_uuid=True), ForeignKey("campaigns.id"), nullable=False, index=True)
+    engine = Column(String, nullable=False)               # perplexity | chatgpt | estimated
+    user_share = Column(Integer, default=0)               # 0-10: times user recommended
+    competitor_share = Column(Integer, default=0)         # 0-10: times competitor recommended
+    source = Column(String, default="estimated")          # estimated | live
+    checked_at = Column(DateTime, default=func.now())
+
+
 class App(Base):
     """A web app that exists in the world, independent of any user. Discovery
     profiles, monitoring subscriptions (Competitor.app_id), and later verified
