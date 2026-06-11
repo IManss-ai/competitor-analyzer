@@ -10,6 +10,7 @@ import {
   Building2,
   Compass,
   FileText,
+  Swords,
   Shield,
   TrendingUp,
   CheckSquare,
@@ -29,6 +30,7 @@ interface SidebarProps {
 const navItems = [
   { href: '/dashboard',             label: 'Dashboard',    Icon: LayoutDashboard },
   { href: '/competitors',           label: 'Competitors',  Icon: Building2 },
+  { href: '/campaigns',             label: 'Campaigns',    Icon: Swords },
   { href: '/discover',              label: 'Discover',     Icon: Compass },
   { href: '/dashboard#feed',        label: 'Intel Feed',   Icon: FileText },
   { href: '/battlecards',           label: 'Battle Cards', Icon: Shield },
