@@ -614,7 +614,7 @@ export default function SettingsClient({
                     "Priority email support"
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <Check size={14} className="text-emerald-400 flex-shrink-0" />
+                      <Check size={14} className="text-emerald-600 flex-shrink-0" />
                       <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{feat}</span>
                     </div>
                   ))}
