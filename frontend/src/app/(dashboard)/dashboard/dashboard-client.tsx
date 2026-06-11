@@ -670,7 +670,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
         <div className="h-[160px] w-full">
           {activityDays.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+            // initialDimension: the first measure can race layout and report -1,
+            // leaving the chart blank until an unrelated re-render (theme toggle).
+            <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 600, height: 160 }}>
               <BarChart data={activityDays} barSize={10} barGap={2}>
                 <XAxis
                   dataKey="date"
