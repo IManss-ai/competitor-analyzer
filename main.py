@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends, api_v1, battlecard, onboarding, local_business, discovery
+from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends, api_v1, battlecard, onboarding, local_business, discovery, campaigns
 from contextlib import asynccontextmanager
 import asyncio
 from app.scheduler import start_scheduler
@@ -137,6 +137,7 @@ app.include_router(battlecard.router)
 app.include_router(onboarding.router)
 app.include_router(local_business.router)
 app.include_router(discovery.router)
+app.include_router(campaigns.router)
 
 @app.get("/")
 def root():

@@ -165,6 +165,7 @@ class Campaign(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
     name = Column(String, nullable=False)               # "Beat Acme"
+    user_product = Column(String, nullable=True)         # the user's own product name (for GEO comparison)
     status = Column(String, default="active")            # active | archived
     created_at = Column(DateTime, default=func.now())
 
