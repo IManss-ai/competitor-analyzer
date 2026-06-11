@@ -19,6 +19,20 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  const hasAnyChanges = data.some(
+    (d) => (d.pricing_change || 0) + (d.new_feature || 0) + (d.positioning_shift || 0) + (d.minor_copy || 0) > 0
+  );
+
+  if (!hasAnyChanges) {
+    return (
+      <div className="h-[220px] w-full flex items-center justify-center">
+        <p className="text-[12px] font-mono" style={{ color: 'var(--text-muted)' }}>
+          No changes classified yet — the breakdown fills in as scans detect them.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-[220px] w-full">
       {mounted && (
@@ -35,10 +49,11 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
           <YAxis
             axisLine={false}
             tickLine={false}
+            allowDecimals={false}
             tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--text-primary)', borderRadius: '12px', border: `1px solid ${p.tooltipBorder}`, boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
+            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--text-primary)', borderRadius: 'var(--radius-md)', border: `1px solid ${p.tooltipBorder}`, boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
             itemStyle={{ color: 'var(--text-primary)', padding: '2px 0' }}
             cursor={{ fill: p.cursor }}
           />
