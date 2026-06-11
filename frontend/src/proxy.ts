@@ -5,11 +5,17 @@ export function proxy(request: NextRequest) {
   const session = request.cookies.get('rivalscope-session');
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't need auth ('/share' = public battle-card links)
-  const publicRoutes = ['/', '/share', '/auth/login', '/auth/verify', '/api/auth/callback'];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+  // Only the app surface requires a session; everything else (landing, /share
+  // battle-card links, /discover, /apps, legal pages) is public. Listing the
+  // protected prefixes — rather than the public ones — means a new public page
+  // can never be locked behind login by omission.
+  const protectedRoutes = [
+    '/battlecards', '/billing', '/campaigns', '/competitors',
+    '/dashboard', '/queue', '/settings', '/trends',
+  ];
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 
-  if (!session && !isPublicRoute) {
+  if (!session && isProtectedRoute) {
     const loginUrl = new URL('/auth/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
