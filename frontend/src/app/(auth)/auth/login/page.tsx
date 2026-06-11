@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { motion } from 'motion/react';
 import ThemeToggle from '@/components/theme-toggle';
+
+// Plausible intel-ledger rows for the left panel — the product demonstrating
+// itself. Static sample data, no live fetch on an unauthenticated page.
+const LEDGER_ROWS = [
+  { time: '09:41', tag: 'PRICING', tagClass: 'badge-pricing_change', text: 'Competitor raised Pro tier $29 → $39, annual plan buried' },
+  { time: '09:12', tag: 'FEATURE', tagClass: 'badge-feature_add', text: 'New AI assistant shipped on competitor homepage' },
+  { time: '08:55', tag: 'REVIEWS', tagClass: 'badge-review_trend', text: '11 new G2 complaints clustered on onboarding time' },
+  { time: '08:30', tag: 'HIRING', tagClass: 'badge-minor_copy', text: '4 new sales roles opened — they are scaling outbound' },
+  { time: '08:02', tag: 'POSITION', tagClass: 'badge-repositioning', text: 'Hero copy shifted from SMB to enterprise language' },
+];
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -67,162 +77,167 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="min-h-[100dvh] flex relative">
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
 
-      {/* Theme toggle — no topbar on this page, pin to a corner for unauthenticated users */}
+  return (
+    <div className="min-h-[100dvh] flex relative" style={{ background: 'var(--surface-base)' }}>
+
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
 
-      {/* Left panel - Pitch Deck Intro Info */}
+      {/* ── Left: the briefing panel — the product demonstrating itself ── */}
       <div
-        className="hidden lg:flex flex-col justify-between w-[45%] p-12 relative overflow-hidden"
-        style={{ background: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)', color: 'var(--text-primary)' }}
+        className="hidden lg:flex flex-col w-[46%] relative"
+        style={{ background: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)' }}
       >
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage:
-              'linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-        {/* Aurora Glows */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
-            style={{ background: 'rgba(79, 124, 176,0.12)' }}
-            animate={{ x: [0, 40, 0], y: [0, -30, 0], scale: [1, 1.1, 1] }}
-            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.div
-            className="absolute bottom-[-10%] right-[-20%] w-[500px] h-[500px] rounded-full blur-[120px]"
-            style={{ background: 'rgba(79, 124, 176,0.08)' }}
-            animate={{ x: [0, -40, 0], y: [0, 40, 0], scale: [1, 1.15, 1] }}
-            transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </div>
+        <div className="flex flex-col h-full p-12 xl:p-16">
 
-        <Link href="/" className="relative flex items-center gap-3 z-10 hover:opacity-80 transition-opacity max-w-fit">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
-          >
-            <RivalscopeLogo size={14} className="text-sky-400" />
-          </div>
-          <div className="leading-none">
-            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Rival</span>
-            <span className="text-[15px] font-bold tracking-tight text-sky-400">scope</span>
-          </div>
-        </Link>
-
-        {/* Headline */}
-        <div className="relative z-10">
-          <p className="text-[11px] font-mono uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
-            Intelligence platform
-          </p>
-          <h2 className="text-[2rem] font-semibold leading-tight tracking-tight mb-5" style={{ color: 'var(--text-primary)', letterSpacing: '-0.025em' }}>
-            Know what changed
-            <br />
-            before your customers do.
-          </h2>
-          <p className="text-[13px] leading-relaxed max-w-sm" style={{ color: 'var(--text-secondary)' }}>
-            Automated competitive intelligence. Track pricing, features, and reviews — then respond with AI-drafted assets.
-          </p>
-
-          {/* Feature list */}
-          <motion.ul
-            className="mt-8 space-y-3"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-            }}
-          >
-            {[
-              'Tracks up to 7 competitor pages',
-              'AI-generated response drafts and strategies',
-              'Secure email and password sign-in',
-            ].map((item) => (
-              <motion.li
-                key={item}
-                className="flex items-center gap-2.5 text-sm"
-                variants={{
-                  hidden: { opacity: 0, x: -10 },
-                  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-                }}
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--accent-primary)' }} />
-                {item}
-              </motion.li>
-            ))}
-          </motion.ul>
-        </div>
-
-        <p className="relative z-10 text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>
-          © {new Date().getFullYear()} Rivalscope. All rights reserved.
-        </p>
-      </div>
-
-      {/* Right panel - Auth Form */}
-      <div className="flex-1 flex items-center justify-center p-8" style={{ background: 'var(--surface-base)' }}>
-        <div className="w-full max-w-[360px]">
-
-          {/* Mobile logo */}
-          <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-8 hover:opacity-85 transition-opacity max-w-fit">
+          {/* Masthead */}
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity max-w-fit">
             <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
+              className="w-7 h-7 flex items-center justify-center"
+              style={{ background: 'var(--accent-primary)' }}
             >
-              <RivalscopeLogo size={14} className="text-sky-400" />
+              <RivalscopeLogo size={13} className="text-white" />
             </div>
-            <span className="text-sm font-semibold tracking-tight">
-              <span style={{ color: 'var(--text-primary)' }}>Rival</span>
-              <span className="text-sky-400">scope</span>
+            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              Rivalscope
             </span>
           </Link>
 
-          {/* Back to Home Navigation Link */}
-          <Link href="/" className="inline-flex items-center gap-1.5 text-[12px] font-medium mb-6 transition-colors group" style={{ color: 'var(--text-muted)' }}>
-            <span className="group-hover:-translate-x-0.5 transition-transform inline-block">←</span>
-            <span>Back to home</span>
+          {/* Dateline rule */}
+          <div
+            className="flex items-baseline justify-between mt-10 pb-2"
+            style={{ borderBottom: '2px solid var(--text-primary)' }}
+          >
+            <span className="text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: 'var(--text-muted)' }}>
+              Competitive intelligence desk
+            </span>
+            <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>{today}</span>
+          </div>
+
+          {/* Headline */}
+          <h2
+            className="mt-8 text-[2.4rem] font-extrabold leading-[1.05] tracking-tight"
+            style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}
+          >
+            Know what changed
+            <br />
+            before your
+            <br />
+            customers do.
+          </h2>
+          <p className="mt-5 text-[13px] leading-relaxed max-w-sm" style={{ color: 'var(--text-secondary)' }}>
+            Rivalscope watches your competitors&apos; pages, pricing, reviews, and hiring —
+            and turns every move into a plan you can execute.
+          </p>
+
+          {/* Live ledger — staggered terminal feed */}
+          <div className="mt-10 flex-1 min-h-0">
+            <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3" style={{ color: 'var(--text-muted)' }}>
+              Detected this morning
+            </p>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14, delayChildren: 0.3 } } }}
+              style={{ borderTop: '1px solid var(--border-default)' }}
+            >
+              {LEDGER_ROWS.map((row) => (
+                <motion.div
+                  key={row.time}
+                  variants={{
+                    hidden: { opacity: 0, y: 6 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+                  }}
+                  className="flex items-baseline gap-3 py-2.5"
+                  style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                >
+                  <span className="text-[10px] font-mono shrink-0 tabular-nums" style={{ color: 'var(--text-muted)' }}>
+                    {row.time}
+                  </span>
+                  <span className={`badge ${row.tagClass} text-[9px] shrink-0`}>{row.tag}</span>
+                  <span className="text-[12px] leading-snug truncate" style={{ color: 'var(--text-secondary)' }}>
+                    {row.text}
+                  </span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Bottom stat strip */}
+          <div
+            className="grid grid-cols-3 pt-5 mt-8"
+            style={{ borderTop: '1px solid var(--border-default)' }}
+          >
+            {[
+              ['24/7', 'monitoring'],
+              ['76+', 'apps indexed'],
+              ['< 24h', 'to action plan'],
+            ].map(([num, label]) => (
+              <div key={label}>
+                <p className="text-[18px] font-mono font-semibold tabular-nums" style={{ color: 'var(--text-primary)' }}>{num}</p>
+                <p className="text-[10px] font-mono uppercase tracking-wider mt-0.5" style={{ color: 'var(--text-muted)' }}>{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right: access form ── */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-[380px]">
+
+          {/* Mobile masthead */}
+          <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10 hover:opacity-85 transition-opacity max-w-fit">
+            <div className="w-7 h-7 flex items-center justify-center" style={{ background: 'var(--accent-primary)' }}>
+              <RivalscopeLogo size={13} className="text-white" />
+            </div>
+            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Rivalscope</span>
           </Link>
 
-          <h1 className="text-[22px] font-semibold mb-1 tracking-tight" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-            Sign in or create your account
+          <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3" style={{ color: 'var(--text-muted)' }}>
+            Access
+          </p>
+          <h1
+            className="text-[26px] font-extrabold tracking-tight leading-tight"
+            style={{ color: 'var(--text-primary)', letterSpacing: '-0.025em' }}
+          >
+            Sign in to your desk
           </h1>
-          <p className="text-[13px] mb-5" style={{ color: 'var(--text-secondary)' }}>
-            Access your intelligence command center.
+          <p className="text-[13px] mt-2 mb-7" style={{ color: 'var(--text-secondary)' }}>
+            New here? Your account is created on first sign-in — no separate signup.
           </p>
 
           {plan && (
             <div
-              className="mb-5 px-3 py-2 rounded-lg flex items-center gap-2"
-              style={{
-                background: 'rgba(79, 124, 176,0.06)',
-                border: '1px solid rgba(79, 124, 176,0.20)',
-              }}
+              className="mb-5 px-3.5 py-2.5 flex items-center gap-2.5"
+              style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
             >
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400">
+              <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5"
+                    style={{ background: 'var(--accent-primary)', color: '#fff' }}>
                 Plan
               </span>
-              <span className="text-[12px]" style={{ color: 'var(--text-primary)' }}>
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>
                 {plan === 'local' ? 'Local Business — $19/mo' : 'SaaS Starter — $49/mo'}
               </span>
-              <span className="ml-auto text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                Checkout after sign in
+              <span className="ml-auto text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>
+                checkout after sign-in
               </span>
             </div>
           )}
 
           {error && (
             <div
-              className="mb-5 px-4 py-3 rounded-lg text-[12px] font-medium"
-              style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.20)', color: '#fca5a5' }}
+              className="mb-5 px-3.5 py-2.5 text-[12px] font-medium"
+              style={{
+                background: 'var(--error-subtle, rgba(185,28,28,0.07))',
+                border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
+                color: 'var(--error-text, #b91c1c)',
+              }}
             >
               {error}
             </div>
@@ -231,54 +246,58 @@ export default function LoginPage() {
           <form onSubmit={handleDirectLogin} className="space-y-4">
             <div>
               <label htmlFor="email" className="rs-label block mb-1.5">Email address</label>
-              <div className="relative">
-                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@company.com"
-                  className="rs-input pl-9"
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                className="rs-input"
+              />
             </div>
 
             <div>
               <label htmlFor="password" className="rs-label block mb-1.5">Password</label>
-              <div className="relative">
-                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  minLength={6}
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="rs-input pl-9"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                minLength={6}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="rs-input"
+              />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="rs-btn-primary w-full py-2.5 text-[13px]"
+              className="rs-btn-primary w-full py-2.5 text-[13px] mt-1"
             >
               {loading ? 'Authenticating…' : 'Sign in'}
               {!loading && <ArrowRight size={13} />}
             </button>
-
-            <p className="text-[11px] text-center leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              New here? Signing in with a new email creates your account automatically.
-            </p>
           </form>
+
+          <div className="mt-8 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+            <Link
+              href="/"
+              className="text-[11px] font-mono inline-flex items-center gap-1.5 group"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              <span className="group-hover:-translate-x-0.5 transition-transform inline-block">←</span>
+              Back to home
+            </Link>
+            <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>
+              © {new Date().getFullYear()} Rivalscope
+            </span>
+          </div>
         </div>
       </div>
     </div>
