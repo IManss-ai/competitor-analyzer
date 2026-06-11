@@ -45,10 +45,11 @@ export default function TrendsChart({ data, competitors }: { data: Record<string
           <YAxis
             axisLine={false}
             tickLine={false}
+            allowDecimals={false}
             tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--text-primary)', borderRadius: '12px', border: `1px solid ${p.tooltipBorder}`, boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
+            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--text-primary)', borderRadius: 'var(--radius-md)', border: `1px solid ${p.tooltipBorder}`, boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
             itemStyle={{ color: 'var(--text-primary)', padding: '2px 0' }}
             cursor={{ stroke: p.axis, strokeWidth: 1, strokeDasharray: '4 4' }}
           />
