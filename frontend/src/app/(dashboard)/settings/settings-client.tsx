@@ -154,9 +154,19 @@ export default function SettingsClient({
     }
   };
 
-  // Delete Competitor
+  // Delete Competitor — two-step inline confirm instead of a native confirm()
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const deleteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (deleteTimer.current) clearTimeout(deleteTimer.current); }, []);
   const handleDeleteCompetitor = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this competitor? This will stop tracking it.')) return;
+    if (pendingDeleteId !== id) {
+      setPendingDeleteId(id);
+      if (deleteTimer.current) clearTimeout(deleteTimer.current);
+      deleteTimer.current = setTimeout(() => setPendingDeleteId(null), 4000);
+      return;
+    }
+    if (deleteTimer.current) clearTimeout(deleteTimer.current);
+    setPendingDeleteId(null);
     try {
       await api.deleteCompetitor(id);
       setCompetitors(competitors.filter(c => c.id !== id));
@@ -254,7 +264,7 @@ export default function SettingsClient({
             </div>
 
             {/* General Profile Card */}
-            <div className="rs-card p-5 space-y-4">
+            <div className="rs-card p-4 space-y-4">
               <div>
                 <label className="rs-label block mb-1.5">
                   Email address
@@ -282,7 +292,7 @@ export default function SettingsClient({
                       type="button"
                       onClick={() => handleUpdateSetting('business_type', item.id)}
                       className={clsx(
-                        'border p-3.5 text-left cursor-pointer transition-all',
+                        'border p-4 text-left cursor-pointer transition-all',
                         settings.business_type === item.id
                           ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                           : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -299,7 +309,7 @@ export default function SettingsClient({
             </div>
 
             {/* Change Password Card */}
-            <div className="rs-card p-5">
+            <div className="rs-card p-4">
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <Lock size={16} />
                 Change Password
@@ -351,7 +361,7 @@ export default function SettingsClient({
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Configure how frequently Rivalscope crawls and scans tracked sites.</p>
             </div>
 
-            <div className="rs-card p-5 space-y-4">
+            <div className="rs-card p-4 space-y-4">
               <div className="space-y-3">
                 {[
                   { id: 'weekly', title: 'Weekly Scans', desc: 'Scans run every Monday at 8:00 AM UTC. Best for standard competitive tracking.' },
@@ -393,7 +403,7 @@ export default function SettingsClient({
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Control how and where you receive intelligence briefings and change alerts.</p>
             </div>
 
-            <form onSubmit={handleNotificationsSubmit} className="rs-card p-5 space-y-6">
+            <form onSubmit={handleNotificationsSubmit} className="rs-card p-4 space-y-6">
               <label className="flex items-start gap-4 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -494,13 +504,21 @@ export default function SettingsClient({
                             </span>
                           </label>
 
-                          {/* Delete Button */}
+                          {/* Delete Button — first click arms, second click within 4s deletes */}
                           <button
                             onClick={() => handleDeleteCompetitor(comp.id)}
-                            className="text-[var(--text-secondary)] hover:text-red-600 p-1.5 hover:bg-red-500/10 transition-colors cursor-pointer"
-                            title="Delete"
+                            className={clsx(
+                              'p-1.5 transition-colors cursor-pointer flex items-center gap-1.5',
+                              pendingDeleteId === comp.id
+                                ? 'text-red-600 bg-red-500/10'
+                                : 'text-[var(--text-secondary)] hover:text-red-600 hover:bg-red-500/10'
+                            )}
+                            title={pendingDeleteId === comp.id ? 'Click again to confirm' : 'Delete'}
                           >
                             <Trash2 size={16} />
+                            {pendingDeleteId === comp.id && (
+                              <span className="text-[10px] font-mono font-semibold uppercase tracking-wide">Confirm?</span>
+                            )}
                           </button>
                         </div>
                       </div>
@@ -511,7 +529,7 @@ export default function SettingsClient({
             </div>
 
             {/* Add Competitor Card */}
-            <div className="rs-card p-5">
+            <div className="rs-card p-4">
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                 <Plus size={16} />
                 Add new competitor
@@ -566,7 +584,7 @@ export default function SettingsClient({
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage payment details, upgrade your account, or download invoices.</p>
             </div>
 
-            <div className="rs-card p-5">
+            <div className="rs-card p-4">
               <div className="flex items-start justify-between mb-8">
                 <div>
                   <h3 className="text-base font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Rivalscope Pro</h3>
@@ -603,7 +621,7 @@ export default function SettingsClient({
               </div>
 
               {/* Plan Card Features */}
-              <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] p-5 mb-6">
+              <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] p-4 mb-6">
                 <p className="rs-label mb-4">Included in Pro plan:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                   {[

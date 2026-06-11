@@ -316,39 +316,44 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>We&apos;ll personalize what you track and how we report it.</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="flex flex-col gap-2 mb-6">
             {[
               {
                 type: 'saas' as const,
-                icon: <Globe size={22} style={{ color: 'var(--accent-primary)' }} />,
+                icon: <Globe size={16} />,
                 title: 'B2B SaaS',
-                desc: 'Track pricing pages, features, messaging, and G2/Trustpilot reviews.',
-                borderStyle: { borderColor: 'var(--accent-primary)', backgroundColor: 'var(--accent-subtle)' },
-                checkColor: 'var(--accent-primary)'
+                desc: 'Pricing pages, features, messaging, G2/Trustpilot reviews.',
               },
               {
                 type: 'local' as const,
-                icon: <MapPin size={22} style={{ color: 'var(--accent-primary)' }} />,
+                icon: <MapPin size={16} />,
                 title: 'Local Business',
-                desc: 'Track Google Maps reviews, Instagram activity, and nearby competitors.',
-                borderStyle: { borderColor: 'var(--accent-primary)', backgroundColor: 'var(--accent-subtle)' },
-                checkColor: 'var(--accent-primary)'
+                desc: 'Google Maps reviews, Instagram activity, nearby competitors.',
               }
-            ].map(({ type, icon, title, desc, borderStyle, checkColor }) => (
-              <button
-                key={type}
-                onClick={() => setSelectedBusinessType(type)}
-                className={`relative text-left p-4 border transition-all cursor-pointer`}
-                style={selectedBusinessType === type ? borderStyle : { borderColor: 'var(--border-default)', backgroundColor: 'var(--fill-subtle)' }}
-              >
-                {selectedBusinessType === type && (
-                  <CheckCircle2 size={14} className="absolute top-3 right-3" style={{ color: checkColor }} />
-                )}
-                <div className="mb-2">{icon}</div>
-                <p className="text-sm font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{title}</p>
-                <p className="text-[11px] leading-snug" style={{ color: 'var(--text-muted)' }}>{desc}</p>
-              </button>
-            ))}
+            ].map(({ type, icon, title, desc }) => {
+              const selected = selectedBusinessType === type;
+              return (
+                <button
+                  key={type}
+                  onClick={() => setSelectedBusinessType(type)}
+                  className="relative flex items-center gap-3 text-left px-4 py-3 border transition-all cursor-pointer"
+                  style={{
+                    borderColor: selected ? 'var(--accent-primary)' : 'var(--border-default)',
+                    backgroundColor: selected ? 'var(--accent-subtle)' : 'var(--fill-subtle)',
+                    boxShadow: selected ? 'inset 3px 0 0 var(--accent-primary)' : 'none',
+                  }}
+                >
+                  <span style={{ color: selected ? 'var(--accent-primary)' : 'var(--text-muted)' }}>{icon}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-[13px] font-bold" style={{ color: 'var(--text-primary)' }}>{title}</span>
+                    <span className="block text-[11px] leading-snug truncate" style={{ color: 'var(--text-muted)' }}>{desc}</span>
+                  </span>
+                  {selected && (
+                    <CheckCircle2 size={14} className="shrink-0" style={{ color: 'var(--accent-primary)' }} />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -646,7 +651,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       </div>
 
       {/* B) ACTIVITY CHART (28-day bar chart) */}
-      <div className="rs-card p-5">
+      <div className="rs-card p-4">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="rs-heading-md">Daily Activity</h2>
@@ -727,7 +732,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 return (
                   <div
                     key={event.id}
-                    className="p-5 transition-colors duration-150"
+                    className="p-4 transition-colors duration-150"
                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
@@ -823,7 +828,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 return (
                   <div
                     key={comp.id}
-                    className="p-5 space-y-3 transition-colors duration-150"
+                    className="p-4 space-y-3 transition-colors duration-150"
                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
