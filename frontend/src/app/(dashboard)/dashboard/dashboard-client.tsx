@@ -658,6 +658,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <BarChart data={activityDays} barSize={10} barGap={2}>
                 <XAxis
                   dataKey="date"
+                  interval={6}
                   tickFormatter={(val) => { const p = val.split('-'); return `${p[1]}/${p[2]}`; }}
                   tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
                   axisLine={{ stroke: p.axis }}
