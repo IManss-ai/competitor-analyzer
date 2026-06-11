@@ -321,7 +321,7 @@ export default function SettingsClient({
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="Min. 6 characters"
                     className="rs-input"
                   />
                 </div>
@@ -331,7 +331,7 @@ export default function SettingsClient({
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="Repeat new password"
                     className="rs-input"
                   />
                 </div>
