@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Topbar from '@/components/topbar';
 import DiscoverClient from './discover-client';
 
 export const metadata: Metadata = {
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function DiscoverPage() {
-  return <DiscoverClient />;
+  return (
+    <div className="pb-12">
+      <Topbar title="Discover" subtitle="Search web apps by category, pricing, and tech stack" />
+      <DiscoverClient />
+    </div>
+  );
 }

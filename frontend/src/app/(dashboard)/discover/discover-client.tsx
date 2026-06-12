@@ -43,15 +43,9 @@ export default function DiscoverClient() {
   useEffect(() => { runSearch(1); }, [category, maxPrice]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="min-h-screen px-4 py-10" style={{ background: 'var(--surface-base)' }}>
-      <div className="max-w-4xl mx-auto space-y-6">
-        <header>
-          <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Discover</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-            Search web apps by category, pricing, and tech stack.
-          </p>
-        </header>
-
+    // Shell (sidebar, Topbar, page padding) comes from the (dashboard) layout
+    <div>
+      <div className="max-w-4xl space-y-6">
         <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); runSearch(1); }}>
           <input
             className="rs-input flex-1" placeholder="Search apps…"
