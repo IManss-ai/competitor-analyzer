@@ -653,7 +653,7 @@ export default function LandingPage() {
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 4, scale: 0.95 }}
                               transition={{ duration: 0.12 }}
-                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[var(--surface-overlay)] border border-[var(--border-default)] text-[var(--text-primary)] px-3 py-2 rounded-lg shadow-xl text-[10px] w-48 pointer-events-none"
+                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[var(--surface-overlay)] border border-[var(--border-default)] text-[var(--text-primary)] px-3 py-2 rounded-lg shadow-[var(--shadow-elevated)] text-[10px] w-48 pointer-events-none"
                             >
                               <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-r-[5px] border-r-white/[0.08] border-b-4 border-b-transparent" />
                               <div className="absolute right-[calc(100%-1px)] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-r-[4px] border-r-[var(--surface-overlay)] border-b-[3px] border-b-transparent" />
@@ -874,7 +874,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-5">
@@ -936,7 +936,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-4">
                 <MessageSquare size={18} className="text-sky-400 flex-shrink-0" />
@@ -966,7 +966,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Zap size={18} className="text-sky-400 flex-shrink-0" />
@@ -996,7 +996,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer"
             >
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -1031,7 +1031,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Calendar size={18} className="text-[var(--text-primary)] flex-shrink-0" />

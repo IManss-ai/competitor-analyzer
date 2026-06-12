@@ -135,7 +135,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
               initial={shouldReduceMotion ? false : { scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg w-full max-w-2xl shadow-2xl relative my-8"
+              className="p-1 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg w-full max-w-2xl shadow-[var(--shadow-modal)] relative my-8"
             >
               {/* Inner Core */}
               <div className="bg-[var(--surface-overlay)] border border-[var(--border-subtle)] rounded-lg overflow-hidden">

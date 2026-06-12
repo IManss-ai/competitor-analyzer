@@ -305,7 +305,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 backdrop-blur-md border border-[var(--border-default)] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md border border-[var(--border-default)] shadow-[var(--shadow-modal)] p-6 md:p-8 max-w-md w-full"
           style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-7">
@@ -386,7 +386,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="relative z-10 backdrop-blur-md border border-[var(--border-default)] shadow-2xl p-6 md:p-8 max-w-md w-full"
+          className="relative z-10 backdrop-blur-md border border-[var(--border-default)] shadow-[var(--shadow-modal)] p-6 md:p-8 max-w-md w-full"
           style={{ backgroundColor: 'var(--surface-overlay)' }}
         >
           <div className="text-center mb-6">
@@ -526,7 +526,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     };
 
     return (
-      <div className="backdrop-blur-md border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
+      <div className="backdrop-blur-md border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-[var(--shadow-modal)] text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
           <div className="absolute inset-0 border-4 rounded-full" style={{ borderColor: 'rgba(79, 124, 176,0.1)' }}></div>
           <div className="absolute inset-0 border-4 border-t-sky-500 rounded-full animate-spin" style={{ borderTopColor: 'var(--accent-primary)' }}></div>
@@ -555,7 +555,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   if (onboardingStep === 2) {
     const isError = onboardingStatus === 'error';
     return (
-      <div className="backdrop-blur-md border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-2xl text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
+      <div className="backdrop-blur-md border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-[var(--shadow-modal)] text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
         <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
           {isError ? (
             <AlertTriangle size={32} className="text-red-400" />

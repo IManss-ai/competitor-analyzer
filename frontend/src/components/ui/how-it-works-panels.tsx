@@ -310,7 +310,7 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
         key={animKey}
         animate={isHovered ? { y: -4 } : { y: 0 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="bg-[var(--surface-base)] border border-[var(--border-default)] rounded-md p-4 shadow-xl relative"
+        className="bg-[var(--surface-base)] border border-[var(--border-default)] rounded-md p-4 relative"
       >
         {/* Folded corner effect mock */}
         <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-sky-950 border-l border-b border-[var(--border-default)] rounded-bl-sm pointer-events-none" />
@@ -437,7 +437,7 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-md p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 shadow-xl transition-all duration-300 cursor-pointer"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-md p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 transition-all duration-300 cursor-pointer"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">
