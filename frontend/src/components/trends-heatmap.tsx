@@ -1,7 +1,6 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { motion } from 'motion/react';
 import { useChartPalette } from '@/lib/chart-theme';
 
 interface HeatmapCompetitor {
@@ -115,18 +114,13 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                   </td>
                   {comp.counts.map((count: number, i: number) => (
                     <td key={i} className="px-2 py-4 text-center">
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.04 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: (compIndex * 0.04) + (i * 0.01), duration: 0.35, type: "spring" }}
+                      <div
                         title={`${count} change${count !== 1 ? 's' : ''} in week of ${weeks[i]}`}
                         className="w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer"
                         style={heatStyle(heatLevel(count))}
                       >
                         {count > 0 ? count : ''}
-                      </motion.div>
+                      </div>
                     </td>
                   ))}
                   <td className="px-6 py-4 text-right">
