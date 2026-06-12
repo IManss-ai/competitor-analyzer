@@ -22,7 +22,7 @@ function getRelativeTime(dateString: string) {
 export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {
   return (
     <header
-      className="flex items-start justify-between mb-8 pb-6"
+      className="flex items-start justify-between flex-wrap gap-3 mb-8 pb-6"
       style={{ borderBottom: '1px solid var(--border-default)' }}
     >
       {/* Left — page title */}
