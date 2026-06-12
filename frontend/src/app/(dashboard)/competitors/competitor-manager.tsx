@@ -341,12 +341,8 @@ export default function CompetitorManager({
             }
 
             return (
-              <motion.div
+              <div
                 key={comp.id}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
                 className="group relative"
               >
                 <div className="rs-card p-5 relative overflow-hidden flex flex-col justify-between h-full">
@@ -427,7 +423,7 @@ export default function CompetitorManager({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
