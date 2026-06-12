@@ -52,7 +52,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
           <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             Hiring Signals
           </h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-400">
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border tag-amber">
             Pending first scan
           </span>
         </div>
@@ -90,11 +90,11 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
             {signal.total_jobs}
           </div>
         </div>
-        <div className="rounded border border-emerald-500/20 bg-emerald-500/5 px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400/80 mb-1 flex items-center gap-1">
+        <div className="rounded border border-[var(--tone-positive)]/20 bg-[var(--tone-positive)]/5 px-3 py-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--tone-positive)] mb-1 flex items-center gap-1">
             <TrendingUp size={9} /> New
           </div>
-          <div className="text-2xl font-bold font-mono text-emerald-400">
+          <div className="text-2xl font-bold font-mono text-[var(--tone-positive)]">
             {signal.new_postings}
           </div>
         </div>

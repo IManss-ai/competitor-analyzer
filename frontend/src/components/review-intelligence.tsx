@@ -9,8 +9,8 @@ interface ReviewIntelligenceProps {
 }
 
 const PLATFORM_STYLES: Record<string, { label: string; badge: string }> = {
-  g2:         { label: 'G2',         badge: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
-  trustpilot: { label: 'Trustpilot', badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+  g2:         { label: 'G2',         badge: 'tag-orange' },
+  trustpilot: { label: 'Trustpilot', badge: 'tag-green' },
   capterra:   { label: 'Capterra',   badge: 'bg-sky-500/10 text-sky-400 border-sky-500/20' },
 };
 
@@ -26,9 +26,9 @@ function StarRating({ rating }: { rating: number | null }) {
           size={10}
           className={
             i < full
-              ? 'text-amber-400 fill-amber-400'
+              ? 'text-[var(--tone-warning)] fill-[var(--tone-warning)]'
               : i === full && half
-              ? 'text-amber-400 fill-amber-400/40'
+              ? 'text-[var(--tone-warning)] fill-[var(--tone-warning)] [fill-opacity:0.4]'
               : 'text-[var(--border-default)] fill-[var(--border-default)]'
           }
         />
@@ -44,7 +44,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
   return (
     <div className="rs-card overflow-hidden">
       <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center gap-2">
-        <Star size={15} className="text-amber-400" />
+        <Star size={15} className="text-[var(--tone-warning)]" />
         <h2 className="text-sm font-bold text-[var(--text-primary)]">Review Intelligence</h2>
         <span className="ml-auto text-[10px] text-[var(--text-muted)] font-mono">G2 · Trustpilot · Capterra</span>
       </div>
@@ -83,7 +83,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                             </span>
                           )}
                           {snap.complaint_count > 0 && (
-                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border bg-red-500/10 text-red-400 border-red-500/20">
+                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm border tag-red">
                               {snap.complaint_count} complaints
                             </span>
                           )}

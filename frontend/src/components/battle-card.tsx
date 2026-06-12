@@ -89,12 +89,12 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
   const getBadgeClass = (type: string | undefined | null) => {
     if (!type) return 'bg-[var(--fill-subtle)] text-[var(--text-muted)] border-[var(--border-default)]';
     const t = type.toLowerCase();
-    if (t.includes('price') || t.includes('pricing')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
-    if (t.includes('feature') || t.includes('add')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
+    if (t.includes('price') || t.includes('pricing')) return 'tag-amber';
+    if (t.includes('feature') || t.includes('add')) return 'tag-green';
     if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-[rgba(155,127,199,0.12)] text-[#9b7fc7] border-[rgba(155,127,199,0.30)]';
-    if (t.includes('reputation')) return 'bg-red-400/10 text-red-400 border-red-400/20';
-    if (t.includes('social') || t.includes('campaign')) return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/20';
-    if (t.includes('review')) return 'bg-amber-400/10 text-amber-400 border-amber-400/20';
+    if (t.includes('reputation')) return 'tag-red';
+    if (t.includes('social') || t.includes('campaign')) return 'tag-green';
+    if (t.includes('review')) return 'tag-amber';
     if (t.includes('offer') || t.includes('new')) return 'bg-sky-400/10 text-sky-400 border-sky-400/20';
     return 'bg-[var(--fill-subtle)] text-[var(--text-muted)] border-[var(--border-default)]';
   };
@@ -147,7 +147,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                         <Zap className="text-sky-400" size={18} />
                         {competitorName} Battle Card
                         {cardData?.variant === 'local' && (
-                          <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
+                          <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border tag-green">
                             Local intel
                           </span>
                         )}
@@ -180,8 +180,8 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                       <p className="text-xs font-mono uppercase tracking-wider animate-pulse">Analyzing competitor intelligence...</p>
                     </div>
                   ) : error ? (
-                    <div className="flex flex-col items-center justify-center text-red-400 space-y-3 py-16 text-center">
-                      <X size={32} className="text-red-500" />
+                    <div className="flex flex-col items-center justify-center text-[var(--tone-danger)] space-y-3 py-16 text-center">
+                      <X size={32} className="text-[var(--tone-danger)]" />
                       <p className="text-sm font-medium">{error}</p>
                     </div>
                   ) : cardData ? (
@@ -238,7 +238,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 1 * 0.07 }}
                           className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md"
                         >
-                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-red-400 mb-4">
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-danger)] mb-4">
                             User Complaints
                           </div>
                           {(!cardData.weaknesses || cardData.weaknesses.length === 0) ? (
@@ -247,7 +247,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                             <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
                               {cardData.weaknesses.map((weakness, idx) => (
                                 <li key={idx} className="flex items-start gap-1.5">
-                                  <span className="text-red-500 select-none">›</span>
+                                  <span className="text-[var(--tone-danger)] select-none">›</span>
                                   <span>{weakness}</span>
                                 </li>
                               ))}
@@ -262,7 +262,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 2 * 0.07 }}
                           className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md"
                         >
-                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-amber-400 mb-4">
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-warning)] mb-4">
                             Strategic Signals
                           </div>
                           {(!cardData.strategic_signals || cardData.strategic_signals.length === 0) ? (
@@ -271,7 +271,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                             <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
                               {cardData.strategic_signals.map((signal, idx) => (
                                 <li key={idx} className="flex items-start gap-1.5">
-                                  <span className="text-amber-500 select-none">›</span>
+                                  <span className="text-[var(--tone-warning)] select-none">›</span>
                                   <span>{signal}</span>
                                 </li>
                               ))}
@@ -286,7 +286,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 3 * 0.07 }}
                           className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md md:col-span-2"
                         >
-                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-400 mb-4">
+                          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-positive)] mb-4">
                             Playbook — This Week
                           </div>
                           {(!cardData.playbook || cardData.playbook.length === 0) ? (
@@ -302,7 +302,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                                     className="flex items-start justify-between gap-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] p-3 rounded border border-[var(--border-subtle)] transition-colors"
                                   >
                                     <div className="flex items-start gap-3">
-                                      <span className="text-xs font-mono font-bold text-emerald-400 mt-0.5">{rankStr}</span>
+                                      <span className="text-xs font-mono font-bold text-[var(--tone-positive)] mt-0.5">{rankStr}</span>
                                       <span className="text-xs text-[var(--text-primary)] leading-relaxed">{play}</span>
                                     </div>
                                     <button
@@ -311,7 +311,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                                       title="Copy to clipboard"
                                     >
                                       {isCopied ? (
-                                        <Check size={10} className="text-emerald-400" />
+                                        <Check size={10} className="text-[var(--tone-positive)]" />
                                       ) : (
                                         <Copy size={10} />
                                       )}

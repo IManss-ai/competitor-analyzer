@@ -143,7 +143,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     const beforeRender = beforeWords.map((word, idx) => {
       const isDeleted = !afterSet.has(word);
       return (
-        <span key={idx} className={isDeleted ? 'bg-red-500/20 text-red-300 line-through px-0.5 rounded' : ''}>
+        <span key={idx} className={isDeleted ? 'bg-[var(--tone-danger)]/15 text-[var(--tone-danger)] line-through px-0.5 rounded' : ''}>
           {word}{' '}
         </span>
       );
@@ -152,7 +152,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     const afterRender = afterWords.map((word, idx) => {
       const isAdded = !beforeSet.has(word);
       return (
-        <span key={idx} className={isAdded ? 'bg-emerald-500/20 text-emerald-300 px-0.5 rounded font-medium' : ''}>
+        <span key={idx} className={isAdded ? 'bg-[var(--tone-positive)]/15 text-[var(--tone-positive)] px-0.5 rounded font-medium' : ''}>
           {word}{' '}
         </span>
       );
@@ -160,12 +160,12 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-        <div className="p-3 bg-red-950/20 border border-red-500/10 rounded">
-          <span className="text-[10px] uppercase font-bold text-red-400 tracking-wider block mb-1">Before</span>
+        <div className="p-3 bg-[var(--tone-danger)]/5 border border-[var(--tone-danger)]/15 rounded">
+          <span className="text-[10px] uppercase font-bold text-[var(--tone-danger)] tracking-wider block mb-1">Before</span>
           <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto" style={{ color: 'var(--text-secondary)' }}>{beforeRender}</div>
         </div>
-        <div className="p-3 bg-emerald-950/20 border border-emerald-500/10 rounded">
-          <span className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider block mb-1">After</span>
+        <div className="p-3 bg-[var(--tone-positive)]/5 border border-[var(--tone-positive)]/15 rounded">
+          <span className="text-[10px] uppercase font-bold text-[var(--tone-positive)] tracking-wider block mb-1">After</span>
           <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto" style={{ color: 'var(--text-primary)' }}>{afterRender}</div>
         </div>
       </div>
@@ -399,7 +399,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                                     <span className="text-xs font-semibold text-[var(--text-primary)]">Text Diff Viewer</span>
                                     {event.net_char_delta !== 0 && (
                                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
-                                        event.net_char_delta > 0 ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-red-400 bg-red-500/10 border border-red-500/20'
+                                        event.net_char_delta > 0 ? 'tag-green border' : 'tag-red border'
                                       }`}>
                                         {event.net_char_delta > 0 ? '+' : ''}{event.net_char_delta} chars
                                       </span>
@@ -453,7 +453,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         </td>
                         <td className="px-5 py-3.5 whitespace-nowrap">
                           <span className={`badge ${
-                            scan.status === 'success' ? 'badge-feature_add' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                            scan.status === 'success' ? 'badge-feature_add' : 'tag-red border'
                           }`}>
                             {scan.status}
                           </span>
@@ -503,14 +503,14 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="rs-btn-ghost !p-1.5 cursor-pointer"
                       title="Copy to clipboard"
                     >
-                      {copied ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                      {copied ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Copy size={14} />}
                     </button>
                     <button
                       onClick={shareBattlecard}
                       className="rs-btn-ghost !p-1.5 cursor-pointer"
                       title="Share Card"
                     >
-                      {shared ? <CheckCircle2 size={14} className="text-emerald-400" /> : <Share2 size={14} />}
+                      {shared ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Share2 size={14} />}
                     </button>
                   </div>
                 </div>
@@ -561,7 +561,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <AlertTriangle size={14} className="text-red-400" /> Their Weaknesses
+                        <AlertTriangle size={14} className="text-[var(--tone-danger)]" /> Their Weaknesses
                       </span>
                       {cardOpenSections.weaknesses ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
@@ -596,7 +596,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <MessageSquare size={14} className="text-emerald-400" /> Talking Points
+                        <MessageSquare size={14} className="text-[var(--tone-positive)]" /> Talking Points
                       </span>
                       {cardOpenSections.talkingPoints ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
@@ -631,7 +631,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Trophy size={14} className="text-amber-400" /> Win Conditions
+                        <Trophy size={14} className="text-[var(--tone-warning)]" /> Win Conditions
                       </span>
                       {cardOpenSections.winConditions ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
