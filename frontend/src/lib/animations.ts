@@ -23,10 +23,9 @@ export const staggerContainerVariants: Variants = {
   },
 };
 
+// DESIGN.md motion rule: no hover lift — institutional = still. Hover feedback
+// comes from border/color state changes, so this variant is a no-op on purpose.
 export const cardHoverVariants = {
-  rest: { y: 0 },
-  hover: {
-    y: -2,
-    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-  },
+  rest: {},
+  hover: {},
 };

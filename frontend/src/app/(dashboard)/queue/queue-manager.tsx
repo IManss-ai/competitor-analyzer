@@ -171,8 +171,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                   {/* Actions Buttons */}
                   <div className="flex items-center gap-3 mt-auto">
                     <motion.button
-                      whileHover={{ scale: 1.02, y: -0.5 }}
-                      whileTap={{ scale: 0.97 }}
+                      whileTap={{ scale: 0.99 }}
                       onClick={() =>
                         handleApprove(
                           action.id,

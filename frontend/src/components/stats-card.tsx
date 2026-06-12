@@ -47,8 +47,6 @@ export default function StatsCard({
 
   return (
     <motion.div
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
       className="rs-card group relative overflow-hidden p-5"
     >
       {/* Accent top border — replaces bottom sweep */}
