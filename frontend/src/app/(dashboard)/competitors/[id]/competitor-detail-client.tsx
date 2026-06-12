@@ -160,11 +160,11 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-        <div className="p-3 bg-red-950/20 border border-red-500/10 rounded-lg">
+        <div className="p-3 bg-red-950/20 border border-red-500/10 rounded">
           <span className="text-[10px] uppercase font-bold text-red-400 tracking-wider block mb-1">Before</span>
           <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto" style={{ color: 'var(--text-secondary)' }}>{beforeRender}</div>
         </div>
-        <div className="p-3 bg-emerald-950/20 border border-emerald-500/10 rounded-lg">
+        <div className="p-3 bg-emerald-950/20 border border-emerald-500/10 rounded">
           <span className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider block mb-1">After</span>
           <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto" style={{ color: 'var(--text-primary)' }}>{afterRender}</div>
         </div>
@@ -235,7 +235,7 @@ ${card.win_conditions && card.win_conditions.length > 0
             <img 
               src={`https://www.google.com/s2/favicons?domain=${(comp.url.split('://')[1] || comp.url).split('/')[0]}&sz=64`}
               alt=""
-              className="w-12 h-12 rounded-xl bg-[var(--fill-subtle)] border border-[var(--border-default)] p-1.5 flex-shrink-0"
+              className="w-12 h-12 rounded bg-[var(--fill-subtle)] border border-[var(--border-default)] p-1.5 flex-shrink-0"
             />
             <div>
               {editing ? (
@@ -358,7 +358,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                           <Circle size={10} style={{ color: 'var(--accent-primary)' }} />
                         </div>
 
-                        <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-md overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
                           {/* Event Header */}
                           <div 
                             onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
@@ -518,7 +518,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                 {/* Content Accordions */}
                 <div className="space-y-3">
                   {/* Accordion 1: Recent Changes */}
-                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
                     <button
                       onClick={() => toggleSection('changes')}
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
@@ -555,7 +555,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 2: Their Weaknesses */}
-                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
                     <button
                       onClick={() => toggleSection('weaknesses')}
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
@@ -590,7 +590,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 3: Talking Points */}
-                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
                     <button
                       onClick={() => toggleSection('talkingPoints')}
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
@@ -625,7 +625,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </div>
 
                   {/* Accordion 4: Win Conditions */}
-                  <div className="border border-[var(--border-subtle)] rounded-lg overflow-hidden">
+                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
                     <button
                       onClick={() => toggleSection('winConditions')}
                       className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"

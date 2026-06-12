@@ -283,7 +283,7 @@ export default function LandingPage() {
         >
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
+            <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
               <RivalscopeLogo size={13} className="text-sky-400" />
             </div>
             <span className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">Rivalscope</span>
@@ -335,7 +335,7 @@ export default function LandingPage() {
               onClick={() => setMenuOpen(!menuOpen)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="md:hidden flex flex-col gap-1 items-center justify-center w-11 h-11 rounded-lg bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] transition-colors"
+              className="md:hidden flex flex-col gap-1 items-center justify-center w-11 h-11 rounded bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] transition-colors"
               aria-label="Toggle menu"
             >
               <span className={`w-3.5 h-0.5 bg-[var(--text-primary)] transition-transform duration-300 ${menuOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
@@ -475,7 +475,7 @@ export default function LandingPage() {
               transition={{ duration: 0.65, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <div className="bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card)] cursor-pointer">
+              <div className="bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card)] cursor-pointer">
                 {/* Panel header */}
                 <div className="flex items-center justify-between px-4 py-3.5 border-b border-[var(--border-default)]">
                   <div className="flex items-center gap-2">
@@ -492,7 +492,7 @@ export default function LandingPage() {
                   {FEED.map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
+                      className="flex items-start gap-3 px-3 py-2.5 rounded hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
                     >
                       <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                         {item.type}
@@ -602,7 +602,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={1}
-            className="border border-[var(--border-default)] rounded-xl hover:border-sky-500/25 transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card-hover)] bg-[var(--surface-raised)]"
+            className="border border-[var(--border-default)] rounded-md hover:border-sky-500/25 transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card-hover)] bg-[var(--surface-raised)]"
           >
             <div className="grid md:grid-cols-[200px_1fr] min-h-[480px]">
 
@@ -621,13 +621,13 @@ export default function LandingPage() {
                         onClick={() => setSelectedDashboardComp(comp)}
                         onMouseEnter={() => setHoveredDashComp(comp)}
                         onMouseLeave={() => setHoveredDashComp(null)}
-                        className="w-full text-left text-xs px-3 py-2.5 rounded-lg font-medium flex items-center justify-between transition-colors cursor-pointer relative animate-none"
+                        className="w-full text-left text-xs px-3 py-2.5 rounded font-medium flex items-center justify-between transition-colors cursor-pointer relative animate-none"
                         style={{ color: selectedDashboardComp === comp ? 'var(--text-primary)' : 'var(--text-muted)' }}
                       >
                         {selectedDashboardComp === comp && (
                           <motion.div
                             layoutId="activeDashTab"
-                            className="absolute inset-0 bg-sky-500/10 border border-sky-500/20 rounded-lg"
+                            className="absolute inset-0 bg-sky-500/10 border border-sky-500/20 rounded"
                             transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                           />
                         )}
@@ -673,7 +673,7 @@ export default function LandingPage() {
 
                 <div className="pt-4 border-t border-[var(--border-default)]">
                   <div className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider mb-2">Scan rate</div>
-                  <div className="text-[10px] text-sky-300 font-mono bg-sky-500/8 border border-sky-500/15 px-2.5 py-1.5 rounded-lg inline-block">
+                  <div className="text-[10px] text-sky-300 font-mono bg-sky-500/8 border border-sky-500/15 px-2.5 py-1.5 rounded inline-block">
                     Every 4 hours
                   </div>
                 </div>
@@ -722,7 +722,7 @@ export default function LandingPage() {
                             />
                             <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Live</span>
                           </div>
-                          <span className="text-[10px] font-mono bg-[var(--fill-subtle)] border border-[var(--border-default)] text-[var(--text-muted)] px-2.5 py-1 rounded-lg">
+                          <span className="text-[10px] font-mono bg-[var(--fill-subtle)] border border-[var(--border-default)] text-[var(--text-muted)] px-2.5 py-1 rounded">
                             ALL
                           </span>
                         </div>
@@ -734,7 +734,7 @@ export default function LandingPage() {
                           { label: 'Changes', unit: 'this week', color: 'text-sky-400', trend: '↑ +2', trendColor: 'text-sky-400', idx: 1 },
                           { label: 'Plays', unit: 'ready', color: 'text-emerald-400', trend: '↑ new', trendColor: 'text-emerald-400', idx: 2 },
                         ].map((s) => (
-                          <div key={s.label} className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded-lg">
+                          <div key={s.label} className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded">
                             <div className="text-[9px] font-mono text-[var(--text-muted)] mb-1">{s.label.toUpperCase()}</div>
                             <div className={`text-sm font-bold font-mono ${s.color} flex items-baseline gap-1`}>
                               <motion.span
@@ -767,7 +767,7 @@ export default function LandingPage() {
                                 transition: { delay: i * 0.07, duration: 0.22, ease: 'easeOut' },
                               }}
                               exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
-                              className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded-lg"
+                              className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded"
                             >
                               <div className="flex items-center gap-2 mb-1.5">
                                 <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>
@@ -783,7 +783,7 @@ export default function LandingPage() {
                         </AnimatePresence>
                       </div>
 
-                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded-lg flex items-center justify-between gap-3">
+                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded flex items-center justify-between gap-3">
                         <div>
                           <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 size={9}  /> SUGGESTED PLAYBOOK
@@ -796,7 +796,7 @@ export default function LandingPage() {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
-                          className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
+                          className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded transition-colors flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
                         >
                           <AnimatePresence mode="wait">
                             {copiedPlaybook ? (
@@ -874,7 +874,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-5">
@@ -887,7 +887,7 @@ export default function LandingPage() {
                   We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
                 </p>
               </div>
-              <div className="flex-shrink-0 w-full sm:w-56 h-20 bg-[var(--surface-raised)] rounded-xl border border-[var(--border-default)] overflow-hidden relative">
+              <div className="flex-shrink-0 w-full sm:w-56 h-20 bg-[var(--surface-raised)] rounded-md border border-[var(--border-default)] overflow-hidden relative">
                 <span className="absolute top-1.5 right-2 z-10 text-[9px] font-mono text-sky-400">▲ +12%</span>
                 <svg className="w-full h-full p-2" viewBox="0 0 180 64">
                   <motion.path
@@ -936,7 +936,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <MessageSquare size={18} className="text-sky-400 flex-shrink-0" />
@@ -966,7 +966,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-gradient-to-b from-[var(--accent-subtle)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-gradient-to-b from-[var(--accent-subtle)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Zap size={18} className="text-sky-400 flex-shrink-0" />
@@ -977,7 +977,7 @@ export default function LandingPage() {
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 Generates targeted email scripts and landing page copy built around the competitor changes detected today.
               </p>
-              <div className="mt-4 font-mono text-[9px] text-sky-400 bg-[var(--accent-subtle)] border border-sky-500/10 p-2.5 rounded-lg min-h-[36px] flex items-center">
+              <div className="mt-4 font-mono text-[9px] text-sky-400 bg-[var(--accent-subtle)] border border-sky-500/10 p-2.5 rounded min-h-[36px] flex items-center">
                 <span>{typewriterText}</span>
                 {card3Hovered && (
                   <motion.span
@@ -996,7 +996,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -1031,7 +1031,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-zinc-400/50 rounded-xl p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-zinc-400/50 rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Calendar size={18} className="text-[var(--text-primary)] flex-shrink-0" />
@@ -1125,12 +1125,12 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={1}
-            className="border border-[var(--border-default)] rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]"
+            className="border border-[var(--border-default)] rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]"
           >
             {/* Card header */}
             <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-lg ${currentCard.logoColor} flex items-center justify-center`}>
+                <div className={`w-8 h-8 rounded ${currentCard.logoColor} flex items-center justify-center`}>
                   <RivalscopeLogo size={13} className="text-white" />
                 </div>
                 <div>
@@ -1323,9 +1323,9 @@ export default function LandingPage() {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0 }}
-                  className="flex items-start gap-3 bg-[var(--surface-base)]/80 border border-[var(--border-default)] p-4 rounded-xl hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-md"
+                  className="flex items-start gap-3 bg-[var(--surface-base)]/80 border border-[var(--border-default)] p-4 rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-md"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
                     {item.icon}
                   </div>
                   <div>
@@ -1367,7 +1367,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/25 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-raised)] to-[var(--surface-base)] rounded-xl px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
+            className="border border-sky-500/25 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-raised)] to-[var(--surface-base)] rounded-md px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-4 text-balance">
@@ -1405,7 +1405,7 @@ export default function LandingPage() {
             {/* Brand */}
             <div className="col-span-2 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded-lg">
+                <div className="w-6 h-6 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded">
                   <RivalscopeLogo size={11} className="text-sky-400" />
                 </div>
                 <span className="text-sm font-semibold text-[var(--text-primary)]">Rivalscope</span>

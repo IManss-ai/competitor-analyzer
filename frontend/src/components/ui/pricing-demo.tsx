@@ -79,7 +79,7 @@ function PricingBasic() {
           <motion.div
             key={tier.name}
             {...reveal(i * 0.12)}
-            className={`relative bg-[var(--surface-raised)]/85 border border-[var(--border-default)] backdrop-blur-md rounded-xl p-8 text-left hover:border-[var(--border-strong)] transition-colors duration-300 shadow-xl`}
+            className={`relative bg-[var(--surface-raised)]/85 border border-[var(--border-default)] backdrop-blur-md rounded-md p-8 text-left hover:border-[var(--border-strong)] transition-colors duration-300 shadow-xl`}
           >
             {/* Badge */}
             {tier.badge && (

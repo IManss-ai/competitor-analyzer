@@ -117,7 +117,7 @@ export function Pricing({
               opacity: { duration: 0.5 },
             }}
             className={cn(
-              `rounded-2xl border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative`,
+              `rounded-md border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative`,
               plan.isPopular ? "border-primary border-2" : "border-border",
               "flex flex-col",
               !plan.isPopular && "mt-5",

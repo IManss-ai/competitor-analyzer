@@ -24,7 +24,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
     return (
       <div className="rs-card p-10 flex flex-col items-center text-center">
         <div
-          className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"
+          className="w-12 h-12 rounded flex items-center justify-center mb-4"
           style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
         >
           <Shield size={22} style={{ color: 'var(--accent-primary)' }} />
@@ -64,7 +64,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
             <div className="rs-card p-5 relative overflow-hidden flex flex-col justify-between h-full">
               {/* Top row */}
               <div className="flex items-start gap-4 mb-5">
-                <div className="w-10 h-10 rounded-lg bg-[var(--fill-subtle)] border border-[var(--border-default)] flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
+                <div className="w-10 h-10 rounded bg-[var(--fill-subtle)] border border-[var(--border-default)] flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}

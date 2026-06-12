@@ -127,7 +127,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                 </div>
 
                 {/* Trigger */}
-                <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-lg p-3.5 mb-4 relative">
+                <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded p-3.5 mb-4 relative">
                   <span
                     className="absolute -top-2.5 left-3 border border-[var(--border-subtle)] px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-[var(--surface-raised)]"
                     style={{ color: 'var(--text-muted)' }}
@@ -150,7 +150,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       />
                     </div>
                   ) : (
-                    <div className="bg-[var(--surface-subtle)] border border-[var(--border-subtle)] rounded-lg p-4 mb-4 relative group/code">
+                    <div className="bg-[var(--surface-subtle)] border border-[var(--border-subtle)] rounded p-4 mb-4 relative group/code">
                       <p className="text-[13px] text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed font-mono selection:bg-sky-500/20 pr-10">
                         {action.edited_text || action.original_draft}
                       </p>

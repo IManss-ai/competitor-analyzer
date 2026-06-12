@@ -103,10 +103,10 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md relative overflow-hidden">
       <div className="space-y-3 relative z-10">
         {/* Row 1 */}
-        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg px-3 py-2.5">
+        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded px-3 py-2.5">
           <span className="text-[10px] text-[var(--text-muted)] font-mono">domain:</span>
           <div className="flex-1 flex items-center text-xs text-[var(--text-primary)] font-mono min-h-[16px]">
             {text1}
@@ -133,7 +133,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
         </div>
 
         {/* Row 2 */}
-        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg px-3 py-2.5">
+        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded px-3 py-2.5">
           <span className="text-[10px] text-[var(--text-muted)] font-mono">domain:</span>
           <div className="flex-1 flex items-center text-xs text-[var(--text-primary)] font-mono min-h-[16px]">
             {text2}
@@ -218,7 +218,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex items-center gap-5 p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl relative overflow-hidden">
+    <div className="w-full h-full flex items-center gap-5 p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md relative overflow-hidden">
       {/* Radar Section */}
       <div className="w-16 h-16 rounded-full border border-[var(--border-default)] relative flex items-center justify-center flex-shrink-0 bg-[var(--fill-subtle)]">
         <svg className="absolute inset-0 w-full h-full -rotate-90">
@@ -305,12 +305,12 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md relative overflow-hidden">
       <motion.div
         key={animKey}
         animate={isHovered ? { y: -4 } : { y: 0 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="bg-[var(--surface-base)] border border-[var(--border-default)] rounded-xl p-4 shadow-xl relative"
+        className="bg-[var(--surface-base)] border border-[var(--border-default)] rounded-md p-4 shadow-xl relative"
       >
         {/* Folded corner effect mock */}
         <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-sky-950 border-l border-b border-[var(--border-default)] rounded-bl-sm pointer-events-none" />
@@ -437,7 +437,7 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-xl p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 shadow-xl transition-all duration-300 cursor-pointer"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-md p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 shadow-xl transition-all duration-300 cursor-pointer"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">

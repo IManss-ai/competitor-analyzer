@@ -44,7 +44,7 @@ export default function LocalBusinessSection({
             return (
               <div key={comp.id} className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] flex items-center justify-center flex-shrink-0">
                     <Store size={14} style={{ color: 'var(--text-muted)' }} />
                   </div>
                   <div className="min-w-0">

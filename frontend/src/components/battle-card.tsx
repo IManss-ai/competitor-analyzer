@@ -117,7 +117,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
       <motion.button
         whileTap={{ scale: 0.99 }}
         onClick={generateCard}
-        className="px-3 py-1.5 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-1.5 transition-colors cursor-pointer"
+        className="px-3 py-1.5 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-1.5 transition-colors cursor-pointer"
       >
         <Zap size={13} className="text-sky-400" />
         <span>Battle Card</span>
@@ -135,10 +135,10 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
               initial={shouldReduceMotion ? false : { scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-xl w-full max-w-2xl shadow-2xl relative my-8"
+              className="p-1 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded-lg w-full max-w-2xl shadow-2xl relative my-8"
             >
               {/* Inner Core */}
-              <div className="bg-[var(--surface-overlay)] border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+              <div className="bg-[var(--surface-overlay)] border border-[var(--border-subtle)] rounded-lg overflow-hidden">
                 {/* Header */}
                 <div className="p-6 border-b border-[var(--border-default)] bg-[var(--fill-subtle)]">
                   <div className="flex items-start justify-between">
@@ -188,7 +188,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                     <div className="p-6 space-y-5">
                       {/* Executive Summary */}
                       {cardData.executive_summary && (
-                        <div className="p-4 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-xl">
+                        <div className="p-4 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md">
                           <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1.5">Executive Summary</div>
                           <p className="text-[var(--text-primary)] text-sm leading-relaxed italic">
                             &quot;{cardData.executive_summary}&quot;
@@ -204,7 +204,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 0 * 0.07 }}
-                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400 mb-4">
                             {cardData.variant === 'local' ? 'Activity This Week' : 'Detected Changes'}
@@ -236,7 +236,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 1 * 0.07 }}
-                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-red-400 mb-4">
                             User Complaints
@@ -260,7 +260,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 2 * 0.07 }}
-                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-amber-400 mb-4">
                             Strategic Signals
@@ -284,7 +284,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={shouldReduceMotion ? { duration: 0 } : { delay: 3 * 0.07 }}
-                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-xl md:col-span-2"
+                          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 rounded-md md:col-span-2"
                         >
                           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-400 mb-4">
                             Playbook — This Week
@@ -299,7 +299,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                                 return (
                                   <li
                                     key={idx}
-                                    className="flex items-start justify-between gap-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] p-3 rounded-lg border border-[var(--border-subtle)] transition-colors"
+                                    className="flex items-start justify-between gap-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] p-3 rounded border border-[var(--border-subtle)] transition-colors"
                                   >
                                     <div className="flex items-start gap-3">
                                       <span className="text-xs font-mono font-bold text-emerald-400 mt-0.5">{rankStr}</span>

@@ -82,7 +82,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
+        <div className="rounded border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
           <div className="text-[10px] font-mono uppercase tracking-wider mb-1" style={{ color: 'var(--text-muted)' }}>
             Open roles
           </div>
@@ -90,7 +90,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
             {signal.total_jobs}
           </div>
         </div>
-        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-3">
+        <div className="rounded border border-emerald-500/20 bg-emerald-500/5 px-3 py-3">
           <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400/80 mb-1 flex items-center gap-1">
             <TrendingUp size={9} /> New
           </div>
@@ -98,7 +98,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
             {signal.new_postings}
           </div>
         </div>
-        <div className="rounded-lg border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
+        <div className="rounded border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
           <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-secondary)] mb-1 flex items-center gap-1">
             <MinusCircle size={9} /> Closed
           </div>
@@ -109,7 +109,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
       </div>
 
       {signal.strategic_signal ? (
-        <div className="rounded-lg border border-sky-500/20 bg-sky-500/[0.04] p-4">
+        <div className="rounded border border-sky-500/20 bg-sky-500/[0.04] p-4">
           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5" style={{ color: 'var(--accent-primary)' }}>
             <AlertCircle size={11} />
             Pattern read

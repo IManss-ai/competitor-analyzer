@@ -19,7 +19,7 @@ export default function CompetitorsLoading() {
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="rs-card p-5 h-[180px] flex flex-col justify-between">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-lg rs-skeleton"></div>
+                <div className="w-10 h-10 rounded rs-skeleton"></div>
                 <div className="flex-1 space-y-2 mt-1">
                   <div className="w-1/2 h-4 rs-skeleton"></div>
                   <div className="w-3/4 h-3 rs-skeleton"></div>

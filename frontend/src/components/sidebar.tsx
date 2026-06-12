@@ -233,7 +233,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
         {/* User profile pill */}
         <div
-          className="flex items-center justify-between gap-2 rounded-lg px-3 py-2"
+          className="flex items-center justify-between gap-2 rounded px-3 py-2"
           style={{
             background: 'var(--fill-subtle)',
             border: '1px solid var(--border-default)',
@@ -367,7 +367,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         {/* Trial upgrade banner */}
         {isOnTrial && (
           <div
-            className="rounded-lg p-3 space-y-2"
+            className="rounded p-3 space-y-2"
             style={{
               background: 'var(--fill-subtle)',
               border: '1px solid var(--border-default)',
@@ -414,7 +414,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg text-[12px] cursor-pointer transition-colors"
+            className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-[12px] cursor-pointer transition-colors"
             style={{ color: 'var(--text-muted)' }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';

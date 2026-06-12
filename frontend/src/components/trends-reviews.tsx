@@ -22,7 +22,7 @@ export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
 
   if (allDates.length === 0) {
     return (
-      <div className="h-[220px] flex items-center justify-center border border-dashed border-[var(--border-default)] rounded-lg text-sm bg-[var(--fill-subtle)]" style={{ color: 'var(--text-secondary)' }}>
+      <div className="h-[220px] flex items-center justify-center border border-dashed border-[var(--border-default)] rounded text-sm bg-[var(--fill-subtle)]" style={{ color: 'var(--text-secondary)' }}>
         No review score trends available yet.
       </div>
     );
