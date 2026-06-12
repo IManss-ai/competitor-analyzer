@@ -102,20 +102,26 @@ export default function SettingsClient({
   };
 
   // Change password
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!newPassword) {
+    // Read straight from the DOM inputs, falling back to React state — same
+    // fix as the login/onboarding forms: password-manager autofill sets
+    // input.value without firing React's onChange, leaving state empty.
+    const fd = new FormData(e.currentTarget);
+    const newVal = (fd.get('new_password') as string) || newPassword || '';
+    const confirmVal = (fd.get('confirm_password') as string) || confirmPassword || '';
+    if (!newVal) {
       setPasswordStatus({ type: 'error', message: 'Password cannot be empty' });
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (newVal !== confirmVal) {
       setPasswordStatus({ type: 'error', message: 'Passwords do not match' });
       return;
     }
     try {
       await api.fetch<any>('/settings', {
         method: 'PATCH',
-        body: JSON.stringify({ password: newPassword }),
+        body: JSON.stringify({ password: newVal }),
       });
       setPasswordStatus({ type: 'success', message: 'Password updated successfully!' });
       setNewPassword('');
@@ -319,6 +325,7 @@ export default function SettingsClient({
                   <label className="rs-label block mb-1.5">New Password</label>
                   <input
                     type="password"
+                    name="new_password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Min. 6 characters"
@@ -329,6 +336,7 @@ export default function SettingsClient({
                   <label className="rs-label block mb-1.5">Confirm New Password</label>
                   <input
                     type="password"
+                    name="confirm_password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repeat new password"
