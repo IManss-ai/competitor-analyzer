@@ -98,6 +98,7 @@
   --accent-subtle:  rgba(52,87,129,0.10);
   --accent-border:  rgba(52,87,129,0.30);
   --accent-glow:    rgba(52,87,129,0.18);
+  --accent-text:    #ffffff;   /* text ON accent fills; dark ink text on the lighter ink accent */
 
   /* ── De-hardcoded fills (new, theme-aware) ───────────── */
   --hairline:           rgba(26,23,20,0.06);
@@ -140,6 +141,7 @@ html[data-theme="ink"] {
   --accent-subtle: rgba(79,124,176,0.12);
   --accent-border: rgba(79,124,176,0.34);
   --accent-glow:   rgba(79,124,176,0.25);
+  --accent-text:   #16140f;
   --hairline: rgba(234,230,221,0.06);
   --fill-subtle: rgba(234,230,221,0.04);
   --fill-subtle-hover: rgba(234,230,221,0.07);
@@ -170,6 +172,7 @@ html[data-theme="ink"] {
     --accent-subtle: rgba(79,124,176,0.12);
     --accent-border: rgba(79,124,176,0.34);
     --accent-glow:   rgba(79,124,176,0.25);
+    --accent-text:   #16140f;
     --hairline: rgba(234,230,221,0.06);
     --fill-subtle: rgba(234,230,221,0.04);
     --fill-subtle-hover: rgba(234,230,221,0.07);

@@ -49,7 +49,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
     const fills = { 1: 0.16, 2: 0.4, 3: 1 } as const;
     return {
       backgroundColor: level === 3 ? p.accent : rgba(fills[level]),
-      color: level === 3 ? '#ffffff' : 'var(--text-primary)',
+      color: level === 3 ? 'var(--accent-text)' : 'var(--text-primary)',
       border: `1px solid ${level === 3 ? p.accent : rgba(fills[level] + 0.1)}`,
     };
   };

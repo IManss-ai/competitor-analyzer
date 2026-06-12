@@ -1097,7 +1097,7 @@ export default function LandingPage() {
                   onMouseEnter={() => setHoveredBattleTab(comp)}
                   onMouseLeave={() => setHoveredBattleTab(null)}
                   className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors cursor-pointer relative"
-                  style={{ color: activeComp === comp ? '#ffffff' : 'var(--text-muted)' }}
+                  style={{ color: activeComp === comp ? 'var(--accent-text)' : 'var(--text-muted)' }}
                 >
                   {hoveredBattleTab === comp && activeComp !== comp && (
                     <motion.div
