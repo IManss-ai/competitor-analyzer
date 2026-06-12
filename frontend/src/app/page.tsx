@@ -874,7 +874,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-3 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
+              className="md:col-span-3 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer shadow-lg"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-5">
@@ -936,7 +936,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-base)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <MessageSquare size={18} className="text-sky-400 flex-shrink-0" />
@@ -966,7 +966,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0 }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-gradient-to-b from-[var(--accent-subtle)] to-[var(--surface-base)] border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Zap size={18} className="text-sky-400 flex-shrink-0" />
@@ -996,7 +996,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-sky-500/70 rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
+              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer shadow-lg"
             >
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -1031,7 +1031,7 @@ export default function LandingPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0 }}
-              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t-2 border-t-zinc-400/50 rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
+              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-lg"
             >
               <div className="flex items-center gap-3 mb-4">
                 <Calendar size={18} className="text-[var(--text-primary)] flex-shrink-0" />
@@ -1367,7 +1367,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0 }}
             custom={0}
-            className="border border-sky-500/25 bg-gradient-to-br from-[var(--accent-subtle)] via-[var(--surface-raised)] to-[var(--surface-base)] rounded-md px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
+            className="border border-sky-500/25 bg-[var(--surface-raised)] rounded-md px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
           >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-4 text-balance">

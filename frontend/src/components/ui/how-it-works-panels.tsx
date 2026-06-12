@@ -177,7 +177,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
         </AnimatePresence>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-tr from-sky-950/5 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 " />
     </div>
   );
 }
@@ -286,7 +286,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
         })}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-tr from-sky-950/5 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 " />
     </div>
   );
 }
@@ -353,7 +353,7 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
         </div>
       </motion.div>
 
-      <div className="absolute inset-0 bg-gradient-to-tr from-sky-950/5 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 " />
     </div>
   );
 }
@@ -398,7 +398,7 @@ export default function HowItWorksPanels() {
       <div className="absolute left-4 md:left-8 top-6 bottom-6 w-[2px] bg-[var(--fill-subtle-hover)] rounded-full pointer-events-none">
         <motion.div
           style={{ scaleY, transformOrigin: 'top' }}
-          className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-500 to-sky-600 rounded-full"
+          className="absolute inset-0 bg-[var(--accent-primary)] rounded-full"
         />
       </div>
 
