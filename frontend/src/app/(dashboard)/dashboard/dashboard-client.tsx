@@ -154,6 +154,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       setOnboardingError('Please enter your competitor’s URL.');
       return;
     }
+    // Sync state from the DOM-read values — the success panel renders
+    // onboardingUrl/Name, which stay empty when autofill skipped onChange.
+    setOnboardingUrl(urlVal);
+    setOnboardingName(nameVal);
     setSubmittingOnboarding(true);
     setOnboardingError('');
 
@@ -777,7 +781,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           {event.brief_text && event.brief_text.length > 120 && (
                             <button 
                               onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] inline-flex items-center gap-0.5"
+                              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] inline-flex items-center gap-0.5 py-2 -my-2 px-1 -mx-1 cursor-pointer"
                             >
                               {isExpanded ? <>Collapse <ChevronUp size={12} /></> : <>Expand <ChevronDown size={12} /></>}
                             </button>
