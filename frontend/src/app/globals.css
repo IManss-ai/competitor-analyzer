@@ -590,7 +590,11 @@ html[data-theme="ink"] .badge-initial_scan {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  [style*="opacity: 0"] {
+  /* Framer Motion emits spaceless inline styles (opacity:0), so match both
+     forms — the spaced selector alone never matched and left scroll-reveal
+     content invisible for reduced-motion users. */
+  [style*="opacity: 0"],
+  [style*="opacity:0"] {
     opacity: 1 !important;
     transform: none !important;
   }
