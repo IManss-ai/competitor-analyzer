@@ -550,7 +550,7 @@ export default function LandingPage() {
 
 
       {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-24 px-6 bg-[var(--surface-raised)] relative">
+      <section id="how-it-works" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto">
 
           <motion.div
@@ -575,7 +575,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" ref={commandCenterRef} className="py-28 px-6 bg-[var(--surface-base)] relative">
+      <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
         <div className="pointer-events-none absolute top-24 left-[15%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-7xl mx-auto relative z-10">
 
@@ -846,7 +846,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
-      <section id="features" className="py-28 px-6 bg-[var(--surface-raised)] relative">
+      <section id="features" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-raised)] relative">
         <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
@@ -1068,7 +1068,7 @@ export default function LandingPage() {
 
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
-      <section id="battle-card" className="py-28 px-6 bg-[var(--surface-base)] relative">
+      <section id="battle-card" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
         <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-sky-600/[0.04] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
@@ -1340,7 +1340,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ─────────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 px-6 bg-[var(--surface-base)] relative">
+      <section id="pricing" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             variants={fadeUpVariants}
