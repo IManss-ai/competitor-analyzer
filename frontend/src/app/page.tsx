@@ -295,7 +295,7 @@ export default function LandingPage() {
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded-full hover:bg-[var(--accent-hover)] transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded hover:bg-[var(--accent-hover)] transition-colors whitespace-nowrap"
             >
               Get started
               <ArrowRight size={10} />
@@ -363,10 +363,10 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="inline-flex items-center gap-2 bg-sky-500/15 border border-sky-500/40 rounded-full px-4 py-2 mb-8"
+                className="inline-flex items-center gap-2 bg-sky-500/15 border border-sky-500/40 rounded px-4 py-2 mb-8"
               >
                 <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse flex-shrink-0" />
-                <span className="text-xs font-mono text-sky-500 tracking-wide font-semibold">LIVE · Real-time competitor monitoring</span>
+                <span className="text-xs font-mono text-sky-500 tracking-wide font-semibold">Real-time competitor intelligence</span>
               </motion.div>
 
               <motion.h1
@@ -377,7 +377,7 @@ export default function LandingPage() {
               >
                 Know every competitor<br className="hidden sm:block" />
                 <HeroRotatingWord
-                  words={['move.', 'pricing change.', 'feature launch.', 'messaging shift.', 'hiring signal.']}
+                  words={['move.', 'price change.', 'launch.', 'pivot.', 'new hire.']}
                   className="text-sky-400"
                   interval={2400}
                 />
@@ -402,7 +402,7 @@ export default function LandingPage() {
                   href="/auth/login"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-white font-semibold text-sm px-6 py-3 rounded-full hover:bg-[var(--accent-hover)] transition-colors"
+                  className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-white font-semibold text-sm px-6 py-3 rounded hover:bg-[var(--accent-hover)] transition-colors"
                 >
                   Start 2-day free trial
                   <ArrowRight size={12} />
@@ -1133,7 +1133,7 @@ export default function LandingPage() {
               initial="rest"
               whileTap={{ scale: 0.97 }}
               animate={{ scale: 1 }}
-              className="inline-flex items-center gap-2.5 bg-[var(--accent-primary)] text-white font-semibold px-8 py-3.5 rounded-full hover:bg-[var(--accent-hover)] transition-colors text-sm relative"
+              className="inline-flex items-center gap-2.5 bg-[var(--accent-primary)] text-white font-semibold px-8 py-3.5 rounded hover:bg-[var(--accent-hover)] transition-colors text-sm relative"
             >
               <span>Start free trial</span>
               <motion.span
