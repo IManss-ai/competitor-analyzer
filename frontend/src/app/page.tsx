@@ -389,7 +389,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[var(--text-secondary)] text-lg leading-relaxed max-w-md mb-8"
               >
-                Your rivals change pricing, ship features, and shift messaging every week — and you find out too late. Rivalscope watches them 24/7 and hands you an AI battle card to win the deal.
+                Track every competitor&apos;s pricing, features, and reviews in real time — and get an AI battle card to win the deal.
               </motion.p>
 
               <motion.div
@@ -456,6 +456,20 @@ export default function LandingPage() {
                     />
                     <span className="text-[10px] font-mono text-emerald-500 uppercase tracking-wider">Live</span>
                   </div>
+                </div>
+
+                {/* Compact stat strip — reads as a live dashboard, not a plain list. */}
+                <div className="grid grid-cols-3 border-b border-[var(--border-default)]">
+                  {[
+                    { v: '5', l: 'tracked' },
+                    { v: '12', l: 'changes / wk' },
+                    { v: '3', l: 'alerts' },
+                  ].map((s, i) => (
+                    <div key={s.l} className="px-4 py-3" style={i > 0 ? { borderLeft: '1px solid var(--border-subtle)' } : undefined}>
+                      <div className="text-lg font-bold font-mono tabular-nums text-[var(--text-primary)] leading-none">{s.v}</div>
+                      <div className="text-[9px] font-mono uppercase tracking-wider text-[var(--text-muted)] mt-1.5">{s.l}</div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Feed rows — populate with a one-time staggered entrance so it
