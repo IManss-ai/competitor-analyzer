@@ -423,7 +423,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[var(--text-secondary)] text-lg leading-relaxed max-w-md mb-8"
               >
-                We track pricing changes, messaging shifts, and review signals across your competitors 24/7. Get AI-generated sales playbooks every Monday morning.
+                Your rivals change pricing, ship features, and shift messaging every week — and you find out too late. Rivalscope watches them 24/7 and hands you an AI battle card to win the deal.
               </motion.p>
 
               <motion.div
