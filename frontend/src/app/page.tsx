@@ -522,7 +522,7 @@ export default function LandingPage() {
             { value: 'Monday', label: 'weekly playbook' },
           ].map((stat, i) => (
             <div key={i} className="flex flex-col items-start gap-2">
-              <div className="text-[42px] sm:text-[56px] font-bold text-[var(--text-primary)] tabular-nums tracking-tight leading-none">
+              <div className="text-[28px] sm:text-[36px] font-bold text-[var(--text-primary)] tabular-nums tracking-tight leading-none whitespace-nowrap">
                 {stat.value}
               </div>
               <div className="text-xs text-[var(--text-secondary)] font-mono uppercase tracking-[0.1em]">{stat.label}</div>
