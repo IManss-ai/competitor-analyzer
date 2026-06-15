@@ -169,7 +169,9 @@ export default function LandingPage() {
 
   const [commandCenterInView, setCommandCenterInView] = useState(false);
   const [metricCounters, setMetricCounters] = useState([0, 0, 0]);
-  const [scanSweeping, setScanSweeping] = useState(false);
+  // Decorative scan-sweep overlay removed (always off) — kept the flag so the
+  // existing conditional block renders nothing without further edits.
+  const [scanSweeping] = useState(false);
   const commandCenterRef = useRef<HTMLElement>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -185,7 +187,7 @@ export default function LandingPage() {
         const nextIdx = (idx + 1) % comps.length;
         return comps[nextIdx];
       });
-    }, 4000);
+    }, 7000);
     return () => clearInterval(interval);
   }, []);
 
@@ -251,15 +253,6 @@ export default function LandingPage() {
     };
     requestAnimationFrame(animate);
   }, [commandCenterInView]);
-
-  // Periodic scan sweep animation every 6 seconds
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setScanSweeping(true);
-      setTimeout(() => setScanSweeping(false), 1300);
-    }, 6000);
-    return () => clearInterval(iv);
-  }, []);
 
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
@@ -385,8 +378,6 @@ export default function LandingPage() {
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="relative pt-24 pb-20 lg:pt-28 lg:pb-24 px-6 overflow-hidden">
-        {/* Subtle top glow - static, no animation */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[640px] h-[360px] bg-sky-600/[0.05] rounded-full blur-[120px] pointer-events-none z-0" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -576,7 +567,6 @@ export default function LandingPage() {
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
       <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-24 left-[15%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-7xl mx-auto relative z-10">
 
           <motion.div
@@ -847,7 +837,6 @@ export default function LandingPage() {
 
       {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
       <section id="features" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-24 right-[12%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <motion.div
@@ -1069,7 +1058,6 @@ export default function LandingPage() {
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
       <section id="battle-card" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
-        <div className="pointer-events-none absolute top-20 left-[10%] w-[560px] h-[560px] bg-sky-600/[0.04] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
@@ -1286,7 +1274,6 @@ export default function LandingPage() {
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
       <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
-        <div className="pointer-events-none absolute top-20 right-[10%] w-[560px] h-[560px] bg-sky-600/[0.05] rounded-full blur-[120px] z-0" />
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
