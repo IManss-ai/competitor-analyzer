@@ -75,12 +75,16 @@ export default function ProductDemo() {
           </span>
         </div>
 
-        {/* Recording (one <video> per theme so sources reload on switch) */}
-        <div className="relative aspect-[1280/536] w-full bg-[var(--surface-raised)]">
-          <video
+        {/* Recording (one <video> per theme so sources reload on switch).
+            Source is 2× the display size, so the slow Ken Burns zoom stays crisp. */}
+        <div className="relative aspect-[2560/1072] w-full overflow-hidden bg-[var(--surface-raised)]">
+          <motion.video
             key={theme}
             ref={videoRef}
-            className="absolute inset-0 h-full w-full"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ transformOrigin: '50% 44%' }}
+            animate={reduced ? undefined : { scale: [1, 1.07, 1.07, 1] }}
+            transition={reduced ? undefined : { duration: 30, repeat: Infinity, ease: 'easeInOut', times: [0, 0.45, 0.55, 1] }}
             poster={`/demo/command-center-${theme}.jpg`}
             muted
             loop
@@ -90,7 +94,7 @@ export default function ProductDemo() {
           >
             <source src={`/demo/command-center-${theme}.webm`} type="video/webm" />
             <source src={`/demo/command-center-${theme}.mp4`} type="video/mp4" />
-          </video>
+          </motion.video>
         </div>
       </div>
     </motion.div>
