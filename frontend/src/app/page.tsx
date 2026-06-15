@@ -10,6 +10,7 @@ import { PricingBasic } from '@/components/ui/pricing-demo';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
+import ProductDemo from '@/components/ui/product-demo';
 import ThemeToggle from '@/components/theme-toggle';
 
 const MotionLink = motion.create(Link);
@@ -475,6 +476,27 @@ export default function LandingPage() {
             <ChevronDown size={18} className="text-[var(--text-muted)]" />
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* ── PRODUCT DEMO ─────────────────────────────────────────────────────── */}
+      <section className="px-6 pb-20 lg:pb-24 -mt-4">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -80px 0px' }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center mb-10"
+          >
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">
+              See it work
+            </p>
+            <h2 className="text-[28px] sm:text-[36px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1]">
+              Every competitor move, in one command center.
+            </h2>
+          </motion.div>
+          <ProductDemo />
+        </div>
       </section>
 
       {/* ── SOCIAL PROOF BAR ─────────────────────────────────────────────────── */}
