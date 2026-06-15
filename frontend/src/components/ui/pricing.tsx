@@ -107,7 +107,7 @@ export function Pricing({
                   }
                 : {}
             }
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px 400px 0px" }}
             transition={{
               duration: 1.6,
               type: "spring",

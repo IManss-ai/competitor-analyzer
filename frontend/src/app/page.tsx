@@ -526,7 +526,7 @@ export default function LandingPage() {
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0 }}
+        viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="py-16 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25 backdrop-blur-sm"
       >
@@ -557,7 +557,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={0}
             className="mb-16"
           >
@@ -583,7 +583,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={0}
             className="mb-12"
           >
@@ -600,7 +600,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={1}
             className="border border-[var(--border-default)] rounded-md hover:border-sky-500/25 transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card-hover)] bg-[var(--surface-raised)]"
           >
@@ -854,7 +854,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={1}
             className="mb-12"
           >
@@ -873,7 +873,7 @@ export default function LandingPage() {
               custom={0}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               className="md:col-span-3 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer"
             >
               <div className="flex-1">
@@ -898,7 +898,7 @@ export default function LandingPage() {
                     strokeLinecap="round"
                     initial={{ pathLength: 0 }}
                     whileInView={{ pathLength: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
                     transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.3 }}
                   />
                   <motion.path
@@ -906,7 +906,7 @@ export default function LandingPage() {
                     fill="url(#chartFill)"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
                     transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.5 }}
                   />
                   <motion.circle
@@ -916,7 +916,7 @@ export default function LandingPage() {
                     fill={p.accentSoft}
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
                     transition={{ duration: 0.4, delay: 1.2, type: 'spring', stiffness: 300 }}
                   />
                   <defs>
@@ -935,7 +935,7 @@ export default function LandingPage() {
               custom={1}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               className="md:col-span-2 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-4">
@@ -963,7 +963,7 @@ export default function LandingPage() {
               custom={2}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               onMouseEnter={() => setCard3Hovered(true)}
               onMouseLeave={() => setCard3Hovered(false)}
               className="md:col-span-1 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer"
@@ -995,7 +995,7 @@ export default function LandingPage() {
               custom={3}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer"
             >
               <div>
@@ -1014,7 +1014,7 @@ export default function LandingPage() {
                   <motion.div
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
                     transition={{ duration: 1.0, ease: 'easeInOut', delay: 0.4 }}
                     style={{ transformOrigin: 'left' }}
                     className="absolute inset-0 bg-sky-500"
@@ -1030,7 +1030,7 @@ export default function LandingPage() {
               custom={4}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-3 mb-4">
@@ -1051,7 +1051,7 @@ export default function LandingPage() {
                     <motion.div
                       initial={{ height: 0 }}
                       whileInView={{ height: `${20 + Math.sin(i * 1.3) * 14}px` }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, margin: "0px 0px 400px 0px" }}
                       transition={{ duration: 0.4, ease: 'easeOut', delay: i * 0.04 }}
                       className="w-full bg-sky-500/30 rounded-sm"
                       style={{ opacity: 0.3 + i * 0.06 }}
@@ -1077,7 +1077,7 @@ export default function LandingPage() {
               variants={fadeUpVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={0}
             >
               <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">04 — Battle Cards</p>
@@ -1123,7 +1123,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={1}
             className="border border-[var(--border-default)] rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]"
           >
@@ -1293,7 +1293,7 @@ export default function LandingPage() {
               variants={fadeUpVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={0}
             >
               <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">05 — Local</p>
@@ -1322,7 +1322,7 @@ export default function LandingPage() {
                   custom={i}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0 }}
+                  viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
                   className="flex items-start gap-3 bg-[var(--surface-base)]/80 border border-[var(--border-default)] p-4 rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-md"
                 >
                   <div className="w-7 h-7 rounded bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
@@ -1346,7 +1346,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={0}
             className="mb-3"
           >
@@ -1365,7 +1365,7 @@ export default function LandingPage() {
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0 }}
+            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={0}
             className="border border-sky-500/25 bg-[var(--surface-raised)] rounded-md px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
           >
