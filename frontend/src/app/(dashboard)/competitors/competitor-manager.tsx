@@ -159,7 +159,7 @@ export default function CompetitorManager({
                   </label>
                   <input
                     id="url"
-                    type="url"
+                    type="text"
                     required
                     placeholder="https://competitor.com"
                     value={url}
