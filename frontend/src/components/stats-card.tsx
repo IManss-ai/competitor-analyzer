@@ -51,8 +51,8 @@ export default function StatsCard({
     >
       {/* Accent top border — replaces bottom sweep */}
       <div
-        className="absolute top-0 left-0 right-0 h-[2px] rounded-t-lg"
-        style={{ background: cfg.bar }}
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ background: cfg.bar, borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }}
       />
 
       {/* Header row */}
@@ -80,15 +80,16 @@ export default function StatsCard({
         {trend && (
           <div
             className={clsx(
-              'flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-md border',
+              'flex items-center gap-1 text-[10px] font-mono px-2 py-1 border',
             )}
-            style={
-              trend === 'up'
+            style={{
+              borderRadius: 'var(--radius-sm)',
+              ...(trend === 'up'
                 ? { color: p.positive, background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
                 : trend === 'down'
                 ? { color: p.danger, background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.20)' }
-                : { color: 'var(--text-muted)', background: 'var(--fill-subtle)', borderColor: 'var(--border-default)' }
-            }
+                : { color: 'var(--text-muted)', background: 'var(--fill-subtle)', borderColor: 'var(--border-default)' })
+            }}
           >
             {trend === 'up'   && <ArrowUp size={9} />}
             {trend === 'down' && <ArrowDown size={9} />}

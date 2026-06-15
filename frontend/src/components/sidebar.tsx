@@ -29,11 +29,14 @@ interface SidebarProps {
   pendingCount?: number;
 }
 
-const navItems = [
+const deskItems = [
   { href: '/dashboard',             label: 'Dashboard',    Icon: LayoutDashboard },
   { href: '/competitors',           label: 'Competitors',  Icon: Building2 },
   { href: '/campaigns',             label: 'Campaigns',    Icon: Swords },
   { href: '/discover',              label: 'Discover',     Icon: Compass },
+];
+
+const signalItems = [
   { href: '/dashboard#feed',        label: 'Intel Feed',   Icon: FileText },
   { href: '/battlecards',           label: 'Battle Cards', Icon: Shield },
   { href: '/trends',                label: 'Trends',       Icon: TrendingUp },
@@ -247,7 +250,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             {email}
           </p>
           <span
-            className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+            className="flex-shrink-0 px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wide"
             style={{
               background: planBadge === 'Pro'
                 ? 'rgba(79, 124, 176,0.15)'
@@ -264,65 +267,138 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
       </div>
 
       {/* ── Navigation ─────────────────────────────────────────────── */}
-      <nav className="flex-1 py-3 px-3 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ href, label, Icon }) => {
-          const isActive =
-            pathname === href ||
-            (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
-          const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
+      <nav className="flex-1 py-3 px-3 space-y-4 overflow-y-auto">
+        <div>
+          <div className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            DESK
+          </div>
+          <div className="space-y-0.5">
+            {deskItems.map(({ href, label, Icon }) => {
+              const isActive =
+                pathname === href ||
+                (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
+              const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
 
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
-              className={clsx(
-                'group relative flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors duration-150',
-                !isActive && 'hover:text-[var(--text-primary)]'
-              )}
-              style={
-                isActive
-                  ? { background: 'var(--accent-subtle)', color: 'var(--accent-primary)' }
-                  : { color: 'var(--text-secondary)' }
-              }
-            >
-              {/* Active left rule — sharp, no glow (DESIGN.md) */}
-              {isActive && (
-                <motion.div
-                  layoutId="activeNavRail"
-                  className="absolute left-0 top-0 bottom-0"
-                  style={{ width: '2px', background: 'var(--accent-primary)' }}
-                  transition={{ duration: 0.15, ease: 'easeOut' }}
-                />
-              )}
-
-              <Icon
-                size={15}
-                className="flex-shrink-0"
-                strokeWidth={isActive ? 2 : 1.75}
-              />
-              <span className="flex-1 truncate">{label}</span>
-
-              {hasBadge && (
-                <span
-                  className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none"
-                  style={{ background: 'var(--accent-primary)' }}
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
+                  className={clsx(
+                    'group relative flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors duration-150',
+                    !isActive && 'hover:text-[var(--text-primary)]'
+                  )}
+                  style={
+                    isActive
+                      ? { background: 'var(--accent-subtle)', color: 'var(--accent-primary)' }
+                      : { color: 'var(--text-secondary)' }
+                  }
                 >
-                  {pendingCount}
-                </span>
-              )}
+                  {/* Active left rule — sharp, no glow (DESIGN.md) */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavRail"
+                      className="absolute left-0 top-0 bottom-0"
+                      style={{ width: '2px', background: 'var(--accent-primary)' }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                    />
+                  )}
 
-              {/* Subtle hover arrow for non-active */}
-              {!isActive && (
-                <ChevronRight
-                  size={11}
-                  className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
-                  style={{ color: 'var(--text-muted)' }}
-                />
-              )}
-            </Link>
-          );
-        })}
+                  <Icon
+                    size={15}
+                    className="flex-shrink-0"
+                    strokeWidth={isActive ? 2 : 1.75}
+                  />
+                  <span className="flex-1 truncate">{label}</span>
+
+                  {hasBadge && (
+                    <span
+                      className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
+                      style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
+                    >
+                      {pendingCount}
+                    </span>
+                  )}
+
+                  {/* Subtle hover arrow for non-active */}
+                  {!isActive && (
+                    <ChevronRight
+                      size={11}
+                      className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
+                      style={{ color: 'var(--text-muted)' }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            SIGNAL
+          </div>
+          <div className="space-y-0.5">
+            {signalItems.map(({ href, label, Icon }) => {
+              const isActive =
+                pathname === href ||
+                (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
+              const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
+
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
+                  className={clsx(
+                    'group relative flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors duration-150',
+                    !isActive && 'hover:text-[var(--text-primary)]'
+                  )}
+                  style={
+                    isActive
+                      ? { background: 'var(--accent-subtle)', color: 'var(--accent-primary)' }
+                      : { color: 'var(--text-secondary)' }
+                  }
+                >
+                  {/* Active left rule — sharp, no glow (DESIGN.md) */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavRail"
+                      className="absolute left-0 top-0 bottom-0"
+                      style={{ width: '2px', background: 'var(--accent-primary)' }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                    />
+                  )}
+
+                  <Icon
+                    size={15}
+                    className="flex-shrink-0"
+                    strokeWidth={isActive ? 2 : 1.75}
+                  />
+                  <span className="flex-1 truncate">{label}</span>
+
+                  {hasBadge && (
+                    <span
+                      className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
+                      style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
+                    >
+                      {pendingCount}
+                    </span>
+                  )}
+
+                  {/* Subtle hover arrow for non-active */}
+                  {!isActive && (
+                    <ChevronRight
+                      size={11}
+                      className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
+                      style={{ color: 'var(--text-muted)' }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </nav>
 
       {/* ── Bottom actions ──────────────────────────────────────────── */}

@@ -52,7 +52,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
           <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             Hiring Signals
           </h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border tag-amber">
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border tag-amber">
             Pending first scan
           </span>
         </div>

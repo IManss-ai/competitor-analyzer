@@ -19,72 +19,57 @@ function getRelativeTime(dateString: string) {
   return `${days}d ago`;
 }
 
+function getFormattedDateline(lastScan?: string | null) {
+  const date = new Date();
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const dayName = days[date.getDay()];
+  const day = String(date.getDate()).padStart(2, '0');
+  const monthName = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  const dateStr = `${dayName} ${day} ${monthName} ${year}`;
+  
+  if (lastScan) {
+    const relative = getRelativeTime(lastScan);
+    return `${dateStr} · LAST SCAN: ${relative.toUpperCase()} · LIVE`;
+  }
+  return `${dateStr} · SYSTEM ONLINE · LIVE`;
+}
+
 export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {
   return (
     <header
-      className="flex items-start justify-between flex-wrap gap-3 mb-8 pb-6"
-      style={{ borderBottom: '1px solid var(--border-default)' }}
+      className="flex items-end justify-between flex-wrap gap-3 mb-8 pb-4"
+      style={{ borderBottom: '2px solid var(--text-primary)' }}
     >
-      {/* Left — page title */}
+      {/* Left — page title + broadsheet dateline */}
       <div>
         <h1
-          className="text-[24px] font-semibold leading-tight tracking-tight"
+          className="text-[28px] font-extrabold leading-tight tracking-tight uppercase"
           style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}
         >
           {title}
         </h1>
-        {subtitle && (
-          <p
-            className="text-[13px] mt-1 font-normal"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {subtitle}
-          </p>
-        )}
+        <div
+          className="text-[10px] font-mono uppercase tracking-[0.12em] mt-1.5 flex flex-wrap items-center gap-x-2"
+          style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
+        >
+          <span>{getFormattedDateline(lastScan)}</span>
+          {subtitle && (
+            <>
+              <span>·</span>
+              <span className="normal-case tracking-normal" style={{ color: 'var(--text-secondary)' }}>
+                {subtitle}
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Right — meta + actions */}
-      <div className="flex items-center gap-4 pt-0.5 flex-shrink-0">
+      {/* Right — theme toggle + actions */}
+      <div className="flex items-center gap-4 pb-0.5 flex-shrink-0">
         <ThemeToggle />
-        <div style={{ width: '1px', height: '16px', background: 'var(--border-default)' }} />
-
-        {/* Monitoring status */}
-        <div className="flex items-center gap-2">
-          <span className="status-dot-active" />
-          <span
-            className="text-[12px] font-medium"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            Monitoring active
-          </span>
-        </div>
-
-        {/* Last scan — undefined means the page didn't load scan data, so say
-            nothing rather than falsely claiming "No scans yet"; null means we
-            know there are none. */}
-        {lastScan !== undefined && (
-          <>
-            <div
-              style={{ width: '1px', height: '16px', background: 'var(--border-default)' }}
-            />
-            {lastScan ? (
-              <time
-                className="text-[11px] font-mono"
-                style={{ color: 'var(--text-muted)' }}
-                dateTime={lastScan}
-              >
-                Last scan: {getRelativeTime(lastScan)}
-              </time>
-            ) : (
-              <span
-                className="text-[11px] font-mono"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                No scans yet
-              </span>
-            )}
-          </>
-        )}
 
         {/* Actions slot */}
         {actions && (

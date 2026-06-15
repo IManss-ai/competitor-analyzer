@@ -145,7 +145,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
           <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             Data Sources
           </h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--border-default)] text-[var(--text-muted)]">
+          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border border-[var(--border-default)] text-[var(--text-muted)]">
             {connectedCount}/{SAAS_FIELDS.length} connected
           </span>
         </div>
