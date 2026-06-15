@@ -9,6 +9,8 @@ import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'rechar
 import { DashboardData, Competitor } from '@/lib/types';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
+import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
+import CountUp from '@/components/count-up';
 
 interface DashboardClientProps {
   userId: string;
@@ -44,6 +46,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const [onboardingInstagram, setOnboardingInstagram] = useState('');
   const [submittingOnboarding, setSubmittingOnboarding] = useState(false);
   const [onboardingError, setOnboardingError] = useState('');
+  // The first report (battle card) generated as the finale of onboarding, so a
+  // new user goes sign-up → add → instant report without a manual click.
+  const [onboardingCard, setOnboardingCard] = useState<BattleCardData | null>(null);
+  const [onboardingCardLoading, setOnboardingCardLoading] = useState(false);
+  const [onboardingCardError, setOnboardingCardError] = useState('');
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const p = useChartPalette();
@@ -94,6 +101,25 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       });
   }, [userId, apiUrl]);
 
+  // Generate the first battle card as the onboarding finale. Fired the moment
+  // the initial scan finishes, so the report is building while we transition.
+  const generateOnboardingCard = async (compId: string) => {
+    setOnboardingCardLoading(true);
+    setOnboardingCardError('');
+    try {
+      const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${compId}`, {
+        headers: { Authorization: `Bearer ${userId}` },
+      });
+      if (!res.ok) throw new Error('generate failed');
+      setOnboardingCard(normalizeBattleCard(await res.json()));
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setOnboardingCardError('We could not build the report right now — you can open the Battle Card from your dashboard.');
+    } finally {
+      setOnboardingCardLoading(false);
+    }
+  };
+
   // Polling scan status for Onboarding Step 2
   useEffect(() => {
     if (onboardingStep !== 1 || !onboardingJobId) return;
@@ -110,6 +136,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           if (data.status === 'done') {
             clearInterval(intervalId);
             setOnboardingStep(2);
+            // Kick off the first report immediately so it builds while the
+            // success state animates in.
+            if (onboardingCompId) generateOnboardingCard(onboardingCompId);
             // Re-fetch dashboard data to update the background counts
             await refreshDashboard();
           } else if (data.status === 'error') {
@@ -562,65 +591,71 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     );
   }
 
-  // ── ONBOARDING STEP 3: INLINE FIRST RESULTS ──────────────────────────────
+  // ── ONBOARDING STEP 3: FIRST INTELLIGENCE REPORT ─────────────────────────
   if (onboardingStep === 2) {
     const isError = onboardingStatus === 'error';
+    const compLabel = onboardingName || onboardingUrl;
+    const resetAndAddAnother = () => {
+      setOnboardingUrl('');
+      setOnboardingName('');
+      setOnboardingG2Url('');
+      setOnboardingCard(null);
+      setOnboardingCardError('');
+      setOnboardingStep(0);
+    };
     return (
-      <div className="backdrop-blur-md border border-[var(--border-default)] p-8 max-w-xl mx-auto shadow-[var(--shadow-modal)] text-center space-y-6 my-12" style={{ backgroundColor: 'var(--surface-overlay)' }}>
-        <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
-          {isError ? (
-            <AlertTriangle size={32} className="text-red-400" />
-          ) : (
-            <CheckCircle2 size={32} />
-          )}
-        </div>
-
-        <div className="space-y-2">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        className="border border-[var(--border-default)] max-w-2xl mx-auto shadow-[var(--shadow-modal)] my-10 overflow-hidden"
+        style={{ backgroundColor: 'var(--surface-overlay)', borderRadius: 'var(--radius-lg)' }}
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-[var(--border-default)] bg-[var(--fill-subtle)] text-center space-y-2">
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto border ${isError ? 'bg-[var(--tone-danger)]/10 border-[var(--tone-danger)]/25' : 'bg-emerald-500/10 border-emerald-500/25'}`}>
+            {isError ? <AlertTriangle size={24} className="text-[var(--tone-danger)]" /> : <CheckCircle2 size={24} className="text-emerald-500" />}
+          </div>
           <h2 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-            {isError ? 'Scan had an issue' : 'First scan complete!'}
+            {isError ? 'Scan had an issue' : `Your first report on ${compLabel}`}
           </h2>
-          <p className="text-xs max-w-sm mx-auto" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-xs max-w-md mx-auto" style={{ color: 'var(--text-secondary)' }}>
             {isError
-              ? "We added your competitor but couldn't scan their page. Check their URL or try again."
-              : "We've captured their current landing page snapshot and scheduled the monitor."
-            }
+              ? "We added your competitor but couldn't scan their page. Check the URL or try again — we'll keep monitoring."
+              : 'We scanned their site and compiled the intelligence below. We re-check automatically every week.'}
           </p>
         </div>
 
+        {/* The report itself (or graceful fallback) */}
         {!isError && (
-          <div className="border border-[var(--border-default)] p-4 max-w-md mx-auto text-left space-y-2 text-xs" style={{ background: 'var(--fill-subtle)' }}>
-            <p className="font-bold" style={{ color: 'var(--text-primary)' }}>{onboardingName || onboardingUrl}</p>
-            <p className="truncate" style={{ color: 'var(--text-secondary)' }}>{onboardingUrl}</p>
-            <p className="border-t border-[var(--border-subtle)] pt-2 mt-2 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              We will automatically check this competitor every Monday and email you changes.
-            </p>
-          </div>
+          <BattleCardContent
+            cardData={onboardingCard}
+            loading={onboardingCardLoading}
+            error={onboardingCardError}
+            loadingLabel="Building your first battle card..."
+          />
         )}
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        {/* Actions */}
+        <div className="p-6 border-t border-[var(--border-default)] flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
-            onClick={() => {
-              setOnboardingUrl('');
-              setOnboardingName('');
-              setOnboardingG2Url('');
-              setOnboardingStep(0);
-            }}
+            onClick={resetAndAddAnother}
             className="w-full sm:w-auto px-5 py-2.5 border border-[var(--border-default)] hover:bg-[var(--fill-subtle-hover)] text-sm font-semibold transition-colors cursor-pointer"
-            style={{ background: 'var(--fill-subtle)', color: 'var(--text-primary)' }}
+            style={{ background: 'var(--fill-subtle)', color: 'var(--text-primary)', borderRadius: 'var(--radius-md)' }}
           >
             Add another competitor
           </button>
           <button
             onClick={() => setOnboardingStep(3)}
             className="w-full sm:w-auto px-5 py-2.5 text-white text-sm font-semibold transition-colors cursor-pointer"
-            style={{ backgroundColor: 'var(--accent-primary)' }}
+            style={{ backgroundColor: 'var(--accent-primary)', borderRadius: 'var(--radius-md)' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
           >
-            Go to Dashboard
+            Go to Dashboard <ArrowRight size={14} className="inline ml-1 -mt-0.5" />
           </button>
         </div>
-      </div>
+      </motion.div>
     );
   }
   return (
@@ -630,22 +665,29 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         {[{
           label: 'Competitors',
           value: dashboardData.competitor_count,
+          decimals: 0,
           sub: 'active targets',
         },{
           label: 'Changes / week',
           value: dashboardData.changes_this_week || 0,
+          decimals: 0,
           sub: 'past 7 days',
         },{
           label: 'Pending alerts',
           value: dashboardData.pending_count,
+          decimals: 0,
           sub: 'require review',
         },{
           label: 'Avg review',
-          value: dashboardData.avg_review_score !== null ? dashboardData.avg_review_score.toFixed(1) : '—',
+          value: dashboardData.avg_review_score,
+          decimals: 1,
           sub: 'across platforms',
-        }].map(({ label, value, sub }, idx) => (
-          <div
+        }].map(({ label, value, decimals, sub }, idx) => (
+          <motion.div
             key={label}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.24, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="px-5 py-4 lg:py-5"
             style={idx > 0 ? { borderLeft: '1px solid var(--border-subtle)' } : undefined}
           >
@@ -654,10 +696,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               className="text-[32px] font-semibold leading-none tracking-tight font-mono tabular-nums mt-2.5"
               style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}
             >
-              {value}
+              {typeof value === 'number' ? <CountUp value={value} decimals={decimals} /> : '—'}
             </p>
             <p className="text-[10px] mt-2 font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{sub}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -738,13 +780,16 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 No change events recorded yet. Run a scan to see data.
               </div>
             ) : (
-              feedEvents.map((event) => {
+              feedEvents.map((event, idx) => {
                 const isExpanded = expandedEventId === event.id;
                 const hostname = (event.competitor_url.split('://')[1] || event.competitor_url).split('/')[0].replace('www.', '');
 
                 return (
-                  <div
+                  <motion.div
                     key={event.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.22, delay: Math.min(idx, 8) * 0.04, ease: [0.16, 1, 0.3, 1] }}
                     className="p-4 transition-colors duration-150"
                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--fill-subtle)')}
@@ -796,7 +841,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })
             )}
