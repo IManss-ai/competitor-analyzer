@@ -534,7 +534,7 @@ export default function LandingPage() {
 
 
       {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-raised)] relative">
+      <section id="how-it-works" className="scroll-mt-24 py-16 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto">
 
           <motion.div
@@ -559,7 +559,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── COMMAND CENTER ──────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
+      <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-16 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto relative z-10">
 
           <motion.div
@@ -811,7 +811,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
-      <section id="battle-card" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
+      <section id="battle-card" className="scroll-mt-24 py-16 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-5xl mx-auto relative z-10">
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
@@ -1022,7 +1022,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── LOCAL BUSINESS ──────────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-[var(--surface-raised)] relative">
+      <section className="py-16 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -1076,7 +1076,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ─────────────────────────────────────────────────────── */}
-      <section id="pricing" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
+      <section id="pricing" className="scroll-mt-24 py-16 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             variants={fadeUpVariants}
@@ -1095,7 +1095,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA ─────────────────────────────────────────────────────────── */}
-      <section className="py-28 px-6 bg-[var(--surface-base)] relative overflow-hidden">
+      <section className="py-16 px-6 bg-[var(--surface-base)] relative overflow-hidden">
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}
