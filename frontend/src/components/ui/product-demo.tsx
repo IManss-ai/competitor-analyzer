@@ -77,13 +77,13 @@ export default function ProductDemo() {
 
         {/* Recording (one <video> per theme so sources reload on switch).
             Source is 2× the display size, so the slow Ken Burns zoom stays crisp. */}
-        <div className="relative aspect-[2560/1072] w-full overflow-hidden bg-[var(--surface-raised)]">
+        <div className="relative aspect-[2600/1072] w-full overflow-hidden bg-[var(--surface-raised)]">
           <motion.video
             key={theme}
             ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ transformOrigin: '50% 44%' }}
-            animate={reduced ? undefined : { scale: [1, 1.07, 1.07, 1] }}
+            className="absolute inset-0 h-full w-full"
+            style={{ transformOrigin: '50% 45%' }}
+            animate={reduced ? undefined : { scale: [1, 1.06, 1.06, 1] }}
             transition={reduced ? undefined : { duration: 30, repeat: Infinity, ease: 'easeInOut', times: [0, 0.45, 0.55, 1] }}
             poster={`/demo/command-center-${theme}.jpg`}
             muted
