@@ -8,6 +8,7 @@ import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, C
 import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { DashboardData, Competitor } from '@/lib/types';
 import { useChartPalette } from '@/lib/chart-theme';
+import { isAbortError } from '@/lib/fetch-utils';
 
 interface DashboardClientProps {
   userId: string;
@@ -64,6 +65,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       // hold their own copy of this data and won't update from client fetches.
       router.refresh();
     } catch (e) {
+      if (isAbortError(e)) return;
       console.error('Failed to refresh dashboard data:', e);
     }
   };
@@ -97,10 +99,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     if (onboardingStep !== 1 || !onboardingJobId) return;
 
     let intervalId: any = null;
-    
+    const controller = new AbortController();
+
     const checkStatus = async () => {
       try {
-        const res = await fetch(`${apiUrl}/api/v1/scan/status/${onboardingJobId}`);
+        const res = await fetch(`${apiUrl}/api/v1/scan/status/${onboardingJobId}`, { signal: controller.signal });
         if (res.ok) {
           const data = await res.json();
           setOnboardingStatus(data.status);
@@ -118,12 +121,16 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           }
         }
       } catch (e) {
+        if (isAbortError(e)) return;
         console.error(e);
       }
     };
 
     intervalId = setInterval(checkStatus, 3000);
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      controller.abort();
+    };
   }, [onboardingStep, onboardingJobId, userId, apiUrl]);
 
   // Business type selection handler
@@ -226,7 +233,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         }
       }
     } catch (e) {
-      console.error(e);
+      if (!isAbortError(e)) console.error(e);
     } finally {
       setLoadingFeed(false);
     }
@@ -255,7 +262,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         }, 3000);
       }
     } catch (e) {
-      console.error(e);
+      if (!isAbortError(e)) console.error(e);
     } finally {
       setScanningCompId(null);
     }
