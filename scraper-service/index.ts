@@ -21,6 +21,29 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   ]);
 }
 
+// Cap concurrent Chromium work. Each scrape opens a browser context + page,
+// which is memory-heavy; an unbounded burst (e.g. 80 sign-ups scanning at once)
+// would spawn 80 contexts in the single shared browser and OOM the container.
+// Extra requests queue; once the queue is full we fail fast with 503 rather
+// than let work pile up unboundedly. Tunable via env without a redeploy.
+const MAX_CONCURRENT = Number(process.env.SCRAPER_MAX_CONCURRENT ?? 4);
+const MAX_QUEUE = Number(process.env.SCRAPER_MAX_QUEUE ?? 40);
+let active = 0;
+const waiters: Array<() => void> = [];
+
+async function acquireSlot(): Promise<void> {
+  if (active < MAX_CONCURRENT) { active++; return; }
+  if (waiters.length >= MAX_QUEUE) throw new Error('scraper overloaded');
+  // Slot is handed over directly by releaseSlot() (count stays reserved),
+  // so the cap can't be exceeded by a race between release and re-acquire.
+  await new Promise<void>((resolve) => waiters.push(resolve));
+}
+function releaseSlot(): void {
+  const next = waiters.shift();
+  if (next) next();
+  else active--;
+}
+
 let browser: Browser | null = null;
 async function getBrowser(): Promise<Browser> {
   if (!browser || !browser.isConnected()) {
@@ -64,13 +87,16 @@ app.get('/health', async (_req, res) => {
 app.post('/scrape-raw', async (req, res) => {
   const url = req.body?.url;
   if (!url || typeof url !== 'string') return res.status(400).json({ error: 'url required' });
+  try { await acquireSlot(); } catch { return res.status(503).json({ error: 'scraper overloaded, retry shortly' }); }
   try { const html = await renderHtml(url); res.json({ text: htmlToMarkdown(html, url) }); }
   catch (e) { res.status(502).json({ error: `scrape-raw failed: ${String(e)}` }); }
+  finally { releaseSlot(); }
 });
 
 app.post('/scrape', async (req, res) => {
   const url = req.body?.url;
   if (!url || typeof url !== 'string') return res.status(400).json({ error: 'url required' });
+  try { await acquireSlot(); } catch { return res.status(503).json({ error: 'scraper overloaded, retry shortly' }); }
   try {
     const b = await getBrowser();
     const ctx = await b.newContext({ userAgent: 'Mozilla/5.0 (compatible; RivalscopeBot/1.0)' });
@@ -94,6 +120,7 @@ app.post('/scrape', async (req, res) => {
       res.json({ text: serialize((record ?? {}) as any) });
     } finally { await ctx.close(); }
   } catch (e) { res.status(502).json({ error: `scrape failed: ${String(e)}` }); }
+  finally { releaseSlot(); }
 });
 
 app.listen(PORT, () => console.log(`[scraper] listening on :${PORT}`));
