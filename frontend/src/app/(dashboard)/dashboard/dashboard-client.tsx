@@ -96,7 +96,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   useEffect(() => {
     if (onboardingStep !== 1 || !onboardingJobId) return;
 
-    let intervalId: any;
+    let intervalId: any = null;
     
     const checkStatus = async () => {
       try {
