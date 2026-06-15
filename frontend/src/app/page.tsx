@@ -59,7 +59,7 @@ const BATTLE_CARDS_DATA = {
       total: 47,
       new: 6,
       closed: 2,
-      read: 'Six new Enterprise Sales and Solutions Engineer roles in EMEA — a clear upmarket push.',
+      read: 'Six new Enterprise Sales and Solutions Engineer roles in EMEA. A clear upmarket push.',
     },
   },
   paypal: {
@@ -88,7 +88,7 @@ const BATTLE_CARDS_DATA = {
       total: 31,
       new: 3,
       closed: 4,
-      read: 'Heavy applied-ML and mobile SDK hiring — a biometric-checkout product launch is imminent.',
+      read: 'Heavy applied-ML and mobile SDK hiring. A biometric-checkout product launch is imminent.',
     },
   },
   square: {
@@ -117,7 +117,7 @@ const BATTLE_CARDS_DATA = {
       total: 22,
       new: 4,
       closed: 1,
-      read: 'Four new UK retail partnership and hardware roles in two weeks — European expansion is funded.',
+      read: 'Four new UK retail partnership and hardware roles in two weeks. European expansion is funded.',
     },
   },
   adyen: {
@@ -167,9 +167,6 @@ export default function LandingPage() {
 
   const [commandCenterInView, setCommandCenterInView] = useState(false);
   const [metricCounters, setMetricCounters] = useState([0, 0, 0]);
-  // Decorative scan-sweep overlay removed (always off) — kept the flag so the
-  // existing conditional block renders nothing without further edits.
-  const [scanSweeping] = useState(false);
   const commandCenterRef = useRef<HTMLElement>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -243,8 +240,8 @@ export default function LandingPage() {
         <motion.nav
           initial={{ y: -24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className={`w-full max-w-5xl rounded-full border px-5 py-2.5 flex items-center justify-between transition-[background-color,border-color,box-shadow] duration-300 ${
+          transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          className={`w-full max-w-5xl rounded-md border px-5 py-2.5 flex items-center justify-between transition-[background-color,border-color,box-shadow] duration-300 ${
             scrolled
               ? 'bg-[var(--surface-base)]/90 border-[var(--border-default)] shadow-[0_1px_0_0_var(--hairline)] backdrop-blur-xl'
               : 'bg-[var(--surface-base)]/60 border-[var(--border-subtle)] backdrop-blur-md'
@@ -293,7 +290,6 @@ export default function LandingPage() {
             </Link>
             <MotionLink
               href="/auth/login"
-              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded hover:bg-[var(--accent-hover)] transition-colors whitespace-nowrap"
             >
@@ -302,7 +298,6 @@ export default function LandingPage() {
             </MotionLink>
             <motion.button
               onClick={() => setMenuOpen(!menuOpen)}
-              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               className="md:hidden flex flex-col gap-1 items-center justify-center w-11 h-11 rounded bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] transition-colors"
               aria-label="Toggle menu"
@@ -362,17 +357,17 @@ export default function LandingPage() {
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 className="inline-flex items-center gap-2 bg-sky-500/15 border border-sky-500/40 rounded px-4 py-2 mb-8"
               >
-                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse flex-shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-sky-400 flex-shrink-0" />
                 <span className="text-xs font-mono text-sky-500 tracking-wide font-semibold">Real-time competitor intelligence</span>
               </motion.div>
 
               <motion.h1
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.24, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[48px] sm:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.1] mb-6 text-[var(--text-primary)]"
               >
                 Know every competitor<br className="hidden sm:block" />
@@ -386,21 +381,20 @@ export default function LandingPage() {
               <motion.p
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.24, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[var(--text-secondary)] text-lg leading-relaxed max-w-md mb-8"
               >
-                Track every competitor&apos;s pricing, features, and reviews in real time — and get an AI battle card to win the deal.
+                Track every competitor&apos;s pricing, features, and reviews in real time. Get an AI battle card to win the deal.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.24, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8"
               >
                 <MotionLink
                   href="/auth/login"
-                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-white font-semibold text-sm px-6 py-3 rounded hover:bg-[var(--accent-hover)] transition-colors"
                 >
@@ -419,7 +413,7 @@ export default function LandingPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.24 }}
+                transition={{ duration: 0.24, delay: 0.24 }}
                 className="flex items-center gap-5 text-xs text-[var(--text-muted)]"
               >
                 <span className="flex items-center gap-1.5">
@@ -438,7 +432,7 @@ export default function LandingPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.24, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
               <div className="bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card)] cursor-pointer">
@@ -517,17 +511,17 @@ export default function LandingPage() {
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
         className="py-16 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25 backdrop-blur-sm"
       >
-        <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+        <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8">
           {[
             { value: 'Every 4h', label: 'scan frequency' },
             { value: '7', label: 'competitors per plan' },
             { value: '5 min', label: 'setup time' },
             { value: 'Monday', label: 'weekly playbook' },
           ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
+            <div key={i} className="flex flex-col items-start gap-2">
               <div className="text-[42px] sm:text-[56px] font-bold text-[var(--text-primary)] tabular-nums tracking-tight leading-none">
                 {stat.value}
               </div>
@@ -551,12 +545,12 @@ export default function LandingPage() {
             custom={0}
             className="mb-16"
           >
-            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">01 — How it works</p>
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">01 · How it works</p>
             <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
             <p className="text-[var(--text-secondary)] text-base max-w-lg leading-relaxed">
-              No SDK integrations. No permissions needed. We crawl public competitor surfaces and synthesize them into actionable intelligence.
+              No SDKs. No permissions. We crawl public competitor pages and turn them into action.
             </p>
           </motion.div>
 
@@ -576,12 +570,12 @@ export default function LandingPage() {
             custom={0}
             className="mb-12"
           >
-            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">02 — Command Center</p>
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">02 · Command Center</p>
             <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               The Intelligence<br className="hidden md:block" /> Command Center
             </h2>
             <p className="text-[var(--text-secondary)] text-base max-w-md leading-relaxed">
-              One view for every competitor movement. Pricing updates, review signals, and AI playbooks in a single dashboard.
+              Every competitor movement in one view: pricing, reviews, and AI playbooks.
             </p>
           </motion.div>
 
@@ -617,7 +611,7 @@ export default function LandingPage() {
                           <motion.div
                             layoutId="activeDashTab"
                             className="absolute inset-0 bg-sky-500/10 border border-sky-500/20 rounded"
-                            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                            transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }}
                           />
                         )}
                         <span className="capitalize relative z-10">{comp}</span>
@@ -670,23 +664,6 @@ export default function LandingPage() {
 
               {/* Main panel */}
               <div className="p-5 flex flex-col justify-between overflow-hidden relative">
-                    {/* Periodic scan sweep */}
-                    <AnimatePresence>
-                      {scanSweeping && (
-                        <motion.div
-                          key="scan-sweep"
-                          initial={{ x: '-110%', opacity: 0.9 }}
-                          animate={{ x: '110%', opacity: 0.3 }}
-                          exit={{}}
-                          transition={{ duration: 1.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                          className="absolute inset-y-0 left-0 w-32 pointer-events-none z-20"
-                          style={{
-                            background:
-                              'linear-gradient(to right, transparent, rgba(79, 124, 176,0.07), rgba(79, 124, 176,0.12), rgba(79, 124, 176,0.07), transparent)',
-                          }}
-                        />
-                      )}
-                    </AnimatePresence>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedDashboardComp}
@@ -782,7 +759,6 @@ export default function LandingPage() {
                           </p>
                         </div>
                         <motion.button
-                          whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
                           className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded transition-colors flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
@@ -846,37 +822,37 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={0}
             >
-              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">03 — Battle Cards</p>
+              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">03 · Battle Cards</p>
               <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-3 text-balance">
                 Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
               <p className="text-[var(--text-secondary)] text-sm max-w-sm leading-relaxed">
-                Generated every Monday for sales enablement, summarized into four actionable quadrants.
+                Four quadrants, refreshed every Monday.
               </p>
             </motion.div>
 
-            <div className="flex p-1 bg-[var(--fill-subtle)] border border-[var(--border-default)] rounded-full gap-0.5 flex-shrink-0">
+            <div className="flex p-1 bg-[var(--fill-subtle)] border border-[var(--border-default)] rounded-md gap-0.5 flex-shrink-0">
               {(['stripe', 'paypal', 'square'] as const).map((comp) => (
                 <motion.button
                   key={comp}
                   onClick={() => setActiveComp(comp)}
                   onMouseEnter={() => setHoveredBattleTab(comp)}
                   onMouseLeave={() => setHoveredBattleTab(null)}
-                  className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors cursor-pointer relative"
+                  className="text-xs font-semibold px-4 py-1.5 rounded-md transition-colors cursor-pointer relative"
                   style={{ color: activeComp === comp ? 'var(--accent-text)' : 'var(--text-muted)' }}
                 >
                   {hoveredBattleTab === comp && activeComp !== comp && (
                     <motion.div
                       layoutId="battleTabHover"
-                      className="absolute inset-0 bg-[var(--fill-subtle-hover)] rounded-full"
-                      transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                      className="absolute inset-0 bg-[var(--fill-subtle-hover)] rounded-md"
+                      transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }}
                     />
                   )}
                   {activeComp === comp && (
                     <motion.div
                       layoutId="activeBattleTab"
-                      className="absolute inset-0 bg-sky-600 rounded-full shadow-[0_2px_8px_rgba(79, 124, 176,0.25)]"
-                      transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                      className="absolute inset-0 bg-sky-600 rounded-md"
+                      transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }}
                     />
                   )}
                   <span className="relative z-10 capitalize">{comp}</span>
@@ -1028,12 +1004,7 @@ export default function LandingPage() {
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 400,
-                            damping: 34,
-                            delay: 0.05 + j * 0.05
-                          }}
+                          transition={{ duration: 0.16, ease: [0, 0, 0.2, 1], delay: 0.05 + j * 0.05 }}
                           className="text-emerald-400 flex-shrink-0 mt-0.5"
                         >
                           <CheckCircle2 size={14} />
@@ -1061,12 +1032,12 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={0}
             >
-              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">04 — Local</p>
+              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">04 · Local</p>
               <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
                 Built for local<br className="hidden lg:block" /> businesses too
               </h2>
               <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-6">
-                Not just SaaS. Crawl Google Maps reviews, social activity, and pricing for physical salons, cafes, gyms, and nearby competitors.
+                Track Google Maps reviews, social activity, and pricing for nearby salons, cafes, and gyms.
               </p>
               <Link
                 href="/auth/login"
@@ -1088,7 +1059,7 @@ export default function LandingPage() {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-                  className="flex items-start gap-3 bg-[var(--surface-base)]/80 border border-[var(--border-default)] p-4 rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer shadow-md"
+                  className="flex items-start gap-3 bg-[var(--surface-base)]/80 border border-[var(--border-default)] p-4 rounded-md hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer"
                 >
                   <div className="w-7 h-7 rounded bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
                     {item.icon}
@@ -1115,7 +1086,7 @@ export default function LandingPage() {
             custom={0}
             className="mb-3"
           >
-            <span className="text-[10px] font-mono text-sky-400 uppercase tracking-widest border border-sky-500/20 bg-sky-500/5 px-3 py-1 rounded-full inline-block">
+            <span className="text-[10px] font-mono text-sky-400 uppercase tracking-widest border border-sky-500/20 bg-sky-500/5 px-3 py-1 rounded-md inline-block">
               Pricing
             </span>
           </motion.div>
@@ -1132,9 +1103,8 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
             custom={0}
-            className="border border-sky-500/25 bg-[var(--surface-raised)] rounded-md px-10 py-16 text-center relative overflow-hidden shadow-[0_0_0_1px_rgba(79, 124, 176,0.08)]"
+            className="border border-sky-500/25 bg-[var(--surface-raised)] rounded-md px-10 py-16 text-center relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[1px] bg-gradient-to-r from-transparent via-sky-500/40 to-transparent pointer-events-none" />
             <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-4 text-balance">
               Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
@@ -1176,7 +1146,7 @@ export default function LandingPage() {
                 <span className="text-sm font-semibold text-[var(--text-primary)]">Rivalscope</span>
               </div>
               <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-xs">
-                AI-driven competitive intelligence. Track pricing, reviews, and messaging shifts so you can act before the next sales call.
+                AI-driven competitive intelligence that tracks pricing, reviews, and messaging shifts so you can act before the next sales call.
               </p>
             </div>
 
