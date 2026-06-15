@@ -776,8 +776,12 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
           <div className="divide-y divide-[var(--border-subtle)] flex-1">
             {feedEvents.length === 0 ? (
-              <div className="p-8 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
-                No change events recorded yet. Run a scan to see data.
+              <div className="p-10 text-center flex flex-col items-center gap-3">
+                <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>No change events yet</p>
+                <p className="text-xs max-w-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>Add a competitor and run your first scan to start tracking changes.</p>
+                <a href="/competitors" className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-primary)', color: '#fff' }}>
+                  Add competitor
+                </a>
               </div>
             ) : (
               feedEvents.map((event, idx) => {
@@ -961,8 +965,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 );
               })
             ) : (
-              <div className="p-8 text-center text-[13px]" style={{ color: 'var(--text-muted)' }}>
-                No competitors tracked yet.
+              <div className="p-8 text-center flex flex-col items-center gap-3">
+                <p className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>No competitors tracked</p>
+                <a href="/competitors" className="text-xs font-semibold px-3 py-1.5 rounded" style={{ background: 'var(--accent-primary)', color: '#fff' }}>
+                  Add one
+                </a>
               </div>
             )}
           </div>
