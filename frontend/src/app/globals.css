@@ -599,3 +599,29 @@ html[data-theme="ink"] .badge-initial_scan {
     transform: none !important;
   }
 }
+
+/* Lenis smooth-scroll required CSS (landing page uses @studio-freight/lenis).
+   Without this, the `h-full` on <html> (layout.tsx) clamps the scroll height
+   to the viewport and Lenis can't scroll the page — the page feels stuck.
+   `html.lenis` (0,1,1) out-specifies Tailwind's `.h-full` (0,1,0), so
+   height:auto wins only while Lenis is active. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
