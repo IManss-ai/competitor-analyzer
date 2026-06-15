@@ -32,7 +32,7 @@ export default function TrendsChart({ data, competitors }: { data: Record<string
   return (
     <div className="h-[220px] w-full group">
       {mounted && (
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 600, height: 220 }}>
         <LineChart data={data} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={p.grid} />
           <XAxis

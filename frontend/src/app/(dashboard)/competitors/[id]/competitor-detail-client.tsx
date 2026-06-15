@@ -706,7 +706,7 @@ ${card.win_conditions && card.win_conditions.length > 0
             
             {ratingData.length > 0 ? (
               <div className="h-[120px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 600, height: 120 }}>
                   <LineChart data={ratingData}>
                     <XAxis dataKey="date" tick={{ fill: chart.tick, fontSize: 10 }} />
                     <YAxis domain={[1, 5]} tick={{ fill: chart.tick, fontSize: 10 }} width={15} />
