@@ -47,6 +47,7 @@ export default function CompetitorManager({
     e.preventDefault();
     setAdding(true);
     setError('');
+    const normalizedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
     try {
       const res = await fetch(`${apiUrl}/api/v1/competitors`, {
         method: 'POST',
@@ -54,7 +55,7 @@ export default function CompetitorManager({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userId}`,
         },
-        body: JSON.stringify({ url, name: name || undefined }),
+        body: JSON.stringify({ url: normalizedUrl, name: name || undefined }),
       });
       if (res.ok) {
         const newComp = await res.json();
