@@ -74,16 +74,16 @@ The Tailwind `sky-*` scale is remapped to this accent in `globals.css`, so `sky-
 
 Semantic indicators retuned to read as "ledger ink colors," not neon. Each renders as a small mono uppercase tag with a 1px border via the locked `.badge` / `.badge-{type}` classes in `globals.css` (rendered by `components/change-badge.tsx` — always use that component, never restyle inline).
 
-| Change Type | Live value | Tag treatment |
-|-------------|-----------|---------------|
-| `initial_scan` | accent — paper `#345781`, ink `#4f7cb0` (only badge with a per-theme override) | bg 12–14% / border ~33% |
-| `pricing_change` | `#c79a4e` (amber) | bg 12% / border 35% |
-| `feature_add` / `new_feature` | `#5aa07a` (green) | bg 12% / border 35% |
-| `repositioning` / `positioning_shift` | `#9b7fc7` (violet) | bg 12% / border 30% |
-| `review_trend` | `#4f9d9d` (teal) | bg 12% / border 35% |
-| `minor_copy` | `#9aa3af` (slate) | bg 10% / border 30% |
+| Change Type | Paper | Ink | Tag treatment |
+|-------------|-------|-----|---------------|
+| `initial_scan` | accent `#345781` | accent `#4f7cb0` | bg 12–14% / border ~33% |
+| `pricing_change` | `#8a5a12` (amber) | `#c79a4e` (amber) | bg 10–12% / border 35% |
+| `feature_add` / `new_feature` | `#1f5d3f` (green) | `#5aa07a` (green) | bg 10–12% / border 35% |
+| `repositioning` / `positioning_shift` | `#6d4f9c` (violet) | `#9b7fc7` (violet) | bg 10–12% / border 30% |
+| `review_trend` | `#2c6f6f` (teal) | `#4f9d9d` (teal) | bg 10–12% / border 35% |
+| `minor_copy` | `#5b6470` (slate) | `#9aa3af` (slate) | bg 10% / border 30% |
 
-> ⚠️ Known gap: apart from `initial_scan`, badge hues are single-value (tuned for ink) with no paper-theme darkening — `#c79a4e` on white is below AA. Candidate fix when touching badges: per-theme values like the settings status-color sweep (`f3493e7`). Chart equivalents live in `lib/chart-theme.ts` and *are* per-theme.
+> ✅ Resolved (was a known gap): every badge now ships **per-theme** values — paper uses darkened hues, ink keeps the lighter originals (`.badge-*` in `globals.css`, with an `html:not([data-theme])` OS-dark fallback that mirrors ink). Verified 2026-06-15: paper `#8a5a12` on `--surface-base` ≈ 5.3:1 (passes WCAG AA). Chart equivalents live in `lib/chart-theme.ts` and are likewise per-theme.
 
 ---
 
