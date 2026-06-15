@@ -449,15 +449,25 @@ export default function LandingPage() {
                     <span className="text-sm font-semibold text-[var(--text-primary)]">Intel Feed</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] font-mono text-[var(--text-muted)]">Updated 8m ago</span>
+                    <motion.span
+                      animate={{ opacity: [1, 0.3, 1] }}
+                      transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                      className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                    />
+                    <span className="text-[10px] font-mono text-emerald-500 uppercase tracking-wider">Live</span>
                   </div>
                 </div>
 
-                {/* Feed rows */}
+                {/* Feed rows — populate with a one-time staggered entrance so it
+                    reads like live data arriving (not an autoplay loop). */}
                 <div className="p-3 space-y-1">
                   {FEED.map((item, i) => (
-                    <div
+                    <motion.div
                       key={i}
+                      initial={{ opacity: 0, y: 6 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.28, delay: 0.5 + i * 0.09, ease: [0.16, 1, 0.3, 1] }}
                       className="flex items-start gap-3 px-3 py-2.5 rounded hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
                     >
                       <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
@@ -468,7 +478,7 @@ export default function LandingPage() {
                         <span className="text-xs text-[var(--text-secondary)] ml-1.5 leading-snug">{item.action}</span>
                       </div>
                       <span className="text-[10px] font-mono text-[var(--text-muted)] whitespace-nowrap flex-shrink-0 pt-0.5">{item.time}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
 
@@ -1162,7 +1172,6 @@ export default function LandingPage() {
                 {[
                   { label: 'How it works', href: '#how-it-works' },
                   { label: 'Command Center', href: '#dashboard-showcase' },
-                  { label: 'Features', href: '#features' },
                   { label: 'Battle Card', href: '#battle-card' },
                 ].map((l) => (
                   <li key={l.label}><a href={l.href} className="hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
