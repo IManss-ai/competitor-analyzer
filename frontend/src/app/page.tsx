@@ -10,7 +10,6 @@ import { PricingBasic } from '@/components/ui/pricing-demo';
 import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
-import { useChartPalette } from '@/lib/chart-theme';
 import ThemeToggle from '@/components/theme-toggle';
 
 const MotionLink = motion.create(Link);
@@ -150,7 +149,6 @@ const COMP_CHANGE_COUNTS: Record<string, number> = {
 const navItems = [
   { label: 'How it works', href: '#how-it-works', key: 'how-it-works' },
   { label: 'Command Center', href: '#dashboard-showcase', key: 'dashboard-showcase' },
-  { label: 'Features', href: '#features', key: 'features' },
   { label: 'Battle Cards', href: '#battle-card', key: 'battle-card' },
   { label: 'Pricing', href: '#pricing', key: 'pricing' },
 ];
@@ -176,7 +174,6 @@ export default function LandingPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isPausedRef = useRef(false);
-  const p = useChartPalette();
 
   useEffect(() => {
     const comps = ['stripe', 'paypal', 'square', 'adyen'] as const;
@@ -190,27 +187,6 @@ export default function LandingPage() {
     }, 7000);
     return () => clearInterval(interval);
   }, []);
-
-  const [card3Hovered, setCard3Hovered] = useState(false);
-
-  const [typewriterText, setTypewriterText] = useState("");
-
-  useEffect(() => {
-    if (!card3Hovered) {
-      queueMicrotask(() => setTypewriterText(""));
-      return;
-    }
-    const fullText = "› Email: ‘We heard Stripe raised rates...’";
-    let i = 0;
-    const interval = setInterval(() => {
-      setTypewriterText(fullText.slice(0, i + 1));
-      i++;
-      if (i >= fullText.length) {
-        clearInterval(interval);
-      }
-    }, 45);
-    return () => clearInterval(interval);
-  }, [card3Hovered]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -351,7 +327,6 @@ export default function LandingPage() {
               {[
                 { label: 'How it works', href: '#how-it-works' },
                 { label: 'Command Center', href: '#dashboard-showcase' },
-                { label: 'Features', href: '#features' },
                 { label: 'Battle Card', href: '#battle-card' },
                 { label: 'Pricing', href: '#pricing' },
                 { label: 'Sign in', href: '/auth/login' },
@@ -835,227 +810,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FEATURES BENTO ──────────────────────────────────────────────── */}
-      <section id="features" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-raised)] relative">
-        <div className="max-w-5xl mx-auto relative z-10">
-
-          <motion.div
-            variants={fadeUpVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-            custom={1}
-            className="mb-12"
-          >
-            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">03 — Features</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] text-balance">
-              Deep intelligence.<br className="hidden md:block" /> Built for your sales team.
-            </h2>
-          </motion.div>
-
-          {/* Asymmetric bento: full width, then 2+1, then 1+2 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-            {/* Row 1: Full width — Pricing Grid Monitoring */}
-            <motion.div
-              variants={fadeUpVariants}
-              custom={0}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-              className="md:col-span-3 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/40 transition-colors duration-300 flex flex-col sm:flex-row items-start sm:items-center gap-6 cursor-pointer"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-5">
-                  <TrendingUp size={18} className="text-sky-400 flex-shrink-0" />
-                  <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
-                  <span className="text-xs font-mono font-bold text-sky-400/80">01</span>
-                </div>
-                <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Pricing Grid Monitoring</h3>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-sm">
-                  We scan HTML structures, pricing grids, and currency changes to detect discount models, bundle rates, or tier adjustments the moment they happen.
-                </p>
-              </div>
-              <div className="flex-shrink-0 w-full sm:w-56 h-20 bg-[var(--surface-raised)] rounded-md border border-[var(--border-default)] overflow-hidden relative">
-                <span className="absolute top-1.5 right-2 z-10 text-[9px] font-mono text-sky-400">▲ +12%</span>
-                <svg className="w-full h-full p-2" viewBox="0 0 180 64">
-                  <motion.path
-                    d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4"
-                    fill="none"
-                    stroke={p.accent}
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
-                    whileInView={{ pathLength: 1 }}
-                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
-                    transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.3 }}
-                  />
-                  <motion.path
-                    d="M 8 56 L 35 44 L 65 28 L 95 36 L 120 18 L 150 10 L 175 4 L 175 64 L 8 64Z"
-                    fill="url(#chartFill)"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
-                    transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.5 }}
-                  />
-                  <motion.circle
-                    cx="175"
-                    cy="4"
-                    r="3"
-                    fill={p.accentSoft}
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
-                    transition={{ duration: 0.4, delay: 1.2, type: 'spring', stiffness: 300 }}
-                  />
-                  <defs>
-                    <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="64">
-                      <stop stopColor={p.accent} stopOpacity="0.15" />
-                      <stop offset="1" stopColor={p.accent} stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            </motion.div>
-
-            {/* Row 2: 2-col — Review Site Intelligence */}
-            <motion.div
-              variants={fadeUpVariants}
-              custom={1}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-              className="md:col-span-2 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/35 transition-colors duration-300 cursor-pointer"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <MessageSquare size={18} className="text-sky-400 flex-shrink-0" />
-                <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
-                <span className="text-xs font-mono font-bold text-sky-400/80">02</span>
-              </div>
-              <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Review Site Intelligence</h3>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                Watches G2, Trustpilot, and public forums. Automatically extracts feature complaints and service timeouts to locate users ready to churn away from competitors.
-              </p>
-              <div className="mt-4 space-y-2">
-                {['G2 · Trustpilot', 'Capterra · Reddit', 'App Store · Play'].map((src) => (
-                  <div key={src} className="flex items-center gap-2 text-[10px] font-mono text-[var(--text-muted)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
-                    {src}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* 1-col — AI Copilot Playbooks */}
-            <motion.div
-              variants={fadeUpVariants}
-              custom={2}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-              onMouseEnter={() => setCard3Hovered(true)}
-              onMouseLeave={() => setCard3Hovered(false)}
-              className="md:col-span-1 bg-[var(--surface-raised)] border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <Zap size={18} className="text-sky-400 flex-shrink-0" />
-                <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
-                <span className="text-xs font-mono font-bold text-sky-400/80">03</span>
-              </div>
-              <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">AI Copilot Playbooks</h3>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                Generates targeted email scripts and landing page copy built around the competitor changes detected today.
-              </p>
-              <div className="mt-4 font-mono text-[9px] text-sky-400 bg-[var(--accent-subtle)] border border-sky-500/10 p-2.5 rounded min-h-[36px] flex items-center">
-                <span>{typewriterText}</span>
-                {card3Hovered && (
-                  <motion.span
-                    animate={{ opacity: [0, 1, 0] }}
-                    transition={{ repeat: Infinity, duration: 0.8 }}
-                    className="w-1.5 h-3 bg-sky-400 ml-0.5"
-                  />
-                )}
-              </div>
-            </motion.div>
-
-            {/* Row 3: 1-col — Zero-Access Crawling */}
-            <motion.div
-              variants={fadeUpVariants}
-              custom={3}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-              className="md:col-span-1 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 flex flex-col justify-between cursor-pointer"
-            >
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <ShieldCheck size={18} className="text-sky-400 flex-shrink-0" />
-                  <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
-                  <span className="text-xs font-mono font-bold text-sky-400/80">04</span>
-                </div>
-                <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Zero-Access Crawling</h3>
-                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                  100% cloud-hosted crawlers scan pages externally. No credentials, integrations, or developer steps required.
-                </p>
-              </div>
-              <div className="mt-6 flex items-center gap-3">
-                <div className="flex-1 h-[2px] bg-[var(--fill-subtle-hover)] rounded-full overflow-hidden relative">
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true, margin: "0px 0px 400px 0px" }}
-                    transition={{ duration: 1.0, ease: 'easeInOut', delay: 0.4 }}
-                    style={{ transformOrigin: 'left' }}
-                    className="absolute inset-0 bg-sky-500"
-                  />
-                </div>
-                <CheckCircle2 size={12} className="text-sky-400 flex-shrink-0" />
-              </div>
-            </motion.div>
-
-            {/* 2-col — Historical Changelog */}
-            <motion.div
-              variants={fadeUpVariants}
-              custom={4}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
-              className="md:col-span-2 bg-[var(--surface-base)]/80 border border-[var(--border-default)] border-t border-t-[var(--border-strong)] rounded-md p-6 hover:border-[var(--border-strong)] transition-colors duration-300 cursor-pointer"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <Calendar size={18} className="text-[var(--text-primary)] flex-shrink-0" />
-                <div className="h-px flex-1 bg-gradient-to-r from-zinc-500/30 to-transparent" />
-                <span className="text-xs font-mono font-bold text-[var(--text-primary)]">05</span>
-              </div>
-              <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">Historical Changelog</h3>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                Check chronological competitor visual logs. Understand their engineering speed, rebranding cycles, and positioning adjustments over time.
-              </p>
-              <div className="mt-5 flex items-center gap-0">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 h-8 border-r border-[var(--border-subtle)] last:border-r-0 flex items-end pb-1 px-0.5"
-                  >
-                    <motion.div
-                      initial={{ height: 0 }}
-                      whileInView={{ height: `${20 + Math.sin(i * 1.3) * 14}px` }}
-                      viewport={{ once: true, margin: "0px 0px 400px 0px" }}
-                      transition={{ duration: 0.4, ease: 'easeOut', delay: i * 0.04 }}
-                      className="w-full bg-sky-500/30 rounded-sm"
-                      style={{ opacity: 0.3 + i * 0.06 }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-          </div>
-        </div>
-      </section>
-
-
-
       {/* ── BATTLE CARDS ────────────────────────────────────────────────── */}
       <section id="battle-card" className="scroll-mt-24 py-28 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-5xl mx-auto relative z-10">
@@ -1068,7 +822,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={0}
             >
-              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">04 — Battle Cards</p>
+              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">03 — Battle Cards</p>
               <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-3 text-balance">
                 Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
@@ -1283,7 +1037,7 @@ export default function LandingPage() {
               viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={0}
             >
-              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">05 — Local</p>
+              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">04 — Local</p>
               <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
                 Built for local<br className="hidden lg:block" /> businesses too
               </h2>
