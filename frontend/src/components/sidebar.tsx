@@ -22,6 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { isAbortError } from '@/lib/fetch-utils';
 
 interface SidebarProps {
   email: string;
@@ -63,22 +64,26 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchSettings() {
       try {
         const res = await fetch(`${apiUrl}/api/v1/settings`, {
           headers: {
             Authorization: `Bearer ${userId}`,
           },
+          signal: controller.signal,
         });
         if (res.ok) {
           const data = await res.json();
           setSettings(data);
         }
       } catch (e) {
+        if (isAbortError(e)) return;
         console.error(e);
       }
     }
     fetchSettings();
+    return () => controller.abort();
   }, [userId, apiUrl]);
 
   useEffect(() => {
@@ -136,6 +141,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         router.refresh();
       }, 3000);
     } catch (e) {
+      if (isAbortError(e)) return;
       console.error(e);
       setScanError(true);
       setTimeout(() => setScanError(false), 4000);

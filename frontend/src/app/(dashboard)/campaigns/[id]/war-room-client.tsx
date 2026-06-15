@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Check, X, RefreshCw, ArrowLeft, Sparkles } from 'lucide-react';
 import Topbar from '@/components/topbar';
+import { isAbortError } from '@/lib/fetch-utils';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -54,13 +55,23 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
 
   const headers = { Authorization: `Bearer ${userId}`, 'Content-Type': 'application/json' };
 
-  const load = useCallback(async () => {
-    const res = await fetch(`${API_BASE}/api/v1/campaigns/${campaignId}`, { headers });
-    if (res.ok) setRoom(await res.json());
-    setLoading(false);
+  const load = useCallback(async (signal?: AbortSignal) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/campaigns/${campaignId}`, { headers, signal });
+      if (res.ok) setRoom(await res.json());
+    } catch (e) {
+      if (isAbortError(e)) return;
+      console.error(e);
+    } finally {
+      if (!signal?.aborted) setLoading(false);
+    }
   }, [campaignId, userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    const controller = new AbortController();
+    load(controller.signal);
+    return () => controller.abort();
+  }, [load]);
 
   const setStatus = async (itemId: string, status: string) => {
     if (!room) return;

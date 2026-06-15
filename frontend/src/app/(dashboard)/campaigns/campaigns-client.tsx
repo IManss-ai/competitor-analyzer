@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Swords, Plus } from 'lucide-react';
+import { isAbortError } from '@/lib/fetch-utils';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -31,24 +32,31 @@ export default function CampaignsClient({ userId }: { userId: string }) {
 
   const headers = { Authorization: `Bearer ${userId}`, 'Content-Type': 'application/json' };
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     try {
       const [campRes, compRes] = await Promise.all([
-        fetch(`${API_BASE}/api/v1/campaigns`, { headers }),
-        fetch(`${API_BASE}/api/v1/competitors`, { headers }),
+        fetch(`${API_BASE}/api/v1/campaigns`, { headers, signal }),
+        fetch(`${API_BASE}/api/v1/competitors`, { headers, signal }),
       ]);
       if (campRes.ok) setCampaigns((await campRes.json()).campaigns);
       if (compRes.ok) {
         const body = await compRes.json();
         setCompetitors(body.competitors || body || []);
       }
+    } catch (e) {
+      if (isAbortError(e)) return;
+      console.error(e);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    const controller = new AbortController();
+    load(controller.signal);
+    return () => controller.abort();
+  }, [load]);
 
   const createCampaign = async () => {
     if (!selected) return;

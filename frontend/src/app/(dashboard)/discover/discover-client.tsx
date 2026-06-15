@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { isAbortError } from '@/lib/fetch-utils';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const CATEGORIES = ['productivity', 'devtools', 'marketing', 'finance', 'ecommerce',
@@ -21,26 +22,33 @@ export default function DiscoverClient() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const runSearch = useCallback(async (p = 1) => {
+  const runSearch = useCallback(async (p = 1, signal?: AbortSignal) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(p) });
       if (q) params.set('q', q);
       if (category) params.set('category', category);
       if (maxPrice) params.set('max_price', maxPrice);
-      const res = await fetch(`${API_BASE}/api/v1/apps/search?${params}`);
+      const res = await fetch(`${API_BASE}/api/v1/apps/search?${params}`, { signal });
       if (res.ok) {
         const body = await res.json();
         setResults(body.results);
         setTotal(body.total);
         setPage(p);
       }
+    } catch (e) {
+      if (isAbortError(e)) return;
+      console.error(e);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [q, category, maxPrice]);
 
-  useEffect(() => { runSearch(1); }, [category, maxPrice]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const controller = new AbortController();
+    runSearch(1, controller.signal);
+    return () => controller.abort();
+  }, [category, maxPrice]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     // Shell (sidebar, Topbar, page padding) comes from the (dashboard) layout
