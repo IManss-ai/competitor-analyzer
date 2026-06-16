@@ -44,19 +44,22 @@ export default function ProductDemo() {
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="relative mx-auto w-full max-w-5xl"
     >
-      {/* Ambient accent glow (decorative, behind the frame) */}
+      {/* Ambient accent glow (decorative, behind the frame). Two stacked
+          radial layers so the halo actually reads on the light paper theme,
+          not just ink. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-x-12 -inset-y-10 -z-10"
+        className="pointer-events-none absolute -inset-x-16 -inset-y-14 -z-10"
         style={{
           background:
-            'radial-gradient(60% 55% at 50% 45%, var(--accent-glow), transparent 72%)',
-          filter: 'blur(48px)',
+            'radial-gradient(62% 58% at 50% 46%, var(--accent-glow), transparent 70%), radial-gradient(42% 44% at 50% 44%, var(--accent-glow), transparent 76%)',
+          filter: 'blur(56px)',
         }}
       />
 
-      {/* App window */}
-      <div className="overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]">
+      {/* App window — soft lift so the frame has presence on paper-light
+          (where the accent glow alone barely reads); glow carries it on ink. */}
+      <div className="overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] shadow-[0_28px_64px_-28px_rgba(26,23,20,0.30),0_10px_28px_-14px_rgba(26,23,20,0.18)]">
         {/* Browser chrome */}
         <div className="flex items-center gap-3 border-b border-[var(--border-default)] px-4 py-2.5 bg-[var(--surface-base)]">
           <div className="flex items-center gap-1.5">
