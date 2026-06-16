@@ -52,7 +52,7 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
           {title}
         </h1>
         <div
-          className="text-[10px] font-mono uppercase tracking-[0.12em] mt-1.5 flex flex-wrap items-center gap-x-2"
+          className="text-[11px] font-mono uppercase tracking-[0.1em] mt-2 flex flex-wrap items-center gap-x-2"
           style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
         >
           <span>{getFormattedDateline(lastScan)}</span>

@@ -515,49 +515,51 @@ html[data-theme="ink"] .badge-initial_scan {
    TYPOGRAPHY SCALE — Archivo grotesk, institutional weights
 ───────────────────────────────────────────────────────────────────────────── */
 
+/* Readability pass: sizes bumped so the dashboard reads comfortably
+   (pitch feedback: text was too small/dense). */
 .rs-heading-xl {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 28px;
+  font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary);
   line-height: 1.15;
 }
 .rs-heading-lg {
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 700;
   letter-spacing: -0.015em;
   color: var(--text-primary);
   line-height: 1.3;
 }
 .rs-heading-md {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-primary);
 }
 .rs-heading-sm {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--text-primary);
 }
 .rs-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
   font-family: var(--font-mono);
 }
 .rs-body {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 .rs-body-sm {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
