@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import { InlineScript } from '@/components/inline-script';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const archivo = Archivo({
@@ -54,6 +55,7 @@ export default function RootLayout({
       <body className={`${archivo.variable} font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
         <InlineScript html={`try{var t=localStorage.getItem('theme');if(t==='ink'||t==='paper'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}`} />
         {children}
+        <Analytics />
       </body>
     </html>
   );
