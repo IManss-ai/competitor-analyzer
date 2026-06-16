@@ -340,7 +340,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.07, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[48px] sm:text-[60px] lg:text-[72px] font-bold tracking-tight leading-[1.08] mb-6 text-[var(--text-primary)]"
+                className="text-[52px] sm:text-[72px] lg:text-[88px] font-medium tracking-[-0.02em] leading-[1.0] mb-6 text-[var(--text-primary)]"
               >
                 Know every competitor
                 <br className="hidden sm:block" />
@@ -505,7 +505,7 @@ export default function LandingPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '0px 0px -100px 0px' }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="py-16 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25"
+        className="py-20 border-y border-[var(--border-subtle)] bg-[var(--surface-raised)]/25"
       >
         <div className="max-w-4xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-4 gap-8">
           {[
@@ -532,7 +532,7 @@ export default function LandingPage() {
       </motion.section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="scroll-mt-24 py-16 px-6 bg-[var(--surface-raised)] relative">
+      <section id="how-it-works" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-raised)] relative">
         <div className="max-w-5xl mx-auto">
           <motion.div
             variants={fadeUpVariants}
@@ -543,7 +543,7 @@ export default function LandingPage() {
             className="mb-16"
           >
             <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">01 · How it works</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
+            <h2 className="text-[44px] lg:text-[64px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
             <p className="text-[var(--text-secondary)] text-base max-w-lg leading-relaxed">
@@ -555,7 +555,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── COMMAND CENTER ───────────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-16 px-6 bg-[var(--surface-base)] relative">
+      <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}
@@ -566,7 +566,7 @@ export default function LandingPage() {
             className="mb-12"
           >
             <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">02 · Command Center</p>
-            <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
+            <h2 className="text-[44px] lg:text-[64px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               The Intelligence<br className="hidden md:block" /> Command Center
             </h2>
             <p className="text-[var(--text-secondary)] text-base max-w-md leading-relaxed">
@@ -753,7 +753,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── BATTLE CARDS ─────────────────────────────────────────────────────── */}
-      <section id="battle-card" className="scroll-mt-24 py-16 px-6 bg-[var(--surface-base)] relative">
+      <section id="battle-card" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
             <motion.div
@@ -764,7 +764,7 @@ export default function LandingPage() {
               custom={0}
             >
               <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">03 · Battle Cards</p>
-              <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-3 text-balance">
+              <h2 className="text-[44px] lg:text-[64px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-3 text-balance">
                 Explore a live<br className="hidden md:block" /> Battle Card
               </h2>
               <p className="text-[var(--text-secondary)] text-sm max-w-sm leading-relaxed">Four quadrants, refreshed every Monday.</p>
@@ -890,7 +890,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ──────────────────────────────────────────────────────────── */}
-      <section id="pricing" className="scroll-mt-24 py-16 px-6 bg-[var(--surface-base)] relative">
+      <section id="pricing" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             variants={fadeUpVariants}
@@ -909,7 +909,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-6 bg-[var(--surface-base)] relative overflow-hidden">
+      <section className="py-24 px-6 bg-[var(--surface-base)] relative overflow-hidden">
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}

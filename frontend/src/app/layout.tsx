@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
-import { Archivo, IBM_Plex_Mono } from 'next/font/google';
+import { Space_Grotesk, IBM_Plex_Mono } from 'next/font/google';
 import { InlineScript } from '@/components/inline-script';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
-const archivo = Archivo({
+// Redesign: Space Grotesk (appkittie language) flows through the existing
+// --font-archivo variable so the whole app re-fonts in one swap.
+const archivo = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-archivo',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 const ibmPlexMono = IBM_Plex_Mono({
@@ -53,7 +55,7 @@ export default function RootLayout({
       className={`${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className={`${archivo.variable} font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
-        <InlineScript html={`try{var t=localStorage.getItem('theme');if(t==='ink'||t==='paper'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}`} />
+        <InlineScript html={`try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='paper'?'paper':'ink')}catch(e){document.documentElement.setAttribute('data-theme','ink')}`} />
         {children}
         <Analytics />
       </body>

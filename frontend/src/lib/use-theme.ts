@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 export type Theme = 'paper' | 'ink';
 
 function readEffectiveTheme(): Theme {
-  if (typeof window === 'undefined') return 'paper';
-  const saved = localStorage.getItem('theme');
-  if (saved === 'ink' || saved === 'paper') return saved;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'ink' : 'paper';
+  // Redesign: dark-first. Ink is the default for everyone; light is opt-in
+  // only when the visitor has explicitly chosen it.
+  if (typeof window === 'undefined') return 'ink';
+  return localStorage.getItem('theme') === 'paper' ? 'paper' : 'ink';
 }
 
 function applyTheme(next: Theme) {
@@ -17,26 +17,15 @@ function applyTheme(next: Theme) {
 }
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>('paper');
+  const [theme, setThemeState] = useState<Theme>('ink');
 
   // DOM is already in the correct theme via the inline pre-paint script + CSS
   // OS fallback; here we only sync React state. Do NOT add applyTheme() — it would
   // stamp data-theme and defeat the live OS-change path below for no-preference users.
   useEffect(() => { setThemeState(readEffectiveTheme()); }, []);
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      if (!localStorage.getItem('theme')) {
-        const next: Theme = mq.matches ? 'ink' : 'paper';
-        setThemeState(next);
-        if (next === 'ink') document.documentElement.setAttribute('data-theme', 'ink');
-        else document.documentElement.removeAttribute('data-theme');
-      }
-    };
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
+  // Dark-first: we no longer follow the OS color scheme. Default is ink for
+  // everyone; the only way to light mode is the explicit toggle (saved pref).
 
   const setTheme = useCallback((next: Theme) => {
     localStorage.setItem('theme', next);

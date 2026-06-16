@@ -46,3 +46,6 @@ frontend/.env.local
 
 # Local session notes
 SESSION-CHANGES-*.md
+
+/node_modules/
+/package-lock.json

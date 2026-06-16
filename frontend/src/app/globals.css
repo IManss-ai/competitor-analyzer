@@ -142,10 +142,10 @@ html[data-theme="ink"] {
   --border-subtle:  rgba(234,230,221,0.07);
   --border-strong:  rgba(234,230,221,0.24);
   --text-primary: #eae6dd; --text-secondary: #a8a094; --text-muted: #6f685c;
-  --accent-primary: #4f7cb0; --accent-hover: #6a96c8;
-  --accent-subtle: rgba(79,124,176,0.12);
-  --accent-border: rgba(79,124,176,0.34);
-  --accent-glow:   rgba(79,124,176,0.25);
+  --accent-primary: #5e9bf0; --accent-hover: #82b3f5;
+  --accent-subtle: rgba(94,155,240,0.14);
+  --accent-border: rgba(94,155,240,0.38);
+  --accent-glow:   rgba(94,155,240,0.38);
   --accent-text:   #16140f;
   --tone-positive: #5aa07a;
   --tone-warning:  #c79a4e;
@@ -156,7 +156,7 @@ html[data-theme="ink"] {
   --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
   --shadow-modal:    0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
 
-  --color-sky-400: #6a96c8; --color-sky-500: #4f7cb0; --color-sky-600: #3f6a9c;
+  --color-sky-400: #82b3f5; --color-sky-500: #5e9bf0; --color-sky-600: #4a82d8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -176,10 +176,10 @@ html[data-theme="ink"] {
     --border-subtle:  rgba(234,230,221,0.07);
     --border-strong:  rgba(234,230,221,0.24);
     --text-primary: #eae6dd; --text-secondary: #a8a094; --text-muted: #6f685c;
-    --accent-primary: #4f7cb0; --accent-hover: #6a96c8;
-    --accent-subtle: rgba(79,124,176,0.12);
-    --accent-border: rgba(79,124,176,0.34);
-    --accent-glow:   rgba(79,124,176,0.25);
+    --accent-primary: #5e9bf0; --accent-hover: #82b3f5;
+    --accent-subtle: rgba(94,155,240,0.14);
+    --accent-border: rgba(94,155,240,0.38);
+    --accent-glow:   rgba(94,155,240,0.38);
     --accent-text:   #16140f;
     --tone-positive: #5aa07a;
     --tone-warning:  #c79a4e;
@@ -189,7 +189,7 @@ html[data-theme="ink"] {
     --fill-subtle-hover: rgba(234,230,221,0.07);
     --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
     --shadow-modal:    0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
-    --color-sky-400: #6a96c8; --color-sky-500: #4f7cb0; --color-sky-600: #3f6a9c;
+    --color-sky-400: #82b3f5; --color-sky-500: #5e9bf0; --color-sky-600: #4a82d8;
     color-scheme: dark;
   }
 }
