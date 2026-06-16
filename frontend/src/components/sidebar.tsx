@@ -261,7 +261,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               background: planBadge === 'Pro'
                 ? 'rgba(79, 124, 176,0.15)'
                 : 'var(--fill-subtle)',
-              color: planBadge === 'Pro' ? '#6a96c8' : 'var(--text-muted)',
+              color: planBadge === 'Pro' ? 'var(--accent-primary)' : 'var(--text-muted)',
               border: planBadge === 'Pro'
                 ? '1px solid rgba(79, 124, 176,0.28)'
                 : '1px solid var(--border-default)',
@@ -422,13 +422,13 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               ? {
                   background: 'rgba(16,185,129,0.10)',
                   border: '1px solid rgba(16,185,129,0.22)',
-                  color: '#34d399',
+                  color: 'var(--tone-positive)',
                 }
               : scanError
               ? {
                   background: 'rgba(220,38,38,0.10)',
                   border: '1px solid rgba(220,38,38,0.24)',
-                  color: '#f87171',
+                  color: 'var(--tone-danger)',
                 }
               : undefined
           }
