@@ -44,7 +44,7 @@ function getBadgeClass(type: string | undefined | null) {
   const t = type.toLowerCase();
   if (t.includes('price') || t.includes('pricing')) return 'tag-amber';
   if (t.includes('feature') || t.includes('add')) return 'tag-green';
-  if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'bg-[rgba(155,127,199,0.12)] text-[#9b7fc7] border-[rgba(155,127,199,0.30)]';
+  if (t.includes('repositioning') || t.includes('messaging') || t.includes('pivot')) return 'tag-violet';
   if (t.includes('reputation')) return 'tag-red';
   if (t.includes('social') || t.includes('campaign')) return 'tag-green';
   if (t.includes('review')) return 'tag-amber';
