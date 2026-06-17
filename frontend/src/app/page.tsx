@@ -303,7 +303,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.4, delay: 0.07, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[52px] sm:text-[72px] lg:text-[88px] font-medium tracking-[-0.02em] leading-[1.0] mb-6 text-[var(--text-primary)] text-balance"
               >
-                Never get blindsided by a competitor <span className="text-sky-400">again.</span>
+                Never get blindsided by a competitor <span className="text-sky-500">again.</span>
               </motion.h1>
 
               <motion.p
