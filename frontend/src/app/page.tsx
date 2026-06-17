@@ -393,7 +393,7 @@ export default function LandingPage() {
                       transition={{ duration: 0.3, delay: 0.6 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                       className="flex items-start gap-3 px-3 py-2.5 rounded hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
                     >
-                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-sm font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                         {item.type}
                       </span>
                       <div className="flex-1 min-w-0">
@@ -641,7 +641,7 @@ export default function LandingPage() {
                 {[
                   { label: 'Detected changes', color: 'text-sky-400', bg: 'bg-sky-500/8', border: 'border-sky-500/15', content: currentCard.changes.map((c, j) => (
                     <div key={j} className="flex gap-2.5 items-start">
-                      <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md uppercase tracking-wide flex-shrink-0 mt-0.5 border ${c.tc}`}>{c.tag}</span>
+                      <span className={`text-[9px] font-mono px-2 py-0.5 rounded-sm uppercase tracking-wide flex-shrink-0 mt-0.5 border ${c.tc}`}>{c.tag}</span>
                       <span className="text-xs text-[var(--text-primary)] leading-snug">{c.text}</span>
                     </div>
                   )) },
