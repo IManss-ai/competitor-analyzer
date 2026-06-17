@@ -717,7 +717,7 @@ export default function LandingPage() {
             custom={0}
             className="border border-sky-500/25 bg-[var(--surface-raised)] rounded-md px-10 py-16 text-center"
           >
-            <h2 className="text-[40px] sm:text-[52px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1] mb-4 text-balance">
+            <h2 className="text-[40px] sm:text-[52px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-4 text-balance">
               Start tracking competitor<br className="hidden sm:block" /> movements today.
             </h2>
             <p className="text-[var(--text-secondary)] text-base max-w-sm mx-auto leading-relaxed mb-10">
