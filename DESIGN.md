@@ -91,13 +91,12 @@ Semantic indicators retuned to read as "ledger ink colors," not neon. Each rende
 
 | Role | Font | Weight | Usage |
 |------|------|--------|-------|
-| Display / Headlines | **Archivo** | 800 / 900 | Page titles, big statements. Institutional grotesk masthead. |
-| UI / Body | **Archivo** | 400 / 500 / 600 | Nav, labels, descriptions. One family, weight does the contrast. |
+| Display / Headlines | **Space Grotesk** | 500 / 700 | Page titles, big statements. Big confident type at medium weight, not heavy-black. |
+| UI / Body | **Space Grotesk** | 400 / 500 / 600 | Nav, labels, descriptions. One family, weight does the contrast. |
 | Data / Mono | **IBM Plex Mono** | 400 / 500 / 600 | URLs, metric numerals, diffs, timestamps, datelines, tags. `tabular-nums` always. |
 
-- Load via `next/font/google` (`Archivo`, `IBM_Plex_Mono`) as CSS variables.
+- Load via `next/font/google` (`Space_Grotesk`, `IBM_Plex_Mono`) as CSS variables. NOTE: Space Grotesk is aliased through the legacy `--font-archivo` variable in `layout.tsx`, so the whole app re-fonts in one swap — the variable name says "archivo" but the face is Space Grotesk (the "appkittie language" redesign).
 - No serif. The authority comes from weight, scale, tight tracking, and mono precision.
-- Self-host alternate (optional): **Mona Sans** can replace Archivo for display+UI if a more neutral grotesk is wanted; not on Google Fonts, so it needs fontsource/self-host.
 - Display tracking: `-0.02em`. Mono uppercase labels: `+0.12em`.
 
 ---
@@ -121,7 +120,7 @@ Sharp corners are a core institutional signal. Do not round past 6px on in-page 
 - **Sidebar:** `240px` fixed left (`--sidebar-width`), `--surface-base` background, 1px `--border-default` right edge. Mono section dividers ("DESK", "SIGNAL").
 - **Content:** max-width `~1180px`, `32px 40px` padding (8pt scale).
 - **Rules over cards:** prefer 1px hairline `--border-default` / `--border-subtle` dividers and a single outer container rule over heavy bordered cards everywhere. Broadsheet, not bubble-wrap.
-- **Headers:** Archivo display headline + a 2px `--ink` underline rule, with a mono **dateline** beneath (e.g. `MON 08 JUN 2026 · 14 SOURCES · LIVE`).
+- **Headers:** Space Grotesk display headline + a 2px `--ink` underline rule, with a mono **dateline** beneath (e.g. `MON 08 JUN 2026 · 14 SOURCES · LIVE`).
 - **Data:** tables and stat tiles use IBM Plex Mono with `tabular-nums`, right-aligned figures.
 
 ---
@@ -135,7 +134,7 @@ Mono uppercase label, big Plex Mono numeral (`--text-primary`), small mono delta
 Grid `1fr auto`. Left: change-type tag, mono URL, body description, a mono `→ OPEN BATTLE CARD` link in `--accent-primary`. Right: mono timestamp. Rows divided by `--border-subtle`.
 
 ### Button — primary
-`background:--accent-primary; color:#fff`; `font: Archivo 600 12.5px`; `padding:8px 14px`; `radius:4px`; hover `--accent-hover`. No glow. (`text-white` is allowed here — accent surface.)
+`background:--accent-primary; color:#fff`; `font: Space Grotesk 600 12.5px`; `padding:8px 14px`; `radius:4px`; hover `--accent-hover`. No glow. (`text-white` is allowed here — accent surface.)
 
 ### Button — ghost
 `transparent`, `color:--text-secondary`, `border:1px solid --border-default`, `radius:4px`; hover `--surface-subtle` + `--text-primary`.
@@ -170,7 +169,7 @@ Gaps, padding, margins MUST use this scale. No arbitrary values.
 
 1. **Paper-light briefing primary + ink terminal alt.** The biggest swing. Reads as a printed institutional report. Differentiates hard from Crayon (loud) and from v2 (dark neon).
 2. **One sparing accent.** Launched as oxblood (serious, editorial, adversarial) but it bled into backgrounds via the sky-remap and read as a "red theme"; now slate-blue (`6fe156a`). The durable decision is the *discipline*: a single accent that appears only on interactive/branded moments, never as a wash.
-3. **Grotesk-only (Archivo) + IBM Plex Mono, no serif.** Swiss/precision-instrument authority. Single sans family; weight and scale carry hierarchy.
+3. **Grotesk-only (Space Grotesk) + IBM Plex Mono, no serif.** Swiss/precision-instrument authority. Single sans family; weight and scale carry hierarchy.
 4. **Sharp 4px corners + hairline ledger rules** instead of heavy shadowed cards. Precise, dense, broadsheet.
 5. **Mono datelines + tabular figures everywhere data lives.** Signals a primary source.
 
