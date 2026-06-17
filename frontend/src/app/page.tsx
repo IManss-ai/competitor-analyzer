@@ -7,7 +7,6 @@ import { ArrowRight, CheckCircle2, TrendingUp, ArrowUpRight, Copy, Check, Chevro
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { Github } from '@/components/ui/brand-icons';
 import { PricingBasic } from '@/components/ui/pricing-demo';
-import { HeroRotatingWord } from '@/components/ui/hero-rotating-word';
 import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
 import ProductDemo from '@/components/ui/product-demo';
@@ -125,8 +124,7 @@ const COMP_CHANGE_COUNTS: Record<string, number> = { stripe: 3, paypal: 1, squar
 
 const navItems = [
   { label: 'How it works', href: '#how-it-works', key: 'how-it-works' },
-  { label: 'Command Center', href: '#dashboard-showcase', key: 'dashboard-showcase' },
-  { label: 'Battle Cards', href: '#battle-card', key: 'battle-card' },
+  { label: 'Product', href: '#product', key: 'product' },
   { label: 'Pricing', href: '#pricing', key: 'pricing' },
 ];
 
@@ -137,18 +135,13 @@ const SPRING = { stiffness: 280, damping: 28, mass: 0.8 };
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeComp, setActiveComp] = useState<'stripe' | 'paypal' | 'square'>('stripe');
-  const [selectedDashboardComp, setSelectedDashboardComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen'>('stripe');
+  const [productTab, setProductTab] = useState<'dashboard' | 'card'>('dashboard');
   const [copiedPlaybook, setCopiedPlaybook] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hoveredDashComp, setHoveredDashComp] = useState<'stripe' | 'paypal' | 'square' | 'adyen' | null>(null);
   const [hoveredBattleTab, setHoveredBattleTab] = useState<'stripe' | 'paypal' | 'square' | null>(null);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
-  const [commandCenterInView, setCommandCenterInView] = useState(false);
-  const [metricCounters, setMetricCounters] = useState([0, 0, 0]);
 
-  const commandCenterRef = useRef<HTMLElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const isPausedRef = useRef(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
   // Scroll progress for top bar
@@ -171,16 +164,6 @@ export default function LandingPage() {
     return () => lenis?.destroy();
   }, []);
 
-  // Competitor auto-rotate
-  useEffect(() => {
-    const comps = ['stripe', 'paypal', 'square', 'adyen'] as const;
-    const interval = setInterval(() => {
-      if (isPausedRef.current) return;
-      setSelectedDashboardComp((c) => comps[(comps.indexOf(c) + 1) % comps.length]);
-    }, 7000);
-    return () => clearInterval(interval);
-  }, []);
-
   // Scroll sentinel
   useEffect(() => {
     const el = sentinelRef.current;
@@ -189,29 +172,6 @@ export default function LandingPage() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  // Command center counter animation
-  useEffect(() => {
-    const el = commandCenterRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting && !commandCenterInView) setCommandCenterInView(true); }, { threshold: 0.25 });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [commandCenterInView]);
-
-  useEffect(() => {
-    if (!commandCenterInView) return;
-    const targets = [4, 3, 2];
-    const duration = 1300;
-    const start = performance.now();
-    const animate = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const e = 1 - Math.pow(1 - t, 3);
-      setMetricCounters(targets.map((v) => Math.round(e * v)));
-      if (t < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [commandCenterInView]);
 
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
@@ -340,15 +300,9 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.07, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[52px] sm:text-[72px] lg:text-[88px] font-medium tracking-[-0.02em] leading-[1.0] mb-6 text-[var(--text-primary)]"
+                className="text-[52px] sm:text-[72px] lg:text-[88px] font-medium tracking-[-0.02em] leading-[1.0] mb-6 text-[var(--text-primary)] text-balance"
               >
-                Know every competitor
-                <br className="hidden sm:block" />
-                <HeroRotatingWord
-                  words={['move.', 'price change.', 'launch.', 'pivot.', 'new hire.']}
-                  className="text-sky-400"
-                  interval={2400}
-                />
+                Never get blindsided by a competitor <span className="text-sky-400">again.</span>
               </motion.h1>
 
               <motion.p
@@ -357,7 +311,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.4, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
                 className="text-[var(--text-secondary)] text-lg leading-relaxed max-w-md mb-8"
               >
-                Track pricing, features, and reviews in real time. Get AI battle cards to win every deal.
+                Rivalscope watches your competitors 24/7 — pricing, features, reviews, hiring — then hands your sales team the exact play to win the next deal.
               </motion.p>
 
               <motion.div
@@ -376,7 +330,7 @@ export default function LandingPage() {
                   Start 2-day free trial <ArrowRight size={12} />
                 </MotionLink>
                 <a
-                  href="#dashboard-showcase"
+                  href="#product"
                   className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-2 py-3"
                 >
                   See a live demo <ArrowRight size={12} className="opacity-50" />
@@ -478,27 +432,6 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* ── PRODUCT DEMO ─────────────────────────────────────────────────────── */}
-      <section className="px-6 pb-20 lg:pb-24 -mt-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '0px 0px -80px 0px' }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="text-center mb-10"
-          >
-            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">
-              See it work
-            </p>
-            <h2 className="text-[28px] sm:text-[36px] font-bold tracking-tight text-[var(--text-primary)] leading-[1.1]">
-              Every competitor move, in one command center.
-            </h2>
-          </motion.div>
-          <ProductDemo />
-        </div>
-      </section>
-
       {/* ── SOCIAL PROOF BAR ─────────────────────────────────────────────────── */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -542,7 +475,7 @@ export default function LandingPage() {
             custom={0}
             className="mb-16"
           >
-            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">01 · How it works</p>
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">How it works</p>
             <h2 className="text-[44px] lg:text-[64px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
               From change detection<br className="hidden md:block" /> to sales playbook in hours.
             </h2>
@@ -554,243 +487,106 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── COMMAND CENTER ───────────────────────────────────────────────────── */}
-      <section id="dashboard-showcase" ref={commandCenterRef} className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* ── THE PRODUCT ──────────────────────────────────────────────────────── */}
+      <section id="product" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
+        <div className="max-w-5xl mx-auto relative z-10">
           <motion.div
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '0px 0px -100px 0px' }}
             custom={0}
-            className="mb-12"
+            className="mb-10"
           >
-            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">02 · Command Center</p>
+            <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-4">See it in action</p>
             <h2 className="text-[44px] lg:text-[64px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-5 text-balance">
-              The Intelligence<br className="hidden md:block" /> Command Center
+              One product.<br className="hidden md:block" /> Two ways to win.
             </h2>
-            <p className="text-[var(--text-secondary)] text-base max-w-md leading-relaxed">
-              Every competitor movement in one view: pricing, reviews, and AI playbooks.
+            <p className="text-[var(--text-secondary)] text-base max-w-lg leading-relaxed">
+              Competitor moves land in your live dashboard the moment they happen — then we synthesize them into the weekly Battle Card your reps actually use on the call.
             </p>
           </motion.div>
 
+          {/* Top-level view switcher */}
           <motion.div
             variants={fadeUpVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '0px 0px -100px 0px' }}
             custom={1}
-            className="border border-[var(--border-default)] rounded-md hover:border-sky-500/25 transition-colors duration-300 overflow-hidden shadow-[var(--shadow-card-hover)] bg-[var(--surface-raised)]"
+            role="tablist"
+            aria-label="Product views"
+            className="flex flex-col sm:flex-row gap-2 mb-8"
           >
-            <div className="grid md:grid-cols-[200px_1fr] min-h-[480px]">
-
-              {/* Sidebar */}
-              <div
-                onMouseEnter={() => { isPausedRef.current = true; }}
-                onMouseLeave={() => { isPausedRef.current = false; }}
-                className="border-r border-[var(--border-default)] p-4 space-y-6"
-              >
-                <div>
-                  <div className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider mb-3">Tracked</div>
-                  <div className="space-y-1">
-                    {(['stripe', 'paypal', 'square', 'adyen'] as const).map((comp) => (
-                      <motion.button
-                        key={comp}
-                        onClick={() => setSelectedDashboardComp(comp)}
-                        onMouseEnter={() => setHoveredDashComp(comp)}
-                        onMouseLeave={() => setHoveredDashComp(null)}
-                        className="w-full text-left text-xs px-3 py-2.5 rounded font-medium flex items-center justify-between transition-colors cursor-pointer relative"
-                        style={{ color: selectedDashboardComp === comp ? 'var(--text-primary)' : 'var(--text-muted)' }}
-                      >
-                        {selectedDashboardComp === comp && (
-                          <motion.div layoutId="activeDashTab" className="absolute inset-0 bg-sky-500/10 border border-sky-500/20 rounded" transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }} />
-                        )}
-                        <span className="capitalize relative z-10">{comp}</span>
-                        {COMP_CHANGE_COUNTS[comp] > 0 ? (
-                          <span className={`flex-shrink-0 min-w-[18px] px-1 py-0.5 rounded text-[8px] font-bold font-mono relative z-10 text-center transition-colors ${selectedDashboardComp === comp ? 'bg-sky-500/20 text-sky-300 border border-sky-500/25' : 'bg-[var(--fill-subtle)] text-[var(--text-muted)]'}`}>
-                            {COMP_CHANGE_COUNTS[comp]}
-                          </span>
-                        ) : (
-                          <span className={`w-1.5 h-1.5 rounded-full relative z-10 transition-colors ${selectedDashboardComp === comp ? 'bg-sky-400' : 'bg-[var(--border-strong)]'}`} />
-                        )}
-                        <AnimatePresence>
-                          {hoveredDashComp === comp && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                              transition={{ duration: 0.12 }}
-                              className="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-50 bg-[var(--surface-overlay)] border border-[var(--border-default)] text-[var(--text-primary)] px-3 py-2 rounded-lg shadow-[var(--shadow-elevated)] text-[10px] w-48 pointer-events-none"
-                            >
-                              <p className="leading-snug font-normal">
-                                {comp === 'stripe' && 'Removed flat enterprise pricing'}
-                                {comp === 'paypal' && 'Merchant card fee increased to 3.49%'}
-                                {comp === 'square' && 'POS dynamic checkout fee update'}
-                                {comp === 'adyen' && 'Changed EMEA SLA & redirect APIs'}
-                              </p>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-                <div className="pt-4 border-t border-[var(--border-default)]">
-                  <div className="text-[9px] font-mono text-[var(--text-muted)] uppercase tracking-wider mb-2">Scan rate</div>
-                  <div className="text-[10px] text-sky-300 font-mono bg-sky-500/8 border border-sky-500/15 px-2.5 py-1.5 rounded inline-block">Every 4 hours</div>
-                </div>
-              </div>
-
-              {/* Main panel */}
-              <div className="p-5 flex flex-col justify-between overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedDashboardComp}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0, transition: { duration: 0.25, ease: 'easeOut' } }}
-                    exit={{ opacity: 0, x: -8, transition: { duration: 0.15, ease: 'easeIn' } }}
-                    className="flex-1 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between border-b border-[var(--border-default)] pb-4 mb-5">
-                        <h3 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
-                          <TrendingUp size={14} className="text-sky-400" />
-                          Intel Feed
-                          <span className="text-[var(--text-muted)] font-normal text-xs">· last scan 8m ago</span>
-                        </h3>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5">
-                            <motion.div animate={{ opacity: [1, 0.3, 1], scale: [1, 0.7, 1] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                            <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Live</span>
-                          </div>
-                          <span className="text-[10px] font-mono bg-[var(--fill-subtle)] border border-[var(--border-default)] text-[var(--text-muted)] px-2.5 py-1 rounded">ALL</span>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-3 mb-4">
-                        {[
-                          { label: 'Monitored', unit: 'targets', color: 'text-[var(--text-primary)]', trend: null, idx: 0 },
-                          { label: 'Changes', unit: 'this week', color: 'text-sky-400', trend: '↑ +2', trendColor: 'text-sky-400', idx: 1 },
-                          { label: 'Plays', unit: 'ready', color: 'text-emerald-400', trend: '↑ new', trendColor: 'text-emerald-400', idx: 2 },
-                        ].map((s) => (
-                          <div key={s.label} className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded">
-                            <div className="text-[9px] font-mono text-[var(--text-muted)] mb-1">{s.label.toUpperCase()}</div>
-                            <div className={`text-sm font-bold font-mono ${s.color} flex items-baseline gap-1`}>
-                              <motion.span
-                                key={`${selectedDashboardComp}-${s.idx}-${commandCenterInView}`}
-                                initial={{ opacity: 0, y: 4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: s.idx * 0.05 }}
-                              >
-                                {metricCounters[s.idx]}
-                              </motion.span>
-                              <span className="text-[10px] font-normal text-[var(--text-muted)]">{s.unit}</span>
-                            </div>
-                            {s.trend && <div className={`text-[9px] font-mono mt-1 ${s.trendColor}`}>{s.trend}</div>}
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="space-y-2 mb-3">
-                        <AnimatePresence mode="popLayout">
-                          {BATTLE_CARDS_DATA[selectedDashboardComp].changes.map((change, i) => (
-                            <motion.div
-                              key={`${selectedDashboardComp}-change-${i}`}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0, transition: { delay: i * 0.07, duration: 0.22, ease: 'easeOut' } }}
-                              exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
-                              className="bg-[var(--fill-subtle-hover)] border border-[var(--border-subtle)] p-3 rounded"
-                            >
-                              <div className="flex items-center gap-2 mb-1.5">
-                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${change.tc}`}>{change.tag.toUpperCase()}</span>
-                                <span className="text-[9px] font-mono text-[var(--text-muted)]">{i === 0 ? 'today' : i === 1 ? '2d ago' : '4d ago'}</span>
-                              </div>
-                              <p className="text-[11px] text-[var(--text-primary)] leading-snug">{change.text}</p>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </div>
-
-                      <div className="border border-sky-500/15 bg-sky-500/[0.03] p-4 rounded flex items-center justify-between gap-3">
-                        <div>
-                          <div className="text-[9px] font-mono text-sky-400 mb-1 flex items-center gap-1.5">
-                            <CheckCircle2 size={9} /> SUGGESTED PLAYBOOK
-                          </div>
-                          <p className="text-xs text-[var(--text-primary)] leading-snug">{BATTLE_CARDS_DATA[selectedDashboardComp].moves[0]}</p>
-                        </div>
-                        <motion.button
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() => { setCopiedPlaybook(true); setTimeout(() => setCopiedPlaybook(false), 2000); }}
-                          className="flex-shrink-0 px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/18 border border-sky-500/25 text-sky-400 font-mono text-[10px] rounded transition-colors flex items-center gap-1.5 cursor-pointer min-w-[95px] justify-center"
-                        >
-                          <AnimatePresence mode="wait">
-                            {copiedPlaybook ? (
-                              <motion.span key="copied" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="flex items-center gap-1">
-                                <Check size={10} className="text-emerald-400" /> Copied
-                              </motion.span>
-                            ) : (
-                              <motion.span key="copy" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="flex items-center gap-1">
-                                <Copy size={10} /> Copy script
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </motion.button>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 mt-2 border-t border-[var(--border-default)] flex items-center justify-between text-[10px] text-[var(--text-muted)] font-mono">
-                      <span>4 pages · 2 API routes · 1 docs path monitored</span>
-                      <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
-                        Export Battle Card <ArrowUpRight size={9} />
-                      </Link>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── BATTLE CARDS ─────────────────────────────────────────────────────── */}
-      <section id="battle-card" className="scroll-mt-24 py-24 px-6 bg-[var(--surface-base)] relative">
-        <div className="max-w-5xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-            <motion.div
-              variants={fadeUpVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-              custom={0}
-            >
-              <p className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-widest mb-3">03 · Battle Cards</p>
-              <h2 className="text-[44px] lg:text-[64px] font-medium tracking-[-0.02em] text-[var(--text-primary)] leading-[1.1] mb-3 text-balance">
-                Explore a live<br className="hidden md:block" /> Battle Card
-              </h2>
-              <p className="text-[var(--text-secondary)] text-sm max-w-sm leading-relaxed">Four quadrants, refreshed every Monday.</p>
-            </motion.div>
-
-            <div className="flex p-1 bg-[var(--fill-subtle)] border border-[var(--border-default)] rounded-md gap-0.5 flex-shrink-0">
-              {(['stripe', 'paypal', 'square'] as const).map((comp) => (
-                <motion.button
-                  key={comp}
-                  onClick={() => setActiveComp(comp)}
-                  onMouseEnter={() => setHoveredBattleTab(comp)}
-                  onMouseLeave={() => setHoveredBattleTab(null)}
-                  className="text-xs font-semibold px-4 py-1.5 rounded-md transition-colors cursor-pointer relative"
-                  style={{ color: activeComp === comp ? 'var(--accent-text)' : 'var(--text-muted)' }}
+            {([
+              { key: 'dashboard', label: 'Live Dashboard', sub: 'Real-time monitoring' },
+              { key: 'card', label: 'Weekly Battle Card', sub: 'The sales deliverable' },
+            ] as const).map((t) => {
+              const active = productTab === t.key;
+              return (
+                <button
+                  key={t.key}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setProductTab(t.key)}
+                  className={`relative flex-1 text-left px-5 py-3.5 rounded-md border transition-colors cursor-pointer ${
+                    active
+                      ? 'border-sky-500/40 bg-sky-500/[0.06]'
+                      : 'border-[var(--border-default)] bg-[var(--surface-raised)] hover:border-[var(--border-strong)]'
+                  }`}
                 >
-                  {hoveredBattleTab === comp && activeComp !== comp && (
-                    <motion.div layoutId="battleTabHover" className="absolute inset-0 bg-[var(--fill-subtle-hover)] rounded-md" transition={{ duration: 0.16 }} />
-                  )}
-                  {activeComp === comp && (
-                    <motion.div layoutId="activeBattleTab" className="absolute inset-0 bg-sky-600 rounded-md" transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }} />
-                  )}
-                  <span className="relative z-10 capitalize">{comp}</span>
-                </motion.button>
-              ))}
-            </div>
-          </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-sky-400' : 'bg-[var(--border-strong)]'}`} />
+                    <span className={`text-sm font-semibold ${active ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>{t.label}</span>
+                  </div>
+                  <p className="text-[11px] font-mono text-[var(--text-muted)] mt-1 ml-3.5">{t.sub}</p>
+                </button>
+              );
+            })}
+          </motion.div>
+
+          {productTab === 'dashboard' ? (
+            <motion.div
+              key="tab-dashboard"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <ProductDemo />
+              <p className="text-center text-[var(--text-muted)] text-xs font-mono mt-6 max-w-md mx-auto leading-relaxed">
+                Every pricing, feature, and messaging change across all tracked competitors — refreshed every 4 hours.
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="tab-card"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed">Four quadrants, refreshed every Monday. Pick a competitor:</p>
+                <div className="flex p-1 bg-[var(--fill-subtle)] border border-[var(--border-default)] rounded-md gap-0.5 flex-shrink-0">
+                  {(['stripe', 'paypal', 'square'] as const).map((comp) => (
+                    <motion.button
+                      key={comp}
+                      onClick={() => setActiveComp(comp)}
+                      onMouseEnter={() => setHoveredBattleTab(comp)}
+                      onMouseLeave={() => setHoveredBattleTab(null)}
+                      className="text-xs font-semibold px-4 py-1.5 rounded-md transition-colors cursor-pointer relative"
+                      style={{ color: activeComp === comp ? 'var(--accent-text)' : 'var(--text-muted)' }}
+                    >
+                      {hoveredBattleTab === comp && activeComp !== comp && (
+                        <motion.div layoutId="battleTabHover" className="absolute inset-0 bg-[var(--fill-subtle-hover)] rounded-md" transition={{ duration: 0.16 }} />
+                      )}
+                      {activeComp === comp && (
+                        <motion.div layoutId="activeBattleTab" className="absolute inset-0 bg-sky-600 rounded-md" transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }} />
+                      )}
+                      <span className="relative z-10 capitalize">{comp}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
 
           <motion.div
             variants={fadeUpVariants}
@@ -886,6 +682,8 @@ export default function LandingPage() {
               </motion.div>
             </AnimatePresence>
           </motion.div>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -959,7 +757,7 @@ export default function LandingPage() {
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Product</h4>
               <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
-                {[{ label: 'How it works', href: '#how-it-works' }, { label: 'Command Center', href: '#dashboard-showcase' }, { label: 'Battle Card', href: '#battle-card' }].map((l) => (
+                {[{ label: 'How it works', href: '#how-it-works' }, { label: 'Live Dashboard', href: '#product' }, { label: 'Battle Card', href: '#product' }].map((l) => (
                   <li key={l.label}><a href={l.href} className="hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
                 ))}
               </ul>
