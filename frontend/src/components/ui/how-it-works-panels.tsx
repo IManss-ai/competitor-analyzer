@@ -442,7 +442,7 @@ export default function HowItWorksPanels() {
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">
                   <div>
-                    <h3 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] mb-3 tracking-tight">
+                    <h3 className="text-xl md:text-2xl font-medium text-[var(--text-primary)] mb-3 tracking-tight">
                       {step.title}
                     </h3>
                     <p className="text-[var(--text-secondary)] text-sm leading-relaxed md:max-w-sm">
