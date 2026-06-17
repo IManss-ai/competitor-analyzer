@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, MotionConfig } from 'motion/react';
 import { ArrowRight, CheckCircle2, TrendingUp, ArrowUpRight, Copy, Check, ChevronDown } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { Github } from '@/components/ui/brand-icons';
@@ -176,6 +176,7 @@ export default function LandingPage() {
   const currentCard = BATTLE_CARDS_DATA[activeComp];
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-[100dvh] bg-[var(--surface-base)] text-[var(--text-primary)] font-sans overflow-x-hidden antialiased">
 
       {/* Scroll progress bar */}
@@ -796,5 +797,6 @@ export default function LandingPage() {
       </footer>
 
     </div>
+    </MotionConfig>
   );
 }
