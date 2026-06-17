@@ -65,7 +65,7 @@ function PricingBasic() {
   return (
     <div className="text-center">
       <motion.div {...reveal()}>
-        <h2 className="text-[40px] lg:text-[54px] font-bold tracking-tight leading-[1.1] mb-5 text-[var(--text-primary)]">
+        <h2 className="text-[40px] lg:text-[54px] font-medium tracking-[-0.02em] leading-[1.1] mb-5 text-[var(--text-primary)]">
           Simple pricing.<br />
           <span className="text-[var(--text-muted)]">No surprises.</span>
         </h2>
