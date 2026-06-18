@@ -50,6 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="ink"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
