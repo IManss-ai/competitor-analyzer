@@ -125,71 +125,78 @@
   --duration-fast: 100ms; --duration-base: 160ms; --duration-slow: 240ms;
 }
 
+/* ── INK = "Signal Room" (default theme): cool near-black, lime = signal ───────
+   Linear-grade restraint. Lime (#c8ff00) is reserved for signal/primary-action;
+   surfaces and most UI stay near-monochrome. Lime always carries DARK text. */
 html[data-theme="ink"] {
-  --background: 40 22% 7%;  --foreground: 40 22% 89%;
-  --card: 40 16% 11%;       --card-foreground: 40 22% 89%;
-  --popover: 40 18% 9%;     --popover-foreground: 40 22% 89%;
-  --primary: 212 38% 50%;   --primary-foreground: 40 30% 96%;
-  --secondary: 40 12% 14%;  --secondary-foreground: 40 22% 89%;
-  --muted: 40 12% 12%;      --muted-foreground: 38 10% 45%;
-  --accent: 212 38% 50%;    --accent-foreground: 40 22% 89%;
-  --destructive: 0 60% 50%; --destructive-foreground: 0 0% 100%;
-  --border: 40 12% 18%;     --input: 40 12% 15%;  --ring: 212 38% 50%;
+  --background: 220 13% 5%;  --foreground: 220 13% 92%;
+  --card: 222 13% 8%;        --card-foreground: 220 13% 92%;
+  --popover: 222 14% 7%;     --popover-foreground: 220 13% 92%;
+  --primary: 73 100% 50%;    --primary-foreground: 80 70% 6%;
+  --secondary: 220 9% 14%;   --secondary-foreground: 220 13% 92%;
+  --muted: 220 9% 12%;       --muted-foreground: 220 6% 47%;
+  --accent: 73 100% 50%;     --accent-foreground: 80 70% 6%;
+  --destructive: 0 72% 60%;  --destructive-foreground: 0 0% 100%;
+  --border: 220 9% 17%;      --input: 220 9% 15%;  --ring: 73 100% 50%;
 
-  --surface-base: #16140f;  --surface-raised: #1f1c16;
-  --surface-overlay: #211e17; --surface-subtle: #26221a;
-  --border-default: rgba(234,230,221,0.14);
-  --border-subtle:  rgba(234,230,221,0.07);
-  --border-strong:  rgba(234,230,221,0.24);
-  --text-primary: #eae6dd; --text-secondary: #a8a094; --text-muted: #6f685c;
-  --accent-primary: #5e9bf0; --accent-hover: #82b3f5;
-  --accent-subtle: rgba(94,155,240,0.14);
-  --accent-border: rgba(94,155,240,0.38);
-  --accent-glow:   rgba(94,155,240,0.38);
-  --accent-text:   #16140f;
+  --surface-base: #0a0b0d;  --surface-raised: #101216;
+  --surface-overlay: #15171c; --surface-subtle: #181a20;
+  --border-default: rgba(233,236,242,0.10);
+  --border-subtle:  rgba(233,236,242,0.055);
+  --border-strong:  rgba(233,236,242,0.20);
+  --text-primary: #e8eaed; --text-secondary: #9a9ea6; --text-muted: #646871;
+  --accent-primary: #c8ff00; --accent-hover: #d7ff3f;
+  --accent-subtle: rgba(200,255,0,0.12);
+  --accent-border: rgba(200,255,0,0.30);
+  --accent-glow:   rgba(200,255,0,0.22);
+  --accent-text:   #0d1500;
   --tone-positive: #5aa07a;
   --tone-warning:  #c79a4e;
   --tone-danger:   #f87171;
-  --hairline: rgba(234,230,221,0.06);
-  --fill-subtle: rgba(234,230,221,0.04);
-  --fill-subtle-hover: rgba(234,230,221,0.07);
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
-  --shadow-modal:    0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
+  --hairline: rgba(233,236,242,0.05);
+  --fill-subtle: rgba(233,236,242,0.035);
+  --fill-subtle-hover: rgba(233,236,242,0.06);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
+  --shadow-modal:    0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.55);
 
-  --color-sky-400: #82b3f5; --color-sky-500: #5e9bf0; --color-sky-600: #4a82d8;
+  --color-sky-50:  #eaffc2; --color-sky-300: #d7ff3f;
+  --color-sky-400: #c8ff00; --color-sky-500: #c8ff00; --color-sky-600: #a8d600;
+  --color-sky-700: #a8d600; --color-sky-950: #18220a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --background: 40 22% 7%;  --foreground: 40 22% 89%;
-    --card: 40 16% 11%;       --card-foreground: 40 22% 89%;
-    --popover: 40 18% 9%;     --popover-foreground: 40 22% 89%;
-    --primary: 212 38% 50%;   --primary-foreground: 40 30% 96%;
-    --secondary: 40 12% 14%;  --secondary-foreground: 40 22% 89%;
-    --muted: 40 12% 12%;      --muted-foreground: 38 10% 45%;
-    --accent: 212 38% 50%;    --accent-foreground: 40 22% 89%;
-    --destructive: 0 60% 50%; --destructive-foreground: 0 0% 100%;
-    --border: 40 12% 18%;     --input: 40 12% 15%;  --ring: 212 38% 50%;
-    --surface-base: #16140f;  --surface-raised: #1f1c16;
-    --surface-overlay: #211e17; --surface-subtle: #26221a;
-    --border-default: rgba(234,230,221,0.14);
-    --border-subtle:  rgba(234,230,221,0.07);
-    --border-strong:  rgba(234,230,221,0.24);
-    --text-primary: #eae6dd; --text-secondary: #a8a094; --text-muted: #6f685c;
-    --accent-primary: #5e9bf0; --accent-hover: #82b3f5;
-    --accent-subtle: rgba(94,155,240,0.14);
-    --accent-border: rgba(94,155,240,0.38);
-    --accent-glow:   rgba(94,155,240,0.38);
-    --accent-text:   #16140f;
+    --background: 220 13% 5%;  --foreground: 220 13% 92%;
+    --card: 222 13% 8%;        --card-foreground: 220 13% 92%;
+    --popover: 222 14% 7%;     --popover-foreground: 220 13% 92%;
+    --primary: 73 100% 50%;    --primary-foreground: 80 70% 6%;
+    --secondary: 220 9% 14%;   --secondary-foreground: 220 13% 92%;
+    --muted: 220 9% 12%;       --muted-foreground: 220 6% 47%;
+    --accent: 73 100% 50%;     --accent-foreground: 80 70% 6%;
+    --destructive: 0 72% 60%;  --destructive-foreground: 0 0% 100%;
+    --border: 220 9% 17%;      --input: 220 9% 15%;  --ring: 73 100% 50%;
+    --surface-base: #0a0b0d;  --surface-raised: #101216;
+    --surface-overlay: #15171c; --surface-subtle: #181a20;
+    --border-default: rgba(233,236,242,0.10);
+    --border-subtle:  rgba(233,236,242,0.055);
+    --border-strong:  rgba(233,236,242,0.20);
+    --text-primary: #e8eaed; --text-secondary: #9a9ea6; --text-muted: #646871;
+    --accent-primary: #c8ff00; --accent-hover: #d7ff3f;
+    --accent-subtle: rgba(200,255,0,0.12);
+    --accent-border: rgba(200,255,0,0.30);
+    --accent-glow:   rgba(200,255,0,0.22);
+    --accent-text:   #0d1500;
     --tone-positive: #5aa07a;
     --tone-warning:  #c79a4e;
     --tone-danger:   #f87171;
-    --hairline: rgba(234,230,221,0.06);
-    --fill-subtle: rgba(234,230,221,0.04);
-    --fill-subtle-hover: rgba(234,230,221,0.07);
-    --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
-    --shadow-modal:    0 24px 64px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.5);
-    --color-sky-400: #82b3f5; --color-sky-500: #5e9bf0; --color-sky-600: #4a82d8;
+    --hairline: rgba(233,236,242,0.05);
+    --fill-subtle: rgba(233,236,242,0.035);
+    --fill-subtle-hover: rgba(233,236,242,0.06);
+    --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
+    --shadow-modal:    0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.55);
+    --color-sky-50:  #eaffc2; --color-sky-300: #d7ff3f;
+    --color-sky-400: #c8ff00; --color-sky-500: #c8ff00; --color-sky-600: #a8d600;
+    --color-sky-700: #a8d600; --color-sky-950: #18220a;
     color-scheme: dark;
   }
 }
@@ -294,14 +301,14 @@ code, pre, .font-mono {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
-/* Buttons — sharp, oxblood, no glow */
+/* Buttons — sharp, flat. Lime carries dark --accent-text, never #fff. */
 .rs-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   background: var(--accent-primary);
-  color: #fff;
+  color: var(--accent-text);
   border: none;
   border-radius: var(--radius-md);
   padding: 9px 16px;
