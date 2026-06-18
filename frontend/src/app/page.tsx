@@ -237,7 +237,7 @@ export default function LandingPage() {
             <MotionLink
               href="/auth/login"
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-primary)] text-white px-4 py-1.5 rounded hover:bg-[var(--accent-hover)] transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-primary)] text-[var(--accent-text)] px-4 py-1.5 rounded hover:bg-[var(--accent-hover)] transition-colors whitespace-nowrap"
             >
               Get started <ArrowRight size={10} />
             </MotionLink>
@@ -326,7 +326,7 @@ export default function LandingPage() {
                   whileTap={{ scale: 0.97 }}
                   whileHover={{ scale: 1.02 }}
                   transition={SPRING}
-                  className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-white font-semibold text-sm px-6 py-3 rounded hover:bg-[var(--accent-hover)] transition-colors"
+                  className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-[var(--accent-text)] font-semibold text-sm px-6 py-3 rounded hover:bg-[var(--accent-hover)] transition-colors"
                 >
                   Start 2-day free trial <ArrowRight size={12} />
                 </MotionLink>
@@ -729,7 +729,7 @@ export default function LandingPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               transition={SPRING}
-              className="inline-flex items-center gap-2.5 bg-[var(--accent-primary)] text-white font-semibold px-8 py-3.5 rounded hover:bg-[var(--accent-hover)] transition-colors text-sm"
+              className="inline-flex items-center gap-2.5 bg-[var(--accent-primary)] text-[var(--accent-text)] font-semibold px-8 py-3.5 rounded hover:bg-[var(--accent-hover)] transition-colors text-sm"
             >
               <span>Start free trial</span>
               <ArrowRight size={13} />

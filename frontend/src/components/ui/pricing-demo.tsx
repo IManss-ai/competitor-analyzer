@@ -111,7 +111,7 @@ function PricingBasic() {
             {/* CTA */}
             <Link
               href={tier.href}
-              className="inline-flex items-center justify-between w-full gap-4 bg-[var(--accent-primary)] text-white font-semibold pl-5 pr-2 py-2.5 rounded-full cursor-pointer hover:bg-[var(--accent-hover)] transition-colors"
+              className="inline-flex items-center justify-between w-full gap-4 bg-[var(--accent-primary)] text-[var(--accent-text)] font-semibold pl-5 pr-2 py-2.5 rounded-full cursor-pointer hover:bg-[var(--accent-hover)] transition-colors"
             >
               <span className="text-sm">{tier.cta}</span>
               <span className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center">
