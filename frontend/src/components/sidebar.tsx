@@ -181,7 +181,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
           className="w-7 h-7 flex items-center justify-center"
           style={{ background: 'var(--accent-primary)' }}
         >
-          <RivalscopeLogo size={12} className="text-white" />
+          <RivalscopeLogo size={12} className="text-[var(--accent-text)]" />
         </div>
         <span className="text-[14px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
           Rivalscope
@@ -231,7 +231,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             className="w-8 h-8 flex items-center justify-center flex-shrink-0"
             style={{ background: 'var(--accent-primary)' }}
           >
-            <RivalscopeLogo size={14} className="text-white" />
+            <RivalscopeLogo size={14} className="text-[var(--accent-text)]" />
           </div>
           <div className="leading-none">
             <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
@@ -319,7 +319,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
                   {hasBadge && (
                     <span
-                      className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
+                      className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
                       style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
@@ -385,7 +385,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
                   {hasBadge && (
                     <span
-                      className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
+                      className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
                       style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
@@ -484,7 +484,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             </div>
             <Link
               href="/settings"
-              className="block w-full py-1.5 rounded-md text-[11px] font-semibold text-center text-white transition-colors"
+              className="block w-full py-1.5 rounded-md text-[11px] font-semibold text-center text-[var(--accent-text)] transition-colors"
               style={{ background: 'var(--accent-primary)' }}
             >
               Upgrade to Pro
