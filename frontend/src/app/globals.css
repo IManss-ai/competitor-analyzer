@@ -508,6 +508,22 @@ html[data-theme="ink"] .badge-initial_scan {
   50%       { box-shadow: 0 0 0 6px rgba(90,160,122,0.05); }
 }
 
+/* Signal pulse — lime "live" dot for the Brief / live states (Signal Room) */
+.sr-pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-primary); position: relative;
+  display: inline-block; flex: 0 0 auto;
+}
+.sr-pulse::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: var(--accent-primary); animation: sr-ping 2.2s ease-out infinite;
+}
+@keyframes sr-ping {
+  0%   { transform: scale(1); opacity: 0.6; }
+  70%  { transform: scale(3); opacity: 0; }
+  100% { opacity: 0; }
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    SECTION DIVIDERS
 ───────────────────────────────────────────────────────────────────────────── */

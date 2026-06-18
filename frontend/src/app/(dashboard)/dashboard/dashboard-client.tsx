@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Building2, Zap, CheckSquare, Star, Clock, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, ShoppingBag } from 'lucide-react';
-import { BarChart, Bar, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { DashboardData, Competitor } from '@/lib/types';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
@@ -399,7 +398,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           <button
             onClick={() => confirmBusinessType(selectedBusinessType)}
             disabled={savingBusinessType}
-            className="w-full disabled:opacity-50 text-white py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             style={{ backgroundColor: 'var(--accent-primary)' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
@@ -522,7 +521,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <button
               type="submit"
               disabled={submittingOnboarding}
-              className="w-full disabled:opacity-50 text-white py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
               style={{ backgroundColor: 'var(--accent-primary)' }}
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
@@ -647,7 +646,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </button>
           <button
             onClick={() => setOnboardingStep(3)}
-            className="w-full sm:w-auto px-5 py-2.5 text-white text-sm font-semibold transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-2.5 text-[var(--accent-text)] text-sm font-semibold transition-colors cursor-pointer"
             style={{ backgroundColor: 'var(--accent-primary)', borderRadius: 'var(--radius-md)' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
@@ -658,113 +657,185 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       </motion.div>
     );
   }
-  return (
-    <div className="space-y-6">
-      {/* A) STATS — one ledger strip, hairline-divided, single accent */}
-      <div className="rs-card grid grid-cols-2 lg:grid-cols-4">
-        {[{
-          label: 'Competitors',
-          value: dashboardData.competitor_count,
-          decimals: 0,
-          sub: 'active targets',
-        },{
-          label: 'Changes / week',
-          value: dashboardData.changes_this_week || 0,
-          decimals: 0,
-          sub: 'past 7 days',
-        },{
-          label: 'Pending alerts',
-          value: dashboardData.pending_count,
-          decimals: 0,
-          sub: 'require review',
-        },{
-          label: 'Avg review',
-          value: dashboardData.avg_review_score,
-          decimals: 1,
-          sub: 'across platforms',
-        }].map(({ label, value, decimals, sub }, idx) => (
-          <motion.div
-            key={label}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.24, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
-            className="px-5 py-4 lg:py-5"
-            style={idx > 0 ? { borderLeft: '1px solid var(--border-subtle)' } : undefined}
-          >
-            <p className="rs-label">{label}</p>
-            <p
-              className="text-[32px] font-semibold leading-none tracking-tight font-mono tabular-nums mt-2.5"
-              style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}
-            >
-              {typeof value === 'number' ? <CountUp value={value} decimals={decimals} /> : '—'}
-            </p>
-            <p className="text-[10px] mt-2 font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{sub}</p>
-          </motion.div>
-        ))}
-      </div>
+  // ── Signal scoring — derived from REAL fields only (never invented numbers) ──
+  const TYPE_WEIGHT: Record<string, number> = {
+    pricing_change: 100, repositioning: 86, positioning_shift: 86,
+    new_feature: 74, feature_add: 74, review_trend: 64, minor_copy: 36,
+    initial_scan: 42, no_change: 14,
+  };
+  const TYPE_LABEL: Record<string, string> = {
+    pricing_change: 'Pricing change', repositioning: 'Repositioning', positioning_shift: 'Repositioning',
+    new_feature: 'New feature', feature_add: 'New feature', review_trend: 'Review shift',
+    minor_copy: 'Copy change', initial_scan: 'Now tracking', no_change: 'No change',
+  };
+  const eventSignal = (ev: any): number => {
+    const base = TYPE_WEIGHT[ev?.change_type] ?? 48;
+    const ts = ev?.detected_at ? new Date(ev.detected_at).getTime() : 0;
+    const days = ts ? (Date.now() - ts) / 86400000 : 60;
+    const recency = Math.max(0, 1 - days / 30);
+    const mag = Math.min(1, Math.abs(ev?.net_char_delta || 0) / 2000);
+    return Math.min(99, Math.round(base * 0.68 + recency * 22 + mag * 10));
+  };
+  const hostnameOf = (u: string) => (u ? (u.split('://')[1] || u).split('/')[0].replace('www.', '') : '');
 
-      {/* B) ACTIVITY CHART (28-day bar chart) */}
-      <div className="rs-card p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="rs-heading-md">Daily Activity</h2>
-            <p className="rs-body-sm mt-0.5">28-day scan + change history</p>
-          </div>
-          <div className="flex items-center gap-4 text-[11px] font-mono">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-sm" style={{ background: p.grid }} />
-              <span style={{ color: 'var(--text-muted)' }}>Quiet</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-sm" style={{ background: 'var(--accent-primary)' }} />
-              <span style={{ color: 'var(--text-secondary)' }}>Changes</span>
-            </div>
-          </div>
-        </div>
-        <div className="h-[160px] w-full">
-          {activityDays.length > 0 ? (
-            // initialDimension: the first measure can race layout and report -1,
-            // leaving the chart blank until an unrelated re-render (theme toggle).
-            <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 600, height: 160 }}>
-              <BarChart data={activityDays} barSize={10} barGap={2}>
-                <XAxis
-                  dataKey="date"
-                  interval={6}
-                  tickFormatter={(val) => { const p = val.split('-'); return `${p[1]}/${p[2]}`; }}
-                  tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
-                  axisLine={{ stroke: p.axis }}
-                  tickLine={false}
-                />
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const d = payload[0].payload;
-                      const fmt = new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                      return (
-                        <div className="text-[12px] px-3 py-2" style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }}>
-                          <p className="font-semibold">{fmt}</p>
-                          <p className="mt-0.5 font-mono" style={{ color: 'var(--accent-primary)' }}>{d.change_count} changes</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                  cursor={{ fill: p.cursor }}
-                />
-                <Bar dataKey="change_count" radius={[0, 0, 0, 0]}>
-                  {activityDays.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.change_count > 0 ? p.accent : p.grid} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+  const rankedEvents = [...feedEvents].sort((a, b) => eventSignal(b) - eventSignal(a));
+  const topEvent = rankedEvents[0] || null;
+  const topIsReal = !!topEvent && topEvent.change_type !== 'initial_scan' && topEvent.change_type !== 'no_change';
+
+  const rankedComps = [...(dashboardData.competitors_health || [])].map((c) => {
+    const evs = feedEvents.filter((e: any) => e.competitor_id === c.id);
+    const signal = evs.length ? Math.max(...evs.map(eventSignal)) : (c.total_changes > 0 ? 52 : 22);
+    const latest = [...evs].sort((a: any, b: any) => eventSignal(b) - eventSignal(a))[0] || null;
+    return { ...c, signal, latest };
+  }).sort((a, b) => b.signal - a.signal);
+
+  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' }).toUpperCase();
+
+  return (
+    <div className="space-y-5">
+      {/* THE BRIEF — leads with the single most important real signal */}
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="rs-card p-6 lg:p-7"
+      >
+        <div className="flex items-center gap-2.5 mb-4 font-mono text-[10.5px] tracking-[0.14em] uppercase" style={{ color: 'var(--text-muted)' }}>
+          {topIsReal ? (
+            <span className="inline-flex items-center gap-2" style={{ color: 'var(--accent-primary)' }}>
+              <span className="sr-pulse" /> Top signal
+            </span>
           ) : (
-            <div className="h-full flex items-center justify-center">
-              <Loader2 size={18} className="animate-spin" style={{ color: 'var(--text-muted)' }} />
-            </div>
+            <span style={{ color: 'var(--text-secondary)' }}>Briefing</span>
           )}
+          <span>· {dateLabel}</span>
         </div>
-      </div>
+
+        {topEvent ? (
+          <>
+            <h2 className="font-semibold tracking-tight leading-[1.15] max-w-2xl" style={{ color: 'var(--text-primary)', fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>
+              {topIsReal ? (
+                <><span style={{ color: 'var(--accent-primary)' }}>{topEvent.competitor_name}</span>{' — '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.</>
+              ) : (
+                <>You&apos;re now tracking <span style={{ color: 'var(--accent-primary)' }}>{topEvent.competitor_name}</span>.</>
+              )}
+            </h2>
+            <p className="mt-3 text-[14px] leading-relaxed max-w-xl line-clamp-3" style={{ color: 'var(--text-secondary)' }}>
+              {topEvent.brief_text || 'Their homepage was captured. Pricing, feature, and messaging changes will surface here automatically.'}
+            </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Link href={`/competitors/${topEvent.competitor_id}`} className="rs-btn-primary">
+                {topIsReal ? 'Open battle card' : 'View intelligence'} <ArrowRight size={14} />
+              </Link>
+              <a href="#feed" className="rs-btn-ghost">See all changes</a>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="font-semibold tracking-tight" style={{ color: 'var(--text-primary)', fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>All quiet on your competitors.</h2>
+            <p className="mt-3 text-[14px] leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)' }}>No changes detected yet. We re-scan every week and surface anything that moves — pricing, features, reviews, hiring.</p>
+            <div className="mt-5"><Link href="/competitors" className="rs-btn-primary"><Plus size={14} /> Add a competitor</Link></div>
+          </>
+        )}
+
+        {/* Compact real metric strip — ledger, hairline-divided */}
+        <div className="mt-6 pt-5 grid grid-cols-2 sm:grid-cols-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+          {[
+            { k: 'Tracked', v: dashboardData.competitor_count, sub: 'competitors' },
+            { k: 'Changes · 7d', v: dashboardData.changes_this_week || 0, sub: 'this week' },
+            { k: 'Needs review', v: dashboardData.pending_count, sub: 'in queue', accent: dashboardData.pending_count > 0 },
+            { k: 'Avg review', v: dashboardData.avg_review_score, dec: 1, sub: 'all platforms' },
+          ].map((m, i) => (
+            <div key={m.k} style={i > 0 ? { paddingLeft: 18, borderLeft: '1px solid var(--border-subtle)' } : undefined} className="py-1">
+              <p className="rs-label text-[9.5px]">{m.k}</p>
+              <p className="font-mono tabular-nums font-semibold text-[24px] leading-none mt-2.5" style={{ color: m.accent ? 'var(--accent-primary)' : 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                {typeof m.v === 'number' ? <CountUp value={m.v} decimals={m.dec || 0} /> : '—'}
+              </p>
+              <p className="text-[9.5px] mt-2 font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{m.sub}</p>
+            </div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* SIGNAL BOARD — competitors ranked by real signal; lime marks the hot one */}
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+        className="rs-card overflow-hidden"
+      >
+        <div className="flex items-center justify-between px-5 py-3.5 gap-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
+          <div className="flex items-center gap-3 min-w-0">
+            <h2 className="rs-heading-sm">Signal Board</h2>
+            <span className="font-mono text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{rankedComps.length} tracked · ranked by signal</span>
+          </div>
+          <div className="flex items-center gap-4 flex-shrink-0">
+            {activityDays.length > 0 && (
+              <div className="hidden sm:flex items-center gap-2">
+                <span className="rs-label text-[9px]">28d</span>
+                {renderSparkline(activityDays.map((d: any) => d.change_count))}
+              </div>
+            )}
+            <Link href="/competitors" className="font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Manage →</Link>
+          </div>
+        </div>
+
+        {rankedComps.length > 0 ? (
+          <div className="overflow-x-auto">
+            <div className="min-w-[680px]">
+              {rankedComps.map((c, idx) => {
+                const hot = idx === 0 && c.signal >= 55 && !!c.latest && c.latest.change_type !== 'initial_scan';
+                const hotBg = 'linear-gradient(90deg, var(--accent-subtle), transparent 42%)';
+                return (
+                  <div
+                    key={c.id}
+                    className="relative grid items-center gap-4 px-5 py-4 transition-colors duration-150"
+                    style={{ gridTemplateColumns: '24px 1.5fr 2fr 92px 64px auto', borderTop: idx ? '1px solid var(--border-subtle)' : 'none', background: hot ? hotBg : 'transparent' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = hot ? hotBg : 'var(--fill-subtle)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = hot ? hotBg : 'transparent')}
+                  >
+                    {hot && <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: 'var(--accent-primary)' }} />}
+                    <span className="font-mono tabular-nums text-[12px]" style={{ color: hot ? 'var(--accent-primary)' : 'var(--text-muted)' }}>{String(idx + 1).padStart(2, '0')}</span>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img src={`https://www.google.com/s2/favicons?domain=${hostnameOf(c.url)}&sz=32`} alt="" className="w-6 h-6 rounded flex-shrink-0" style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-default)', padding: 2 }} />
+                      <div className="min-w-0">
+                        <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{c.name}</div>
+                        <div className="font-mono text-[9.5px] truncate" style={{ color: 'var(--text-muted)' }}>{hostnameOf(c.url)}</div>
+                      </div>
+                    </div>
+                    <div className="text-[12px] flex items-center gap-2 min-w-0" style={{ color: 'var(--text-secondary)' }}>
+                      {c.latest ? (
+                        <>
+                          <span className={`badge badge-${c.latest.change_type} flex-shrink-0`}>{c.latest.change_type === 'initial_scan' ? 'New' : (TYPE_LABEL[c.latest.change_type] || 'Change')}</span>
+                          <span className="truncate">{c.latest.brief_text || 'Update detected'}</span>
+                        </>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)' }}>No changes yet</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 justify-end">
+                      <span className="rounded-full overflow-hidden flex-shrink-0" style={{ width: 42, height: 4, background: 'var(--fill-subtle-hover)' }}><span style={{ display: 'block', height: '100%', width: `${c.signal}%`, background: hot ? 'var(--accent-primary)' : 'var(--text-muted)' }} /></span>
+                      <span className="font-mono tabular-nums text-[11px] w-6 text-right" style={{ color: hot ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>{c.signal}</span>
+                    </div>
+                    <span className="font-mono text-[10px] text-right" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(c.last_scanned)}</span>
+                    <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" className="p-1.5 cursor-pointer transition-colors flex-shrink-0" style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
+                        {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} style={{ color: 'var(--tone-positive)' }} /> : <RefreshCw size={13} />}
+                      </button>
+                      <Link href={`/competitors/${c.id}`} className="font-mono text-[10.5px] whitespace-nowrap" style={{ color: hot ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>Card →</Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="px-5 py-12 text-center flex flex-col items-center gap-3">
+            <p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>No competitors tracked yet.</p>
+            <Link href="/competitors" className="rs-btn-primary inline-flex"><Plus size={14} /> Add your first competitor</Link>
+          </div>
+        )}
+      </motion.section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* C) INTEL FEED */}
@@ -779,7 +850,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <div className="p-10 text-center flex flex-col items-center gap-3">
                 <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>No change events yet</p>
                 <p className="text-xs max-w-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>Add a competitor and run your first scan to start tracking changes.</p>
-                <a href="/competitors" className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-primary)', color: '#fff' }}>
+                <a href="/competitors" className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-primary)', color: 'var(--accent-text)' }}>
                   Add competitor
                 </a>
               </div>
@@ -967,7 +1038,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             ) : (
               <div className="p-8 text-center flex flex-col items-center gap-3">
                 <p className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>No competitors tracked</p>
-                <a href="/competitors" className="text-xs font-semibold px-3 py-1.5 rounded" style={{ background: 'var(--accent-primary)', color: '#fff' }}>
+                <a href="/competitors" className="text-xs font-semibold px-3 py-1.5 rounded" style={{ background: 'var(--accent-primary)', color: 'var(--accent-text)' }}>
                   Add one
                 </a>
               </div>
