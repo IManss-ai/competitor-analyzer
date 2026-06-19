@@ -95,16 +95,16 @@ class TestDiscoveryApi(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["apps"][0]["slug"], "acme")
 
-    @patch("app.routes.battlecard.anthropic.Anthropic")
-    def test_public_discovery_makes_zero_paid_model_calls(self, mock_anthropic):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_public_discovery_makes_zero_paid_model_calls(self, _mock_avail, mock_get_client):
         """Cost regression — same class of bug as the June 2026 credit drain."""
         mock_client = MagicMock()
-        mock_anthropic.return_value = mock_client
-        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "real", "OPENAI_API_KEY": "real"}):
-            self.client.get("/api/v1/apps/search?q=acme")
-            self.client.get("/api/v1/apps/acme")
-            self.client.get("/api/v1/apps-sitemap")
-        mock_client.messages.create.assert_not_called()
+        mock_get_client.return_value = mock_client
+        self.client.get("/api/v1/apps/search?q=acme")
+        self.client.get("/api/v1/apps/acme")
+        self.client.get("/api/v1/apps-sitemap")
+        mock_client.chat.completions.create.assert_not_called()
 
 
 if __name__ == "__main__":

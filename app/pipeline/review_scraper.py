@@ -1,7 +1,6 @@
 import json
 import httpx
 import logging
-import os
 import re
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -9,7 +8,7 @@ from sqlalchemy import select
 from app.models import Review, ReviewSnapshot, Competitor
 from app.config import SCRAPER_URL
 from app.observability import note_degraded
-import anthropic
+import app.llm as llm
 import uuid as _uuid
 
 logger = logging.getLogger(__name__)
@@ -50,58 +49,66 @@ def _extract_json_from_response(content: str) -> dict:
     return json.loads(content)
 
 async def _extract_reviews_with_claude(text: str) -> dict:
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key":
+    if not llm.ai_available():
         note_degraded("review_scraper.extract", "empty", "dummy_key")
         return {"reviews": [], "avg_rating": 0, "total_reviews": 0}
-        
-    client = anthropic.AsyncAnthropic(api_key=api_key)
-    prompt = """Extract reviews from this page text. Return JSON: {"reviews": [{"id": "str", "author": "str", "rating": int, "title": "str", "body": "str", "published_at": "ISO-8601 date str"}], "avg_rating": float, "total_reviews": int}. 
-    
+
+    client = llm.get_async_client()
+    prompt = """Extract reviews from this page text. Return JSON: {"reviews": [{"id": "str", "author": "str", "rating": int, "title": "str", "body": "str", "published_at": "ISO-8601 date str"}], "avg_rating": float, "total_reviews": int}.
+
     If no reviews found, return empty list and 0. Use your best judgment to determine ratings (1-5).
-    
+
     Text:
     """ + text[:15000]
-    
+
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that extracts structured review data from web page text."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
-        return _extract_json_from_response(response.content[0].text)
+        return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("review_scraper.extract", "empty", "api_error", e)
         return {"reviews": [], "avg_rating": 0, "total_reviews": 0}
 
 async def _analyze_complaints_with_claude(reviews: list) -> dict:
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key" or not reviews:
-        if reviews and (not api_key or api_key == "dummy_anthropic_key"):
+    if not llm.ai_available() or not reviews:
+        if reviews and not llm.ai_available():
             note_degraded("review_scraper.complaints", "empty", "dummy_key")
         return {"complaints": [], "complaint_reviews": []}
-        
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+
+    client = llm.get_async_client()
     reviews_json = json.dumps(reviews)
-    
+
     prompt = """Analyze these reviews. Identify which reviews are complaints (negative sentiment about specific product issues).
     Extract the top 3 recurring complaint themes across all negative reviews.
-    
+
     Return JSON: {"complaints": ["theme1", "theme2", "theme3"], "complaint_reviews": ["review_id_1", "review_id_2"]}.
     If no complaints, return empty lists.
-    
+
     Reviews:
     """ + reviews_json
-    
+
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that analyzes product reviews and identifies complaint themes."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
-        return _extract_json_from_response(response.content[0].text)
+        return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("review_scraper.complaints", "empty", "api_error", e)
         return {"complaints": [], "complaint_reviews": []}

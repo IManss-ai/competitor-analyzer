@@ -24,7 +24,7 @@ class TestActionGenerator(unittest.IsolatedAsyncioTestCase):
         # Verify call attributes for the last call
         mock_create.assert_called()
         kwargs = mock_create.call_args[1]
-        self.assertEqual(kwargs["model"], "gpt-4o-mini")
+        self.assertEqual(kwargs["model"], "deepseek-v4-flash")
         self.assertEqual(kwargs["temperature"], 0.7)
         self.assertEqual(kwargs["max_tokens"], 400)
 

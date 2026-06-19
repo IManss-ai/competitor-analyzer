@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-import anthropic
+import app.llm as llm
 
 from app.db import get_session
 from app.observability import note_degraded
@@ -162,8 +162,7 @@ def _generate_local_battlecard(comp: Competitor, db: Session, allow_ai: bool = T
     if latest_snapshot and latest_snapshot.avg_rating is not None:
         rating_line = f"Current avg rating: {latest_snapshot.avg_rating}/5 across {latest_snapshot.total_reviews or '?'} reviews ({latest_snapshot.complaint_count or 0} complaints flagged).\n"
 
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    is_dummy = (not api_key) or (api_key == "dummy_anthropic_key") or not allow_ai
+    is_dummy = (not llm.ai_available()) or not allow_ai
 
     executive_summary = ""
     what_changed = []
@@ -171,7 +170,7 @@ def _generate_local_battlecard(comp: Competitor, db: Session, allow_ai: bool = T
     playbook = []
 
     if not is_dummy:
-        client = anthropic.Anthropic(api_key=api_key)
+        client = llm.get_sync_client()
         weakness_str = "\n".join(f"- {w}" for w in weaknesses)
         user_prompt = f"""Local competitor: {comp.name or comp.url}
 
@@ -185,18 +184,18 @@ Known customer complaints:
 {weakness_str}"""
 
         try:
-            response = client.messages.create(
-                model="claude-sonnet-4-6",
-                max_tokens=1024,
+            response = client.chat.completions.create(
+                model=llm.MODEL,
+                max_tokens=4096,
                 messages=[
-                    {"role": "user", "content": [
-                        {"type": "text", "text": LOCAL_SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}},
-                        {"type": "text", "text": user_prompt}
-                    ]}
+                    {"role": "system", "content": LOCAL_SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt},
                 ],
                 temperature=0.7,
+                response_format={"type": "json_object"},
+                extra_body=llm.THINKING_OFF,
             )
-            content = response.content[0].text
+            content = response.choices[0].message.content
             if "```json" in content:
                 content = content.split("```json")[1].split("```")[0].strip()
             elif "```" in content:
@@ -338,8 +337,7 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
         if hiring_snapshot.strategic_signal:
             hiring_signal_text += f". Pattern read: {hiring_snapshot.strategic_signal}"
 
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    is_dummy = (not api_key) or (api_key == "dummy_anthropic_key") or not allow_ai
+    is_dummy = (not llm.ai_available()) or not allow_ai
 
     executive_summary = ""
     what_changed = []
@@ -347,7 +345,7 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
     playbook = []
 
     if not is_dummy:
-        client = anthropic.Anthropic(api_key=api_key)
+        client = llm.get_sync_client()
         change_str = "\n".join(change_list_texts) if change_list_texts else "No changes detected in the past 7 days."
         weakness_str = "\n".join(weaknesses)
 
@@ -388,18 +386,18 @@ Known customer complaints/weaknesses:
 {weakness_str}{hiring_block}"""
 
         try:
-            response = client.messages.create(
-                model="claude-sonnet-4-6",
-                max_tokens=1024,
+            response = client.chat.completions.create(
+                model=llm.MODEL,
+                max_tokens=4096,
                 messages=[
-                    {"role": "user", "content": [
-                        {"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}},
-                        {"type": "text", "text": user_prompt}
-                    ]}
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
                 ],
-                temperature=0.7
+                temperature=0.7,
+                response_format={"type": "json_object"},
+                extra_body=llm.THINKING_OFF,
             )
-            content = response.content[0].text
+            content = response.choices[0].message.content
             if "```json" in content:
                 content = content.split("```json")[1].split("```")[0].strip()
             elif "```" in content:

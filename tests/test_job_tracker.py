@@ -190,52 +190,53 @@ class TestBattleCardIncludesHiringSignal(unittest.TestCase):
         Base.metadata.drop_all(self.engine)
         app.dependency_overrides.clear()
 
-    @patch("app.routes.battlecard.anthropic.Anthropic")
-    def test_hiring_signal_passed_into_prompt(self, mock_anthropic_class):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_hiring_signal_passed_into_prompt(self, _mock_avail, mock_get_client):
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
-        mock_msg = MagicMock()
-        mock_msg.content = [MagicMock(text=json.dumps({
+        mock_get_client.return_value = mock_client
+        mock_resp = MagicMock()
+        mock_resp.choices = [MagicMock(message=MagicMock(content=json.dumps({
             "executive_summary": "ok",
             "what_changed": [],
             "weaknesses": ["x"],
             "strategic_signals": ["upmarket pivot"],
             "playbook": ["a", "b", "c", "d", "e"],
-        }))]
-        mock_client.messages.create.return_value = mock_msg
+        })))]
+        mock_client.chat.completions.create.return_value = mock_resp
 
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}", headers={"Authorization": f"Bearer {self.user.id}"})
+        resp = self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}", headers={"Authorization": f"Bearer {self.user.id}"})
         self.assertEqual(resp.status_code, 200)
 
-        user_text = mock_client.messages.create.call_args.kwargs["messages"][0]["content"][1]["text"]
+        # new shape: messages[1] is the user turn, content is a plain string
+        user_text = mock_client.chat.completions.create.call_args.kwargs["messages"][1]["content"]
         self.assertIn("Hiring signals", user_text)
         self.assertIn("12 open roles", user_text)
         self.assertIn("4 new this week", user_text)
         self.assertIn("upmarket pivot", user_text)
 
-    def test_no_hiring_signal_means_no_hiring_block_in_prompt(self):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_no_hiring_signal_means_no_hiring_block_in_prompt(self, _mock_avail, mock_get_client):
         self.db.query(JobSnapshot).delete()
         self.db.commit()
 
-        with patch("app.routes.battlecard.anthropic.Anthropic") as mock_anthropic_class:
-            mock_client = MagicMock()
-            mock_anthropic_class.return_value = mock_client
-            mock_msg = MagicMock()
-            mock_msg.content = [MagicMock(text=json.dumps({
-                "executive_summary": "ok",
-                "what_changed": [],
-                "weaknesses": ["x"],
-                "strategic_signals": ["y"],
-                "playbook": ["a", "b", "c", "d", "e"],
-            }))]
-            mock_client.messages.create.return_value = mock_msg
+        mock_client = MagicMock()
+        mock_get_client.return_value = mock_client
+        mock_resp = MagicMock()
+        mock_resp.choices = [MagicMock(message=MagicMock(content=json.dumps({
+            "executive_summary": "ok",
+            "what_changed": [],
+            "weaknesses": ["x"],
+            "strategic_signals": ["y"],
+            "playbook": ["a", "b", "c", "d", "e"],
+        })))]
+        mock_client.chat.completions.create.return_value = mock_resp
 
-            with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-                self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}", headers={"Authorization": f"Bearer {self.user.id}"})
+        self.client.get(f"/api/v1/battlecards/generate/{self.competitor.id}", headers={"Authorization": f"Bearer {self.user.id}"})
 
-            user_text = mock_client.messages.create.call_args.kwargs["messages"][0]["content"][1]["text"]
-            self.assertNotIn("Hiring signals", user_text)
+        user_text = mock_client.chat.completions.create.call_args.kwargs["messages"][1]["content"]
+        self.assertNotIn("Hiring signals", user_text)
 
 
 if __name__ == "__main__":

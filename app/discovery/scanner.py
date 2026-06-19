@@ -1,7 +1,7 @@
 """Cheap scan tier for seeded apps.
 
 COST CONTRACT (do not violate — see docs/superpowers/specs/2026-06-10-discovery-engine-design.md):
-- exactly ONE claude-haiku-4-5 call per app per refresh; NEVER Sonnet
+- exactly ONE DeepSeek (llm.MODEL) call per app per refresh; NEVER a heavy model
 - tech detection is regex-only (free)
 - batch size capped by SEED_SCAN_DAILY_LIMIT
 """
@@ -9,7 +9,7 @@ import json
 import os
 from datetime import datetime
 
-import anthropic
+import app.llm as llm
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
@@ -55,16 +55,19 @@ async def cheap_scan_app(app: App, db: Session) -> bool:
         db.add(AppTech(app_id=app.id, **tech))
 
     profile = None
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if api_key and api_key != "dummy_anthropic_key":
+    if llm.ai_available():
         try:
-            client = anthropic.AsyncAnthropic(api_key=api_key)
-            resp = await client.messages.create(
-                model="claude-haiku-4-5",
+            client = llm.get_async_client()
+            resp = await client.chat.completions.create(
+                model=llm.MODEL,
                 max_tokens=800,
-                messages=[{"role": "user", "content": f"{EXTRACT_PROMPT}\n\nPage text:\n{text[:6000]}"}],
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that extracts structured product profiles from web page text."},
+                    {"role": "user", "content": f"{EXTRACT_PROMPT}\n\nPage text:\n{text[:6000]}"},
+                ],
+                extra_body=llm.THINKING_OFF,
             )
-            profile = parse_profile_json(resp.content[0].text)
+            profile = parse_profile_json(resp.choices[0].message.content)
             if profile is None:
                 note_degraded("discovery.scanner", "tech_only", "unparseable_ai_output")
         except Exception as e:

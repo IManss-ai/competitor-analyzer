@@ -109,9 +109,8 @@ class TestReviewsAndBattlecards(unittest.TestCase):
 
     # 2. Test Battlecard Endpoint
     def test_battlecard_heuristic_fallback(self):
-        import os
         from unittest.mock import patch
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             resp = self.client.get(f"/api/v1/battlecards/generate/{str(self.competitor.id)}", headers=self.auth_headers)
             self.assertEqual(resp.status_code, 200)
             data = resp.json()
