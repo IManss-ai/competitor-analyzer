@@ -688,6 +688,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     const latest = [...evs].sort((a: any, b: any) => eventSignal(b) - eventSignal(a))[0] || null;
     return { ...c, signal, latest };
   }).sort((a, b) => b.signal - a.signal);
+  const anyRealSignal = rankedComps.some((c: any) => c.latest && c.latest.change_type !== 'initial_scan' && c.latest.change_type !== 'no_change');
 
   const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' }).toUpperCase();
 
@@ -711,29 +712,38 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           <span>· {dateLabel}</span>
         </div>
 
-        {topEvent ? (
+        {topIsReal ? (
           <>
             <h2 className="font-semibold tracking-tight leading-[1.15] max-w-2xl" style={{ color: 'var(--text-primary)', fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>
-              {topIsReal ? (
-                <><span style={{ color: 'var(--accent-primary)' }}>{topEvent.competitor_name}</span>{' — '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.</>
-              ) : (
-                <>You&apos;re now tracking <span style={{ color: 'var(--accent-primary)' }}>{topEvent.competitor_name}</span>.</>
-              )}
+              <span style={{ color: 'var(--accent-primary)' }}>{topEvent.competitor_name}</span>{' — '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl line-clamp-3" style={{ color: 'var(--text-secondary)' }}>
-              {topEvent.brief_text || 'Their homepage was captured. Pricing, feature, and messaging changes will surface here automatically.'}
+              {topEvent.brief_text || 'Their homepage changed. Open the battle card for the full breakdown and the play to run.'}
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Link href={`/competitors/${topEvent.competitor_id}`} className="rs-btn-primary">
-                {topIsReal ? 'Open battle card' : 'View intelligence'} <ArrowRight size={14} />
+                Open battle card <ArrowRight size={14} />
               </Link>
               <a href="#feed" className="rs-btn-ghost">See all changes</a>
             </div>
           </>
+        ) : dashboardData.competitor_count > 0 ? (
+          <>
+            <h2 className="font-semibold tracking-tight max-w-2xl" style={{ color: 'var(--text-primary)', fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>
+              Watching <span style={{ color: 'var(--accent-primary)' }}>{dashboardData.competitor_count}</span> {dashboardData.competitor_count === 1 ? 'competitor' : 'competitors'}. No moves yet.
+            </h2>
+            <p className="mt-3 text-[14px] leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)' }}>
+              We&apos;re watching their homepages, pricing, reviews and hiring. The first real change surfaces here the moment it lands — we re-scan every week.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Link href="/competitors" className="rs-btn-primary"><Plus size={14} /> Add more competitors</Link>
+              <a href="#feed" className="rs-btn-ghost">See baselines</a>
+            </div>
+          </>
         ) : (
           <>
-            <h2 className="font-semibold tracking-tight" style={{ color: 'var(--text-primary)', fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>All quiet on your competitors.</h2>
-            <p className="mt-3 text-[14px] leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)' }}>No changes detected yet. We re-scan every week and surface anything that moves — pricing, features, reviews, hiring.</p>
+            <h2 className="font-semibold tracking-tight" style={{ color: 'var(--text-primary)', fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>Add your first competitor.</h2>
+            <p className="mt-3 text-[14px] leading-relaxed max-w-xl" style={{ color: 'var(--text-secondary)' }}>Point Rivalscope at a competitor and we&apos;ll capture their homepage, reviews and hiring — then flag every move before it costs you a deal.</p>
             <div className="mt-5"><Link href="/competitors" className="rs-btn-primary"><Plus size={14} /> Add a competitor</Link></div>
           </>
         )}
@@ -767,7 +777,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="flex items-center justify-between px-5 py-3.5 gap-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
           <div className="flex items-center gap-3 min-w-0">
             <h2 className="rs-heading-sm">Signal Board</h2>
-            <span className="font-mono text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{rankedComps.length} tracked · ranked by signal</span>
+            <span className="font-mono text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{rankedComps.length} tracked · {anyRealSignal ? 'ranked by signal' : 'baselines captured'}</span>
           </div>
           <div className="flex items-center gap-4 flex-shrink-0">
             {activityDays.length > 0 && (
@@ -953,9 +963,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             {dashboardData.competitors_health && dashboardData.competitors_health.length > 0 ? (
               dashboardData.competitors_health.map((comp) => {
                 const statusColor = comp.status === 'Active'
-                  ? { color: p.positive, bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.22)' }
+                  ? { color: p.positive, bg: 'color-mix(in srgb, var(--tone-positive) 12%, transparent)', border: 'color-mix(in srgb, var(--tone-positive) 28%, transparent)' }
                   : comp.status === 'Error'
-                  ? { color: p.danger, bg: 'rgba(248,113,113,0.10)', border: 'rgba(248,113,113,0.22)' }
+                  ? { color: p.danger, bg: 'color-mix(in srgb, var(--tone-danger) 12%, transparent)', border: 'color-mix(in srgb, var(--tone-danger) 28%, transparent)' }
                   : { color: 'var(--text-muted)', bg: 'var(--fill-subtle)', border: 'var(--border-default)' };
 
                 return (
@@ -996,7 +1006,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <span className="rs-label block mb-0.5">Reviews Avg</span>
                         <span className="text-[12px] font-mono inline-flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
                           {comp.avg_rating !== null ? (
-                            <><Star size={11} className="text-amber-400" />{comp.avg_rating.toFixed(1)}</>
+                            <><Star size={11} style={{ color: 'var(--tone-warning)' }} />{comp.avg_rating.toFixed(1)}</>
                           ) : '--'}
                         </span>
                       </div>
@@ -1018,7 +1028,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           {scanningCompId === comp.id ? (
                             <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
                           ) : scanDoneCompId === comp.id ? (
-                            <CheckCircle2 size={13} className="text-emerald-400" />
+                            <CheckCircle2 size={13} style={{ color: 'var(--tone-positive)' }} />
                           ) : (
                             <RefreshCw size={13} />
                           )}
