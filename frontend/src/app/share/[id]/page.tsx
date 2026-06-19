@@ -55,7 +55,7 @@ export default async function PublicSharePage({ params }: PageProps) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 font-sans" style={{ background: 'var(--surface-base)' }}>
         <div className="rs-card p-8 max-w-md w-full text-center space-y-4">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto text-lg font-bold bg-red-500/10 text-red-400 border border-red-500/20">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto text-lg font-bold bg-[var(--tone-danger)]/10 text-[var(--tone-danger)] border border-[var(--tone-danger)]/20">
             !
           </div>
           <h1 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Battle Card Not Found</h1>

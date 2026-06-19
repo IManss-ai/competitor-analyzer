@@ -68,7 +68,7 @@ export default function ProductDemo() {
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
           </div>
           <div className="mx-auto flex max-w-xs flex-1 items-center justify-center gap-2 rounded border border-[var(--border-subtle)] bg-[var(--fill-subtle)] px-3 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--tone-positive)' }} />
             <span className="truncate font-mono text-[10px] tracking-wide text-[var(--text-muted)]">
               app.rivalscope.com/command-center
             </span>

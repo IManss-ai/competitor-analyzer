@@ -422,8 +422,8 @@ export default function HowItWorksPanels() {
               <div className="absolute left-[-15px] md:left-[-31px] -translate-x-1/2 top-4 z-20 flex items-center justify-center">
                 <motion.div
                   animate={{
-                    borderColor: isHovered ? '#6a96c8' : 'rgba(79, 124, 176, 0.2)',
-                    backgroundColor: isHovered ? 'rgba(79, 124, 176, 0.12)' : 'rgba(79, 124, 176, 0.05)',
+                    borderColor: isHovered ? 'var(--accent-primary)' : 'color-mix(in srgb, var(--accent-primary) 20%, transparent)',
+                    backgroundColor: isHovered ? 'color-mix(in srgb, var(--accent-primary) 12%, transparent)' : 'color-mix(in srgb, var(--accent-primary) 5%, transparent)',
                   }}
                   transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }}
                   className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-[var(--surface-raised)] flex items-center justify-center text-xs md:text-sm font-mono font-bold text-sky-400"
