@@ -1,22 +1,20 @@
 import json
-import os
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import Review, ReviewSnapshot
 from app.observability import note_degraded
 from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response, _parse_date
-import anthropic
+import app.llm as llm
 import uuid as _uuid
 
 
 async def _extract_google_reviews_with_claude(text: str) -> dict:
-    """Extract Google Maps review data using Claude."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key":
+    """Extract Google Maps review data using LLM."""
+    if not llm.ai_available():
         return {"avg_rating": 0, "total_reviews": 0, "recent_reviews": [], "top_complaints": []}
 
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    client = llm.get_async_client()
     prompt = """Extract Google Maps review data from this page text. Return JSON:
 {
   "avg_rating": float,
@@ -34,13 +32,16 @@ Text:
 """ + text[:15000]
 
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that extracts structured review data from web page text."},
+                {"role": "user", "content": prompt},
+            ],
             temperature=0
         )
-        return _extract_json_from_response(response.content[0].text)
+        return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("google_reviews.extract", "empty", "api_error", e)
         return {"avg_rating": 0, "total_reviews": 0, "recent_reviews": [], "top_complaints": []}

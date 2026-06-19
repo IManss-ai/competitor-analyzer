@@ -1,11 +1,10 @@
 import hashlib
 import json
 import logging
-import os
 import uuid as _uuid
 from datetime import datetime, timedelta
 
-import anthropic
+import app.llm as llm
 import httpx
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -92,11 +91,10 @@ async def probe_careers_url(homepage_url: str) -> str | None:
 
 async def _extract_jobs_with_claude(text: str) -> dict:
     """Pull job listings out of a careers-page text dump."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key":
+    if not llm.ai_available():
         return {"jobs": []}
 
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    client = llm.get_async_client()
     prompt = """Extract every distinct open job posting from this careers page. Return ONLY JSON:
 {
   "jobs": [
@@ -116,25 +114,27 @@ Text:
 """ + text[:18000]
 
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that extracts structured job posting data from careers pages."},
+                {"role": "user", "content": prompt},
+            ],
             temperature=0,
         )
-        return _extract_json_from_response(response.content[0].text)
+        return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("job_tracker.extract", "empty", "api_error", e)
         return {"jobs": []}
 
 
 async def _interpret_hiring_pattern(competitor_name: str, new_jobs: list, total_jobs: int) -> str | None:
-    """Ask Claude for a 1-sentence strategic interpretation of the hiring delta."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key" or not new_jobs:
+    """Ask LLM for a 1-sentence strategic interpretation of the hiring delta."""
+    if not llm.ai_available() or not new_jobs:
         return None
 
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    client = llm.get_async_client()
     new_jobs_summary = "\n".join(
         f"- {j.get('title','?')} ({j.get('department') or 'unknown dept'}, {j.get('location') or 'unknown loc'})"
         for j in new_jobs[:20]
@@ -153,13 +153,16 @@ Examples of strong outputs:
 Output the sentence only, no preamble or quotes."""
 
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=200,
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": "You are a strategic analyst. Output exactly one sentence with no preamble or quotes."},
+                {"role": "user", "content": prompt},
+            ],
             temperature=0.4,
         )
-        return response.content[0].text.strip().strip('"').strip()
+        return response.choices[0].message.content.strip().strip('"').strip()
     except Exception as e:
         note_degraded("job_tracker.interpret", "none", "api_error", e)
         return None
