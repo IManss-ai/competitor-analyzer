@@ -218,7 +218,7 @@ export default function LoginPage() {
               style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
             >
               <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5"
-                    style={{ background: 'var(--accent-primary)', color: 'var(--accent-text)' }}>
+                    style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                 Plan
               </span>
               <span className="text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>

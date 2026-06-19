@@ -860,7 +860,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <div className="p-10 text-center flex flex-col items-center gap-3">
                 <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>No change events yet</p>
                 <p className="text-xs max-w-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>Add a competitor and run your first scan to start tracking changes.</p>
-                <a href="/competitors" className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-primary)', color: 'var(--accent-text)' }}>
+                <a href="/competitors" className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                   Add competitor
                 </a>
               </div>
@@ -1048,7 +1048,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             ) : (
               <div className="p-8 text-center flex flex-col items-center gap-3">
                 <p className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>No competitors tracked</p>
-                <a href="/competitors" className="text-xs font-semibold px-3 py-1.5 rounded" style={{ background: 'var(--accent-primary)', color: 'var(--accent-text)' }}>
+                <a href="/competitors" className="text-xs font-semibold px-3 py-1.5 rounded" style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                   Add one
                 </a>
               </div>

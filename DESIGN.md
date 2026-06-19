@@ -21,7 +21,7 @@ Dark (ink) is the brand environment and the default a fresh visitor lands on. Pa
 | `--surface-subtle` | `#161d2e` | Hover / inset tints |
 | `--text-primary` | `#e9edf6` | Headlines, primary text (cool off-white, never pure `#fff`) |
 | `--text-secondary` | `#9aa6bd` | Body, descriptions |
-| `--text-muted` | `#76829a` | Labels, datelines, timestamps (AA-tuned on `--surface-base`) |
+| `--text-muted` | `#828ea6` | Labels, datelines, timestamps (AA-tuned for raised surfaces too, ≥4.5:1) |
 | `--border-default` | `rgba(180,200,235,0.12)` | Container + section rules |
 | `--border-subtle` | `rgba(180,200,235,0.06)` | Row dividers |
 | `--border-strong` | `rgba(180,200,235,0.22)` | Emphasized rules / hover |

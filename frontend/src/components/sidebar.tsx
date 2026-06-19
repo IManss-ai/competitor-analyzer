@@ -320,7 +320,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   {hasBadge && (
                     <span
                       className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
-                      style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
+                      style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
                     </span>
@@ -386,7 +386,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   {hasBadge && (
                     <span
                       className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
-                      style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
+                      style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
                     </span>
@@ -485,7 +485,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             <Link
               href="/settings"
               className="block w-full py-1.5 rounded-md text-[11px] font-semibold text-center text-[var(--accent-text)] transition-colors"
-              style={{ background: 'var(--accent-primary)' }}
+              style={{ background: 'var(--accent-cta)' }}
             >
               Upgrade to Pro
             </Link>
