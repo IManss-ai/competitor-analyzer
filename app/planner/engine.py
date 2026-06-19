@@ -221,7 +221,7 @@ def _ai_plan(signals: dict) -> tuple[str, list[dict]] | None:
         client = llm.get_sync_client()
         resp = client.chat.completions.create(
             model=llm.MODEL,
-            max_tokens=1200,
+            max_tokens=4096,
             messages=[
                 {"role": "system", "content": PLAN_SYSTEM_PROMPT},
                 {"role": "user", "content": _build_user_prompt(signals)},

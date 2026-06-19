@@ -186,7 +186,7 @@ Known customer complaints:
         try:
             response = client.chat.completions.create(
                 model=llm.MODEL,
-                max_tokens=1024,
+                max_tokens=4096,
                 messages=[
                     {"role": "system", "content": LOCAL_SYSTEM_PROMPT},
                     {"role": "user", "content": user_prompt},
@@ -388,7 +388,7 @@ Known customer complaints/weaknesses:
         try:
             response = client.chat.completions.create(
                 model=llm.MODEL,
-                max_tokens=1024,
+                max_tokens=4096,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
