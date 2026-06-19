@@ -143,13 +143,14 @@ class TestLocalBattleCard(unittest.TestCase):
         self.assertEqual(data["what_changed"][0]["type"], "review_trend")
         self.assertIn("quiet", data["executive_summary"].lower())
 
-    @patch("app.routes.battlecard.anthropic.Anthropic")
-    def test_local_uses_anthropic_when_key_present(self, mock_anthropic_class):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_local_uses_ai_when_available(self, mock_ai_available, mock_get_sync_client):
         self._seed_complaints()
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
-        mock_msg = MagicMock()
-        mock_msg.content = [MagicMock(text=json.dumps({
+        mock_get_sync_client.return_value = mock_client
+        mock_choice = MagicMock()
+        mock_choice.message.content = json.dumps({
             "executive_summary": "Cafe Rival is hemorrhaging regulars over slow service.",
             "what_changed": [{"type": "reputation_shift", "text": "12 complaints flagged this week"}],
             "weaknesses": ["Slow lunch service", "Cold drinks", "Restroom cleanliness"],
@@ -161,20 +162,23 @@ class TestLocalBattleCard(unittest.TestCase):
                 "Reply warmly to their 1-star Google reviews inviting visits",
                 "Boost a regular-customer testimonial geo-targeted to their zip",
             ],
-        }))]
-        mock_client.messages.create.return_value = mock_msg
+        })
+        mock_response = MagicMock()
+        mock_response.choices = [mock_choice]
+        mock_client.chat.completions.create.return_value = mock_response
 
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+        resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data["variant"], "local")
         self.assertEqual(len(data["playbook"]), 5)
         self.assertIn("hemorrhaging", data["executive_summary"])
-        mock_client.messages.create.assert_called_once()
-        call_kwargs = mock_client.messages.create.call_args.kwargs
-        sent_text = call_kwargs["messages"][0]["content"][0]["text"]
-        self.assertIn("local business strategist", sent_text)
+        mock_client.chat.completions.create.assert_called_once()
+        call_kwargs = mock_client.chat.completions.create.call_args.kwargs
+        self.assertEqual(call_kwargs["model"], "deepseek-v4-flash")
+        system_msg = call_kwargs["messages"][0]
+        self.assertEqual(system_msg["role"], "system")
+        self.assertIn("local business strategist", system_msg["content"])
 
     def test_generate_requires_auth(self):
         resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}")
@@ -191,62 +195,66 @@ class TestLocalBattleCard(unittest.TestCase):
         )
         self.assertEqual(resp.status_code, 403)
 
-    @patch("app.routes.battlecard.anthropic.Anthropic")
-    def test_ai_card_is_cached_and_not_regenerated(self, mock_anthropic_class):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_ai_card_is_cached_and_not_regenerated(self, mock_ai_available, mock_get_sync_client):
         self._seed_complaints()
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
-        mock_msg = MagicMock()
-        mock_msg.content = [MagicMock(text=json.dumps({
+        mock_get_sync_client.return_value = mock_client
+        mock_choice = MagicMock()
+        mock_choice.message.content = json.dumps({
             "executive_summary": "Cached summary.",
             "what_changed": [{"type": "reputation_shift", "text": "complaints"}],
             "weaknesses": ["w1", "w2"],
             "strategic_signals": ["s1"],
             "playbook": ["Run a", "Run b", "Run c", "Run d", "Run e"],
-        }))]
-        mock_client.messages.create.return_value = mock_msg
+        })
+        mock_response = MagicMock()
+        mock_response.choices = [mock_choice]
+        mock_client.chat.completions.create.return_value = mock_response
 
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            first = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
-            second = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+        first = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+        second = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(first.status_code, 200)
         self.assertEqual(second.status_code, 200)
         self.assertEqual(second.json()["executive_summary"], "Cached summary.")
         # Two page views, ONE paid model call — the second is served from cache.
-        mock_client.messages.create.assert_called_once()
+        mock_client.chat.completions.create.assert_called_once()
 
-    @patch("app.routes.battlecard.anthropic.Anthropic")
-    def test_public_endpoint_never_calls_ai(self, mock_anthropic_class):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_public_endpoint_never_calls_ai(self, mock_ai_available, mock_get_sync_client):
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            resp = self.client.get(f"/api/v1/battlecards/public/{self.local_comp.id}")
+        mock_get_sync_client.return_value = mock_client
+        resp = self.client.get(f"/api/v1/battlecards/public/{self.local_comp.id}")
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(len(data["playbook"]), 5)  # heuristic card still complete
-        mock_client.messages.create.assert_not_called()
+        mock_client.chat.completions.create.assert_not_called()
 
-    @patch("app.routes.battlecard.anthropic.Anthropic")
-    def test_public_endpoint_serves_cached_ai_card(self, mock_anthropic_class):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_public_endpoint_serves_cached_ai_card(self, mock_ai_available, mock_get_sync_client):
         self._seed_complaints()
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
-        mock_msg = MagicMock()
-        mock_msg.content = [MagicMock(text=json.dumps({
+        mock_get_sync_client.return_value = mock_client
+        mock_choice = MagicMock()
+        mock_choice.message.content = json.dumps({
             "executive_summary": "Owner-generated card.",
             "what_changed": [{"type": "reputation_shift", "text": "complaints"}],
             "weaknesses": ["w1", "w2"],
             "strategic_signals": ["s1"],
             "playbook": ["Run a", "Run b", "Run c", "Run d", "Run e"],
-        }))]
-        mock_client.messages.create.return_value = mock_msg
+        })
+        mock_response = MagicMock()
+        mock_response.choices = [mock_choice]
+        mock_client.chat.completions.create.return_value = mock_response
 
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real_key"}):
-            self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
-            resp = self.client.get(f"/api/v1/battlecards/public/{self.local_comp.id}")
+        self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
+        resp = self.client.get(f"/api/v1/battlecards/public/{self.local_comp.id}")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["executive_summary"], "Owner-generated card.")
-        mock_client.messages.create.assert_called_once()
+        mock_client.chat.completions.create.assert_called_once()
 
 
 if __name__ == "__main__":

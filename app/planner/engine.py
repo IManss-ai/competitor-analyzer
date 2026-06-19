@@ -12,7 +12,7 @@ import json
 import os
 from datetime import datetime, timedelta
 
-import anthropic
+import app.llm as llm
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -214,25 +214,22 @@ def _heuristic_plan(signals: dict) -> tuple[str, list[dict]]:
 
 
 def _ai_plan(signals: dict) -> tuple[str, list[dict]] | None:
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key":
+    if not llm.ai_available():
         note_degraded("planner", "heuristic", "dummy_key")
         return None
     try:
-        client = anthropic.Anthropic(api_key=api_key)
-        resp = client.messages.create(
-            model="claude-sonnet-4-6",
+        client = llm.get_sync_client()
+        resp = client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=1200,
-            messages=[{
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": PLAN_SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}},
-                    {"type": "text", "text": _build_user_prompt(signals)},
-                ],
-            }],
+            messages=[
+                {"role": "system", "content": PLAN_SYSTEM_PROMPT},
+                {"role": "user", "content": _build_user_prompt(signals)},
+            ],
             temperature=0.6,
+            response_format={"type": "json_object"},
         )
-        content = resp.content[0].text
+        content = resp.choices[0].message.content
         if "```json" in content:
             content = content.split("```json")[1].split("```")[0].strip()
         elif "```" in content:
