@@ -1,4 +1,3 @@
-import os
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -34,48 +33,44 @@ class TestGeoVisibility(unittest.TestCase):
         self.db.close()
 
     def test_estimated_when_no_api_key(self):
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "dummy_openai_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             snap = get_or_check_visibility(self.campaign, "MyProduct", self.db)
         self.assertEqual(snap.source, "estimated")
         self.assertTrue(0 <= snap.user_share <= 10)
         self.assertTrue(0 <= snap.competitor_share <= 10)
 
     def test_estimate_is_deterministic(self):
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "dummy_openai_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             a = get_or_check_visibility(self.campaign, "MyProduct", self.db, force=True)
             b = get_or_check_visibility(self.campaign, "MyProduct", self.db, force=True)
         self.assertEqual((a.user_share, a.competitor_share), (b.user_share, b.competitor_share))
 
     def test_cached_snapshot_reused(self):
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "dummy_openai_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             first = get_or_check_visibility(self.campaign, "MyProduct", self.db)
             second = get_or_check_visibility(self.campaign, "MyProduct", self.db)
         self.assertEqual(first.id, second.id)
 
-    @patch("app.geo.visibility.OpenAI")
-    def test_live_path_when_key_present(self, mock_cls):
-        client = MagicMock()
+    @patch("app.geo.visibility.llm.ai_available", return_value=True)
+    @patch("app.geo.visibility.client.chat.completions.create")
+    def test_live_path_when_key_present(self, mock_create, _avail):
         choice = MagicMock()
         choice.message.content = (
             "For this need I would recommend: 1. Acme — strong incumbent. 2. MyProduct — rising option. "
             "3. OtherTool. Acme is the most established; MyProduct is solid too. Acme wins for most."
         )
-        client.chat.completions.create.return_value = MagicMock(choices=[choice])
-        mock_cls.return_value = client
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "real"}):
-            snap = get_or_check_visibility(self.campaign, "MyProduct", self.db, force=True)
+        mock_create.return_value = MagicMock(choices=[choice])
+        snap = get_or_check_visibility(self.campaign, "MyProduct", self.db, force=True)
         self.assertEqual(snap.source, "live")
         self.assertGreater(snap.competitor_share, 0)
         self.assertGreater(snap.user_share, 0)
         self.assertGreater(snap.competitor_share, snap.user_share)  # Acme mentioned more
 
-    @patch("app.geo.visibility.OpenAI")
-    def test_live_failure_falls_back_to_estimate(self, mock_cls):
-        client = MagicMock()
-        client.chat.completions.create.side_effect = RuntimeError("down")
-        mock_cls.return_value = client
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "real"}):
-            snap = get_or_check_visibility(self.campaign, "MyProduct", self.db, force=True)
+    @patch("app.geo.visibility.llm.ai_available", return_value=True)
+    @patch("app.geo.visibility.client.chat.completions.create")
+    def test_live_failure_falls_back_to_estimate(self, mock_create, _avail):
+        mock_create.side_effect = RuntimeError("down")
+        snap = get_or_check_visibility(self.campaign, "MyProduct", self.db, force=True)
         self.assertEqual(snap.source, "estimated")
 
 

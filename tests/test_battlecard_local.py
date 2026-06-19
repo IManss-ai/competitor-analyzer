@@ -1,5 +1,4 @@
 import json
-import os
 import unittest
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
@@ -99,7 +98,7 @@ class TestLocalBattleCard(unittest.TestCase):
         self.db.commit()
 
     def test_local_business_type_returns_local_variant(self):
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -107,7 +106,7 @@ class TestLocalBattleCard(unittest.TestCase):
         self.assertEqual(len(data["playbook"]), 5)
 
     def test_saas_business_type_returns_saas_variant(self):
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             resp = self.client.get(f"/api/v1/battlecards/generate/{self.saas_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -115,7 +114,7 @@ class TestLocalBattleCard(unittest.TestCase):
 
     def test_local_fallback_with_complaints_uses_reputation_playbook(self):
         self._seed_complaints()
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -128,7 +127,7 @@ class TestLocalBattleCard(unittest.TestCase):
 
     def test_local_fallback_with_active_social_uses_counter_playbook(self):
         self._seed_active_social()
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
@@ -136,7 +135,7 @@ class TestLocalBattleCard(unittest.TestCase):
         self.assertEqual(len(data["playbook"]), 5)
 
     def test_local_fallback_quiet_competitor(self):
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             resp = self.client.get(f"/api/v1/battlecards/generate/{self.local_comp.id}", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
         data = resp.json()

@@ -69,7 +69,8 @@ async def _extract_reviews_with_claude(text: str) -> dict:
                 {"role": "system", "content": "You are a helpful assistant that extracts structured review data from web page text."},
                 {"role": "user", "content": prompt},
             ],
-            temperature=0
+            temperature=0,
+            response_format={"type": "json_object"},
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
@@ -102,7 +103,8 @@ async def _analyze_complaints_with_claude(reviews: list) -> dict:
                 {"role": "system", "content": "You are a helpful assistant that analyzes product reviews and identifies complaint themes."},
                 {"role": "user", "content": prompt},
             ],
-            temperature=0
+            temperature=0,
+            response_format={"type": "json_object"},
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:

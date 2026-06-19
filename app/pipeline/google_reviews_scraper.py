@@ -39,7 +39,8 @@ Text:
                 {"role": "system", "content": "You are a helpful assistant that extracts structured review data from web page text."},
                 {"role": "user", "content": prompt},
             ],
-            temperature=0
+            temperature=0,
+            response_format={"type": "json_object"},
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:

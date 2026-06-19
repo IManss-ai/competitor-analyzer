@@ -1,4 +1,3 @@
-import os
 import unittest
 import uuid as _uuid
 from unittest.mock import patch
@@ -41,14 +40,11 @@ class TestCampaignsApi(unittest.TestCase):
         self.db.add(self.comp)
         self.db.commit()
         self.auth = {"Authorization": f"Bearer {self.user.id}"}
-        self.env = patch.dict(os.environ, {
-            "ANTHROPIC_API_KEY": "dummy_anthropic_key",
-            "OPENAI_API_KEY": "dummy_openai_key",
-        })
-        self.env.start()
+        self.ai_unavailable = patch("app.llm.ai_available", return_value=False)
+        self.ai_unavailable.start()
 
     def tearDown(self):
-        self.env.stop()
+        self.ai_unavailable.stop()
         self.db.close()
         fastapi_app.dependency_overrides.clear()
 
