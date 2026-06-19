@@ -635,8 +635,8 @@ export default function LandingPage() {
                       <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">open</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-base font-bold font-mono text-emerald-400">+{currentCard.hiring.new}</span>
-                      <span className="text-[10px] font-mono text-emerald-400/70 uppercase tracking-wider">new</span>
+                      <span className="text-base font-bold font-mono" style={{ color: 'var(--tone-positive)' }}>+{currentCard.hiring.new}</span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--tone-positive) 70%, transparent)' }}>new</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-base font-bold font-mono text-[var(--text-secondary)]">−{currentCard.hiring.closed}</span>
@@ -660,21 +660,21 @@ export default function LandingPage() {
                       <span className="text-xs text-[var(--text-primary)] leading-snug">{c.text}</span>
                     </div>
                   )) },
-                  { label: 'User complaints', color: 'text-red-400', bg: 'bg-red-500/8', border: 'border-red-500/15', content: currentCard.complaints.map((c, j) => (
+                  { label: 'User complaints', color: 'text-[var(--tone-danger)]', bg: 'bg-[var(--tone-danger)]/8', border: 'border-[var(--tone-danger)]/15', content: currentCard.complaints.map((c, j) => (
                     <div key={j} className="pl-0 space-y-1">
                       <p className="text-xs text-[var(--text-secondary)] italic leading-relaxed min-h-[32px]">{c.text}</p>
                       <span className="text-[10px] font-mono text-[var(--text-muted)] mt-1 block">{c.source}</span>
                     </div>
                   )) },
-                  { label: 'Strategic signals', color: 'text-amber-400', bg: 'bg-amber-500/8', border: 'border-amber-500/15', content: currentCard.signals.map((s, j) => (
+                  { label: 'Strategic signals', color: 'text-[var(--tone-warning)]', bg: 'bg-[var(--tone-warning)]/8', border: 'border-[var(--tone-warning)]/15', content: currentCard.signals.map((s, j) => (
                     <div key={j} className="flex gap-2 items-start">
-                      <span className="text-amber-500 text-sm mt-0.5 flex-shrink-0">›</span>
+                      <span className="text-sm mt-0.5 flex-shrink-0" style={{ color: 'var(--tone-warning)' }}>›</span>
                       <p className="text-xs text-[var(--text-primary)] leading-snug"><strong>{s.bold}</strong>{s.rest}</p>
                     </div>
                   )) },
-                  { label: 'Playbook actions', color: 'text-emerald-400', bg: 'bg-emerald-500/8', border: 'border-emerald-500/15', content: currentCard.moves.map((move, j) => (
+                  { label: 'Playbook actions', color: 'text-[var(--tone-positive)]', bg: 'bg-[var(--tone-positive)]/8', border: 'border-[var(--tone-positive)]/15', content: currentCard.moves.map((move, j) => (
                     <div key={j} className="flex gap-2 items-start">
-                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.16, delay: 0.05 + j * 0.05 }} className="text-emerald-400 flex-shrink-0 mt-0.5">
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.16, delay: 0.05 + j * 0.05 }} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--tone-positive)' }}>
                         <CheckCircle2 size={14} />
                       </motion.div>
                       <span className="text-xs text-[var(--text-primary)] leading-snug">{move}</span>
