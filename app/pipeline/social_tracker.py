@@ -1,23 +1,21 @@
 import json
 import hashlib
-import os
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import SocialPost
 from app.observability import note_degraded
 from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response, _parse_date
-import anthropic
+import app.llm as llm
 import uuid as _uuid
 
 
 async def _extract_posts_with_claude(text: str, platform: str) -> dict:
     """Extract social media posts from page text using Claude."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key":
+    if not llm.ai_available():
         return {"posts": []}
 
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    client = llm.get_async_client()
     prompt = f"""Extract recent public posts from this {platform} page text. Return JSON:
 {{
   "posts": [
@@ -31,13 +29,18 @@ Text:
 """ + text[:15000]
 
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that extracts structured data from web page text."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
-        return _extract_json_from_response(response.content[0].text)
+        return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded(f"social_tracker.extract[{platform}]", "empty", "api_error", e)
         return {"posts": []}
@@ -45,11 +48,10 @@ Text:
 
 async def _summarize_sentiment_with_claude(posts: list, platform: str) -> dict:
     """Summarize sentiment of a batch of posts using Claude."""
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key or api_key == "dummy_anthropic_key" or not posts:
+    if not llm.ai_available() or not posts:
         return {"sentiment_summary": "", "notable_posts": []}
 
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    client = llm.get_async_client()
     posts_json = json.dumps(posts[:20])
 
     prompt = f"""Analyze the sentiment of these {platform} posts. Return JSON:
@@ -62,13 +64,18 @@ Posts:
 """ + posts_json
 
     try:
-        response = await client.messages.create(
-            model="claude-haiku-4-5",
+        response = await client.chat.completions.create(
+            model=llm.MODEL,
             max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that analyzes sentiment from social media posts."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
-        return _extract_json_from_response(response.content[0].text)
+        return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded(f"social_tracker.sentiment[{platform}]", "empty", "api_error", e)
         return {"sentiment_summary": "", "notable_posts": []}

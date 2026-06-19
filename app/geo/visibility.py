@@ -1,6 +1,6 @@
 """AI-engine visibility (GEO): who does the AI recommend — you or them?
 
-Live path: one gpt-4o-mini call asking for recommendations in the niche, then
+Live path: one DeepSeek (llm.MODEL) call asking for recommendations in the niche, then
 counting brand mentions. Estimated path (no key / failure): deterministic
 score derived from review data so the UI always works — clearly labeled
 "estimated", auto-replaced by live data once credits land.
@@ -8,16 +8,17 @@ score derived from review data so the UI always works — clearly labeled
 COST CONTRACT: snapshots cached 7 days per campaign; one mini call per refresh.
 """
 import hashlib
-import os
 import re
 from datetime import datetime, timedelta
 
-from openai import OpenAI
+import app.llm as llm
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Campaign, Competitor, GeoSnapshot, ReviewSnapshot
 from app.observability import note_degraded
+
+client = llm.get_sync_client()
 
 CACHE_MAX_AGE = timedelta(days=7)
 
@@ -51,17 +52,16 @@ def _count_mentions(text: str, name: str) -> int:
 
 
 def _live_check(user_product: str, competitor_name: str, category: str | None) -> tuple[int, int] | None:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key or api_key == "dummy_openai_key":
+    if not llm.ai_available():
         note_degraded("geo", "estimated", "dummy_key")
         return None
     try:
-        client = OpenAI(api_key=api_key)
         niche = category or "this product category"
         resp = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=llm.MODEL,
             max_tokens=400,
             temperature=0.3,
+            extra_body=llm.THINKING_OFF,
             messages=[{
                 "role": "user",
                 "content": (

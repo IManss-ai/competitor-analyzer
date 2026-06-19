@@ -60,7 +60,7 @@ class TestPlannerEngine(unittest.TestCase):
 
     def test_heuristic_plan_when_no_api_key(self):
         self._seed_pricing_event()
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "dummy_anthropic_key"}):
+        with patch("app.llm.ai_available", return_value=False):
             plan = get_or_generate_plan(self.campaign, self.db)
         self.assertFalse(plan.ai_generated)
         self.assertTrue(plan.executive_read)
@@ -72,54 +72,54 @@ class TestPlannerEngine(unittest.TestCase):
         joined = " ".join(i.title + " " + (i.body or "") for i in items).lower()
         self.assertIn("pric", joined)  # pricing event must shape the heuristic plan
 
-    @patch("app.planner.engine.anthropic.Anthropic")
-    def test_ai_plan_when_key_present(self, mock_cls):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_ai_plan_when_key_present(self, _mock_avail, mock_get_client):
         client = MagicMock()
-        msg = MagicMock()
-        msg.content = [MagicMock(text=AI_PLAN)]
-        client.messages.create.return_value = msg
-        mock_cls.return_value = client
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real"}):
-            plan = get_or_generate_plan(self.campaign, self.db)
+        resp = MagicMock()
+        resp.choices = [MagicMock(message=MagicMock(content=AI_PLAN))]
+        client.chat.completions.create.return_value = resp
+        mock_get_client.return_value = client
+        plan = get_or_generate_plan(self.campaign, self.db)
         self.assertTrue(plan.ai_generated)
         self.assertIn("upmarket", plan.executive_read)
-        client.messages.create.assert_called_once()
+        client.chat.completions.create.assert_called_once()
 
-    @patch("app.planner.engine.anthropic.Anthropic")
-    def test_plan_is_cached_not_regenerated(self, mock_cls):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_plan_is_cached_not_regenerated(self, _mock_avail, mock_get_client):
         client = MagicMock()
-        msg = MagicMock()
-        msg.content = [MagicMock(text=AI_PLAN)]
-        client.messages.create.return_value = msg
-        mock_cls.return_value = client
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real"}):
-            first = get_or_generate_plan(self.campaign, self.db)
-            second = get_or_generate_plan(self.campaign, self.db)
+        resp = MagicMock()
+        resp.choices = [MagicMock(message=MagicMock(content=AI_PLAN))]
+        client.chat.completions.create.return_value = resp
+        mock_get_client.return_value = client
+        first = get_or_generate_plan(self.campaign, self.db)
+        second = get_or_generate_plan(self.campaign, self.db)
         self.assertEqual(first.id, second.id)
-        client.messages.create.assert_called_once()  # one paid call for two views
+        client.chat.completions.create.assert_called_once()  # one paid call for two views
 
-    @patch("app.planner.engine.anthropic.Anthropic")
-    def test_new_intel_triggers_regeneration(self, mock_cls):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_new_intel_triggers_regeneration(self, _mock_avail, mock_get_client):
         client = MagicMock()
-        msg = MagicMock()
-        msg.content = [MagicMock(text=AI_PLAN)]
-        client.messages.create.return_value = msg
-        mock_cls.return_value = client
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real"}):
-            first = get_or_generate_plan(self.campaign, self.db)
-            # new intel arrives strictly after the plan was generated
-            self._seed_pricing_event(detected_at=datetime.utcnow() + timedelta(seconds=2))
-            second = get_or_generate_plan(self.campaign, self.db)
+        resp = MagicMock()
+        resp.choices = [MagicMock(message=MagicMock(content=AI_PLAN))]
+        client.chat.completions.create.return_value = resp
+        mock_get_client.return_value = client
+        first = get_or_generate_plan(self.campaign, self.db)
+        # new intel arrives strictly after the plan was generated
+        self._seed_pricing_event(detected_at=datetime.utcnow() + timedelta(seconds=2))
+        second = get_or_generate_plan(self.campaign, self.db)
         self.assertNotEqual(first.id, second.id)
-        self.assertEqual(client.messages.create.call_count, 2)
+        self.assertEqual(client.chat.completions.create.call_count, 2)
 
-    @patch("app.planner.engine.anthropic.Anthropic")
-    def test_ai_failure_falls_back_to_heuristic(self, mock_cls):
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_ai_failure_falls_back_to_heuristic(self, _mock_avail, mock_get_client):
         client = MagicMock()
-        client.messages.create.side_effect = RuntimeError("api down")
-        mock_cls.return_value = client
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "real"}):
-            plan = get_or_generate_plan(self.campaign, self.db)
+        client.chat.completions.create.side_effect = RuntimeError("api down")
+        mock_get_client.return_value = client
+        plan = get_or_generate_plan(self.campaign, self.db)
         self.assertFalse(plan.ai_generated)
         items = self.db.execute(select(ActionPlanItem).where(ActionPlanItem.plan_id == plan.id)).scalars().all()
         self.assertEqual(len(items), 5)

@@ -101,7 +101,7 @@ export default function LoginPage() {
               className="w-7 h-7 flex items-center justify-center"
               style={{ background: 'var(--accent-primary)' }}
             >
-              <RivalscopeLogo size={13} className="text-white" />
+              <RivalscopeLogo size={13} className="text-[var(--accent-text)]" />
             </div>
             <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
               Rivalscope
@@ -194,7 +194,7 @@ export default function LoginPage() {
           {/* Mobile masthead */}
           <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10 hover:opacity-85 transition-opacity max-w-fit">
             <div className="w-7 h-7 flex items-center justify-center" style={{ background: 'var(--accent-primary)' }}>
-              <RivalscopeLogo size={13} className="text-white" />
+              <RivalscopeLogo size={13} className="text-[var(--accent-text)]" />
             </div>
             <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Rivalscope</span>
           </Link>
@@ -218,7 +218,7 @@ export default function LoginPage() {
               style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
             >
               <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5"
-                    style={{ background: 'var(--accent-primary)', color: 'var(--accent-text)' }}>
+                    style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                 Plan
               </span>
               <span className="text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>

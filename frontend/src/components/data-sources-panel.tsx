@@ -188,7 +188,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
                     </button>
                   )}
                   {isCareers && probeResult === 'not-found' && (
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--tone-warning)]">
                       No common path matched
                     </span>
                   )}
@@ -235,7 +235,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
       {editing && (
         <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-[var(--border-default)]">
           {error ? (
-            <span className="text-xs text-red-400">{error}</span>
+            <span className="text-xs" style={{ color: 'var(--tone-danger)' }}>{error}</span>
           ) : (
             <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
               Empty fields clear the override

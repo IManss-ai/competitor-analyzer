@@ -18,7 +18,7 @@ class TestClassifierSynthesizer(unittest.IsolatedAsyncioTestCase):
         
         mock_create.assert_called_once()
         kwargs = mock_create.call_args[1]
-        self.assertEqual(kwargs["model"], "gpt-4o-mini")
+        self.assertEqual(kwargs["model"], "deepseek-v4-flash")
         self.assertEqual(kwargs["temperature"], 0)
         self.assertEqual(kwargs["max_tokens"], 20)
 
@@ -68,7 +68,7 @@ class TestClassifierSynthesizer(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(res, "Competitor added pricing page updates.")
         mock_create.assert_called_once()
         kwargs = mock_create.call_args[1]
-        self.assertEqual(kwargs["model"], "gpt-4o-mini")
+        self.assertEqual(kwargs["model"], "deepseek-v4-flash")
         self.assertEqual(kwargs["temperature"], 0.3)
         self.assertEqual(kwargs["max_tokens"], 200)
 

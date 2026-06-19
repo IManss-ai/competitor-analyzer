@@ -1,7 +1,6 @@
-from openai import AsyncOpenAI
-from app.config import OPENAI_API_KEY
+import app.llm as llm
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+client = llm.get_async_client()
 
 ACTION_TYPES_BY_CHANGE = {
     "pricing_change": ["retention_email", "pricing_copy"],
@@ -57,7 +56,7 @@ async def generate_action(
     user_description: str = "SaaS founders and small teams",
 ) -> str | None:
     """
-    Generate one action draft using gpt-4o-mini or a local heuristic fallback.
+    Generate one action draft using DeepSeek (llm.MODEL) or a local heuristic fallback.
     Returns draft text or None on error.
     """
     prompt_config = PROMPTS.get(action_type)
@@ -73,13 +72,14 @@ async def generate_action(
 
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=llm.MODEL,
             messages=[
                 {"role": "system", "content": prompt_config["system"]},
                 {"role": "user", "content": user_msg},
             ],
             max_tokens=400,
             temperature=0.7,
+            extra_body=llm.THINKING_OFF,
         )
         return response.choices[0].message.content.strip()
     except Exception:

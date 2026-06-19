@@ -9,7 +9,9 @@ if not os.environ.get("RAILWAY_ENVIRONMENT"):
         pass
 
 DATABASE_URL = os.environ["DATABASE_URL"]
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+# AI provider — DeepSeek (OpenAI-compatible). Old OpenAI/Anthropic keys no longer required.
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 SCRAPER_URL = os.environ.get("SCRAPER_URL", "")
 # Polar.sh billing — set these in Railway environment variables
 # POLAR_ACCESS_TOKEN: from https://polar.sh/settings/tokens

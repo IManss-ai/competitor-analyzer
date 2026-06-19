@@ -49,3 +49,6 @@ SESSION-CHANGES-*.md
 
 /node_modules/
 /package-lock.json
+
+# superpowers brainstorm visual companion
+.superpowers/

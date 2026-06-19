@@ -33,20 +33,22 @@ class TestCheapScanner(unittest.IsolatedAsyncioTestCase):
     def tearDown(self):
         self.db.close()
 
-    def _mock_anthropic(self, text):
+    def _mock_llm_client(self, text):
         client = MagicMock()
-        msg = MagicMock()
-        msg.content = [MagicMock(text=text)]
-        client.messages.create = AsyncMock(return_value=msg)
+        mock_response = MagicMock()
+        mock_choice = MagicMock()
+        mock_choice.message.content = text
+        mock_response.choices = [mock_choice]
+        client.chat.completions.create = AsyncMock(return_value=mock_response)
         return client
 
-    @patch("app.discovery.scanner.anthropic.AsyncAnthropic")
+    @patch("app.discovery.scanner.llm.get_async_client")
+    @patch("app.discovery.scanner.llm.ai_available", return_value=True)
     @patch("app.discovery.scanner.fetch_page_text", new_callable=AsyncMock)
-    async def test_successful_scan_populates_profile(self, mock_fetch, mock_cls):
+    async def test_successful_scan_populates_profile(self, mock_fetch, mock_available, mock_get_client):
         mock_fetch.return_value = ("<html>js.stripe.com page text</html>", None)
-        mock_cls.return_value = self._mock_anthropic(PROFILE_JSON)
-        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "real"}):
-            ok = await cheap_scan_app(self.app_row, self.db)
+        mock_get_client.return_value = self._mock_llm_client(PROFILE_JSON)
+        ok = await cheap_scan_app(self.app_row, self.db)
         self.assertTrue(ok)
         self.db.refresh(self.app_row)
         self.assertEqual(self.app_row.scan_status, "ok")
@@ -58,34 +60,32 @@ class TestCheapScanner(unittest.IsolatedAsyncioTestCase):
         techs = {t.technology for t in self.db.execute(select(AppTech)).scalars().all()}
         self.assertIn("stripe", techs)
 
-    @patch("app.discovery.scanner.anthropic.AsyncAnthropic")
+    @patch("app.discovery.scanner.llm.get_async_client")
+    @patch("app.discovery.scanner.llm.ai_available", return_value=True)
     @patch("app.discovery.scanner.fetch_page_text", new_callable=AsyncMock)
-    async def test_uses_haiku_never_sonnet(self, mock_fetch, mock_cls):
+    async def test_uses_deepseek_model(self, mock_fetch, mock_available, mock_get_client):
         mock_fetch.return_value = ("page", None)
-        client = self._mock_anthropic(PROFILE_JSON)
-        mock_cls.return_value = client
-        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "real"}):
-            await cheap_scan_app(self.app_row, self.db)
-        model = client.messages.create.call_args.kwargs["model"]
-        self.assertIn("haiku", model)
-        self.assertNotIn("sonnet", model)
+        client = self._mock_llm_client(PROFILE_JSON)
+        mock_get_client.return_value = client
+        await cheap_scan_app(self.app_row, self.db)
+        model = client.chat.completions.create.call_args.kwargs["model"]
+        self.assertEqual(model, "deepseek-v4-flash")
 
     @patch("app.discovery.scanner.fetch_page_text", new_callable=AsyncMock)
     async def test_fetch_failure_marks_scan_failed(self, mock_fetch):
         mock_fetch.return_value = ("", "boom")
-        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "real"}):
-            ok = await cheap_scan_app(self.app_row, self.db)
+        ok = await cheap_scan_app(self.app_row, self.db)
         self.assertFalse(ok)
         self.db.refresh(self.app_row)
         self.assertEqual(self.app_row.scan_status, "scan_failed")
 
-    @patch("app.discovery.scanner.anthropic.AsyncAnthropic")
+    @patch("app.discovery.scanner.llm.get_async_client")
+    @patch("app.discovery.scanner.llm.ai_available", return_value=True)
     @patch("app.discovery.scanner.fetch_page_text", new_callable=AsyncMock)
-    async def test_garbage_ai_output_still_records_tech(self, mock_fetch, mock_cls):
+    async def test_garbage_ai_output_still_records_tech(self, mock_fetch, mock_available, mock_get_client):
         mock_fetch.return_value = ("<script src='https://js.stripe.com/v3/'></script>", None)
-        mock_cls.return_value = self._mock_anthropic("not json")
-        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "real"}):
-            ok = await cheap_scan_app(self.app_row, self.db)
+        mock_get_client.return_value = self._mock_llm_client("not json")
+        ok = await cheap_scan_app(self.app_row, self.db)
         self.assertTrue(ok)  # degraded but not failed
         self.db.refresh(self.app_row)
         self.assertEqual(self.app_row.scan_status, "ok")

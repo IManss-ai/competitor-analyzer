@@ -169,8 +169,9 @@ class TestLocalBusiness(unittest.IsolatedAsyncioTestCase):
     # ── Scraper and Scan background integrations ──────────────────────────
 
     @patch("app.pipeline.google_reviews_scraper.fetch_page_text")
-    @patch("app.pipeline.google_reviews_scraper.anthropic.AsyncAnthropic")
-    async def test_scrape_google_reviews(self, mock_anthropic_class, mock_fetch_page_text):
+    @patch("app.llm.ai_available", return_value=True)
+    @patch("app.llm.get_async_client")
+    async def test_scrape_google_reviews(self, mock_get_client, _mock_avail, mock_fetch_page_text):
         """Test Google Reviews scraping logic and DB upsert."""
         from app.pipeline.google_reviews_scraper import scrape_google_reviews
         from app.models import Review, ReviewSnapshot
@@ -180,14 +181,11 @@ class TestLocalBusiness(unittest.IsolatedAsyncioTestCase):
         # Setup mock fetch_page_text response (must be >= 100 chars)
         mock_fetch_page_text.return_value = "Mock Google Maps page content containing reviews" * 10
 
-        # Setup mock Anthropic client
+        # Setup mock DeepSeek/OpenAI-shape client
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
+        mock_get_client.return_value = mock_client
 
-        mock_response = MagicMock()
-        mock_content = MagicMock()
-        mock_content.text = """
-        {
+        json_payload = json.dumps({
           "avg_rating": 4.5,
           "total_reviews": 2,
           "recent_reviews": [
@@ -195,14 +193,12 @@ class TestLocalBusiness(unittest.IsolatedAsyncioTestCase):
             {"author": "Bob", "rating": 1, "body": "Terrible customer service.", "published_at": "2026-06-02T13:00:00Z"}
           ],
           "top_complaints": ["Customer service"]
-        }
-        """
-        mock_response.content = [mock_content]
-        mock_client.messages.create = AsyncMock(return_value=mock_response)
+        })
+        mock_response = MagicMock()
+        mock_response.choices = [MagicMock(message=MagicMock(content=json_payload))]
+        mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
-        # Set env variable to pass the guard
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test_api_key"}):
-            result = await scrape_google_reviews(str(self.competitor.id), "https://maps.google.com/place/test", self.db)
+        result = await scrape_google_reviews(str(self.competitor.id), "https://maps.google.com/place/test", self.db)
 
         self.assertEqual(result["avg_rating"], 4.5)
         self.assertEqual(result["total_reviews"], 2)
@@ -233,8 +229,9 @@ class TestLocalBusiness(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(bob_rev.is_complaint, True)
 
     @patch("app.pipeline.social_tracker.fetch_page_text")
-    @patch("app.pipeline.social_tracker.anthropic.AsyncAnthropic")
-    async def test_scrape_social_posts(self, mock_anthropic_class, mock_fetch_page_text):
+    @patch("app.llm.ai_available", return_value=True)
+    @patch("app.llm.get_async_client")
+    async def test_scrape_social_posts(self, mock_get_client, _mock_avail, mock_fetch_page_text):
         """Test Social Post scraping logic and DB upsert with sentiment."""
         from app.pipeline.social_tracker import scrape_social_posts
         from app.models import SocialPost
@@ -244,52 +241,44 @@ class TestLocalBusiness(unittest.IsolatedAsyncioTestCase):
         # Setup mock fetch_page_text response (must be >= 100 chars)
         mock_fetch_page_text.return_value = "Mock social page content containing posts" * 10
 
-        # Setup mock Anthropic client
+        # Setup mock DeepSeek/OpenAI-shape client
         mock_client = MagicMock()
-        mock_anthropic_class.return_value = mock_client
+        mock_get_client.return_value = mock_client
 
-        # Setup responses for extract and sentiment calls
-        instagram_extract_resp = MagicMock()
-        instagram_extract_resp.content = [MagicMock(text=json.dumps({
-            "posts": [
-                {"content": "Insta post 1", "posted_at": "2026-06-05T10:00:00Z", "engagement_hint": "10 likes"}
-            ]
-        }))]
+        def _resp(payload):
+            r = MagicMock()
+            r.choices = [MagicMock(message=MagicMock(content=json.dumps(payload)))]
+            return r
 
-        instagram_sentiment_resp = MagicMock()
-        instagram_sentiment_resp.content = [MagicMock(text=json.dumps({
+        instagram_extract_resp = _resp({"posts": [
+            {"content": "Insta post 1", "posted_at": "2026-06-05T10:00:00Z", "engagement_hint": "10 likes"}
+        ]})
+        instagram_sentiment_resp = _resp({
             "sentiment_summary": "Upbeat and positive vibes",
             "notable_posts": ["Insta post 1"]
-        }))]
-
-        facebook_extract_resp = MagicMock()
-        facebook_extract_resp.content = [MagicMock(text=json.dumps({
-            "posts": [
-                {"content": "FB post 1", "posted_at": "2026-06-06T12:00:00Z", "engagement_hint": "5 shares"}
-            ]
-        }))]
-
-        facebook_sentiment_resp = MagicMock()
-        facebook_sentiment_resp.content = [MagicMock(text=json.dumps({
+        })
+        facebook_extract_resp = _resp({"posts": [
+            {"content": "FB post 1", "posted_at": "2026-06-06T12:00:00Z", "engagement_hint": "5 shares"}
+        ]})
+        facebook_sentiment_resp = _resp({
             "sentiment_summary": "Neutral updates",
             "notable_posts": ["FB post 1"]
-        }))]
+        })
 
-        mock_client.messages.create = AsyncMock()
-        mock_client.messages.create.side_effect = [
+        mock_client.chat.completions.create = AsyncMock()
+        mock_client.chat.completions.create.side_effect = [
             instagram_extract_resp,
             instagram_sentiment_resp,
             facebook_extract_resp,
             facebook_sentiment_resp
         ]
 
-        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test_api_key"}):
-            result = await scrape_social_posts(
-                str(self.competitor.id),
-                instagram_handle="test_insta",
-                facebook_page="test_fb",
-                db=self.db
-            )
+        result = await scrape_social_posts(
+            str(self.competitor.id),
+            instagram_handle="test_insta",
+            facebook_page="test_fb",
+            db=self.db
+        )
 
         self.assertEqual(result["instagram_posts"], 1)
         self.assertEqual(result["facebook_posts"], 1)

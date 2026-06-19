@@ -15,10 +15,10 @@ const PAPER: ChartPalette = {
   surface: '#ffffff', tooltipBg: '#ffffff', tooltipBorder: 'rgba(26,23,20,0.12)', cursor: 'rgba(26,23,20,0.04)',
 };
 const INK: ChartPalette = {
-  accent: '#4f7cb0', accentSoft: '#6a96c8',
+  accent: '#c8ff00', accentSoft: '#a8d600',
   positive: '#5aa07a', warning: '#c79a4e', neutral: '#9aa3af', danger: '#f87171', violet: '#9b7fc7',
-  grid: 'rgba(234,230,221,0.08)', axis: 'rgba(234,230,221,0.18)', tick: '#a8a094',
-  surface: '#1f1c16', tooltipBg: '#211e17', tooltipBorder: 'rgba(234,230,221,0.14)', cursor: 'rgba(234,230,221,0.04)',
+  grid: 'rgba(233,236,242,0.07)', axis: 'rgba(233,236,242,0.16)', tick: '#9a9ea6',
+  surface: '#101216', tooltipBg: '#15171c', tooltipBorder: 'rgba(233,236,242,0.14)', cursor: 'rgba(233,236,242,0.04)',
 };
 
 export function useChartPalette(): ChartPalette {

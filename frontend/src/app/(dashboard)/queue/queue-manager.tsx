@@ -59,17 +59,17 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
         <div className="px-6 py-24 text-center flex flex-col items-center">
           <div className="relative w-16 h-16 mx-auto mb-6">
             <motion.div
-              className="absolute inset-0 border border-emerald-500/20 rounded-full"
+              className="absolute inset-0 border border-[var(--tone-positive)]/20 rounded-full"
               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
-              className="absolute inset-2 border border-emerald-500/10 rounded-full"
+              className="absolute inset-2 border border-[var(--tone-positive)]/10 rounded-full"
               animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <div className="absolute inset-0 rounded-full bg-emerald-500/10 flex items-center justify-center">
-              <CheckCircle2 size={32} className="text-emerald-400" />
+            <div className="absolute inset-0 rounded-full bg-[var(--tone-positive)]/10 flex items-center justify-center">
+              <CheckCircle2 size={32} style={{ color: 'var(--tone-positive)' }} />
             </div>
           </div>
           <h3 className="text-xl font-semibold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>Queue is clear</h3>
@@ -107,8 +107,8 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <div 
-                className={`rs-card p-5 flex flex-col border-l-[4px] ${approvedId === action.id ? 'bg-emerald-500/5 border-emerald-500/20' : ''}`}
-                style={{ borderLeftColor: approvedId === action.id ? 'rgba(16,185,129,0.5)' : borderLeftColor }}
+                className={`rs-card p-5 flex flex-col border-l-[4px] ${approvedId === action.id ? 'bg-[var(--tone-positive)]/5 border-[var(--tone-positive)]/20' : ''}`}
+                style={{ borderLeftColor: approvedId === action.id ? 'var(--tone-positive)' : borderLeftColor }}
               >
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-5 flex-wrap">
@@ -160,7 +160,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                         title="Copy to clipboard"
                       >
                         {copiedId === action.id ? (
-                          <Check size={14} className="text-emerald-400" />
+                          <Check size={14} style={{ color: 'var(--tone-positive)' }} />
                         ) : (
                           <Copy size={14} />
                         )}
