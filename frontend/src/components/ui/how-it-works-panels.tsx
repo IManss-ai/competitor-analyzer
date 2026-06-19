@@ -124,7 +124,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                className="text-emerald-400"
+                style={{ color: 'var(--tone-positive)' }}
               >
                 <CheckCircle2 size={13} />
               </motion.div>
@@ -151,7 +151,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                className="text-emerald-400"
+                style={{ color: 'var(--tone-positive)' }}
               >
                 <CheckCircle2 size={13} />
               </motion.div>
@@ -330,9 +330,9 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
           className="space-y-2"
         >
           {[
-            { tag: 'pricing', text: 'Pricing changed · +14%', color: 'text-amber-400 border-amber-500/20 bg-amber-500/5' },
-            { tag: 'support', text: '3 new complaints · support', color: 'text-red-400 border-red-500/20 bg-red-500/5' },
-            { tag: 'play', text: 'Action: run EMEA email campaign', color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' },
+            { tag: 'pricing', text: 'Pricing changed · +14%', color: 'text-[var(--tone-warning)] border-[var(--tone-warning)]/20 bg-[var(--tone-warning)]/5' },
+            { tag: 'support', text: '3 new complaints · support', color: 'text-[var(--tone-danger)] border-[var(--tone-danger)]/20 bg-[var(--tone-danger)]/5' },
+            { tag: 'play', text: 'Action: run EMEA email campaign', color: 'text-[var(--tone-positive)] border-[var(--tone-positive)]/20 bg-[var(--tone-positive)]/5' },
           ].map((row, idx) => (
             <motion.div
               key={idx}
