@@ -1,6 +1,6 @@
 """AI-engine visibility (GEO): who does the AI recommend — you or them?
 
-Live path: one gpt-4o-mini call asking for recommendations in the niche, then
+Live path: one DeepSeek (llm.MODEL) call asking for recommendations in the niche, then
 counting brand mentions. Estimated path (no key / failure): deterministic
 score derived from review data so the UI always works — clearly labeled
 "estimated", auto-replaced by live data once credits land.

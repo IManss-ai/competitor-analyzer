@@ -1,7 +1,7 @@
 """Cheap scan tier for seeded apps.
 
 COST CONTRACT (do not violate — see docs/superpowers/specs/2026-06-10-discovery-engine-design.md):
-- exactly ONE claude-haiku-4-5 call per app per refresh; NEVER Sonnet
+- exactly ONE DeepSeek (llm.MODEL) call per app per refresh; NEVER a heavy model
 - tech detection is regex-only (free)
 - batch size capped by SEED_SCAN_DAILY_LIMIT
 """

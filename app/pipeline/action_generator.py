@@ -56,7 +56,7 @@ async def generate_action(
     user_description: str = "SaaS founders and small teams",
 ) -> str | None:
     """
-    Generate one action draft using gpt-4o-mini or a local heuristic fallback.
+    Generate one action draft using DeepSeek (llm.MODEL) or a local heuristic fallback.
     Returns draft text or None on error.
     """
     prompt_config = PROMPTS.get(action_type)
