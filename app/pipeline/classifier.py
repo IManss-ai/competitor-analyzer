@@ -1,8 +1,7 @@
-from openai import AsyncOpenAI
-from app.config import OPENAI_API_KEY
+import app.llm as llm
 from app.observability import note_degraded
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+client = llm.get_async_client()
 
 VALID_CATEGORIES = {"pricing_change", "feature_add", "repositioning", "minor_copy", "no_change"}
 
@@ -28,7 +27,7 @@ async def classify_change(text_before: str, text_after: str) -> str:
 
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=llm.MODEL,
             messages=[
                 {"role": "system", "content": CLASSIFY_SYSTEM},
                 {"role": "user", "content": f"BEFORE:\n{before_trunc}\n\nAFTER:\n{after_trunc}"},

@@ -1,7 +1,6 @@
-from openai import AsyncOpenAI
-from app.config import OPENAI_API_KEY
+import app.llm as llm
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+client = llm.get_async_client()
 
 ACTION_TYPES_BY_CHANGE = {
     "pricing_change": ["retention_email", "pricing_copy"],
@@ -73,7 +72,7 @@ async def generate_action(
 
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=llm.MODEL,
             messages=[
                 {"role": "system", "content": prompt_config["system"]},
                 {"role": "user", "content": user_msg},

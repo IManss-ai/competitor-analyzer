@@ -1,8 +1,7 @@
-from openai import AsyncOpenAI
-from app.config import OPENAI_API_KEY
+import app.llm as llm
 from app.observability import note_degraded
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+client = llm.get_async_client()
 
 SYNTHESIZE_SYSTEM = """You are a competitive intelligence analyst writing weekly briefs for SaaS founders.
 Given a competitor's website change (before and after), write a 2-3 sentence brief that:
@@ -28,7 +27,7 @@ async def synthesize_brief(
 
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=llm.MODEL,
             messages=[
                 {"role": "system", "content": SYNTHESIZE_SYSTEM},
                 {
@@ -73,7 +72,7 @@ async def summarize_competitor_profile(
 
     try:
         response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=llm.MODEL,
             messages=[
                 {"role": "system", "content": SUMMARIZE_PROFILE_SYSTEM},
                 {
