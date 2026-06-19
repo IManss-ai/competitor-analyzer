@@ -515,16 +515,16 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             )}
 
             {onboardingError && (
-              <p className="text-xs text-red-400 font-medium font-mono">{onboardingError}</p>
+              <p className="text-xs font-medium font-mono" style={{ color: 'var(--tone-danger)' }}>{onboardingError}</p>
             )}
 
             <button
               type="submit"
               disabled={submittingOnboarding}
               className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
-              style={{ backgroundColor: 'var(--accent-primary)' }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
+              style={{ backgroundColor: 'var(--accent-cta)' }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta)')}
             >
               {submittingOnboarding ? (
                 <><Loader2 size={16} className="animate-spin" /> Creating...</>
@@ -612,8 +612,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       >
         {/* Header */}
         <div className="p-6 border-b border-[var(--border-default)] bg-[var(--fill-subtle)] text-center space-y-2">
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto border ${isError ? 'bg-[var(--tone-danger)]/10 border-[var(--tone-danger)]/25' : 'bg-emerald-500/10 border-emerald-500/25'}`}>
-            {isError ? <AlertTriangle size={24} className="text-[var(--tone-danger)]" /> : <CheckCircle2 size={24} className="text-emerald-500" />}
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto border ${isError ? 'bg-[var(--tone-danger)]/10 border-[var(--tone-danger)]/25' : 'bg-[var(--tone-positive)]/10 border-[var(--tone-positive)]/25'}`}>
+            {isError ? <AlertTriangle size={24} className="text-[var(--tone-danger)]" /> : <CheckCircle2 size={24} style={{ color: 'var(--tone-positive)' }} />}
           </div>
           <h2 className="text-lg font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
             {isError ? 'Scan had an issue' : `Your first report on ${compLabel}`}
