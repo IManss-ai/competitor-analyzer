@@ -124,7 +124,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                className="text-emerald-400"
+                style={{ color: 'var(--tone-positive)' }}
               >
                 <CheckCircle2 size={13} />
               </motion.div>
@@ -151,7 +151,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                className="text-emerald-400"
+                style={{ color: 'var(--tone-positive)' }}
               >
                 <CheckCircle2 size={13} />
               </motion.div>
@@ -330,9 +330,9 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
           className="space-y-2"
         >
           {[
-            { tag: 'pricing', text: 'Pricing changed · +14%', color: 'text-amber-400 border-amber-500/20 bg-amber-500/5' },
-            { tag: 'support', text: '3 new complaints · support', color: 'text-red-400 border-red-500/20 bg-red-500/5' },
-            { tag: 'play', text: 'Action: run EMEA email campaign', color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5' },
+            { tag: 'pricing', text: 'Pricing changed · +14%', color: 'text-[var(--tone-warning)] border-[var(--tone-warning)]/20 bg-[var(--tone-warning)]/5' },
+            { tag: 'support', text: '3 new complaints · support', color: 'text-[var(--tone-danger)] border-[var(--tone-danger)]/20 bg-[var(--tone-danger)]/5' },
+            { tag: 'play', text: 'Action: run EMEA email campaign', color: 'text-[var(--tone-positive)] border-[var(--tone-positive)]/20 bg-[var(--tone-positive)]/5' },
           ].map((row, idx) => (
             <motion.div
               key={idx}
@@ -422,8 +422,8 @@ export default function HowItWorksPanels() {
               <div className="absolute left-[-15px] md:left-[-31px] -translate-x-1/2 top-4 z-20 flex items-center justify-center">
                 <motion.div
                   animate={{
-                    borderColor: isHovered ? '#6a96c8' : 'rgba(79, 124, 176, 0.2)',
-                    backgroundColor: isHovered ? 'rgba(79, 124, 176, 0.12)' : 'rgba(79, 124, 176, 0.05)',
+                    borderColor: isHovered ? 'var(--accent-primary)' : 'color-mix(in srgb, var(--accent-primary) 20%, transparent)',
+                    backgroundColor: isHovered ? 'color-mix(in srgb, var(--accent-primary) 12%, transparent)' : 'color-mix(in srgb, var(--accent-primary) 5%, transparent)',
                   }}
                   transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }}
                   className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-[var(--surface-raised)] flex items-center justify-center text-xs md:text-sm font-mono font-bold text-sky-400"

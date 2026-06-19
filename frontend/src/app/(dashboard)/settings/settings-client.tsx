@@ -20,10 +20,10 @@ const statusConfig: Record<
 > = {
   active: {
     label: 'Active',
-    dot: 'bg-emerald-600',
-    text: 'text-emerald-600',
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/25',
+    dot: 'bg-[var(--tone-positive)]',
+    text: 'text-[var(--tone-positive)]',
+    bg: 'bg-[var(--tone-positive)]/10',
+    border: 'border-[var(--tone-positive)]/25',
   },
   trialing: {
     label: 'Trial',
@@ -34,17 +34,17 @@ const statusConfig: Record<
   },
   canceled: {
     label: 'Canceled',
-    dot: 'bg-red-600',
-    text: 'text-red-600',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/25',
+    dot: 'bg-[var(--tone-danger)]',
+    text: 'text-[var(--tone-danger)]',
+    bg: 'bg-[var(--tone-danger)]/10',
+    border: 'border-[var(--tone-danger)]/25',
   },
   past_due: {
     label: 'Past due',
-    dot: 'bg-amber-600',
-    text: 'text-amber-600',
-    bg: 'bg-amber-500/10',
-    border: 'border-amber-500/25',
+    dot: 'bg-[var(--tone-warning)]',
+    text: 'text-[var(--tone-warning)]',
+    bg: 'bg-[var(--tone-warning)]/10',
+    border: 'border-[var(--tone-warning)]/25',
   },
 };
 
@@ -223,7 +223,7 @@ export default function SettingsClient({
           style={{
             background: 'var(--surface-raised)',
             border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
-            color: 'var(--error-text, #b91c1c)',
+            color: 'var(--tone-danger)',
             boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
           }}
         >
@@ -345,7 +345,7 @@ export default function SettingsClient({
                 </div>
 
                 {passwordStatus.type && (
-                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-emerald-600' : 'text-red-600')}>
+                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-[var(--tone-danger)]')}>
                     {passwordStatus.message}
                   </p>
                 )}
@@ -439,7 +439,7 @@ export default function SettingsClient({
               </div>
 
               {notifStatus.type && (
-                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-emerald-600' : 'text-red-600')}>
+                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-[var(--tone-danger)]')}>
                   {notifStatus.message}
                 </p>
               )}
@@ -518,8 +518,8 @@ export default function SettingsClient({
                             className={clsx(
                               'p-1.5 transition-colors cursor-pointer flex items-center gap-1.5',
                               pendingDeleteId === comp.id
-                                ? 'text-red-600 bg-red-500/10'
-                                : 'text-[var(--text-secondary)] hover:text-red-600 hover:bg-red-500/10'
+                                ? 'text-[var(--tone-danger)] bg-[var(--tone-danger)]/10'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10'
                             )}
                             title={pendingDeleteId === comp.id ? 'Click again to confirm' : 'Delete'}
                           >
@@ -567,7 +567,7 @@ export default function SettingsClient({
                 </div>
 
                 {addStatus.type && (
-                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-emerald-600' : 'text-red-600')}>
+                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-[var(--tone-danger)]')}>
                     {addStatus.message}
                   </p>
                 )}
@@ -640,7 +640,7 @@ export default function SettingsClient({
                     "Priority email support"
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <Check size={14} className="text-emerald-600 flex-shrink-0" />
+                      <Check size={14} className="flex-shrink-0" style={{ color: 'var(--tone-positive)' }} />
                       <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{feat}</span>
                     </div>
                   ))}

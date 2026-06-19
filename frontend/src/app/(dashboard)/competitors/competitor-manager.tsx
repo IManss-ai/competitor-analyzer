@@ -190,7 +190,7 @@ export default function CompetitorManager({
               </form>
 
               {error && (
-                <p className="text-xs text-red-400 font-medium font-mono mt-3">{error}</p>
+                <p className="text-xs font-medium font-mono mt-3" style={{ color: 'var(--tone-danger)' }}>{error}</p>
               )}
 
               {/* Local Business Details (collapsible) */}
@@ -287,7 +287,7 @@ export default function CompetitorManager({
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{competitors.length} / 7</span>
           {atLimit && (
-            <span className="inline-flex items-center gap-1 text-[9.5px] uppercase tracking-wider font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+            <span className="inline-flex items-center gap-1 text-[9.5px] uppercase tracking-wider font-mono text-[var(--tone-warning)] bg-[var(--tone-warning)]/10 px-2 py-0.5 rounded border border-[var(--tone-warning)]/20">
               Limit reached
             </span>
           )}
@@ -351,8 +351,8 @@ export default function CompetitorManager({
                     {/* Top right status */}
                     <div className="absolute top-5 right-5 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--tone-positive)' }}></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'var(--tone-positive)' }}></span>
                       </span>
                       <span className="tag-green text-[9px] uppercase font-mono tracking-wider px-1.5 py-0.5 rounded-sm border">
                         monitoring
@@ -416,7 +416,7 @@ export default function CompetitorManager({
                       <button
                         onClick={() => handleDelete(comp.id)}
                         disabled={deleting === comp.id}
-                        className="p-1.5 text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded transition-all duration-200 cursor-pointer disabled:opacity-40"
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10 rounded transition-all duration-200 cursor-pointer disabled:opacity-40"
                         title="Remove competitor"
                       >
                         <Trash2 size={16} />

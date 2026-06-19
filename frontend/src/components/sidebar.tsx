@@ -259,11 +259,11 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             className="flex-shrink-0 px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wide"
             style={{
               background: planBadge === 'Pro'
-                ? 'rgba(79, 124, 176,0.15)'
+                ? 'color-mix(in srgb, var(--accent-primary) 15%, transparent)'
                 : 'var(--fill-subtle)',
               color: planBadge === 'Pro' ? 'var(--accent-primary)' : 'var(--text-muted)',
               border: planBadge === 'Pro'
-                ? '1px solid rgba(79, 124, 176,0.28)'
+                ? '1px solid color-mix(in srgb, var(--accent-primary) 28%, transparent)'
                 : '1px solid var(--border-default)',
             }}
           >
@@ -320,7 +320,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   {hasBadge && (
                     <span
                       className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
-                      style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
+                      style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
                     </span>
@@ -386,7 +386,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   {hasBadge && (
                     <span
                       className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
-                      style={{ background: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}
+                      style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
                     </span>
@@ -420,14 +420,14 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
           style={
             scanDone
               ? {
-                  background: 'rgba(16,185,129,0.10)',
-                  border: '1px solid rgba(16,185,129,0.22)',
+                  background: 'color-mix(in srgb, var(--tone-positive) 12%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--tone-positive) 26%, transparent)',
                   color: 'var(--tone-positive)',
                 }
               : scanError
               ? {
-                  background: 'rgba(220,38,38,0.10)',
-                  border: '1px solid rgba(220,38,38,0.24)',
+                  background: 'color-mix(in srgb, var(--tone-danger) 12%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--tone-danger) 26%, transparent)',
                   color: 'var(--tone-danger)',
                 }
               : undefined
@@ -485,7 +485,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             <Link
               href="/settings"
               className="block w-full py-1.5 rounded-md text-[11px] font-semibold text-center text-[var(--accent-text)] transition-colors"
-              style={{ background: 'var(--accent-primary)' }}
+              style={{ background: 'var(--accent-cta)' }}
             >
               Upgrade to Pro
             </Link>

@@ -40,7 +40,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
       {/* HEADER */}
       <header
         className="py-4 px-6 sticky top-0 z-10 backdrop-blur-md"
-        style={{ background: 'rgba(7,11,20,0.85)', borderBottom: '1px solid var(--border-default)' }}
+        style={{ background: 'color-mix(in srgb, var(--surface-base) 85%, transparent)', borderBottom: '1px solid var(--border-default)' }}
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
@@ -59,7 +59,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
           <button onClick={handleCopyLink} className="rs-btn-ghost text-[13px]">
             {copied ? (
               <>
-                <Check size={14} className="text-emerald-400" />
+                <Check size={14} style={{ color: 'var(--tone-positive)' }} />
                 Copied!
               </>
             ) : (
@@ -105,7 +105,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* THEIR WEAKNESSES */}
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle size={16} className="text-red-400" />
+            <AlertTriangle size={16} style={{ color: 'var(--tone-danger)' }} />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
               Their Weaknesses
             </h2>
@@ -128,7 +128,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* TALKING POINTS */}
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <MessageSquare size={16} className="text-amber-400" />
+            <MessageSquare size={16} style={{ color: 'var(--tone-warning)' }} />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
               Your Talking Points
             </h2>
@@ -151,7 +151,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* WIN CONDITIONS */}
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <Trophy size={16} className="text-emerald-400" />
+            <Trophy size={16} style={{ color: 'var(--tone-positive)' }} />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
               Win Conditions
             </h2>

@@ -59,7 +59,7 @@ export default function LocalBusinessSection({
 
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {hasGoogleMaps && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-emerald-400/10 text-emerald-300 border border-emerald-400/20 px-2 py-0.5 rounded-md">
+                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-[var(--tone-positive)]/10 text-[var(--tone-positive)] border border-[var(--tone-positive)]/20 px-2 py-0.5 rounded-md">
                       Google Reviews
                     </span>
                   )}
