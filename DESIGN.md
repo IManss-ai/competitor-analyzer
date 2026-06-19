@@ -1,185 +1,170 @@
-# Rivalscope — Design System v3 ("Intelligence Desk")
+# Rivalscope — Design System v4 ("Signal Desk", blue · dark-first)
 
-**Direction:** Institutional authority. A primary-source research terminal you'd trust with revenue decisions.
-**Personality:** Calm, serious, precise. Reads like an institutional briefing or a financial ledger, not a colorful SaaS dashboard.
-**Memorable thing:** "This is a primary source." Authority through restraint, editorial-grotesk typography, and dense data presented cleanly.
+**Direction:** A confident competitive-intelligence terminal. Deep navy near-black canvas, one electric-blue signal accent, big editorial grotesk type. The structural confidence and motion of appkittie / Linear, governed by strict accent discipline.
+**Personality:** Sharp, fast, trustworthy. Reads like a professional intel/trading terminal, not a pastel SaaS.
+**Memorable thing:** Electric blue on deep navy — one accent, used only where there's meaning (signal + primary action), with a single gradient "glow" moment per view.
 
-> Supersedes v2 ("Premium Dark Intelligence Platform", sky-blue on blue-black). v3 is a deliberate fresh direction chosen 2026-06-08. **Migration status: DUAL THEME LIVE (paper-light default + ink-dark + toggle shipped 2026-06-08; ink foundation `094d976`, paper sweep + toggle merged `c250746`).** The app renders both themes app-wide; new visitors follow their OS `prefers-color-scheme`, a saved choice overrides + persists. Theme = `data-theme` on `<html>` (`:root` paper / `html[data-theme="ink"]` ink / OS-dark CSS fallback); pre-paint script in `layout.tsx` avoids FOUC; `useTheme()` (`lib/use-theme.ts`) drives the toggle; charts use `useChartPalette()` (`lib/chart-theme.ts`). Remaining: the bespoke broadsheet relayouts (see `DESIGN-REBUILD-PLAN.md`). This doc reflects the **live token names and values in `frontend/src/app/globals.css`** as of 2026-06-11.
-
-The headline departures from v2: a warm **paper-light** default surface (v2 was all-dark), a single **slate-blue** accent (v2 was sky blue; launched as oxblood, swapped in `6fe156a` — see Accent section), a **grotesk + mono** type system with no serif (v2 was Geist), and **sharp 4px** corners with hairline "ledger" rules instead of heavy cards.
+> **Supersedes** v3 "Intelligence Desk" (paper-light default + slate-blue) and the reverted lime "Signal Room" experiment. This is the **blue, dark-first** system on branch `feat/blue-redesign`. **Dark (ink) is the default and the primary design target**; paper-light remains a working alternate through the same token names. Reference anchors: **appkittie.com** (huge display type, dense confident layout, one signature gradient) and **Linear** (accent scarcity, surface-ladder depth, product screenshots as the protagonist) — adapted, never copied. Token names below are the live names in `frontend/src/app/globals.css`; this doc is the spec the CSS implements.
 
 ---
 
-## Surfaces — dual mode, paper leads
+## Themes — dark leads
 
-Paper-light is the **default** brand environment; ink-dark is a first-class alternate.
+Dark (ink) is the brand environment and the default a fresh visitor lands on. Paper-light is a first-class alternate via the theme toggle. Both use the same `--surface-*` / `--text-*` / `--border-*` token family.
 
-Token names below are the **live** names in `globals.css`. (The original v3 spec used `--paper`/`--panel`/`--ink`/`--rule` names; they shipped as the `--surface-*`/`--text-*`/`--border-*` family.)
-
-### Paper (default / light, `:root`)
+### Ink (dark, default — `html[data-theme="ink"]` + OS-dark fallback)
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--surface-base` | `#f5f2ec` | Page background (warm off-white briefing paper) |
-| `--surface-raised` | `#ffffff` | Cards / panels |
-| `--surface-overlay` | `#ffffff` | Modals / popovers |
-| `--surface-subtle` | `#fbf9f5` | Hover / inset tints |
-| `--text-primary` | `#1a1714` | Primary text, headlines |
-| `--text-secondary` | `#6b6258` | Body, descriptions |
-| `--text-muted` | `#726b5e` | Labels, datelines, timestamps (darkened from `#9a9186` for WCAG AA ~4.8:1 on `--surface-base`) |
-| `--border-default` | `rgba(26,23,20,0.12)` | Section + container rules |
-| `--border-subtle` | `rgba(26,23,20,0.07)` | Row dividers |
-| `--border-strong` | `rgba(26,23,20,0.22)` | Emphasized rules |
-| `--hairline` | `rgba(26,23,20,0.06)` | Finest dividers |
-| `--fill-subtle` / `--fill-subtle-hover` | `rgba(26,23,20,0.03)` / `0.05` | Tinted row/hover fills |
+| `--surface-base` | `#080b14` | Page background (deep navy near-black, faint blue tint) |
+| `--surface-raised` | `#0e1320` | Cards / panels (one step up) |
+| `--surface-overlay` | `#121829` | Modals / popovers / two-step lift |
+| `--surface-subtle` | `#161d2e` | Hover / inset tints |
+| `--text-primary` | `#e9edf6` | Headlines, primary text (cool off-white, never pure `#fff`) |
+| `--text-secondary` | `#9aa6bd` | Body, descriptions |
+| `--text-muted` | `#76829a` | Labels, datelines, timestamps (AA-tuned on `--surface-base`) |
+| `--border-default` | `rgba(180,200,235,0.12)` | Container + section rules |
+| `--border-subtle` | `rgba(180,200,235,0.06)` | Row dividers |
+| `--border-strong` | `rgba(180,200,235,0.22)` | Emphasized rules / hover |
+| `--hairline` | `rgba(180,200,235,0.05)` | Finest dividers |
+| `--fill-subtle` / `-hover` | `rgba(180,200,235,0.035)` / `0.06` | Row / hover fills |
 
-### Ink (dark, `html[data-theme="ink"]` + OS-dark fallback)
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--surface-base` | `#16140f` | Page background (warm near-black, not blue-black) |
-| `--surface-raised` | `#1f1c16` | Cards / panels |
-| `--surface-overlay` | `#211e17` | Modals / popovers |
-| `--surface-subtle` | `#26221a` | Hover / inset |
-| `--text-primary` | `#eae6dd` | Primary text |
-| `--text-secondary` | `#a8a094` | Body |
-| `--text-muted` | `#6f685c` | Labels |
-| `--border-default` | `rgba(234,230,221,0.14)` | Rules |
-| `--border-subtle` | `rgba(234,230,221,0.07)` | Dividers |
-| `--border-strong` | `rgba(234,230,221,0.24)` | Emphasized rules |
-| `--hairline` | `rgba(234,230,221,0.06)` | Finest dividers |
-| `--fill-subtle` / `--fill-subtle-hover` | `rgba(234,230,221,0.04)` / `0.07` | Tinted fills |
+Depth is carried by the **surface ladder + hairline borders**, not shadows (Linear move). `--shadow-card` stays `none`; only `--shadow-elevated` / `--shadow-modal` exist, for floating overlays.
 
-Shadows: `--shadow-card`/`--shadow-card-hover` are `none` (flatness is the brand); only `--shadow-elevated` and `--shadow-modal` exist, for overlays.
+### Paper (light alternate — `:root`)
+Retained from v3, already in the blue family (slate-blue accent). `--surface-base` `#f5f2ec`, `--text-primary` `#1a1714`, etc. Not the primary design target; kept working and AA-correct.
 
 ---
 
-## Accent — Slate-blue (one color, used sparingly)
+## Accent — electric blue (one color, used sparingly)
 
-Slate-blue is the only brand color. It appears on the wordmark mark, the active nav item, the primary button, key tags, and thin section rules. Nowhere else — **never as a background wash or decorative surface**. It is *not* an error color (errors use `--destructive`, a semantic red).
+Blue is the only brand color. It appears on the brand mark, the primary action, the active nav item, signal indicators (live dot, signal score), links, focus rings, and thin accent rules. **Never as a background wash on content surfaces, never on decorative cards.** It is not an error color (errors use `--destructive`).
 
-| Token | Paper | Ink |
-|-------|-------|-----|
-| `--accent-primary` | `#345781` | `#4f7cb0` |
-| `--accent-hover` | `#2c4868` | `#6a96c8` |
-| `--accent-subtle` | `rgba(52,87,129,0.10)` | `rgba(79,124,176,0.12)` |
-| `--accent-border` | `rgba(52,87,129,0.30)` | `rgba(79,124,176,0.34)` |
-| `--accent-glow` | `rgba(52,87,129,0.18)` | `rgba(79,124,176,0.25)` |
+| Token | Ink (dark) | Paper (light) | Notes |
+|-------|-----------|---------------|-------|
+| `--accent-primary` | `#2e8bff` | `#345781` | Electric azure. Links, icons, headline accent word, signal, focus, borders. Azure-on-navy = AA. |
+| `--accent-cta` | `#1e6bff` | `#345781` | **Primary button background** — deeper so white label hits WCAG AA (white/`#1e6bff` ≈ 4.55:1). |
+| `--accent-hover` | `#54a3ff` | `#2c4868` | Hover state |
+| `--accent-text` | `#ffffff` | `#ffffff` | Text on accent fills (verified AA on `--accent-cta`) |
+| `--accent-subtle` | `rgba(46,139,255,0.12)` | `rgba(52,87,129,0.10)` | Tinted accent fills |
+| `--accent-border` | `rgba(46,139,255,0.30)` | `rgba(52,87,129,0.30)` | Accent rules / selected borders |
+| `--accent-glow` | `rgba(46,139,255,0.28)` | `rgba(52,87,129,0.18)` | The signature gradient glow (see below) |
+| `--accent-deep` | `#0a2550` | `#243a54` | Navy anchor for the gradient + brand mark |
 
-The Tailwind `sky-*` scale is remapped to this accent in `globals.css`, so `sky-500`/`sky-700` utilities render slate-blue — never introduce raw sky/violet hex.
+The Tailwind `sky-*` scale is remapped to this accent in `globals.css`, so legacy `sky-*` utilities render electric blue. Never introduce raw blue/violet hex outside these tokens.
 
-**History:** v3 launched with an oxblood accent (`#8b2c2c`/`#c0524f`). The sky-remap leaked it into landing-page backgrounds and the whole product read as a "red theme," so it was swapped to slate-blue and pulled out of the glows (`6fe156a`). Lesson kept as a rule: the accent must stay a sparing highlight. Other alternates considered at v3 creation: Brass `#9a6a2f` (drifts luxury-crypto), Ledger green `#1f5d3f` (less ownable).
-
----
-
-## Change-Type Semantic Colors (re-tuned, low saturation)
-
-Semantic indicators retuned to read as "ledger ink colors," not neon. Each renders as a small mono uppercase tag with a 1px border via the locked `.badge` / `.badge-{type}` classes in `globals.css` (rendered by `components/change-badge.tsx` — always use that component, never restyle inline).
-
-| Change Type | Paper | Ink | Tag treatment |
-|-------------|-------|-----|---------------|
-| `initial_scan` | accent `#345781` | accent `#4f7cb0` | bg 12–14% / border ~33% |
-| `pricing_change` | `#8a5a12` (amber) | `#c79a4e` (amber) | bg 10–12% / border 35% |
-| `feature_add` / `new_feature` | `#1f5d3f` (green) | `#5aa07a` (green) | bg 10–12% / border 35% |
-| `repositioning` / `positioning_shift` | `#6d4f9c` (violet) | `#9b7fc7` (violet) | bg 10–12% / border 30% |
-| `review_trend` | `#2c6f6f` (teal) | `#4f9d9d` (teal) | bg 10–12% / border 35% |
-| `minor_copy` | `#5b6470` (slate) | `#9aa3af` (slate) | bg 10% / border 30% |
-
-> ✅ Resolved (was a known gap): every badge now ships **per-theme** values — paper uses darkened hues, ink keeps the lighter originals (`.badge-*` in `globals.css`, with an `html:not([data-theme])` OS-dark fallback that mirrors ink). Verified 2026-06-15: paper `#8a5a12` on `--surface-base` ≈ 5.3:1 (passes WCAG AA). Chart equivalents live in `lib/chart-theme.ts` and are likewise per-theme.
+**Discipline rule (kept from v3, the durable lesson):** the accent is a sparing highlight. Two shades only — `--accent-primary` (vibrant, for accent text/marks on dark) and `--accent-cta` (deeper, for white-text buttons). No purple/indigo drift — the hue stays a true cool blue (~213–220°).
 
 ---
 
-## Typography — grotesk + mono, no serif
+## Signature gradient — one moment per view
 
-| Role | Font | Weight | Usage |
-|------|------|--------|-------|
-| Display / Headlines | **Space Grotesk** | 500 / 700 | Page titles, big statements. Big confident type at medium weight, not heavy-black. |
-| UI / Body | **Space Grotesk** | 400 / 500 / 600 | Nav, labels, descriptions. One family, weight does the contrast. |
-| Data / Mono | **IBM Plex Mono** | 400 / 500 / 600 | URLs, metric numerals, diffs, timestamps, datelines, tags. `tabular-nums` always. |
+The one place the blue becomes a gradient: a **navy → electric-azure radial glow** behind the hero headline (and a 135° navy→azure on the brand mark). It is the appkittie "spotlight" move, in our blue.
 
-- Load via `next/font/google` (`Space_Grotesk`, `IBM_Plex_Mono`) as CSS variables. NOTE: Space Grotesk is aliased through the legacy `--font-archivo` variable in `layout.tsx`, so the whole app re-fonts in one swap — the variable name says "archivo" but the face is Space Grotesk (the "appkittie language" redesign).
-- No serif. The authority comes from weight, scale, tight tracking, and mono precision.
-- Display tracking: `-0.02em`. Mono uppercase labels: `+0.12em`.
+- Hero glow: `radial-gradient(ellipse at center, rgba(46,139,255,0.28), transparent 62%)` behind the headline, `z-index` below text.
+- A 1px top-edge accent line on the framed product screenshot: `linear-gradient(90deg, transparent, rgba(46,139,255,0.8), transparent)`.
+- **Hard limit: one gradient moment per viewport.** Never smear it across sections, cards, buttons, or full-bleed backgrounds. Everywhere else the blue is a flat solid.
 
 ---
 
-## Radius — sharp
+## Change-Type Semantic Colors (re-tuned for navy)
+
+Semantic indicators are distinct from the brand blue. Each renders as a small mono uppercase tag via `.badge-{type}` (component `change-badge.tsx`). On the navy ink surface they use the brighter hues; paper keeps darkened hues. `initial_scan` / baseline uses the brand blue.
+
+| Change Type | Ink (on navy) | Paper |
+|-------------|---------------|-------|
+| `pricing_change` | `#c79a4e` (amber) | `#8a5a12` |
+| `feature_add` / `new_feature` | `#5aa07a` (green) | `#1f5d3f` |
+| `repositioning` | `#9b7fc7` (violet) | `#6d4f9c` |
+| `review_trend` | `#4f9d9d` (teal) | `#2c6f6f` |
+| `minor_copy` | `#9aa3af` (slate) | `#5b6470` |
+| `initial_scan` / baseline | `#2e8bff` (brand blue) | `#345781` |
+
+> Violet stays a *semantic* tag color only (repositioning), never a brand/UI accent — the brand hue is blue. Keeps us clear of the purple-AI-slop trap.
+
+---
+
+## Typography — Space Grotesk + IBM Plex Mono, no serif
+
+Unchanged family system; **adds a big display scale** for the marketing surface (appkittie/Linear move).
+
+| Role | Font | Size / Weight / Tracking | Usage |
+|------|------|--------------------------|-------|
+| Display XL (hero) | Space Grotesk | 80–92px / 500 / `-0.045em` | Landing hero headline |
+| Display LG | Space Grotesk | 48–56px / 500 / `-0.03em` | Section openers |
+| Display MD | Space Grotesk | 32–40px / 500 / `-0.02em` | Sub-sections |
+| Heading | Space Grotesk | 21–28px / 600–700 / `-0.015em` | In-app page titles, card titles |
+| UI / Body | Space Grotesk | 15–18px / 400–600 | Nav, labels, paragraphs |
+| Data / Mono | IBM Plex Mono | 11–14px / 400–600, `tabular-nums` | URLs, numerals, timestamps, tags, datelines, eyebrows |
+
+- Loaded via `next/font/google`; Space Grotesk is fed through the legacy `--font-archivo` variable (one-swap alias). No serif.
+- Display tracking pulls aggressively negative on the big sizes (appkittie H1 is `-4.8px` at 96px). Mono uppercase labels/eyebrows: `+0.12–0.14em`.
+- Body never below 16px on marketing; cool off-white `--text-primary`, never pure white.
+
+---
+
+## Radius — sharp (unchanged)
 
 | Context | Value | Token |
 |---------|-------|-------|
-| Badges / tags | `2px` | `--radius-sm` |
-| Buttons / inputs / cards | `4px` | `--radius-md` |
-| Large panels | `6px` | `--radius-lg` |
-| Modals / overlays only | `8px` | `--radius-xl` |
-| Avatars / pills | `9999px` | `--radius-pill` |
+| Badges / tags | 2px | `--radius-sm` |
+| Buttons / inputs / cards | 4px | `--radius-md` |
+| Large panels | 6px | `--radius-lg` |
+| Modals / framed screenshots | 8px | `--radius-xl` |
+| Pills / avatars | 9999px | `--radius-pill` |
 
-Sharp corners are a core institutional signal. Do not round past 6px on in-page containers (`--radius-xl` is reserved for floating overlays). Never reintroduce v2's `rounded-lg/xl/md` Tailwind classes with default values.
-
----
-
-## Layout — broadsheet / ledger
-
-- **Sidebar:** `240px` fixed left (`--sidebar-width`), `--surface-base` background, 1px `--border-default` right edge. Mono section dividers ("DESK", "SIGNAL").
-- **Content:** max-width `~1180px`, `32px 40px` padding (8pt scale).
-- **Rules over cards:** prefer 1px hairline `--border-default` / `--border-subtle` dividers and a single outer container rule over heavy bordered cards everywhere. Broadsheet, not bubble-wrap.
-- **Headers:** Space Grotesk display headline + a 2px `--ink` underline rule, with a mono **dateline** beneath (e.g. `MON 08 JUN 2026 · 14 SOURCES · LIVE`).
-- **Data:** tables and stat tiles use IBM Plex Mono with `tabular-nums`, right-aligned figures.
-
----
-
-## Components
-
-### Stat tile (ledger row)
-Mono uppercase label, big Plex Mono numeral (`--text-primary`), small mono delta (accent for up). Tiles sit in one bordered container divided by `--border-subtle`, not separate cards.
-
-### Feed row
-Grid `1fr auto`. Left: change-type tag, mono URL, body description, a mono `→ OPEN BATTLE CARD` link in `--accent-primary`. Right: mono timestamp. Rows divided by `--border-subtle`.
-
-### Button — primary
-`background:--accent-primary; color:#fff`; `font: Space Grotesk 600 12.5px`; `padding:8px 14px`; `radius:4px`; hover `--accent-hover`. No glow. (`text-white` is allowed here — accent surface.)
-
-### Button — ghost
-`transparent`, `color:--text-secondary`, `border:1px solid --border-default`, `radius:4px`; hover `--surface-subtle` + `--text-primary`.
-
-### Tag / badge
-`font: IBM Plex Mono 600 9.5px`; `letter-spacing:.08em`; uppercase; `padding:2px 7px`; `radius:2px`; 1px colored border; subtle tinted bg. Use `components/change-badge.tsx` + the `.badge-*` classes; never inline.
-
-### Card / panel
-`background:--surface-raised`; `border:1px solid --border-default`; `radius:4–6px`; **no drop shadow** (paper uses rules + flatness, not elevation). Hover: border `--accent-border` or `--border-strong`, no lift.
-
----
-
-## Motion — minimal and crisp
-
-- Duration tokens: `--duration-fast: 100ms`, `--duration-base: 160ms`, `--duration-slow: 240ms`. Nothing slower.
-- Easing tokens: `--ease-out` (`cubic-bezier(0,0,0.2,1)`) for enter, `--ease-smooth` (`cubic-bezier(0.16,1,0.3,1)`) for moves; `ease-in` for exit.
-- **No spring bounce, no hover lift.** v2's spring nav rail and `y:-2` lifts are dropped. Institutional = still.
-- State change = crisp fade/cut. Active nav = instant accent rule.
-- `prefers-reduced-motion`: all transitions collapse to instant.
+Sharp corners are a brand signal. We keep our 4px house style rather than appkittie's soft 10–24px radii. No `rounded-lg/xl` Tailwind defaults.
 
 ---
 
 ## Spacing (8pt scale, unchanged)
 ```
-4px  8px  12px  16px  24px  32px  40px  48px  64px
+4  8  12  16  24  32  40  48  64  ·  96 (section rhythm on marketing)
 ```
-Gaps, padding, margins MUST use this scale. No arbitrary values.
+All gaps/padding/margins use this scale. No arbitrary values.
 
 ---
 
-## Creative Decisions (v3)
+## Motion — alive, not bouncy
 
-1. **Paper-light briefing primary + ink terminal alt.** The biggest swing. Reads as a printed institutional report. Differentiates hard from Crayon (loud) and from v2 (dark neon).
-2. **One sparing accent.** Launched as oxblood (serious, editorial, adversarial) but it bled into backgrounds via the sky-remap and read as a "red theme"; now slate-blue (`6fe156a`). The durable decision is the *discipline*: a single accent that appears only on interactive/branded moments, never as a wash.
-3. **Grotesk-only (Space Grotesk) + IBM Plex Mono, no serif.** Swiss/precision-instrument authority. Single sans family; weight and scale carry hierarchy.
-4. **Sharp 4px corners + hairline ledger rules** instead of heavy shadowed cards. Precise, dense, broadsheet.
-5. **Mono datelines + tabular figures everywhere data lives.** Signals a primary source.
+- Durations: `--duration-fast 100ms`, `--duration-base 160ms`, `--duration-slow 240ms`; marketing reveals may run to ~400ms.
+- Easing: `--ease-out` (`cubic-bezier(0,0,0.2,1)`) enter, `--ease-smooth` (`cubic-bezier(0.16,1,0.3,1)`) moves; `ease-in` exit.
+- Purposeful only: fades, count-ups, staggered reveals, hover states that *explain* (reveal a label/diff). **No spring bounce, no `y:-` hover lift, no `transition: all`.** Animate `transform`/`opacity` only.
+- `prefers-reduced-motion: reduce` collapses everything to instant AND forces scroll-reveal content visible (the `[style*="opacity:0"]` override stays — it's why reduced-motion users don't see blank sections).
+
+---
+
+## Components (on navy)
+
+- **Button — primary:** `background: var(--accent-cta)`, `color: var(--accent-text)` (white, AA-verified), Space Grotesk 600, 9px 16px, radius 4px, hover `--accent-hover`. No glow.
+- **Button — ghost:** transparent, `--text-secondary`, 1px `--border-default`, hover `--fill-subtle-hover` + `--text-primary`.
+- **Card / panel:** `--surface-raised`, 1px `--border-default`, radius 4–6px, **no shadow**; hover = border `--accent-border` or `--border-strong`, no lift.
+- **Tag / badge:** IBM Plex Mono 600 ~10px, uppercase, 2px radius, 1px colored border, subtle tinted bg. Use `change-badge.tsx`.
+- **Eyebrow:** mono, uppercase, `+0.14em`, `--accent-primary`, optional 1px accent border + live dot.
+- **Stat tile / feed row:** mono `tabular-nums`, hairline-divided in one bordered container, not separate cards.
+
+---
+
+## HARD BANS — no AI slop
+
+Never ship: purple/indigo/violet gradient backgrounds or blue→purple schemes (our blue stays true-blue); glassmorphism; emoji as headings/bullets; the 3-identical-icon feature-card grid; "Empower / Unleash / Seamless" copy; centered-hero + 3-columns + pricing cookie-cutter; fake or round dashboard numbers; decorative charts with no data; stock-photo vibes; inconsistent spacing / mismatched radii / low-contrast gray-on-gray; anything that reads as a Tailwind template. Be specific, opinionated, branded.
+
+---
+
+## Constraints (enforced)
+
+- **Theme-aware tokens only** (`--text-*`, `--surface-*`, `--border-*`, `--accent-*`). No hardcoded hex, no `text-white` / `bg-white` except `text-white` on a verified-contrast blue accent surface.
+- **WCAG AA** on all text; real `:focus-visible` rings; full keyboard nav.
+- **Honesty principle:** the landing promises only what the app delivers. Real sample data on marketing, never invented metrics or fabricated "detected changes." (Root fix for the "AI-slop / empty" tester feedback.)
+- Frontend-only; do not break existing routes or the `/api/v1/*` contract.
 
 ---
 
 ## Decisions Log
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-06-08 | v3 "Intelligence Desk" created via /design-consultation | Fresh institutional-authority direction; grounded in research (Crayon, AlphaSense, Mercury). Supersedes v2 sky/dark. |
-| 2026-06-08 | Dual theme shipped (paper default + ink + toggle, OS-aware) | Paper is the brand environment; ink kept first-class for the terminal crowd. `094d976`, `c250746`. |
-| 2026-06-08 | Accent swapped oxblood → slate-blue | Sky-remap leaked oxblood into landing backgrounds; product read as a "red theme." Accent must stay a sparing highlight. `6fe156a`. |
-| 2026-06-09 | Paper `--text-muted` darkened to `#726b5e` | WCAG AA (~4.8:1) on `#f5f2ec`. |
-| 2026-06-11 | DESIGN.md synced to live `globals.css` tokens (this update) | Doc drifted from shipped reality: `--surface-*`/`--text-*`/`--border-*` names, slate-blue accent tables, real badge values (incl. paper-contrast gap flagged), 240px sidebar, live motion/radius tokens. |
+| 2026-06-19 | v4 "Signal Desk": blue, dark-first | Pivot from reverted lime experiment. Electric-blue (`#2e8bff`/`#1e6bff`) on deep navy `#080b14`; dark is default, paper kept as alternate. appkittie + Linear as structure/discipline anchors. |
+| 2026-06-19 | One signature gradient moment per view | navy→azure radial glow behind hero only; blue is otherwise a flat, scarce accent (Linear discipline). Avoids the gradient-everywhere AI-slop trap. |
+| 2026-06-19 | Big display scale added (80–92px, -0.045em) | Marketing first-impression needs appkittie-grade confident type; in-app stays denser. |
+| 2026-06-19 | Honesty principle written into the system | Diagnosis: the UI over-promised data it didn't have. Landing + app must match. |
+
+_Prior v3 history (paper default, oxblood→slate-blue swap, dual-theme shipping) retained in git; superseded by this doc for the blue redesign._
