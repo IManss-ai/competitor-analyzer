@@ -71,6 +71,7 @@ async def _extract_reviews_with_claude(text: str) -> dict:
             ],
             temperature=0,
             response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
@@ -105,6 +106,7 @@ async def _analyze_complaints_with_claude(reviews: list) -> dict:
             ],
             temperature=0,
             response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:

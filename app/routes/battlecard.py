@@ -193,6 +193,7 @@ Known customer complaints:
                 ],
                 temperature=0.7,
                 response_format={"type": "json_object"},
+                extra_body=llm.THINKING_OFF,
             )
             content = response.choices[0].message.content
             if "```json" in content:
@@ -394,6 +395,7 @@ Known customer complaints/weaknesses:
                 ],
                 temperature=0.7,
                 response_format={"type": "json_object"},
+                extra_body=llm.THINKING_OFF,
             )
             content = response.choices[0].message.content
             if "```json" in content:

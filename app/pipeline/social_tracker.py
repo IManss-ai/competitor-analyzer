@@ -38,6 +38,7 @@ Text:
             ],
             temperature=0,
             response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
@@ -72,6 +73,7 @@ Posts:
             ],
             temperature=0,
             response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:

@@ -61,6 +61,7 @@ def _live_check(user_product: str, competitor_name: str, category: str | None) -
             model=llm.MODEL,
             max_tokens=400,
             temperature=0.3,
+            extra_body=llm.THINKING_OFF,
             messages=[{
                 "role": "user",
                 "content": (

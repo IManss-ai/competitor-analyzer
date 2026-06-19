@@ -123,6 +123,7 @@ Text:
             ],
             temperature=0,
             response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
@@ -162,6 +163,7 @@ Output the sentence only, no preamble or quotes."""
                 {"role": "user", "content": prompt},
             ],
             temperature=0.4,
+            extra_body=llm.THINKING_OFF,
         )
         return response.choices[0].message.content.strip().strip('"').strip()
     except Exception as e:

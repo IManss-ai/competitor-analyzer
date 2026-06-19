@@ -79,6 +79,7 @@ async def generate_action(
             ],
             max_tokens=400,
             temperature=0.7,
+            extra_body=llm.THINKING_OFF,
         )
         return response.choices[0].message.content.strip()
     except Exception:

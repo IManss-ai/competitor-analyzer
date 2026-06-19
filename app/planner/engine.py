@@ -228,6 +228,7 @@ def _ai_plan(signals: dict) -> tuple[str, list[dict]] | None:
             ],
             temperature=0.6,
             response_format={"type": "json_object"},
+            extra_body=llm.THINKING_OFF,
         )
         content = resp.choices[0].message.content
         if "```json" in content:

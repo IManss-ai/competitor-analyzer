@@ -34,6 +34,7 @@ async def classify_change(text_before: str, text_after: str) -> str:
             ],
             max_tokens=20,
             temperature=0,
+            extra_body=llm.THINKING_OFF,
         )
         result = response.choices[0].message.content.strip().lower()
         if result in VALID_CATEGORIES:

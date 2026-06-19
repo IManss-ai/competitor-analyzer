@@ -65,6 +65,7 @@ async def cheap_scan_app(app: App, db: Session) -> bool:
                     {"role": "system", "content": "You are a helpful assistant that extracts structured product profiles from web page text."},
                     {"role": "user", "content": f"{EXTRACT_PROMPT}\n\nPage text:\n{text[:6000]}"},
                 ],
+                extra_body=llm.THINKING_OFF,
             )
             profile = parse_profile_json(resp.choices[0].message.content)
             if profile is None:

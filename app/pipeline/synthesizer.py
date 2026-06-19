@@ -42,6 +42,7 @@ async def synthesize_brief(
             ],
             max_tokens=200,
             temperature=0.3,
+            extra_body=llm.THINKING_OFF,
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
@@ -86,6 +87,7 @@ async def summarize_competitor_profile(
             ],
             max_tokens=220,
             temperature=0.3,
+            extra_body=llm.THINKING_OFF,
         )
         return response.choices[0].message.content.strip()
     except Exception as e:

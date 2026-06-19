@@ -9,6 +9,10 @@ from app.config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL
 MODEL = "deepseek-v4-flash"
 MODEL_FLAGSHIP = "deepseek-v4-pro"  # defined for a future battlecard-only upgrade; unused today
 
+# deepseek-v4-flash defaults to THINKING mode — reasoning tokens eat the budget
+# before content is emitted. Force direct content output on every call.
+THINKING_OFF = {"thinking": {"type": "disabled"}}
+
 _DUMMY_KEYS = {"", "dummy", "dummy_key", "dummy_anthropic_key", "dummy_openai_key"}
 
 
