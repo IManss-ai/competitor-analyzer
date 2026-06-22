@@ -237,7 +237,7 @@ export default function LandingPage() {
             <MotionLink
               href="/auth/login"
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center min-h-[44px] gap-2 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
+              className="hidden sm:inline-flex items-center min-h-[44px] gap-2 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
             >
               Get started <ArrowRight size={10} />
             </MotionLink>
