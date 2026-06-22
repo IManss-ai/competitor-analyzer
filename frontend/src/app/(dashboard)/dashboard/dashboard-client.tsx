@@ -8,6 +8,7 @@ import { Building2, Star, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, Al
 import { DashboardData, Competitor } from '@/lib/types';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
+import { competitorDomain } from '@/lib/utils';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
 import CountUp from '@/components/count-up';
 
@@ -676,7 +677,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     const mag = Math.min(1, Math.abs(ev?.net_char_delta || 0) / 2000);
     return Math.min(99, Math.round(base * 0.68 + recency * 22 + mag * 10));
   };
-  const hostnameOf = (u: string) => (u ? (u.split('://')[1] || u).split('/')[0].replace('www.', '') : '');
+  const hostnameOf = (u: string) => competitorDomain(u);
 
   const rankedEvents = [...feedEvents].sort((a, b) => eventSignal(b) - eventSignal(a));
   const topEvent = rankedEvents[0] || null;
@@ -809,7 +810,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     <div className="flex items-center gap-3 min-w-0">
                       <img src={`https://www.google.com/s2/favicons?domain=${hostnameOf(c.url)}&sz=32`} alt="" className="w-6 h-6 rounded flex-shrink-0" style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-default)', padding: 2 }} />
                       <div className="min-w-0">
-                        <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{c.name}</div>
+                        <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{c.name || hostnameOf(c.url)}</div>
                         <div className="font-mono text-[9.5px] truncate" style={{ color: 'var(--text-muted)' }}>{hostnameOf(c.url)}</div>
                       </div>
                     </div>
@@ -867,7 +868,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             ) : (
               feedEvents.map((event, idx) => {
                 const isExpanded = expandedEventId === event.id;
-                const hostname = (event.competitor_url.split('://')[1] || event.competitor_url).split('/')[0].replace('www.', '');
+                const hostname = competitorDomain(event.competitor_url);
 
                 return (
                   <motion.div
@@ -978,7 +979,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <h3 className="text-[13px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{comp.name}</h3>
+                        <h3 className="text-[13px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{comp.name || hostnameOf(comp.url)}</h3>
                         <a
                           href={comp.url}
                           target="_blank"

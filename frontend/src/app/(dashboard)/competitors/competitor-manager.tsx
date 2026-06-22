@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Trash2, Plus, ExternalLink, ChevronDown, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
+import { competitorDomain } from '@/lib/utils';
 import BattleCard from '@/components/battle-card';
 
 interface CompetitorManagerProps {
@@ -334,12 +335,7 @@ export default function CompetitorManager({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {competitors.map((comp, index) => {
-            let hostname = comp.url;
-            try {
-              hostname = new URL(comp.url).hostname;
-            } catch {
-              // keep raw url
-            }
+            const hostname = competitorDomain(comp.url);
 
             return (
               <div

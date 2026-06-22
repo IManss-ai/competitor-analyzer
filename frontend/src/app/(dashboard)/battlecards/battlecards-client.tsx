@@ -5,18 +5,11 @@ import { motion } from 'motion/react';
 import { Shield, ExternalLink, Plus } from 'lucide-react';
 import BattleCard from '@/components/battle-card';
 import { Competitor } from '@/lib/types';
+import { competitorDomain } from '@/lib/utils';
 
 interface BattlecardsClientProps {
   competitors: Competitor[];
   userId: string;
-}
-
-function hostnameOf(url: string) {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return url;
-  }
 }
 
 export default function BattlecardsClient({ competitors, userId }: BattlecardsClientProps) {
@@ -50,7 +43,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       {competitors.map((comp, index) => {
-        const hostname = hostnameOf(comp.url);
+        const hostname = competitorDomain(comp.url);
 
         return (
           <motion.div
