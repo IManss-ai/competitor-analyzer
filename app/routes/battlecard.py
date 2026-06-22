@@ -11,6 +11,7 @@ from app.observability import note_degraded
 from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache
 from app.pipeline.job_tracker import get_latest_hiring_signal
 from app.routes.api_v1 import require_api_user
+from app.serialization import iso_utc
 
 import uuid as _uuid
 
@@ -279,7 +280,7 @@ Known customer complaints:
         "strategic_signals": strategic_signals,
         "playbook": playbook,
         "share_token": str(comp.id),
-        "generated_at": datetime.now().isoformat(),
+        "generated_at": iso_utc(datetime.now(timezone.utc)),
         "actions": playbook,
         "variant": "local",
     }, ai_generated
@@ -340,7 +341,7 @@ def _baseline_saas_payload(comp: Competitor, weaknesses: list, hiring_signal_tex
         "strategic_signals": strategic_signals,
         "playbook": playbook,
         "share_token": str(comp.id),
-        "generated_at": datetime.now().isoformat(),
+        "generated_at": iso_utc(datetime.now(timezone.utc)),
         "actions": playbook,
         "variant": "saas",
     }
@@ -590,7 +591,7 @@ Known customer complaints/weaknesses:
         "strategic_signals": strategic_signals,
         "playbook": playbook,
         "share_token": str(comp.id),
-        "generated_at": datetime.now().isoformat(),
+        "generated_at": iso_utc(datetime.now(timezone.utc)),
         "actions": playbook,
         "variant": "saas",
     }, ai_generated

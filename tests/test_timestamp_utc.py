@@ -8,6 +8,7 @@ UTC designator so new Date(...) parses them correctly.
 """
 import re
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
 from fastapi.testclient import TestClient
@@ -250,6 +251,93 @@ class TestEveryEndpointTimestampIsUtc(unittest.TestCase):
     def test_war_room_timestamps_utc(self):
         # generated_at (plan), checked_at (geo), detected_at (events).
         self._assert_endpoint_utc(f"/api/v1/campaigns/{self.campaign.id}")
+
+
+class TestBattlecardGeneratedAtUtc(unittest.TestCase):
+    """The battle card's own `generated_at` must carry an explicit UTC offset so
+    the card's "GENERATED AT" / "Week of" render is correct for non-UTC users —
+    previously it used datetime.now() (local) (issue #3, bug #2 follow-up)."""
+
+    def setUp(self):
+        self.engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+        Base.metadata.create_all(self.engine)
+        self.SessionLocal = sessionmaker(bind=self.engine)
+
+        def override_get_session():
+            db = self.SessionLocal()
+            try:
+                yield db
+            finally:
+                db.close()
+
+        app.dependency_overrides[get_session] = override_get_session
+        self.client = TestClient(app, raise_server_exceptions=False)
+
+        self.db = self.SessionLocal()
+        self.user = User(email="genat@example.com")
+        self.db.add(self.user)
+        self.db.commit()
+        self.db.refresh(self.user)
+        self.auth = {"Authorization": f"Bearer {self.user.id}"}
+
+    def tearDown(self):
+        self.db.close()
+        Base.metadata.drop_all(self.engine)
+        app.dependency_overrides.clear()
+
+    def _competitor(self, business_type="saas"):
+        c = Competitor(user_id=self.user.id, url=f"https://{business_type}.example.com",
+                       name=f"{business_type} Rival", business_type=business_type)
+        self.db.add(c)
+        self.db.commit()
+        self.db.refresh(c)
+        return c
+
+    def _snapshot(self, comp, text="copy"):
+        s = Snapshot(competitor_id=comp.id, raw_text=text, char_count=len(text))
+        self.db.add(s)
+        self.db.commit()
+        self.db.refresh(s)
+        return s
+
+    def _assert_generated_at_utc(self, comp_id):
+        with patch("app.llm.ai_available", return_value=False):
+            resp = self.client.get(f"/api/v1/battlecards/generate/{comp_id}", headers=self.auth)
+        self.assertEqual(resp.status_code, 200)
+        gen = resp.json()["generated_at"]
+        self.assertTrue(_is_utc_marked(gen), f"generated_at not UTC-marked: {gen!r}")
+
+    def test_saas_baseline_card_generated_at_utc(self):
+        # initial_scan only -> _baseline_saas_payload path
+        comp = self._competitor("saas")
+        snap = self._snapshot(comp)
+        self.db.add(ChangeEvent(
+            competitor_id=comp.id, snapshot_before_id=snap.id, snapshot_after_id=snap.id,
+            net_char_delta=snap.char_count, change_type="initial_scan", brief_text="now tracking",
+        ))
+        self.db.commit()
+        self._assert_generated_at_utc(comp.id)
+
+    def test_saas_change_card_generated_at_utc(self):
+        # real change -> saas return path
+        comp = self._competitor("saas")
+        before = self._snapshot(comp, "old")
+        after = self._snapshot(comp, "new and different")
+        self.db.add(ChangeEvent(
+            competitor_id=comp.id, snapshot_before_id=before.id, snapshot_after_id=after.id,
+            net_char_delta=120, change_type="pricing_change", brief_text="moved pricing behind a quote",
+        ))
+        self.db.commit()
+        self._assert_generated_at_utc(comp.id)
+
+    def test_local_card_generated_at_utc(self):
+        # local variant -> local return path
+        comp = self._competitor("local")
+        self._assert_generated_at_utc(comp.id)
 
 
 if __name__ == "__main__":
