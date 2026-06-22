@@ -18,6 +18,10 @@ SCRAPER_URL = os.environ.get("SCRAPER_URL", "")
 # POLAR_WEBHOOK_SECRET: from https://polar.sh/dashboard/[org]/settings/webhooks
 # POLAR_SAAS_PRODUCT_ID: product ID for $49/mo plan
 # POLAR_LOCAL_PRODUCT_ID: product ID for $19/mo plan
+# POLAR_SERVER: "sandbox" (testing) | "production" (launch) — routes the SDK to
+# sandbox-api.polar.sh vs api.polar.sh without code edits. Token + product IDs
+# must match the selected server.
+POLAR_SERVER = os.environ.get("POLAR_SERVER", "production")
 POLAR_ACCESS_TOKEN = os.environ.get("POLAR_ACCESS_TOKEN", "")
 POLAR_WEBHOOK_SECRET = os.environ.get("POLAR_WEBHOOK_SECRET", "")
 POLAR_SAAS_PRODUCT_ID = os.environ.get("POLAR_SAAS_PRODUCT_ID", "")

@@ -1,9 +1,14 @@
 import os
-from app.config import POLAR_ACCESS_TOKEN, POLAR_SAAS_PRODUCT_ID, POLAR_LOCAL_PRODUCT_ID, APP_BASE_URL
+from app.config import (
+    POLAR_ACCESS_TOKEN, POLAR_SAAS_PRODUCT_ID, POLAR_LOCAL_PRODUCT_ID,
+    APP_BASE_URL, POLAR_SERVER,
+)
 
 def _get_polar():
     from polar_sdk import Polar
-    return Polar(access_token=POLAR_ACCESS_TOKEN)
+    # server selects sandbox vs production at runtime (POLAR_SERVER) — every
+    # Polar client goes through here, so this is the single switch point.
+    return Polar(access_token=POLAR_ACCESS_TOKEN, server=POLAR_SERVER)
 
 async def create_checkout_session(
     user_email: str,
