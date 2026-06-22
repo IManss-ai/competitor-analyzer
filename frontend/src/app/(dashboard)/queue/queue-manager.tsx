@@ -93,11 +93,11 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
       <AnimatePresence initial={false}>
         {actions.map((action) => {
           const borderLeftColor = {
-            pricing: '#c79a4e',
-            feature: '#5aa07a',
-            repositioning: '#9b7fc7',
-            copy: '#64748b'
-          }[action.change_event.change_type] || '#64748b';
+            pricing: 'var(--tone-warning)',
+            feature: 'var(--tone-positive)',
+            repositioning: 'var(--tone-repositioning)',
+            copy: 'var(--tone-neutral)'
+          }[action.change_event.change_type] || 'var(--tone-neutral)';
 
           return (
             <motion.div
