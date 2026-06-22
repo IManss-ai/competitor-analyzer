@@ -109,10 +109,8 @@ export function Pricing({
             }
             viewport={{ once: true, margin: "0px 0px 400px 0px" }}
             transition={{
-              duration: 1.6,
-              type: "spring",
-              stiffness: 100,
-              damping: 30,
+              duration: 0.6,
+              ease: [0.16, 1, 0.3, 1],
               delay: 0.4,
               opacity: { duration: 0.5 },
             }}
@@ -189,7 +187,7 @@ export function Pricing({
                     variant: "outline",
                   }),
                   "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
+                  "transform-gpu ring-offset-current transition-colors duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
                   plan.isPopular
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-background text-foreground border-input"

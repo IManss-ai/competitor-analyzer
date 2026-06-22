@@ -14,6 +14,7 @@ interface BattleCardData {
   generated_at: string;
   competitor_name: string;
   competitor_url: string;
+  is_baseline?: boolean;
 }
 
 export default function SharePage({ card }: { card: BattleCardData }) {
@@ -44,7 +45,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-1.5 mb-1">
+            <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Intel</span>
               <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Battle Card</span>
             </div>
@@ -87,7 +88,11 @@ export default function SharePage({ card }: { card: BattleCardData }) {
               What Changed
             </h2>
           </div>
-          {card.what_changed.length === 0 ? (
+          {card.is_baseline ? (
+            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
+              Baseline captured — no changes recorded yet. New changes appear here after the next scan.
+            </p>
+          ) : card.what_changed.length === 0 ? (
             <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
               Your competitor has been quiet — no pricing or feature changes detected this week.
             </p>

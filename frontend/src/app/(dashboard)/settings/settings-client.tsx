@@ -219,7 +219,7 @@ export default function SettingsClient({
       {toast && (
         <div
           role="alert"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 text-[12px] font-medium flex items-center gap-2.5"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 text-[12px] font-medium flex items-center gap-3"
           style={{
             background: 'var(--surface-raised)',
             border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
@@ -245,7 +245,7 @@ export default function SettingsClient({
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={clsx(
-                'flex items-center gap-3 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-150 cursor-pointer',
+                'flex items-center gap-3 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-150 cursor-pointer',
                 activeTab === tab.id
                   ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--fill-subtle-hover)] hover:text-[var(--text-primary)]'
@@ -272,7 +272,7 @@ export default function SettingsClient({
             {/* General Profile Card */}
             <div className="rs-card p-4 space-y-4">
               <div>
-                <label className="rs-label block mb-1.5">
+                <label className="rs-label block mb-2">
                   Email address
                 </label>
                 <input
@@ -284,7 +284,7 @@ export default function SettingsClient({
               </div>
 
               <div>
-                <label className="rs-label block mb-1.5">
+                <label className="rs-label block mb-2">
                   Business type
                 </label>
                 <p className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>Toggles features specific to your business model.</p>
@@ -298,7 +298,7 @@ export default function SettingsClient({
                       type="button"
                       onClick={() => handleUpdateSetting('business_type', item.id)}
                       className={clsx(
-                        'border p-4 text-left cursor-pointer transition-all',
+                        'border p-4 text-left cursor-pointer transition-colors',
                         settings.business_type === item.id
                           ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                           : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -322,7 +322,7 @@ export default function SettingsClient({
               </h3>
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <div>
-                  <label className="rs-label block mb-1.5">New Password</label>
+                  <label className="rs-label block mb-2">New Password</label>
                   <input
                     type="password"
                     name="new_password"
@@ -333,7 +333,7 @@ export default function SettingsClient({
                   />
                 </div>
                 <div>
-                  <label className="rs-label block mb-1.5">Confirm New Password</label>
+                  <label className="rs-label block mb-2">Confirm New Password</label>
                   <input
                     type="password"
                     name="confirm_password"
@@ -378,7 +378,7 @@ export default function SettingsClient({
                   <label
                     key={item.id}
                     className={clsx(
-                      'flex items-start gap-4 border p-4 cursor-pointer transition-all',
+                      'flex items-start gap-4 border p-4 cursor-pointer transition-colors',
                       (settings as any).scan_schedule === item.id
                         ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                         : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -426,7 +426,7 @@ export default function SettingsClient({
               </label>
 
               <div>
-                <label className="rs-label block mb-1.5">
+                <label className="rs-label block mb-2">
                   Digest delivery email
                 </label>
                 <input
@@ -506,7 +506,7 @@ export default function SettingsClient({
                               onChange={() => handleToggleCompetitor(comp)}
                               className="sr-only peer"
                             />
-                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent-primary)] relative"></div>
+                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[var(--border-strong)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--text-primary)] after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:bg-[var(--accent-primary)] relative"></div>
                             <span className="ml-2 text-xs font-semibold min-w-[48px]" style={{ color: 'var(--text-secondary)' }}>
                               {comp.active ? 'Active' : 'Paused'}
                             </span>
@@ -516,7 +516,7 @@ export default function SettingsClient({
                           <button
                             onClick={() => handleDeleteCompetitor(comp.id)}
                             className={clsx(
-                              'p-1.5 transition-colors cursor-pointer flex items-center gap-1.5',
+                              'p-2 transition-colors cursor-pointer flex items-center gap-2',
                               pendingDeleteId === comp.id
                                 ? 'text-[var(--tone-danger)] bg-[var(--tone-danger)]/10'
                                 : 'text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10'
@@ -545,7 +545,7 @@ export default function SettingsClient({
               <form onSubmit={handleAddCompetitor} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="rs-label block mb-1.5">Competitor Name (optional)</label>
+                    <label className="rs-label block mb-2">Competitor Name (optional)</label>
                     <input
                       type="text"
                       value={newName}
@@ -555,7 +555,7 @@ export default function SettingsClient({
                     />
                   </div>
                   <div>
-                    <label className="rs-label block mb-1.5">Competitor Website (URL)</label>
+                    <label className="rs-label block mb-2">Competitor Website (URL)</label>
                     <input
                       type="text"
                       value={newUrl}
@@ -600,7 +600,7 @@ export default function SettingsClient({
                     <span className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>$49<span className="text-sm font-normal" style={{ color: 'var(--text-secondary)' }}>/mo</span></span>
                     <span
                       className={clsx(
-                        'inline-flex items-center gap-1.5 px-2.5 py-0.5 border text-[11px] uppercase tracking-wide font-bold',
+                        'inline-flex items-center gap-2 px-3 py-0.5 border text-[11px] uppercase tracking-wide font-bold',
                         statusCfg.bg,
                         statusCfg.text,
                         statusCfg.border

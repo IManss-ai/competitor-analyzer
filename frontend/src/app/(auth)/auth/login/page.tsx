@@ -96,7 +96,7 @@ export default function LoginPage() {
         <div className="flex flex-col h-full p-12 xl:p-16">
 
           {/* Masthead */}
-          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity max-w-fit">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity max-w-fit">
             <div
               className="w-7 h-7 flex items-center justify-center"
               style={{ background: 'var(--accent-primary)' }}
@@ -153,7 +153,7 @@ export default function LoginPage() {
                     hidden: { opacity: 0, y: 6 },
                     visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
                   }}
-                  className="flex items-baseline gap-3 py-2.5"
+                  className="flex items-baseline gap-3 py-3"
                   style={{ borderBottom: '1px solid var(--border-subtle)' }}
                 >
                   <span className="text-[10px] font-mono shrink-0 tabular-nums" style={{ color: 'var(--text-muted)' }}>
@@ -192,7 +192,7 @@ export default function LoginPage() {
         <div className="w-full max-w-[380px]">
 
           {/* Mobile masthead */}
-          <Link href="/" className="lg:hidden flex items-center gap-2.5 mb-10 hover:opacity-85 transition-opacity max-w-fit">
+          <Link href="/" className="lg:hidden flex items-center gap-3 mb-10 hover:opacity-85 transition-opacity max-w-fit">
             <div className="w-7 h-7 flex items-center justify-center" style={{ background: 'var(--accent-primary)' }}>
               <RivalscopeLogo size={13} className="text-[var(--accent-text)]" />
             </div>
@@ -214,10 +214,10 @@ export default function LoginPage() {
 
           {plan && (
             <div
-              className="mb-5 px-3.5 py-2.5 flex items-center gap-2.5"
+              className="mb-5 px-4 py-3 flex items-center gap-3"
               style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
             >
-              <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5"
+              <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5"
                     style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                 Plan
               </span>
@@ -232,11 +232,11 @@ export default function LoginPage() {
 
           {error && (
             <div
-              className="mb-5 px-3.5 py-2.5 text-[12px] font-medium"
+              className="mb-5 px-4 py-3 text-[12px] font-medium"
               style={{
-                background: 'var(--error-subtle, rgba(185,28,28,0.07))',
-                border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
-                color: 'var(--error-text, #b91c1c)',
+                background: 'color-mix(in srgb, var(--tone-danger) 8%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--tone-danger) 28%, transparent)',
+                color: 'var(--tone-danger)',
               }}
             >
               {error}
@@ -245,7 +245,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleDirectLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="rs-label block mb-1.5">Email address</label>
+              <label htmlFor="email" className="rs-label block mb-2">Email address</label>
               <input
                 id="email"
                 name="email"
@@ -260,7 +260,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="rs-label block mb-1.5">Password</label>
+              <label htmlFor="password" className="rs-label block mb-2">Password</label>
               <input
                 id="password"
                 name="password"
@@ -278,7 +278,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="rs-btn-primary w-full py-2.5 text-[13px] mt-1"
+              className="rs-btn-primary w-full py-3 text-[13px] mt-1"
             >
               {loading ? 'Authenticating…' : 'Sign in'}
               {!loading && <ArrowRight size={13} />}
@@ -288,7 +288,7 @@ export default function LoginPage() {
           <div className="mt-8 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid var(--border-subtle)' }}>
             <Link
               href="/"
-              className="text-[11px] font-mono inline-flex items-center gap-1.5 group"
+              className="text-[11px] font-mono inline-flex items-center gap-2 group"
               style={{ color: 'var(--text-muted)' }}
             >
               <span className="group-hover:-translate-x-0.5 transition-transform inline-block">←</span>

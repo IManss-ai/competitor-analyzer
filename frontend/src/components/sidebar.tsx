@@ -176,7 +176,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         borderBottom: '1px solid var(--border-default)',
       }}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         <div
           className="w-7 h-7 flex items-center justify-center"
           style={{ background: 'var(--accent-primary)' }}
@@ -275,7 +275,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
       {/* ── Navigation ─────────────────────────────────────────────── */}
       <nav className="flex-1 py-3 px-3 space-y-4 overflow-y-auto">
         <div>
-          <div className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div className="px-3 mb-2 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             DESK
           </div>
           <div className="space-y-0.5">
@@ -291,7 +291,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   href={href}
                   onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
                   className={clsx(
-                    'group relative flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors duration-150',
+                    'group relative flex items-center gap-3 px-3 py-3 text-[13px] font-medium transition-colors duration-150',
                     !isActive && 'hover:text-[var(--text-primary)]'
                   )}
                   style={
@@ -319,7 +319,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
                   {hasBadge && (
                     <span
-                      className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
+                      className="text-[var(--accent-text)] text-[9px] font-bold px-2 py-0.5 rounded-[2px] leading-none"
                       style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
@@ -341,7 +341,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         </div>
 
         <div>
-          <div className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div className="px-3 mb-2 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             SIGNAL
           </div>
           <div className="space-y-0.5">
@@ -357,7 +357,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
                   href={href}
                   onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
                   className={clsx(
-                    'group relative flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors duration-150',
+                    'group relative flex items-center gap-3 px-3 py-3 text-[13px] font-medium transition-colors duration-150',
                     !isActive && 'hover:text-[var(--text-primary)]'
                   )}
                   style={
@@ -385,7 +385,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
                   {hasBadge && (
                     <span
-                      className="text-[var(--accent-text)] text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] leading-none"
+                      className="text-[var(--accent-text)] text-[9px] font-bold px-2 py-0.5 rounded-[2px] leading-none"
                       style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
                     >
                       {pendingCount}
@@ -484,7 +484,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             </div>
             <Link
               href="/settings"
-              className="block w-full py-1.5 rounded-md text-[11px] font-semibold text-center text-[var(--accent-text)] transition-colors"
+              className="block w-full py-2 rounded-md text-[11px] font-semibold text-center text-[var(--accent-text)] transition-colors"
               style={{ background: 'var(--accent-cta)' }}
             >
               Upgrade to Pro
@@ -496,7 +496,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-[12px] cursor-pointer transition-colors"
+            className="flex items-center gap-2 w-full px-2 py-2 rounded text-[12px] cursor-pointer transition-colors"
             style={{ color: 'var(--text-muted)' }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';

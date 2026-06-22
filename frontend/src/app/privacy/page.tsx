@@ -20,7 +20,7 @@ export default function PrivacyPage() {
 
         {/* Header */}
         <header className="mb-10 pb-8 border-b border-[var(--border-default)]">
-          <div className="flex items-center gap-2.5 mb-4">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-7 h-7 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded">
               <RivalscopeLogo size={13} className="text-sky-400" />
             </div>

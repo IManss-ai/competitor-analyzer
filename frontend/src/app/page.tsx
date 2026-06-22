@@ -193,13 +193,13 @@ export default function LandingPage() {
           initial={{ y: -24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-          className={`w-full max-w-5xl rounded-md border px-5 py-2.5 flex items-center justify-between transition-[background-color,border-color,box-shadow] duration-300 ${
+          className={`w-full max-w-5xl rounded-md border px-5 py-3 flex items-center justify-between transition-[background-color,border-color,box-shadow] duration-300 ${
             scrolled
               ? 'bg-[var(--surface-base)]/90 border-[var(--border-default)] shadow-[0_1px_0_0_var(--hairline)] backdrop-blur-xl'
               : 'bg-[var(--surface-base)]/60 border-[var(--border-subtle)] backdrop-blur-md'
           }`}
         >
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center min-h-[44px] gap-3 group">
             <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
               <RivalscopeLogo size={13} className="text-sky-400" />
             </div>
@@ -213,7 +213,7 @@ export default function LandingPage() {
                 href={item.href}
                 onMouseEnter={() => setHoveredNav(item.key)}
                 onMouseLeave={() => setHoveredNav(null)}
-                className="relative py-1 hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="relative py-2 hover:text-[var(--text-primary)] transition-colors duration-200"
               >
                 <span>{item.label}</span>
                 {hoveredNav === item.key && (
@@ -231,13 +231,13 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link href="/auth/login" className="hidden sm:block text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 py-1.5 whitespace-nowrap">
+            <Link href="/auth/login" className="hidden sm:inline-flex items-center min-h-[44px] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 whitespace-nowrap">
               Sign in
             </Link>
             <MotionLink
               href="/auth/login"
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 py-1.5 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
+              className="inline-flex items-center min-h-[44px] gap-2 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
             >
               Get started <ArrowRight size={10} />
             </MotionLink>
@@ -266,7 +266,7 @@ export default function LandingPage() {
             <div className="flex flex-col gap-5">
               {[...navItems, { label: 'Sign in', href: '/auth/login', key: 'signin' }].map((item, i) => (
                 <motion.div key={item.key} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}>
-                  <Link href={item.href} onClick={() => setMenuOpen(false)} className="text-2xl font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors inline-block">
+                  <Link href={item.href} onClick={() => setMenuOpen(false)} className="text-2xl font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors inline-flex items-center min-h-[44px] py-1">
                     {item.label}
                   </Link>
                 </motion.div>
@@ -291,7 +291,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 bg-[var(--accent-subtle)] border border-[var(--accent-border)] rounded px-3.5 py-1.5 mb-8"
+            className="inline-flex items-center gap-2 bg-[var(--accent-subtle)] border border-[var(--accent-border)] rounded px-4 py-2 mb-8"
           >
             <span className="sr-pulse" />
             <span className="text-[11px] font-mono text-sky-500 tracking-[0.14em] uppercase font-semibold">Live competitor intelligence</span>
@@ -319,7 +319,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="grid sm:grid-cols-2 gap-x-10 gap-y-3.5 max-w-2xl text-left mt-10"
+            className="grid sm:grid-cols-2 gap-x-10 gap-y-4 max-w-2xl text-left mt-10"
           >
             {[
               'Track pricing, feature & messaging changes, 24/7',
@@ -327,7 +327,7 @@ export default function LandingPage() {
               'Catch hiring & strategy signals before they go public',
               'Get a ready-to-send sales play for every move',
             ].map((b) => (
-              <div key={b} className="flex items-start gap-2.5">
+              <div key={b} className="flex items-start gap-3">
                 <CheckCircle2 size={16} className="text-sky-500 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-[var(--text-primary)] leading-snug">{b}</span>
               </div>
@@ -364,7 +364,7 @@ export default function LandingPage() {
             className="flex items-center gap-5 text-xs text-[var(--text-muted)] mt-6 font-mono"
           >
             {['No card required', 'Cancel anytime', '5-min setup'].map((t) => (
-              <span key={t} className="flex items-center gap-1.5">
+              <span key={t} className="flex items-center gap-2">
                 <CheckCircle2 size={12} className="text-sky-500" /> {t}
               </span>
             ))}
@@ -382,12 +382,12 @@ export default function LandingPage() {
           <div className="relative bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-lg overflow-hidden">
             {/* blue top-edge accent line */}
             <div aria-hidden className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)' }} />
-            <div className="flex items-center justify-between px-4 py-3.5 border-b border-[var(--border-default)]">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-default)]">
               <div className="flex items-center gap-2">
                 <TrendingUp size={14} className="text-sky-400" />
                 <span className="text-sm font-semibold text-[var(--text-primary)]">Intel Feed</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span className="sr-pulse" />
                 <span className="text-[10px] font-mono text-sky-500 uppercase tracking-wider">Live</span>
               </div>
@@ -397,7 +397,7 @@ export default function LandingPage() {
               {[{ v: '5', l: 'tracked' }, { v: '12', l: 'changes / wk' }, { v: '3', l: 'alerts' }].map((s, i) => (
                 <div key={s.l} className="px-4 py-3" style={i > 0 ? { borderLeft: '1px solid var(--border-subtle)' } : undefined}>
                   <div className="text-lg font-bold font-mono tabular-nums text-[var(--text-primary)] leading-none">{s.v}</div>
-                  <div className="text-[9px] font-mono uppercase tracking-wider text-[var(--text-muted)] mt-1.5">{s.l}</div>
+                  <div className="text-[9px] font-mono uppercase tracking-wider text-[var(--text-muted)] mt-2">{s.l}</div>
                 </div>
               ))}
             </div>
@@ -409,14 +409,14 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.4 + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex items-start gap-3 px-3 py-2.5 rounded hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
+                  className="flex items-start gap-3 px-3 py-3 rounded hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
                 >
                   <span className={`text-[10px] px-2 py-0.5 rounded-sm font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                     {item.type}
                   </span>
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-semibold text-[var(--text-primary)]">{item.company}</span>
-                    <span className="text-xs text-[var(--text-secondary)] ml-1.5 leading-snug">{item.action}</span>
+                    <span className="text-xs text-[var(--text-secondary)] ml-2 leading-snug">{item.action}</span>
                   </div>
                   <span className="text-[10px] font-mono text-[var(--text-muted)] whitespace-nowrap flex-shrink-0 pt-0.5">{item.time}</span>
                 </motion.div>
@@ -437,7 +437,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="mt-14 flex flex-col items-center gap-1.5 relative z-10"
+          className="mt-14 flex flex-col items-center gap-2 relative z-10"
         >
           <motion.div
             animate={{ y: [0, 5, 0] }}
@@ -545,7 +545,7 @@ export default function LandingPage() {
                   role="tab"
                   aria-selected={active}
                   onClick={() => setProductTab(t.key)}
-                  className={`relative flex-1 text-left px-5 py-3.5 rounded-md border transition-colors cursor-pointer ${
+                  className={`relative flex-1 text-left px-5 py-4 rounded-md border transition-colors cursor-pointer ${
                     active
                       ? 'border-sky-500/40 bg-sky-500/[0.06]'
                       : 'border-[var(--border-default)] bg-[var(--surface-raised)] hover:border-[var(--border-strong)]'
@@ -555,7 +555,7 @@ export default function LandingPage() {
                     <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-sky-400' : 'bg-[var(--border-strong)]'}`} />
                     <span className={`text-sm font-semibold ${active ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}`}>{t.label}</span>
                   </div>
-                  <p className="text-[11px] font-mono text-[var(--text-muted)] mt-1 ml-3.5">{t.sub}</p>
+                  <p className="text-[11px] font-mono text-[var(--text-muted)] mt-1 ml-4">{t.sub}</p>
                 </button>
               );
             })}
@@ -569,9 +569,15 @@ export default function LandingPage() {
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               <ProductDemo />
-              <p className="text-center text-[var(--text-muted)] text-xs font-mono mt-6 max-w-md mx-auto leading-relaxed">
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -120px 0px' }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="text-center text-[var(--text-muted)] text-xs font-mono mt-6 max-w-md mx-auto leading-relaxed"
+              >
                 Every pricing, feature, and messaging change across all tracked competitors — refreshed every 4 hours.
-              </p>
+              </motion.p>
             </motion.div>
           ) : (
             <motion.div
@@ -589,7 +595,7 @@ export default function LandingPage() {
                       onClick={() => setActiveComp(comp)}
                       onMouseEnter={() => setHoveredBattleTab(comp)}
                       onMouseLeave={() => setHoveredBattleTab(null)}
-                      className="text-xs font-semibold px-4 py-1.5 rounded-md transition-colors cursor-pointer relative"
+                      className="text-xs font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer relative"
                       style={{ color: activeComp === comp ? 'var(--accent-text)' : 'var(--text-muted)' }}
                     >
                       {hoveredBattleTab === comp && activeComp !== comp && (
@@ -630,21 +636,21 @@ export default function LandingPage() {
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="flex items-center gap-5">
                     <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--text-muted)]">Hiring</span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <span className="text-base font-bold font-mono text-[var(--text-primary)]">{currentCard.hiring.total}</span>
                       <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">open</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <span className="text-base font-bold font-mono" style={{ color: 'var(--tone-positive)' }}>+{currentCard.hiring.new}</span>
                       <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--tone-positive) 70%, transparent)' }}>new</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <span className="text-base font-bold font-mono text-[var(--text-secondary)]">−{currentCard.hiring.closed}</span>
                       <span className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">closed</span>
                     </div>
                   </div>
                   <p className="text-[11px] leading-snug text-[var(--text-primary)] italic max-w-md">
-                    <span className="text-sky-400 not-italic font-mono uppercase tracking-wider text-[9px] mr-1.5">Pattern</span>
+                    <span className="text-sky-400 not-italic font-mono uppercase tracking-wider text-[9px] mr-2">Pattern</span>
                     {currentCard.hiring.read}
                   </p>
                 </div>
@@ -655,7 +661,7 @@ export default function LandingPage() {
               <motion.div key={activeComp} className="grid md:grid-cols-2 divide-x divide-y divide-[var(--border-subtle)]">
                 {[
                   { label: 'Detected changes', color: 'text-sky-400', bg: 'bg-sky-500/8', border: 'border-sky-500/15', content: currentCard.changes.map((c, j) => (
-                    <div key={j} className="flex gap-2.5 items-start">
+                    <div key={j} className="flex gap-3 items-start">
                       <span className={`text-[9px] font-mono px-2 py-0.5 rounded-sm uppercase tracking-wide flex-shrink-0 mt-0.5 border ${c.tc}`}>{c.tag}</span>
                       <span className="text-xs text-[var(--text-primary)] leading-snug">{c.text}</span>
                     </div>
@@ -689,7 +695,7 @@ export default function LandingPage() {
                     transition={{ duration: 0.2, delay: qi * 0.06 }}
                     className="p-5 hover:bg-[var(--fill-subtle)] transition-colors"
                   >
-                    <div className={`text-[10px] font-mono uppercase tracking-widest ${q.color} ${q.bg} border ${q.border} px-2.5 py-1 rounded-md inline-flex mb-4`}>
+                    <div className={`text-[10px] font-mono uppercase tracking-widest ${q.color} ${q.bg} border ${q.border} px-3 py-1 rounded-md inline-flex mb-4`}>
                       {q.label}
                     </div>
                     <div className="space-y-3">{q.content}</div>
@@ -744,7 +750,7 @@ export default function LandingPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               transition={SPRING}
-              className="inline-flex items-center gap-2.5 bg-[var(--accent-cta)] text-[var(--accent-text)] font-semibold px-8 py-3.5 rounded hover:bg-[var(--accent-cta-hover)] transition-colors text-sm"
+              className="inline-flex items-center gap-3 bg-[var(--accent-cta)] text-[var(--accent-text)] font-semibold px-8 py-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors text-sm"
             >
               <span>Start free trial</span>
               <ArrowRight size={13} />
@@ -772,9 +778,9 @@ export default function LandingPage() {
 
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Product</h4>
-              <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
+              <ul className="text-xs text-[var(--text-secondary)]">
                 {[{ label: 'How it works', href: '#how-it-works' }, { label: 'Live Dashboard', href: '#product' }, { label: 'Battle Card', href: '#product' }].map((l) => (
-                  <li key={l.label}><a href={l.href} className="hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
+                  <li key={l.label}><a href={l.href} className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -790,10 +796,10 @@ export default function LandingPage() {
 
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Links</h4>
-              <ul className="space-y-2 text-xs text-[var(--text-muted)]">
-                <li><a href="/privacy" className="hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-[var(--text-primary)] transition-colors">Terms of Service</a></li>
-                <li><a href="mailto:manssjones@gmail.com" className="hover:text-[var(--text-primary)] transition-colors">Support</a></li>
+              <ul className="text-xs text-[var(--text-muted)]">
+                <li><a href="/privacy" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Terms of Service</a></li>
+                <li><a href="mailto:manssjones@gmail.com" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Support</a></li>
               </ul>
             </div>
           </div>
@@ -803,7 +809,7 @@ export default function LandingPage() {
               &copy; {new Date().getFullYear()} Rivalscope. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-[var(--text-muted)]">
-              <a href="https://github.com/IManss-ai/competitor-analyzer" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="hover:text-[var(--text-primary)] transition-colors">
+              <a href="https://github.com/IManss-ai/competitor-analyzer" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] hover:text-[var(--text-primary)] transition-colors">
                 <Github size={14} />
               </a>
             </div>

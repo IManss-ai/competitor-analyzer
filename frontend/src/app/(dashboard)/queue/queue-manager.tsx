@@ -93,11 +93,11 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
       <AnimatePresence initial={false}>
         {actions.map((action) => {
           const borderLeftColor = {
-            pricing: '#c79a4e',
-            feature: '#5aa07a',
-            repositioning: '#9b7fc7',
-            copy: '#64748b'
-          }[action.change_event.change_type] || '#64748b';
+            pricing: 'var(--tone-warning)',
+            feature: 'var(--tone-positive)',
+            repositioning: 'var(--tone-repositioning)',
+            copy: 'var(--tone-neutral)'
+          }[action.change_event.change_type] || 'var(--tone-neutral)';
 
           return (
             <motion.div
@@ -116,7 +116,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                     {action.competitor.name}
                   </span>
                   <ChangeBadge type={action.change_event.change_type} />
-                  <span className="ml-auto inline-flex items-center text-[9px] uppercase font-mono tracking-wider px-2.5 py-1 rounded-md border border-sky-500/20 text-sky-400 bg-sky-500/10">
+                  <span className="ml-auto inline-flex items-center text-[9px] uppercase font-mono tracking-wider px-3 py-1 rounded-md border border-sky-500/20 text-sky-400 bg-sky-500/10">
                     {action.action_type.replace(/_/g, ' ')}
                   </span>
                   {action.change_event.detected_at && (
@@ -127,7 +127,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                 </div>
 
                 {/* Trigger */}
-                <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded p-3.5 mb-4 relative">
+                <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded p-4 mb-4 relative">
                   <span
                     className="absolute -top-2.5 left-3 border border-[var(--border-subtle)] px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-[var(--surface-raised)]"
                     style={{ color: 'var(--text-muted)' }}
@@ -156,7 +156,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       </p>
                       <button
                         onClick={() => handleCopy(action.id, action.edited_text || action.original_draft)}
-                        className="absolute top-3 right-3 p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] rounded-md transition-colors opacity-0 group-hover/code:opacity-100 cursor-pointer"
+                        className="absolute top-3 right-3 p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] rounded-md transition-colors opacity-0 group-hover/code:opacity-100 cursor-pointer"
                         title="Copy to clipboard"
                       >
                         {copiedId === action.id ? (

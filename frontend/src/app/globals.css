@@ -107,6 +107,8 @@
   --tone-positive: #1f5d3f;
   --tone-warning:  #8a5a12;
   --tone-danger:   #b3261e;
+  --tone-repositioning: #6d4f9c;
+  --tone-neutral:  #5b6470;
 
   /* ── De-hardcoded fills (new, theme-aware) ───────────── */
   --hairline:           rgba(26,23,20,0.06);
@@ -157,6 +159,8 @@ html[data-theme="ink"] {
   --tone-positive: #5aa07a;
   --tone-warning:  #c79a4e;
   --tone-danger:   #f87171;
+  --tone-repositioning: #9b7fc7;
+  --tone-neutral:  #9aa3af;
   --hairline: rgba(180,200,235,0.05);
   --fill-subtle: rgba(180,200,235,0.035);
   --fill-subtle-hover: rgba(180,200,235,0.06);
@@ -194,6 +198,8 @@ html[data-theme="ink"] {
     --tone-positive: #5aa07a;
     --tone-warning:  #c79a4e;
     --tone-danger:   #f87171;
+    --tone-repositioning: #9b7fc7;
+    --tone-neutral:  #9aa3af;
     --hairline: rgba(180,200,235,0.05);
     --fill-subtle: rgba(180,200,235,0.035);
     --fill-subtle-hover: rgba(180,200,235,0.06);

@@ -153,8 +153,8 @@ export default function CompetitorManager({
             <div className="rs-card p-6">
               <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Add new competitor</h3>
               <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-4 items-end">
-                <div className="w-full md:flex-1 space-y-1.5">
-                  <label htmlFor="url" className="rs-label block mb-1.5">
+                <div className="w-full md:flex-1 space-y-2">
+                  <label htmlFor="url" className="rs-label block mb-2">
                     Website URL
                   </label>
                   <input
@@ -167,8 +167,8 @@ export default function CompetitorManager({
                     className="rs-input"
                   />
                 </div>
-                <div className="w-full md:w-64 space-y-1.5">
-                  <label htmlFor="name" className="rs-label block mb-1.5">
+                <div className="w-full md:w-64 space-y-2">
+                  <label htmlFor="name" className="rs-label block mb-2">
                     Display name (optional)
                   </label>
                   <input
@@ -220,8 +220,8 @@ export default function CompetitorManager({
                         className="overflow-hidden"
                       >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="space-y-1.5">
-                            <label htmlFor="google-maps-url" className="rs-label block mb-1.5">
+                          <div className="space-y-2">
+                            <label htmlFor="google-maps-url" className="rs-label block mb-2">
                               Google Maps URL
                             </label>
                             <input
@@ -233,8 +233,8 @@ export default function CompetitorManager({
                               className="rs-input"
                             />
                           </div>
-                          <div className="space-y-1.5">
-                            <label htmlFor="instagram-handle" className="rs-label block mb-1.5">
+                          <div className="space-y-2">
+                            <label htmlFor="instagram-handle" className="rs-label block mb-2">
                               Instagram handle
                             </label>
                             <div className="relative">
@@ -249,8 +249,8 @@ export default function CompetitorManager({
                               />
                             </div>
                           </div>
-                          <div className="space-y-1.5">
-                            <label htmlFor="facebook-page" className="rs-label block mb-1.5">
+                          <div className="space-y-2">
+                            <label htmlFor="facebook-page" className="rs-label block mb-2">
                               Facebook page
                             </label>
                             <input
@@ -279,7 +279,7 @@ export default function CompetitorManager({
           <span className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>Tracking limit</span>
           <div className="w-24 h-1.5 bg-[var(--fill-subtle-hover)] rounded-full overflow-hidden">
             <div
-              className="h-full transition-all duration-500"
+              className="h-full transition-[width] duration-500"
               style={{ width: `${filledRatio}%`, backgroundColor: 'var(--accent-primary)' }}
             />
           </div>
@@ -299,7 +299,7 @@ export default function CompetitorManager({
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+          transition={{ duration: 0.24, ease: [0, 0, 0.2, 1] }}
           className="rs-card p-6"
         >
           <div className="px-6 py-20 text-center flex flex-col items-center">
@@ -349,12 +349,12 @@ export default function CompetitorManager({
                 <div className="rs-card p-5 relative overflow-hidden flex flex-col justify-between h-full">
                   <div>
                     {/* Top right status */}
-                    <div className="absolute top-5 right-5 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="absolute top-5 right-5 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--tone-positive)' }}></span>
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: 'var(--tone-positive)' }}></span>
                       </span>
-                      <span className="tag-green text-[9px] uppercase font-mono tracking-wider px-1.5 py-0.5 rounded-sm border">
+                      <span className="tag-green text-[9px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-sm border">
                         monitoring
                       </span>
                     </div>
@@ -399,7 +399,7 @@ export default function CompetitorManager({
                   </div>
 
                   {/* Bottom row */}
-                  <div className="flex items-end justify-between gap-4 mt-4 pt-3.5 border-t border-[var(--border-subtle)]">
+                  <div className="flex items-end justify-between gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                     <div className="min-w-0">
                       <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>Monitoring since</div>
                       <div className="text-sm font-medium font-mono" style={{ color: 'var(--text-secondary)' }}>
@@ -416,7 +416,7 @@ export default function CompetitorManager({
                       <button
                         onClick={() => handleDelete(comp.id)}
                         disabled={deleting === comp.id}
-                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10 rounded transition-all duration-200 cursor-pointer disabled:opacity-40"
+                        className="p-2 text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10 rounded transition-colors duration-200 cursor-pointer disabled:opacity-40"
                         title="Remove competitor"
                       >
                         <Trash2 size={16} />

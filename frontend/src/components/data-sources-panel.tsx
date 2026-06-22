@@ -152,7 +152,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
         {!editing && (
           <button
             onClick={startEdit}
-            className="rs-btn-ghost !px-3 !py-1.5 text-xs cursor-pointer"
+            className="rs-btn-ghost !px-3 !py-2 text-xs cursor-pointer"
           >
             <Pencil size={12} />
             Edit
@@ -170,7 +170,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
           const draftValue = draft[field.key];
           const isCareers = field.key === 'careers_url';
           return (
-            <div key={field.key} className="space-y-1.5">
+            <div key={field.key} className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
                   {field.label}
@@ -245,7 +245,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
             <button
               onClick={cancelEdit}
               disabled={saving}
-              className="rs-btn-ghost !px-3 !py-1.5 text-xs cursor-pointer"
+              className="rs-btn-ghost !px-3 !py-2 text-xs cursor-pointer"
             >
               <X size={12} />
               Cancel
@@ -253,7 +253,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
             <button
               onClick={save}
               disabled={saving}
-              className="rs-btn-primary !px-3 !py-1.5 text-xs cursor-pointer"
+              className="rs-btn-primary !px-3 !py-2 text-xs cursor-pointer"
             >
               {saving ? (
                 <>

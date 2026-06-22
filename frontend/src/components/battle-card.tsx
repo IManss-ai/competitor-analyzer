@@ -51,7 +51,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
       <motion.button
         whileTap={{ scale: 0.99 }}
         onClick={generateCard}
-        className="px-3 py-1.5 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-1.5 transition-colors cursor-pointer"
+        className="px-3 py-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-2 transition-colors cursor-pointer"
       >
         <Zap size={13} className="text-sky-400" />
         <span>Battle Card</span>

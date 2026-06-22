@@ -59,7 +59,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
         <h2 className="rs-label">
           Activity density heatmap
         </h2>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Less</span>
           {([0, 1, 2, 3] as const).map((level) => (
             <div

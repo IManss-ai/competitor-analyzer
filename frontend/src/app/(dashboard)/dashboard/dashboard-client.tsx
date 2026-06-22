@@ -375,7 +375,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 <button
                   key={type}
                   onClick={() => setSelectedBusinessType(type)}
-                  className="relative flex items-center gap-3 text-left px-4 py-3 border transition-all cursor-pointer"
+                  className="relative flex items-center gap-3 text-left px-4 py-3 border transition-colors cursor-pointer"
                   style={{
                     borderColor: selected ? 'var(--accent-primary)' : 'var(--border-default)',
                     backgroundColor: selected ? 'var(--accent-subtle)' : 'var(--fill-subtle)',
@@ -398,7 +398,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           <button
             onClick={() => confirmBusinessType(selectedBusinessType)}
             disabled={savingBusinessType}
-            className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="w-full disabled:opacity-50 text-[var(--accent-text)] py-3 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
             style={{ backgroundColor: 'var(--accent-primary)' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
@@ -452,7 +452,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
           <form onSubmit={submitOnboardingCompetitor} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>
+              <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>
                 {selectedBusinessType === 'local' ? 'Competitor Website URL *' : 'Competitor URL *'}
               </label>
               <input
@@ -467,7 +467,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             </div>
 
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Business Name (Optional)</label>
+              <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>Business Name (Optional)</label>
               <input
                 type="text"
                 name="name"
@@ -481,7 +481,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             {selectedBusinessType === 'local' ? (
               <>
                 <div>
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Google Maps URL (Optional)</label>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>Google Maps URL (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g. maps.google.com/place/..."
@@ -491,7 +491,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>Instagram Handle (Optional)</label>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>Instagram Handle (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g. @rivalcafe"
@@ -503,7 +503,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               </>
             ) : (
               <div>
-                <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-muted)' }}>G2 or Trustpilot URL (Optional)</label>
+                <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-muted)' }}>G2 or Trustpilot URL (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. g2.com/products/competitor/reviews"
@@ -521,7 +521,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <button
               type="submit"
               disabled={submittingOnboarding}
-              className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full disabled:opacity-50 text-[var(--accent-text)] py-3 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
               style={{ backgroundColor: 'var(--accent-cta)' }}
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta-hover)')}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta)')}
@@ -639,14 +639,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         <div className="p-6 border-t border-[var(--border-default)] flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={resetAndAddAnother}
-            className="w-full sm:w-auto px-5 py-2.5 border border-[var(--border-default)] hover:bg-[var(--fill-subtle-hover)] text-sm font-semibold transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-3 border border-[var(--border-default)] hover:bg-[var(--fill-subtle-hover)] text-sm font-semibold transition-colors cursor-pointer"
             style={{ background: 'var(--fill-subtle)', color: 'var(--text-primary)', borderRadius: 'var(--radius-md)' }}
           >
             Add another competitor
           </button>
           <button
             onClick={() => setOnboardingStep(3)}
-            className="w-full sm:w-auto px-5 py-2.5 text-[var(--accent-text)] text-sm font-semibold transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-3 text-[var(--accent-text)] text-sm font-semibold transition-colors cursor-pointer"
             style={{ backgroundColor: 'var(--accent-primary)', borderRadius: 'var(--radius-md)' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
@@ -701,7 +701,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="rs-card p-6 lg:p-7"
       >
-        <div className="flex items-center gap-2.5 mb-4 font-mono text-[10.5px] tracking-[0.14em] uppercase" style={{ color: 'var(--text-muted)' }}>
+        <div className="flex items-center gap-3 mb-4 font-mono text-[10.5px] tracking-[0.14em] uppercase" style={{ color: 'var(--text-muted)' }}>
           {topIsReal ? (
             <span className="inline-flex items-center gap-2" style={{ color: 'var(--accent-primary)' }}>
               <span className="sr-pulse" /> Top signal
@@ -758,7 +758,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           ].map((m, i) => (
             <div key={m.k} style={i > 0 ? { paddingLeft: 18, borderLeft: '1px solid var(--border-subtle)' } : undefined} className="py-1">
               <p className="rs-label text-[9.5px]">{m.k}</p>
-              <p className="font-mono tabular-nums font-semibold text-[24px] leading-none mt-2.5" style={{ color: m.accent ? 'var(--accent-primary)' : 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              <p className="font-mono tabular-nums font-semibold text-[24px] leading-none mt-3" style={{ color: m.accent ? 'var(--accent-primary)' : 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 {typeof m.v === 'number' ? <CountUp value={m.v} decimals={m.dec || 0} /> : '—'}
               </p>
               <p className="text-[9.5px] mt-2 font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{m.sub}</p>
@@ -774,7 +774,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         transition={{ duration: 0.3, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
         className="rs-card overflow-hidden"
       >
-        <div className="flex items-center justify-between px-5 py-3.5 gap-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
+        <div className="flex items-center justify-between px-5 py-4 gap-4" style={{ borderBottom: '1px solid var(--border-default)' }}>
           <div className="flex items-center gap-3 min-w-0">
             <h2 className="rs-heading-sm">Signal Board</h2>
             <span className="font-mono text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{rankedComps.length} tracked · {anyRealSignal ? 'ranked by signal' : 'baselines captured'}</span>
@@ -806,7 +806,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                   >
                     {hot && <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: 'var(--accent-primary)' }} />}
                     <span className="font-mono tabular-nums text-[12px]" style={{ color: hot ? 'var(--accent-primary)' : 'var(--text-muted)' }}>{String(idx + 1).padStart(2, '0')}</span>
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0">
                       <img src={`https://www.google.com/s2/favicons?domain=${hostnameOf(c.url)}&sz=32`} alt="" className="w-6 h-6 rounded flex-shrink-0" style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-default)', padding: 2 }} />
                       <div className="min-w-0">
                         <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{c.name}</div>
@@ -829,7 +829,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     </div>
                     <span className="font-mono text-[10px] text-right" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(c.last_scanned)}</span>
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" className="p-1.5 cursor-pointer transition-colors flex-shrink-0" style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
+                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" className="p-2 cursor-pointer transition-colors flex-shrink-0" style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
                         {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} style={{ color: 'var(--tone-positive)' }} /> : <RefreshCw size={13} />}
                       </button>
                       <Link href={`/competitors/${c.id}`} className="font-mono text-[10.5px] whitespace-nowrap" style={{ color: hot ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>Card →</Link>
@@ -860,7 +860,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <div className="p-10 text-center flex flex-col items-center gap-3">
                 <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>No change events yet</p>
                 <p className="text-xs max-w-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>Add a competitor and run your first scan to start tracking changes.</p>
-                <a href="/competitors" className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
+                <a href="/competitors" className="mt-1 inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded" style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                   Add competitor
                 </a>
               </div>
@@ -888,7 +888,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         style={{ background: 'var(--surface-overlay)', border: '1px solid var(--border-default)', padding: '3px' }}
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <div className="flex items-center justify-between gap-2 mb-2">
                           <span className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>{event.competitor_name || hostname}</span>
                           <time suppressHydrationWarning className="text-[11px] font-mono flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(event.detected_at)}</time>
                         </div>
@@ -907,7 +907,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           {event.brief_text || 'Website copy updated.'}
                         </p>
 
-                        <div className="flex items-center gap-4 mt-2.5">
+                        <div className="flex items-center gap-4 mt-3">
                           <Link
                             href={`/competitors/${event.competitor_id}`}
                             className="text-[12px] font-semibold inline-flex items-center gap-1 transition-colors"
@@ -1021,7 +1021,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <button
                           onClick={() => scanNow(comp.id)}
                           disabled={!!scanningCompId}
-                          className="inline-flex items-center justify-center p-1.5 cursor-pointer transition-colors"
+                          className="inline-flex items-center justify-center p-2 cursor-pointer transition-colors"
                           style={{ border: '1px solid var(--border-default)', background: 'transparent', color: 'var(--text-muted)' }}
                           title="Scan now"
                         >
@@ -1048,7 +1048,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             ) : (
               <div className="p-8 text-center flex flex-col items-center gap-3">
                 <p className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>No competitors tracked</p>
-                <a href="/competitors" className="text-xs font-semibold px-3 py-1.5 rounded" style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
+                <a href="/competitors" className="text-xs font-semibold px-3 py-2 rounded" style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
                   Add one
                 </a>
               </div>

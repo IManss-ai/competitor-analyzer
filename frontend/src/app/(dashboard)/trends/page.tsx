@@ -41,7 +41,7 @@ export default async function TrendsPage() {
       {!hasCompetitors ? (
         <div className="rs-card p-6">
           <div className="px-6 py-24 text-center flex flex-col items-center">
-            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-1.5 p-3 rounded-full bg-[var(--fill-subtle)] border border-[var(--border-default)]">
+            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-2 p-3 rounded-full bg-[var(--fill-subtle)] border border-[var(--border-default)]">
               <div className="w-2.5 h-[30%] bg-[var(--fill-subtle-hover)] rounded-sm"></div>
               <div className="w-2.5 h-[70%] bg-[var(--border-strong)] rounded-sm"></div>
               <div className="w-2.5 h-[50%] bg-[var(--fill-subtle-hover)] rounded-sm"></div>

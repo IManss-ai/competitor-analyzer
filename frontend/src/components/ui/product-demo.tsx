@@ -59,10 +59,10 @@ export default function ProductDemo() {
 
       {/* App window — soft lift so the frame has presence on paper-light
           (where the accent glow alone barely reads); glow carries it on ink. */}
-      <div className="overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] shadow-[0_28px_64px_-28px_rgba(26,23,20,0.30),0_10px_28px_-14px_rgba(26,23,20,0.18)]">
+      <div className="overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]">
         {/* Browser chrome */}
-        <div className="flex items-center gap-3 border-b border-[var(--border-default)] px-4 py-2.5 bg-[var(--surface-base)]">
-          <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-3 border-b border-[var(--border-default)] px-4 py-3 bg-[var(--surface-base)]">
+          <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
