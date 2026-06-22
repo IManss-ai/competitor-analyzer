@@ -45,7 +45,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-1.5 mb-1">
+            <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Intel</span>
               <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Battle Card</span>
             </div>

@@ -133,7 +133,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
         <section className="rs-card p-5 space-y-2">
           <div className="flex items-center justify-between">
             <h2 className="rs-label">Competitive read</h2>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 badge">
+            <span className="text-[10px] font-mono px-2 py-0.5 badge">
               {room.plan.ai_generated ? 'AI ANALYSIS' : 'SIGNAL-BASED'}
             </span>
           </div>

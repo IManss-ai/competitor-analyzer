@@ -38,7 +38,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
         </p>
         <Link
           href="/competitors"
-          className="rs-btn-primary text-[13px] inline-flex items-center gap-1.5"
+          className="rs-btn-primary text-[13px] inline-flex items-center gap-2"
         >
           <Plus size={14} />
           Add competitors
@@ -95,7 +95,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
               </div>
 
               {/* Bottom row */}
-              <div className="flex items-center justify-between gap-4 mt-4 pt-3.5 border-t border-[var(--border-subtle)]">
+              <div className="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-[var(--border-subtle)]">
                 <div className="min-w-0">
                   <div className="text-[9px] uppercase tracking-wider font-mono mb-1" style={{ color: 'var(--text-muted)' }}>
                     Last 7 days

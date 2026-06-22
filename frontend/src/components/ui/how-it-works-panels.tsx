@@ -106,7 +106,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
     <div className="w-full h-full flex flex-col justify-center p-5 bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md relative overflow-hidden">
       <div className="space-y-3 relative z-10">
         {/* Row 1 */}
-        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded px-3 py-2.5">
+        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded px-3 py-3">
           <span className="text-[10px] text-[var(--text-muted)] font-mono">domain:</span>
           <div className="flex-1 flex items-center text-xs text-[var(--text-primary)] font-mono min-h-[16px]">
             {text1}
@@ -133,7 +133,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
         </div>
 
         {/* Row 2 */}
-        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded px-3 py-2.5">
+        <div className="flex items-center gap-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded px-3 py-3">
           <span className="text-[10px] text-[var(--text-muted)] font-mono">domain:</span>
           <div className="flex-1 flex items-center text-xs text-[var(--text-primary)] font-mono min-h-[16px]">
             {text2}
@@ -168,7 +168,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
               initial={{ y: 8, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 8, opacity: 0 }}
-              className="bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-[9px] px-2 py-1 rounded-md flex items-center gap-1.5 shadow-md"
+              className="bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-[9px] px-2 py-1 rounded-md flex items-center gap-2 shadow-md"
             >
               <span className="w-1 h-1 rounded-full bg-sky-400 animate-pulse" />
               2 competitors added
@@ -257,13 +257,13 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
       </div>
 
       {/* URL Stream Section */}
-      <div className="flex-1 space-y-1.5 font-mono text-[9px] min-w-0">
+      <div className="flex-1 space-y-2 font-mono text-[9px] min-w-0">
         {urls.map((url, i) => {
           const isScanned = scanStep > i;
           return (
             <div
               key={url}
-              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md border transition-colors duration-200 ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-md border transition-colors duration-200 ${
                 isScanned
                   ? 'bg-sky-950/20 border-sky-500/25 text-sky-300'
                   : 'bg-[var(--fill-subtle-hover)] border-[var(--border-default)] text-[var(--text-muted)]'
@@ -339,7 +339,7 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
               variants={itemVariants}
               className="flex items-center gap-2 text-[9px]"
             >
-              <span className={`px-1.5 py-0.5 rounded border text-[8px] font-mono font-medium ${row.color}`}>
+              <span className={`px-2 py-0.5 rounded border text-[8px] font-mono font-medium ${row.color}`}>
                 {row.tag}
               </span>
               <span className="text-[var(--text-secondary)] truncate">{row.text}</span>
@@ -453,7 +453,7 @@ export default function HowItWorksPanels() {
                   <div className="mt-6 md:mt-8">
                     <Link
                       href="/auth/login"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors"
+                      className="inline-flex items-center gap-2 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors"
                     >
                       Learn details <ArrowRight size={11} />
                     </Link>

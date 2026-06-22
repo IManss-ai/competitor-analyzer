@@ -124,7 +124,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
       {/* Executive Summary */}
       {cardData.executive_summary && (
         <div className="p-4 bg-[var(--surface-raised)] border border-[var(--border-default)]" style={{ borderRadius: 'var(--radius-md)' }}>
-          <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1.5">Executive Summary</div>
+          <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">Executive Summary</div>
           <p className="text-[var(--text-primary)] text-sm leading-relaxed italic">
             &quot;{cardData.executive_summary}&quot;
           </p>
@@ -158,11 +158,11 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
                 : 'No significant changes detected this week'}
             </p>
           ) : (
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               {cardData.what_changed.map((change, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex">
-                    <span className={`text-[8px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 border ${getBadgeClass(change.type)}`} style={{ borderRadius: 'var(--radius-sm)' }}>
+                    <span className={`text-[8px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 border ${getBadgeClass(change.type)}`} style={{ borderRadius: 'var(--radius-sm)' }}>
                       {getBadgeLabel(change.type)}
                     </span>
                   </div>
@@ -189,7 +189,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           ) : (
             <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
               {cardData.weaknesses.map((weakness, idx) => (
-                <li key={idx} className="flex items-start gap-1.5">
+                <li key={idx} className="flex items-start gap-2">
                   <span className="text-[var(--tone-danger)] select-none">›</span>
                   <span>{weakness}</span>
                 </li>
@@ -214,7 +214,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           ) : (
             <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
               {cardData.strategic_signals.map((signal, idx) => (
-                <li key={idx} className="flex items-start gap-1.5">
+                <li key={idx} className="flex items-start gap-2">
                   <span className="text-[var(--tone-warning)] select-none">›</span>
                   <span>{signal}</span>
                 </li>
@@ -237,7 +237,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           {(!cardData.playbook || cardData.playbook.length === 0) ? (
             <p className="text-xs text-[var(--text-muted)] italic">No playbook recommendations</p>
           ) : (
-            <ol className="space-y-2.5">
+            <ol className="space-y-3">
               {cardData.playbook.map((play, idx) => {
                 const rankStr = String(idx + 1).padStart(2, '0');
                 const isCopied = copiedIndex === idx;

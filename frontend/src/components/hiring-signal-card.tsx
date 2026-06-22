@@ -110,7 +110,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
 
       {signal.strategic_signal ? (
         <div className="rounded border border-sky-500/20 bg-sky-500/[0.04] p-4">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5" style={{ color: 'var(--accent-primary)' }}>
+          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: 'var(--accent-primary)' }}>
             <AlertCircle size={11} />
             Pattern read
           </div>

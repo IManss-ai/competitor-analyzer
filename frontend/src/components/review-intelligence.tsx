@@ -90,11 +90,11 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                         </div>
 
                         {snap.top_complaints && snap.top_complaints.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 pl-1">
+                          <div className="flex flex-wrap gap-2 pl-1">
                             {snap.top_complaints.map((c, cIdx) => (
                               <span
                                 key={cIdx}
-                                className="text-[11px] text-[var(--text-secondary)] bg-[var(--fill-subtle)] border border-[var(--border-subtle)] px-2.5 py-1 rounded"
+                                className="text-[11px] text-[var(--text-secondary)] bg-[var(--fill-subtle)] border border-[var(--border-subtle)] px-3 py-1 rounded"
                               >
                                 {c}
                               </span>

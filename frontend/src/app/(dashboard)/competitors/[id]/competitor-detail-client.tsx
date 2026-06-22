@@ -235,7 +235,7 @@ ${card.win_conditions && card.win_conditions.length > 0
             <img 
               src={`https://www.google.com/s2/favicons?domain=${(comp.url.split('://')[1] || comp.url).split('/')[0]}&sz=64`}
               alt=""
-              className="w-12 h-12 rounded bg-[var(--fill-subtle)] border border-[var(--border-default)] p-1.5 flex-shrink-0"
+              className="w-12 h-12 rounded bg-[var(--fill-subtle)] border border-[var(--border-default)] p-2 flex-shrink-0"
             />
             <div>
               {editing ? (
@@ -282,7 +282,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   </a>
                 </>
               )}
-              <p className="text-xs mt-1 flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
+              <p className="text-xs mt-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                 <Clock size={12} /> Last scanned {lastScannedText}
               </p>
             </div>
@@ -398,7 +398,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                                   <div className="flex items-center justify-between mb-2">
                                     <span className="text-xs font-semibold text-[var(--text-primary)]">Text Diff Viewer</span>
                                     {event.net_char_delta !== 0 && (
-                                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
                                         event.net_char_delta > 0 ? 'tag-green border' : 'tag-red border'
                                       }`}>
                                         {event.net_char_delta > 0 ? '+' : ''}{event.net_char_delta} chars
@@ -440,7 +440,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   {detail.scan_history && detail.scan_history.length > 0 ? (
                     detail.scan_history.map((scan: any) => (
                       <tr key={scan.id} className="hover:bg-[var(--fill-subtle)] transition-colors">
-                        <td className="px-5 py-3.5 whitespace-nowrap text-xs">
+                        <td className="px-5 py-4 whitespace-nowrap text-xs">
                           {new Date(scan.fetched_at).toLocaleString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -448,17 +448,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                             minute: '2-digit'
                           })}
                         </td>
-                        <td className="px-5 py-3.5 whitespace-nowrap font-mono text-xs">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono text-xs">
                           {scan.char_count.toLocaleString()} chars
                         </td>
-                        <td className="px-5 py-3.5 whitespace-nowrap">
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <span className={`badge ${
                             scan.status === 'success' ? 'badge-feature_add' : 'tag-red border'
                           }`}>
                             {scan.status}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 whitespace-nowrap text-xs font-semibold">
+                        <td className="px-5 py-4 whitespace-nowrap text-xs font-semibold">
                           {scan.changes_detected > 0 ? (
                             <span className="inline-flex items-center gap-1" style={{ color: 'var(--accent-primary)' }}>
                               <Zap size={12} /> {scan.changes_detected} found
@@ -497,17 +497,17 @@ ${card.win_conditions && card.win_conditions.length > 0
                     </p>
                   </div>
                   
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={copyBattlecardToClipboard}
-                      className="rs-btn-ghost !p-1.5 cursor-pointer"
+                      className="rs-btn-ghost !p-2 cursor-pointer"
                       title="Copy to clipboard"
                     >
                       {copied ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Copy size={14} />}
                     </button>
                     <button
                       onClick={shareBattlecard}
-                      className="rs-btn-ghost !p-1.5 cursor-pointer"
+                      className="rs-btn-ghost !p-2 cursor-pointer"
                       title="Share Card"
                     >
                       {shared ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Share2 size={14} />}
@@ -538,7 +538,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
+                              <ul className="list-disc pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.what_changed.map((c: string | { text: string }, idx: number) => (
                                   <li key={idx}>{typeof c === 'string' ? c : c.text}</li>
                                 ))}
@@ -575,7 +575,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
+                              <ul className="list-disc pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.weaknesses.map((w: string, idx: number) => (
                                   <li key={idx}>{w}</li>
                                 ))}
@@ -610,7 +610,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
-                              <ol className="list-decimal pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
+                              <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.talking_points.map((tp: string, idx: number) => (
                                   <li key={idx}>{tp}</li>
                                 ))}
@@ -645,7 +645,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         >
                           <div className="p-4 text-xs space-y-2">
                             {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-1.5 leading-relaxed text-[var(--text-primary)]">
+                              <ul className="list-disc pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
                                 {detail.battlecard.win_conditions.map((wc: string, idx: number) => (
                                   <li key={idx}>{wc}</li>
                                 ))}
@@ -664,7 +664,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                   <button
                     onClick={handleRegenerateBattlecard}
                     disabled={regenerating}
-                    className="rs-btn-ghost text-xs !py-1.5 !px-3 cursor-pointer"
+                    className="rs-btn-ghost text-xs !py-2 !px-3 cursor-pointer"
                   >
                     {regenerating ? (
                       <>
