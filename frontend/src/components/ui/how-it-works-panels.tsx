@@ -226,7 +226,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
             cx="32"
             cy="32"
             r="28"
-            stroke="#3f6a9c"
+            stroke="var(--accent-border)"
             strokeWidth="1.5"
             fill="none"
             strokeDasharray="176"
@@ -271,7 +271,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
             >
               <motion.span
                 animate={{
-                  backgroundColor: isScanned ? '#6a96c8' : 'var(--text-muted)',
+                  backgroundColor: isScanned ? 'var(--accent-primary)' : 'var(--text-muted)',
                 }}
                 className="w-1.5 h-1.5 rounded-full"
               />
