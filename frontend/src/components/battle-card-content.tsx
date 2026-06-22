@@ -13,6 +13,10 @@ export interface BattleCardData {
   playbook: string[];
   generated_at: string;
   variant?: 'saas' | 'local';
+  /** True when no real change has ever been recorded — a fresh baseline scan
+      OR a long-quiet competitor. In both cases what_changed is empty and the
+      detected-changes panel shows an honest baseline state, not a fabricated one. */
+  is_baseline?: boolean;
 }
 
 // Normalize old API format (strings in what_changed, talking_points,
@@ -36,6 +40,7 @@ export function normalizeBattleCard(raw: any): BattleCardData {
     playbook: raw.playbook || raw.talking_points || raw.actions || [],
     generated_at: raw.generated_at || new Date().toISOString(),
     variant: raw.variant === 'local' ? 'local' : 'saas',
+    is_baseline: raw.is_baseline === true,
   };
 }
 
@@ -140,7 +145,13 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400 mb-4">
             {cardData.variant === 'local' ? 'Activity This Week' : 'Detected Changes'}
           </div>
-          {(!cardData.what_changed || cardData.what_changed.length === 0) ? (
+          {cardData.is_baseline ? (
+            <p className="text-xs text-[var(--text-muted)] italic">
+              {cardData.variant === 'local'
+                ? 'No activity yet — baseline captured. New reviews and posts appear after the next scan.'
+                : 'No changes detected yet — baseline captured. New changes appear after the next scan.'}
+            </p>
+          ) : (!cardData.what_changed || cardData.what_changed.length === 0) ? (
             <p className="text-xs text-[var(--text-muted)] italic">
               {cardData.variant === 'local'
                 ? 'Quiet week — no new reviews or social posts'
