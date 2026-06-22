@@ -1,14 +1,14 @@
 @import 'tailwindcss';
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   RIVALSCOPE — Design System v3 "Intelligence Desk"
-   Dual theme: paper-light is the default (:root); ink-dark is opt-in via
-   html[data-theme="ink"]; a dark-OS visitor with no saved pref gets ink
-   automatically (prefers-color-scheme fallback, zero JS).
-   Accent: slate-blue (#345781 paper / #4f7cb0 ink)
+   RIVALSCOPE — Design System v4 "Signal Desk" (blue, dark-first)
+   Dual theme via shared token names: ink-dark is the brand default
+   (html[data-theme="ink"], set in layout.tsx + a prefers-color-scheme
+   fallback); paper-light is the :root alternate reachable via the theme toggle.
+   Accent: electric blue (#2e8bff / CTA #1e6bff ink · #345781 paper) — sky-* remapped
    Spacing: 8pt scale (4, 8, 12, 16, 24, 32, 40, 48, 64)
    Radius:  sharp — cards 6px, buttons/inputs 4px, badges 2px, pills 9999px
-   Type:    Archivo (grotesk, UI + display) + IBM Plex Mono (data)
+   Type:    Space Grotesk (grotesk UI + display, via the --font-archivo alias) + IBM Plex Mono (data)
    Motion:  minimal, crisp — no glow, no spring, no hover lift
 ───────────────────────────────────────────────────────────────────────────── */
 
@@ -33,9 +33,10 @@
   --color-input:                hsl(var(--input));
   --color-ring:                 hsl(var(--ring));
 
-  /* Remap Tailwind's `sky` scale to the slate-blue accent so every legacy
-     sky-* utility becomes the v3 accent with no per-component edits.
-     Values here are the PAPER defaults; ink overrides live below. */
+  /* Remap Tailwind's `sky` scale to the brand accent so every legacy
+     sky-* utility becomes the v4 accent with no per-component edits.
+     Values here are the PAPER defaults (slate-blue); ink overrides to
+     electric blue live below. */
   --color-sky-50:  #eef3f9;
   --color-sky-100: #dce7f2;
   --color-sky-200: #b9cfe6;
@@ -130,9 +131,10 @@
   --duration-fast: 100ms; --duration-base: 160ms; --duration-slow: 240ms;
 }
 
-/* ── INK = "Signal Room" (default theme): cool near-black, lime = signal ───────
-   Linear-grade restraint. Lime (#c8ff00) is reserved for signal/primary-action;
-   surfaces and most UI stay near-monochrome. Lime always carries DARK text. */
+/* ── INK = "Signal Desk" (default theme): deep navy near-black, electric blue = signal
+   Linear-grade restraint. Electric blue (#2e8bff / CTA #1e6bff) is reserved for
+   signal + primary action; surfaces and most UI stay near-monochrome. The blue
+   CTA carries WHITE text (AA-verified); never a lime/dark-text accent. */
 html[data-theme="ink"] {
   --background: 222 41% 6%;  --foreground: 222 30% 94%;
   --card: 222 38% 9%;        --card-foreground: 222 30% 94%;
@@ -519,7 +521,7 @@ html[data-theme="ink"] .badge-initial_scan {
   50%       { box-shadow: 0 0 0 6px rgba(90,160,122,0.05); }
 }
 
-/* Signal pulse — lime "live" dot for the Brief / live states (Signal Room) */
+/* Signal pulse — electric-blue "live" dot for the Brief / live states (Signal Desk) */
 .sr-pulse {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--accent-primary); position: relative;
@@ -546,7 +548,7 @@ html[data-theme="ink"] .badge-initial_scan {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   TYPOGRAPHY SCALE — Archivo grotesk, institutional weights
+   TYPOGRAPHY SCALE — Space Grotesk (via --font-archivo alias), institutional weights
 ───────────────────────────────────────────────────────────────────────────── */
 
 /* Readability pass: sizes bumped so the dashboard reads comfortably
