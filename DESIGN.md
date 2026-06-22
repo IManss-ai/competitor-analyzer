@@ -144,6 +144,26 @@ All gaps/padding/margins use this scale. No arbitrary values.
 
 ---
 
+## Error & empty states
+
+One canonical pattern — no per-screen one-offs:
+
+- **Errors:** text in `--tone-danger` (theme-aware: paper `#b3261e`, ink `#f87171`); tinted container via `color-mix(in srgb, var(--tone-danger) 8%, transparent)` background + `… 28%` border. Inline, next to the source. Never a hardcoded red. (Reference: `auth/login/page.tsx`.)
+- **Empty states:** a warm one-line message in `--text-muted` italic, plus a primary action where one exists (e.g. "Scan for new changes"). Use theme tokens only — never hardcoded gray. (Reference: the battle-card panels + `queue-manager.tsx` empty state.)
+- **Honest baseline:** when `is_baseline` is true, say so plainly ("baseline captured; changes appear after the next scan") rather than implying activity.
+
+---
+
+## Charts
+
+Chart and sparkline colors come from `lib/chart-theme.ts`, consumed via `useChartPalette()` (theme-aware, swaps on `data-theme`). **Never hardcode a stroke/fill** — that is how the reverted-lime `#A8D600` stroke slipped in.
+
+- **Accent line/area:** ink `accent #2e8bff` / `accentSoft #54a3ff` · paper `accent #345781` / `accentSoft #6a96c8`.
+- **Categorical/semantic series:** reuse the palette's `positive` / `warning` / `danger` / `neutral` / `violet` (mirror the `--tone-*` set).
+- **Grid / axis / tick:** the palette's `grid` / `axis` / `tick` tokens, never raw rgba.
+
+---
+
 ## Responsive Behavior
 
 | Breakpoint | Min width | Tailwind | Notes |
@@ -178,9 +198,7 @@ All gaps/padding/margins use this scale. No arbitrary values.
 
 ## Known Gaps
 
-- `globals.css` header comments still self-label "v3 Intelligence Desk / Archivo / slate-blue" (and an `html[data-theme="ink"]` "lime = signal" note) — stale vs the live v4 blue tokens the file now contains. Doc/comment drift, not a render bug, but it misleads anyone reading tokens.
-- Error / empty-state styling isn't specified centrally — login uses `--tone-danger`; queue/settings carry one-offs. Needs a shared spec.
-- Chart / sparkline palette lives in code (`lib/chart-theme.ts` + `useChartPalette()`), not in this doc.
+- Error / empty-state styling — **spec addressed** (see "Error & empty states" above). Remaining: migrate the existing `queue`/`settings` one-offs onto the canonical pattern (separate PR).
 
 ---
 
