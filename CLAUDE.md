@@ -86,7 +86,7 @@ alembic revision --autogenerate -m "description_of_changes"
   ```
 
 ### 2. Frontend Deployment (Vercel)
-- **Production URL**: [https://competitor-analyzer-zeta.vercel.app](https://competitor-analyzer-zeta.vercel.app)
+- **Production URL**: [https://rivalscope.dev](https://rivalscope.dev)
 - **Secondary Deployment Domain**: [https://competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app](https://competitor-analyzer-m8amtwbus-imanss-ais-projects.vercel.app)
 - **Vercel Project**: `competitor-analyzer` (Owner: `imanss-ais-projects`)
 - **CI/CD Triggers**: Pushes to `origin/main` automatically build and deploy the frontend production build.
