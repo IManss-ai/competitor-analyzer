@@ -144,9 +144,26 @@ All gaps/padding/margins use this scale. No arbitrary values.
 
 ---
 
-## HARD BANS — no AI slop
+## Responsive Behavior
 
-Never ship: purple/indigo/violet gradient backgrounds or blue→purple schemes (our blue stays true-blue); glassmorphism; emoji as headings/bullets; the 3-identical-icon feature-card grid; "Empower / Unleash / Seamless" copy; centered-hero + 3-columns + pricing cookie-cutter; fake or round dashboard numbers; decorative charts with no data; stock-photo vibes; inconsistent spacing / mismatched radii / low-contrast gray-on-gray; anything that reads as a Tailwind template. Be specific, opinionated, branded.
+| Breakpoint | Min width | Tailwind | Notes |
+|------------|-----------|----------|-------|
+| Mobile     | base      | (none)   | Single column; hero display drops to 40–52px |
+| Tablet     | 640px     | `sm:`    | Two-up grids begin |
+| Desktop    | 768px     | `md:`    | Primary layout target (most-used breakpoint) |
+| Wide       | 1024px    | `lg:`    | Max content width ~1280px, centered |
+
+- **Touch targets ≥ 44px** on every interactive element — nav links, theme toggle, footer links, toggles. (Landing nav/footer links currently fall short; fix on sight.)
+- No horizontal scroll at any width; never `user-scalable=no` / `maximum-scale=1`.
+- `xl:` / `2xl:` intentionally unused — layouts top out at `lg`.
+
+---
+
+## Do's & Don'ts — no AI slop
+
+**Do:** anchor on deep navy `--surface-base`; reserve electric blue for the brand mark, primary CTA, active nav, signal indicators, focus rings, and links only; carry depth with the surface ladder + hairline borders; pair feature sections with real product UI; keep to one gradient moment per viewport; put `tabular-nums` on every numeric / timestamp cell; **draw every chart and sparkline stroke from the slate-blue accent token** — a raw lime stroke like `#A8D600` is exactly the off-palette slop this forbids.
+
+**Don't ship:** purple/indigo/violet gradient backgrounds or blue→purple schemes (our blue stays true-blue); glassmorphism; emoji as headings/bullets; the 3-identical-icon feature-card grid; "Empower / Unleash / Seamless" copy; centered-hero + 3-columns + pricing cookie-cutter; fake or round dashboard numbers; decorative charts with no data; stock-photo vibes; inconsistent spacing / mismatched radii / low-contrast gray-on-gray; anything that reads as a Tailwind template. Be specific, opinionated, branded.
 
 ---
 
@@ -156,6 +173,14 @@ Never ship: purple/indigo/violet gradient backgrounds or blue→purple schemes (
 - **WCAG AA** on all text; real `:focus-visible` rings; full keyboard nav.
 - **Honesty principle:** the landing promises only what the app delivers. Real sample data on marketing, never invented metrics or fabricated "detected changes." (Root fix for the "AI-slop / empty" tester feedback.)
 - Frontend-only; do not break existing routes or the `/api/v1/*` contract.
+
+---
+
+## Known Gaps
+
+- `globals.css` header comments still self-label "v3 Intelligence Desk / Archivo / slate-blue" (and an `html[data-theme="ink"]` "lime = signal" note) — stale vs the live v4 blue tokens the file now contains. Doc/comment drift, not a render bug, but it misleads anyone reading tokens.
+- Error / empty-state styling isn't specified centrally — login uses `--tone-danger`; queue/settings carry one-offs. Needs a shared spec.
+- Chart / sparkline palette lives in code (`lib/chart-theme.ts` + `useChartPalette()`), not in this doc.
 
 ---
 
