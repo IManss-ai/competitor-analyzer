@@ -234,9 +234,9 @@ export default function LoginPage() {
             <div
               className="mb-5 px-3.5 py-2.5 text-[12px] font-medium"
               style={{
-                background: 'var(--error-subtle, rgba(185,28,28,0.07))',
-                border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
-                color: 'var(--error-text, #b91c1c)',
+                background: 'color-mix(in srgb, var(--tone-danger) 8%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--tone-danger) 28%, transparent)',
+                color: 'var(--tone-danger)',
               }}
             >
               {error}
