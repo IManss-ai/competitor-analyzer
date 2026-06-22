@@ -12,6 +12,20 @@ import uuid
 router = APIRouter(prefix="/api/v1")
 
 
+# ── Serialization helpers ────────────────────────────────────────────────────
+
+def _iso_utc(dt):
+    """Serialize a datetime as an explicit-UTC ISO-8601 string. Our timestamps
+    come from func.now() (UTC) but live in tz-naive columns; a bare .isoformat()
+    drops the offset, so the browser reads them as LOCAL time and "x ago" skews
+    by the user's UTC offset (issue #3, bug #2). Marking them UTC fixes it."""
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.isoformat()
+
+
 # ── Auth dependency ──────────────────────────────────────────────────────────
 
 def require_api_user(authorization: str = Header(default=None)) -> str:
@@ -106,7 +120,7 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
             "competitor_id": str(e.competitor_id),
             "competitor_name": c.name,
             "competitor_url": c.url,
-            "detected_at": e.detected_at.isoformat() if e.detected_at else None,
+            "detected_at": _iso_utc(e.detected_at),
             "change_type": e.change_type,
             "brief_text": e.brief_text,
             "week_label": e.week_label,
@@ -242,7 +256,7 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
 
         for c in active_competitors:
             last_snap = latest_snap_map.get(c.id)
-            last_scanned = last_snap.fetched_at.isoformat() if last_snap else None
+            last_scanned = _iso_utc(last_snap.fetched_at) if last_snap else None
             
             total_changes = change_count_map.get(c.id, 0)
             
@@ -278,7 +292,7 @@ def api_dashboard(user_id: str = Depends(require_api_user), db: Session = Depend
     return {
         "events": events,
         "pending_count": pending_count,
-        "last_scan": last_scan.isoformat() if last_scan else None,
+        "last_scan": _iso_utc(last_scan),
         "competitor_count": competitor_count,
         "changes_this_week": changes_this_week,
         "avg_review_score": avg_review_score,
@@ -310,7 +324,7 @@ def api_dashboard_feed(
             "competitor_id": str(e.competitor_id),
             "competitor_name": c.name,
             "competitor_url": c.url,
-            "detected_at": e.detected_at.isoformat() if e.detected_at else None,
+            "detected_at": _iso_utc(e.detected_at),
             "change_type": e.change_type,
             "brief_text": e.brief_text,
             "week_label": e.week_label,
@@ -577,7 +591,7 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
     for e, before_text, after_text in change_rows:
         change_events.append({
             "id": str(e.id),
-            "detected_at": e.detected_at.isoformat() if e.detected_at else None,
+            "detected_at": _iso_utc(e.detected_at),
             "change_type": e.change_type,
             "brief_text": e.brief_text,
             "week_label": e.week_label,
@@ -597,7 +611,7 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
         {
             "id": str(snap.id),
             "platform": snap.platform,
-            "snapshot_at": snap.snapshot_at.isoformat() if snap.snapshot_at else None,
+            "snapshot_at": _iso_utc(snap.snapshot_at),
             "avg_rating": snap.avg_rating,
             "total_reviews": snap.total_reviews,
             "complaint_count": snap.complaint_count,
@@ -620,7 +634,7 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
     scan_history = [
         {
             "id": str(s.id),
-            "fetched_at": s.fetched_at.isoformat() if s.fetched_at else None,
+            "fetched_at": _iso_utc(s.fetched_at),
             "char_count": s.char_count,
             "status": "error" if s.fetch_error else "success",
             "fetch_error": s.fetch_error,
@@ -643,7 +657,7 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
     hiring_signal = None
     if hiring:
         hiring_signal = {
-            "snapshot_at": hiring.snapshot_at.isoformat() if hiring.snapshot_at else None,
+            "snapshot_at": _iso_utc(hiring.snapshot_at),
             "total_jobs": hiring.total_jobs or 0,
             "new_postings": hiring.new_postings or 0,
             "closed_postings": hiring.closed_postings or 0,
@@ -702,7 +716,7 @@ def api_competitor_reviews(competitor_id: str, user_id: str = Depends(require_ap
                 "total_reviews": snap.total_reviews,
                 "complaint_count": snap.complaint_count,
                 "top_complaints": _json.loads(snap.top_complaints) if snap.top_complaints else [],
-                "snapshot_at": snap.snapshot_at.isoformat() if snap.snapshot_at else None
+                "snapshot_at": _iso_utc(snap.snapshot_at)
             }
             
     recent_complaints = db.execute(
@@ -750,7 +764,7 @@ def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(ge
                     "id": str(e.id),
                     "brief_text": e.brief_text,
                     "change_type": e.change_type,
-                    "detected_at": e.detected_at.isoformat() if e.detected_at else None,
+                    "detected_at": _iso_utc(e.detected_at),
                 },
                 "competitor": {"id": str(c.id), "name": c.name, "url": c.url},
             }
