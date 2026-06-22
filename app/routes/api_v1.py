@@ -14,16 +14,10 @@ router = APIRouter(prefix="/api/v1")
 
 # ── Serialization helpers ────────────────────────────────────────────────────
 
-def _iso_utc(dt):
-    """Serialize a datetime as an explicit-UTC ISO-8601 string. Our timestamps
-    come from func.now() (UTC) but live in tz-naive columns; a bare .isoformat()
-    drops the offset, so the browser reads them as LOCAL time and "x ago" skews
-    by the user's UTC offset (issue #3, bug #2). Marking them UTC fixes it."""
-    if dt is None:
-        return None
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.isoformat()
+# Emit timestamps as explicit UTC so the browser doesn't read them as local time
+# (issue #3, bug #2). Shared across route modules; aliased here for existing call
+# sites and the test import path.
+from app.serialization import iso_utc as _iso_utc
 
 
 # ── Auth dependency ──────────────────────────────────────────────────────────
@@ -401,7 +395,7 @@ def api_list_competitors(include_inactive: bool = False, user_id: str = Depends(
                 "url": c.url,
                 "name": c.name,
                 "active": c.active,
-                "created_at": c.created_at.isoformat() if c.created_at else None,
+                "created_at": _iso_utc(c.created_at),
                 "business_type": c.business_type,
                 "google_maps_url": c.google_maps_url,
                 "instagram_handle": c.instagram_handle,
@@ -670,7 +664,7 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
             "url": comp.url,
             "name": comp.name,
             "active": comp.active,
-            "created_at": comp.created_at.isoformat() if comp.created_at else None,
+            "created_at": _iso_utc(comp.created_at),
             "business_type": comp.business_type,
             "google_maps_url": comp.google_maps_url,
             "instagram_handle": comp.instagram_handle,
@@ -734,7 +728,7 @@ def api_competitor_reviews(competitor_id: str, user_id: str = Depends(require_ap
                 "rating": r.rating,
                 "title": r.title,
                 "body": r.body,
-                "published_at": r.published_at.isoformat() if r.published_at else None
+                "published_at": _iso_utc(r.published_at)
             }
             for r in recent_complaints
         ]
@@ -759,7 +753,7 @@ def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(ge
                 "action_type": a.action_type,
                 "original_draft": a.original_draft,
                 "edited_text": a.edited_text,
-                "created_at": a.created_at.isoformat() if a.created_at else None,
+                "created_at": _iso_utc(a.created_at),
                 "change_event": {
                     "id": str(e.id),
                     "brief_text": e.brief_text,
@@ -955,7 +949,7 @@ def api_settings(user_id: str = Depends(require_api_user), db: Session = Depends
         "id": str(user.id),
         "email": user.email,
         "subscription_status": user.subscription_status,
-        "trial_ends_at": user.trial_ends_at.isoformat() if user.trial_ends_at else None,
+        "trial_ends_at": _iso_utc(user.trial_ends_at),
         "business_type": getattr(user, "business_type", None) or "saas",
         "scan_schedule": getattr(user, "scan_schedule", None) or "weekly",
         "email_notifications": getattr(user, "email_notifications", True),
@@ -987,7 +981,7 @@ def api_update_settings(payload: dict, user_id: str = Depends(require_api_user),
         "id": str(user.id),
         "email": user.email,
         "subscription_status": user.subscription_status,
-        "trial_ends_at": user.trial_ends_at.isoformat() if user.trial_ends_at else None,
+        "trial_ends_at": _iso_utc(user.trial_ends_at),
         "business_type": getattr(user, "business_type", None) or "saas",
         "scan_schedule": getattr(user, "scan_schedule", None) or "weekly",
         "email_notifications": getattr(user, "email_notifications", True),

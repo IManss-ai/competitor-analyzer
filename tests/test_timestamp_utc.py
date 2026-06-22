@@ -6,6 +6,7 @@ so the browser parses them as LOCAL time and "x ago" is skewed by the user's UTC
 offset (e.g. "5h ago" right after a scan in GMT+5). The API must emit an explicit
 UTC designator so new Date(...) parses them correctly.
 """
+import re
 import unittest
 from datetime import datetime, timezone, timedelta
 
@@ -16,8 +17,16 @@ from sqlalchemy.pool import StaticPool
 
 from main import app
 from app.db import Base, get_session
-from app.models import User, Competitor, Snapshot, ChangeEvent
+from app.models import (
+    User, Competitor, Snapshot, ChangeEvent, Review, SocialPost,
+    Campaign, ActionPlan, GeoSnapshot, App,
+)
 from app.routes.api_v1 import _iso_utc
+from app.serialization import iso_utc
+
+# Matches a full ISO-8601 datetime (has a 'T' and a time). Deliberately does NOT
+# match date-only or week labels like "2026-W25".
+_ISO_DT = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}")
 
 
 def _is_utc_marked(s: str) -> bool:
@@ -26,6 +35,21 @@ def _is_utc_marked(s: str) -> bool:
         return False
     parsed = datetime.fromisoformat(s.replace("Z", "+00:00"))
     return parsed.tzinfo is not None and parsed.utcoffset() == timedelta(0)
+
+
+def _collect_iso_datetimes(obj, found=None):
+    """Recursively collect every ISO-datetime-looking string in a JSON payload."""
+    if found is None:
+        found = []
+    if isinstance(obj, dict):
+        for v in obj.values():
+            _collect_iso_datetimes(v, found)
+    elif isinstance(obj, list):
+        for v in obj:
+            _collect_iso_datetimes(v, found)
+    elif isinstance(obj, str) and _ISO_DT.match(obj):
+        found.append(obj)
+    return found
 
 
 class TestIsoUtcHelper(unittest.TestCase):
@@ -122,6 +146,110 @@ class TestDashboardTimestampsAreUtc(unittest.TestCase):
         self.assertTrue(history)
         self.assertTrue(_is_utc_marked(history[0]["fetched_at"]),
                         f"fetched_at not UTC-marked: {history[0]['fetched_at']!r}")
+
+
+class TestEveryEndpointTimestampIsUtc(unittest.TestCase):
+    """Every ISO-datetime emitted by the campaigns/discovery/local_business
+    endpoints (and the api_v1 list/detail/settings endpoints) must carry an
+    explicit UTC offset — no bare naive timestamps anywhere (issue #3, bug #2)."""
+
+    def setUp(self):
+        self.engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+        Base.metadata.create_all(self.engine)
+        self.SessionLocal = sessionmaker(bind=self.engine)
+
+        def override_get_session():
+            db = self.SessionLocal()
+            try:
+                yield db
+            finally:
+                db.close()
+
+        app.dependency_overrides[get_session] = override_get_session
+        self.client = TestClient(app, raise_server_exceptions=False)
+
+        self.db = self.SessionLocal()
+        self.user = User(email="allts@example.com")
+        self.db.add(self.user)
+        self.db.commit()
+        self.db.refresh(self.user)
+        self.comp = Competitor(user_id=self.user.id, url="https://acme.example.com", name="Acme", business_type="local")
+        self.db.add(self.comp)
+        self.db.commit()
+        self.db.refresh(self.comp)
+
+        now = datetime.utcnow()
+        snap = Snapshot(competitor_id=self.comp.id, raw_text="copy", char_count=4)
+        snap.fetched_at = now
+        self.db.add(snap)
+        self.db.commit()
+        self.db.refresh(snap)
+        ev = ChangeEvent(
+            competitor_id=self.comp.id, snapshot_before_id=snap.id, snapshot_after_id=snap.id,
+            net_char_delta=4, change_type="pricing_change", brief_text="moved pricing",
+        )
+        ev.detected_at = now
+        self.db.add(ev)
+        self.db.add(Review(
+            competitor_id=self.comp.id, platform="g2", review_id="r1", body="slow",
+            published_at=now - timedelta(days=1), is_complaint=True,
+        ))
+        self.db.add(SocialPost(
+            competitor_id=self.comp.id, platform="instagram", post_id="p1", content="promo",
+            posted_at=now - timedelta(hours=3),
+        ))
+        self.db.add(App(slug="acme-app", url="https://acme.example.com", name="Acme",
+                        scan_status="ok", last_scanned_at=now))
+        self.campaign = Campaign(user_id=self.user.id, competitor_id=self.comp.id, name="Beat Acme",
+                                 user_product="MyTool")
+        self.db.add(self.campaign)
+        self.db.commit()
+        self.db.refresh(self.campaign)
+        plan = ActionPlan(campaign_id=self.campaign.id, executive_read="read", ai_generated=False)
+        self.db.add(plan)
+        self.db.add(GeoSnapshot(campaign_id=self.campaign.id, engine="estimated", source="estimated"))
+        self.db.commit()
+        self.auth = {"Authorization": f"Bearer {self.user.id}"}
+
+    def tearDown(self):
+        self.db.close()
+        Base.metadata.drop_all(self.engine)
+        app.dependency_overrides.clear()
+
+    def _assert_endpoint_utc(self, path, expect_any=True):
+        resp = self.client.get(path, headers=self.auth)
+        self.assertEqual(resp.status_code, 200, f"{path} -> {resp.status_code}: {resp.text[:200]}")
+        stamps = _collect_iso_datetimes(resp.json())
+        if expect_any:
+            self.assertTrue(stamps, f"{path} emitted no timestamps to check — fixture gap")
+        for s in stamps:
+            self.assertTrue(_is_utc_marked(s), f"{path} emitted a non-UTC timestamp: {s!r}")
+
+    def test_competitors_list_created_at_utc(self):
+        self._assert_endpoint_utc("/api/v1/competitors")
+
+    def test_settings_trial_ends_at_utc(self):
+        self._assert_endpoint_utc("/api/v1/settings")
+
+    def test_reviews_published_at_utc(self):
+        self._assert_endpoint_utc(f"/api/v1/competitors/{self.comp.id}/reviews")
+
+    def test_social_posts_timestamps_utc(self):
+        self._assert_endpoint_utc(f"/api/v1/local/competitors/{self.comp.id}/social-posts")
+
+    def test_apps_sitemap_last_scanned_utc(self):
+        self._assert_endpoint_utc("/api/v1/apps-sitemap")
+
+    def test_campaigns_list_timestamps_utc(self):
+        self._assert_endpoint_utc("/api/v1/campaigns")
+
+    def test_war_room_timestamps_utc(self):
+        # generated_at (plan), checked_at (geo), detected_at (events).
+        self._assert_endpoint_utc(f"/api/v1/campaigns/{self.campaign.id}")
 
 
 if __name__ == "__main__":
