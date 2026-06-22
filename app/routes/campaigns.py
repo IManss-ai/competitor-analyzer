@@ -10,6 +10,7 @@ from app.models import ActionPlan, ActionPlanItem, Campaign, ChangeEvent, Compet
 from app.planner.engine import get_or_generate_plan
 from app.geo.visibility import get_or_check_visibility
 from app.routes.api_v1 import require_api_user
+from app.serialization import iso_utc
 
 router = APIRouter(prefix="/api/v1", tags=["campaigns"])
 
@@ -87,8 +88,8 @@ def list_campaigns(db: Session = Depends(get_session), user_id: str = Depends(re
             "name": campaign.name,
             "competitor_name": comp.name or comp.url,
             "competitor_url": comp.url,
-            "last_plan_at": latest_plan.generated_at.isoformat() if latest_plan and latest_plan.generated_at else None,
-            "created_at": campaign.created_at.isoformat() if campaign.created_at else None,
+            "last_plan_at": iso_utc(latest_plan.generated_at) if latest_plan else None,
+            "created_at": iso_utc(campaign.created_at),
         })
     return {"campaigns": campaigns}
 
@@ -126,7 +127,7 @@ def get_war_room(
             "id": str(plan.id),
             "executive_read": plan.executive_read,
             "ai_generated": plan.ai_generated,
-            "generated_at": plan.generated_at.isoformat() if plan.generated_at else None,
+            "generated_at": iso_utc(plan.generated_at),
             "trigger_summary": plan.trigger_summary,
             "items": [
                 {
@@ -145,11 +146,11 @@ def get_war_room(
             "user_share": geo.user_share,
             "competitor_share": geo.competitor_share,
             "source": geo.source,
-            "checked_at": geo.checked_at.isoformat() if geo.checked_at else None,
+            "checked_at": iso_utc(geo.checked_at),
         },
         "events": [
             {
-                "detected_at": e.detected_at.isoformat() if e.detected_at else None,
+                "detected_at": iso_utc(e.detected_at),
                 "change_type": e.change_type,
                 "brief_text": e.brief_text,
             }
@@ -166,7 +167,7 @@ def regenerate_plan(
 ):
     campaign = _own_campaign(campaign_id, user_id, db)
     plan = get_or_generate_plan(campaign, db, force=True)
-    return {"plan_id": str(plan.id), "generated_at": plan.generated_at.isoformat() if plan.generated_at else None}
+    return {"plan_id": str(plan.id), "generated_at": iso_utc(plan.generated_at)}
 
 
 @router.post("/plan-items/{item_id}/status")

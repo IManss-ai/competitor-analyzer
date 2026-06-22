@@ -261,10 +261,18 @@ Known customer complaints:
             ]
         weaknesses = weaknesses[:3]
 
+    # Baseline for a local business = nothing recorded yet (no reviews, no posts).
+    # Keeps the dashboard's "honest baseline" contract consistent across variants.
+    is_baseline = (
+        db.execute(select(Review.id).where(Review.competitor_id == comp.id).limit(1)).scalar_one_or_none() is None
+        and db.execute(select(SocialPost.id).where(SocialPost.competitor_id == comp.id).limit(1)).scalar_one_or_none() is None
+    )
+
     return {
         "title": f"{comp.name or comp.url} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
         "executive_summary": executive_summary,
         "what_changed": what_changed,
+        "is_baseline": is_baseline,
         "weaknesses": weaknesses[:4],
         "talking_points": playbook,
         "win_conditions": strategic_signals,
@@ -275,6 +283,67 @@ Known customer complaints:
         "actions": playbook,
         "variant": "local",
     }, ai_generated
+
+
+def _has_real_change_ever(comp_id, db: Session) -> bool:
+    """True once a real (non-initial_scan) change has ever been recorded for this
+    competitor. initial_scan events are the baseline profile captured on first
+    sight, not a detected change."""
+    row = db.execute(
+        select(ChangeEvent.id)
+        .where(ChangeEvent.competitor_id == comp_id)
+        .where(ChangeEvent.change_type.isnot(None))
+        .where(ChangeEvent.change_type != "initial_scan")
+        .limit(1)
+    ).scalar_one_or_none()
+    return row is not None
+
+
+def _baseline_saas_payload(comp: Competitor, weaknesses: list, hiring_signal_text: str, is_baseline: bool) -> dict:
+    """Honest SaaS card when there is nothing real to diff. Emits no fabricated
+    change and (since the card is change-driven) costs no paid model call.
+    `is_baseline` distinguishes a brand-new competitor from one we've tracked
+    through a quiet week."""
+    name = comp.name or comp.url
+    if is_baseline:
+        executive_summary = (
+            f"Now tracking {name}. This is the baseline scan — no page changes to "
+            f"report yet. Pricing, feature, and positioning shifts will surface here "
+            f"as they happen."
+        )
+        signal = "Baseline captured. Strategic signals will appear as their public surfaces change."
+    else:
+        executive_summary = f"No homepage changes detected for {name} in the past week."
+        signal = "A quiet week — no new moves on their public surfaces to react to."
+
+    strategic_signals = []
+    if hiring_signal_text:
+        strategic_signals.append(f"Hiring signal: {hiring_signal_text}")
+    strategic_signals.append(signal)
+
+    # Plays that prepare for the next move WITHOUT asserting a change happened.
+    playbook = [
+        f"Capture {name}'s current pricing and positioning now so the next change is obvious.",
+        "Write down your top 3 differentiators against them while there's no fire to fight.",
+        "Set alerts on their pricing and changelog pages so the next shift reaches you first.",
+        "Brief sales on the current competitive baseline before anything moves.",
+        "Line up 2-3 fresh customer proof points to deploy the moment they change.",
+    ]
+    return {
+        "title": f"{name} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
+        "executive_summary": executive_summary,
+        "what_changed": [],
+        "is_baseline": is_baseline,
+        "weaknesses": weaknesses[:4],
+        "talking_points": playbook,
+        "win_conditions": strategic_signals,
+        "strategic_signals": strategic_signals,
+        "playbook": playbook,
+        "share_token": str(comp.id),
+        "generated_at": datetime.now().isoformat(),
+        "actions": playbook,
+        "variant": "saas",
+    }
 
 
 def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = True) -> tuple[dict, bool]:
@@ -288,8 +357,18 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
         .where(ChangeEvent.detected_at >= seven_days_ago)
     ).scalars().all()
 
-    change_list_texts = [c.brief_text for c in changes if c.brief_text]
-    
+    # initial_scan events are the baseline profile we capture on first sight —
+    # there is no prior snapshot to diff against, so they are NOT a detected
+    # change. Treating them as one is what fabricated changes on a first scan
+    # (issue #3, bug #1).
+    real_changes = [c for c in changes if (c.change_type or "") != "initial_scan"]
+    change_list_texts = [c.brief_text for c in real_changes if c.brief_text]
+
+    # Baseline = we have never recorded a real (non-initial) change for this
+    # competitor. True on a first scan, stays true until something actually
+    # changes. Drives the honest is_baseline flag the dashboard renders.
+    is_baseline = not _has_real_change_ever(comp_uuid, db)
+
     # Get review snapshots/complaints for weaknesses
     latest_snapshots = db.execute(
         select(ReviewSnapshot)
@@ -317,8 +396,11 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
         ).scalars().all()
         weaknesses = [c[:100] for c in complaints_in_db]
 
-    if not weaknesses:
-        # Static baseline weaknesses
+    # Static filler weaknesses are only acceptable on a change-driven card. On a
+    # baseline/quiet card (no real change) presenting invented weaknesses as fact
+    # is the same dishonesty as inventing a change (issue #3, bug #1) — leave them
+    # empty when we have no real complaints to show.
+    if not weaknesses and change_list_texts:
         weaknesses = [
             f"Pricing transparency issues on their homepage.",
             "Customer support delays reported in forums.",
@@ -336,6 +418,11 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
         hiring_signal_text = "; ".join(parts)
         if hiring_snapshot.strategic_signal:
             hiring_signal_text += f". Pattern read: {hiring_snapshot.strategic_signal}"
+
+    # Whether there is a real page change to report this week. When false, the
+    # changes quadrant stays empty and the card leans on hiring/complaints — but
+    # we never invent a change (issue #3, bug #1).
+    has_change = bool(change_list_texts)
 
     is_dummy = (not llm.ai_available()) or not allow_ai
 
@@ -416,9 +503,6 @@ Known customer complaints/weaknesses:
     ai_generated = bool(playbook)
     # Heuristic fallback if API key is dummy or request fails
     if not playbook:
-        has_pricing = any("price" in c.lower() or "pricing" in c.lower() for c in change_list_texts)
-        has_feature = any("feature" in c.lower() or "copilot" in c.lower() for c in change_list_texts)
-
         # Set fallback weaknesses (up to 3)
         fallback_weaknesses = weaknesses[:3] if weaknesses else [
             "Opaque custom quoting required for enterprise tiers.",
@@ -426,62 +510,80 @@ Known customer complaints/weaknesses:
             "Mobile user experience responsiveness issues."
         ]
 
-        if has_pricing:
-            executive_summary = f"{comp.name or comp.url} is adjusting pricing structure to optimize revenue, potentially creating friction for SMBs."
-            what_changed = [
-                {"type": "pricing_change", "text": f"Updated landing page to highlight custom quote pricing instead of transparent flat rates."}
-            ]
-            strategic_signals = [
-                f"{comp.name or comp.url} is moving upmarket to target enterprise customers, leaving self-serve buyers underserved.",
-                "Opaque pricing structure signals potential upcoming margin compression or sales-led model pivot."
-            ]
-            playbook = [
-                f"Highlight our simple, transparent pricing structure compared to {comp.name or comp.url}'s updates.",
-                "Deploy dedicated target ads focusing on our flat-rate billing model with no seat limits.",
-                "Offer mid-market customers a free migration path to showcase immediate cost stability.",
-                "Empower sales reps to lead EMEA pitch calls focusing on simple, contract-free pricing.",
-                "Publish a budget comparison calculator demonstrating 40% savings over enterprise tiers."
-            ]
-        elif has_feature:
-            executive_summary = f"{comp.name or comp.url} launched a major feature update to capture developer workflow integration."
-            what_changed = [
-                {"type": "feature_add", "text": "Released new workflow integration and authentication templates on public surfaces."}
-            ]
-            strategic_signals = [
-                f"{comp.name or comp.url} is attempting to increase platform lock-in by expanding core integrations.",
-                "Increased focus on developer experience suggests target competitor is capturing technical decision-makers."
-            ]
-            playbook = [
-                f"Showcase our production-ready reliability versus {comp.name or comp.url}'s recently released features.",
-                "Target developer teams with sandbox uptime guarantees and clean API documentation.",
-                "Add 'works out-of-the-box' templates directly to our getting started guides.",
-                "Run competitive comparison campaigns highlighting our simpler API schema.",
-                "Conduct outreach to dissatisfied integration users citing platform stability."
-            ]
+        if not has_change:
+            # No page change to report, but real hiring/complaint intel exists
+            # (otherwise we'd have returned the baseline card already). Use the
+            # honest baseline-style narrative — never a fabricated change.
+            bp = _baseline_saas_payload(comp, weaknesses, hiring_signal_text, is_baseline)
+            executive_summary = bp["executive_summary"]
+            what_changed = []
+            strategic_signals = bp["strategic_signals"]
+            playbook = bp["playbook"]
+            fallback_weaknesses = bp["weaknesses"]
         else:
-            executive_summary = f"{comp.name or comp.url} updated homepage copy to refine core brand positioning."
+            has_pricing = any("price" in c.lower() or "pricing" in c.lower() for c in change_list_texts)
+            has_feature = any("feature" in c.lower() or "copilot" in c.lower() for c in change_list_texts)
+
+            if has_pricing:
+                executive_summary = f"{comp.name or comp.url} is adjusting pricing structure to optimize revenue, potentially creating friction for SMBs."
+                strategic_signals = [
+                    f"{comp.name or comp.url} is moving upmarket to target enterprise customers, leaving self-serve buyers underserved.",
+                    "Opaque pricing structure signals potential upcoming margin compression or sales-led model pivot."
+                ]
+                playbook = [
+                    f"Highlight our simple, transparent pricing structure compared to {comp.name or comp.url}'s updates.",
+                    "Deploy dedicated target ads focusing on our flat-rate billing model with no seat limits.",
+                    "Offer mid-market customers a free migration path to showcase immediate cost stability.",
+                    "Empower sales reps to lead EMEA pitch calls focusing on simple, contract-free pricing.",
+                    "Publish a budget comparison calculator demonstrating 40% savings over enterprise tiers."
+                ]
+            elif has_feature:
+                executive_summary = f"{comp.name or comp.url} launched a major feature update to capture developer workflow integration."
+                strategic_signals = [
+                    f"{comp.name or comp.url} is attempting to increase platform lock-in by expanding core integrations.",
+                    "Increased focus on developer experience suggests target competitor is capturing technical decision-makers."
+                ]
+                playbook = [
+                    f"Showcase our production-ready reliability versus {comp.name or comp.url}'s recently released features.",
+                    "Target developer teams with sandbox uptime guarantees and clean API documentation.",
+                    "Add 'works out-of-the-box' templates directly to our getting started guides.",
+                    "Run competitive comparison campaigns highlighting our simpler API schema.",
+                    "Conduct outreach to dissatisfied integration users citing platform stability."
+                ]
+            else:
+                executive_summary = f"{comp.name or comp.url} updated homepage copy to refine core brand positioning."
+                strategic_signals = [
+                    f"{comp.name or comp.url} is repositioning towards a pure technical persona, ignoring non-technical builders.",
+                    "Subtle copy refinements indicate competitive positioning adjustments to counter rising platforms."
+                ]
+                playbook = [
+                    f"Position our platform as the fastest developer-first alternative with zero setup friction.",
+                    "Send target email playbooks focusing on our 24/7 dedicated engineering support lines.",
+                    "Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
+                    "Highlight our high-touch onboarding experience for non-technical team managers.",
+                    "Build comparison landing page detailing our direct integration performance."
+                ]
+            # Describe the REAL change(s) we diffed, never a templated invention.
+            # We only reach here with real briefs, so this is grounded data.
             what_changed = [
-                {"type": "repositioning", "text": "Refined hero copy and brand messaging to emphasize developer-first infrastructure."}
-            ]
-            strategic_signals = [
-                f"{comp.name or comp.url} is repositioning towards a pure technical persona, ignoring non-technical builders.",
-                "Subtle copy refinements indicate competitive positioning adjustments to counter rising platforms."
-            ]
-            playbook = [
-                f"Position our platform as the fastest developer-first alternative with zero setup friction.",
-                "Send target email playbooks focusing on our 24/7 dedicated engineering support lines.",
-                "Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
-                "Highlight our high-touch onboarding experience for non-technical team managers.",
-                "Build comparison landing page detailing our direct integration performance."
-            ]
-        
+                {"type": (c.change_type or "repositioning"), "text": c.brief_text}
+                for c in real_changes if c.brief_text
+            ][:4]
+
         weaknesses = fallback_weaknesses
+
+    # Honesty chokepoint: with no real page change this week, the changes quadrant
+    # must be empty regardless of what the model returned (it can still invent one
+    # even when told "no changes"). The card stays driven by hiring/complaints.
+    if not has_change:
+        what_changed = []
 
     # Return rich battle card payload, actions maps to playbook for backwards compatibility
     return {
         "title": f"{comp.name or comp.url} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
         "executive_summary": executive_summary,
         "what_changed": what_changed,
+        "is_baseline": is_baseline,
         "weaknesses": weaknesses[:4],
         "talking_points": playbook,  # Keep mapping to avoid breaking other endpoints if any
         "win_conditions": strategic_signals,

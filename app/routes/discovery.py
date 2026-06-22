@@ -10,6 +10,7 @@ from app.db import get_session
 from app.models import App, AppPricing, AppTech, ChangeEvent, Competitor, ReviewSnapshot
 from app.discovery.search import search_apps
 from app.routes.api_v1 import require_api_user
+from app.serialization import iso_utc
 
 router = APIRouter(prefix="/api/v1", tags=["discovery"])
 
@@ -48,7 +49,7 @@ def api_apps_sitemap(db: Session = Depends(get_session)):
         select(App.slug, App.last_scanned_at).where(App.scan_status != "scan_failed").order_by(App.created_at)
     ).all()
     return {"apps": [
-        {"slug": r[0], "last_scanned_at": r[1].isoformat() if r[1] else None} for r in rows
+        {"slug": r[0], "last_scanned_at": iso_utc(r[1])} for r in rows
     ]}
 
 
@@ -96,7 +97,7 @@ def api_app_profile(slug: str, db: Session = Depends(get_session)):
         "tags": json.loads(app_row.tags) if app_row.tags else [],
         "logo_url": app_row.logo_url,
         "screenshot_url": app_row.screenshot_url,
-        "last_scanned_at": app_row.last_scanned_at.isoformat() if app_row.last_scanned_at else None,
+        "last_scanned_at": iso_utc(app_row.last_scanned_at),
         "pricing": [
             {"tier_name": p.tier_name, "price": p.price, "currency": p.currency,
              "period": p.period, "features": json.loads(p.features) if p.features else []}

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.db import get_session, SessionLocal
 from app.models import Competitor, SocialPost
 from app.routes.api_v1 import require_api_user
+from app.serialization import iso_utc
 import uuid
 import asyncio
 
@@ -87,8 +88,8 @@ def get_social_posts(
                 "platform": p.platform,
                 "post_id": p.post_id,
                 "content": p.content,
-                "posted_at": p.posted_at.isoformat() if p.posted_at else None,
-                "fetched_at": p.fetched_at.isoformat() if p.fetched_at else None,
+                "posted_at": iso_utc(p.posted_at),
+                "fetched_at": iso_utc(p.fetched_at),
                 "sentiment": p.sentiment,
                 "engagement_hint": p.engagement_hint,
             }
