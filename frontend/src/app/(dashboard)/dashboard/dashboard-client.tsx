@@ -375,7 +375,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 <button
                   key={type}
                   onClick={() => setSelectedBusinessType(type)}
-                  className="relative flex items-center gap-3 text-left px-4 py-3 border transition-all cursor-pointer"
+                  className="relative flex items-center gap-3 text-left px-4 py-3 border transition-colors cursor-pointer"
                   style={{
                     borderColor: selected ? 'var(--accent-primary)' : 'var(--border-default)',
                     backgroundColor: selected ? 'var(--accent-subtle)' : 'var(--fill-subtle)',
@@ -398,7 +398,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           <button
             onClick={() => confirmBusinessType(selectedBusinessType)}
             disabled={savingBusinessType}
-            className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             style={{ backgroundColor: 'var(--accent-primary)' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
@@ -521,7 +521,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <button
               type="submit"
               disabled={submittingOnboarding}
-              className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="w-full disabled:opacity-50 text-[var(--accent-text)] py-2.5 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
               style={{ backgroundColor: 'var(--accent-cta)' }}
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta-hover)')}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta)')}

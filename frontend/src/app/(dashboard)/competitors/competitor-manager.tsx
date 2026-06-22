@@ -279,7 +279,7 @@ export default function CompetitorManager({
           <span className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>Tracking limit</span>
           <div className="w-24 h-1.5 bg-[var(--fill-subtle-hover)] rounded-full overflow-hidden">
             <div
-              className="h-full transition-all duration-500"
+              className="h-full transition-[width] duration-500"
               style={{ width: `${filledRatio}%`, backgroundColor: 'var(--accent-primary)' }}
             />
           </div>
@@ -299,7 +299,7 @@ export default function CompetitorManager({
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+          transition={{ duration: 0.24, ease: [0, 0, 0.2, 1] }}
           className="rs-card p-6"
         >
           <div className="px-6 py-20 text-center flex flex-col items-center">
@@ -416,7 +416,7 @@ export default function CompetitorManager({
                       <button
                         onClick={() => handleDelete(comp.id)}
                         disabled={deleting === comp.id}
-                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10 rounded transition-all duration-200 cursor-pointer disabled:opacity-40"
+                        className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10 rounded transition-colors duration-200 cursor-pointer disabled:opacity-40"
                         title="Remove competitor"
                       >
                         <Trash2 size={16} />

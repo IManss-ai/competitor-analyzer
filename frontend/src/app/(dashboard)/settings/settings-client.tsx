@@ -245,7 +245,7 @@ export default function SettingsClient({
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={clsx(
-                'flex items-center gap-3 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-150 cursor-pointer',
+                'flex items-center gap-3 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors duration-150 cursor-pointer',
                 activeTab === tab.id
                   ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--fill-subtle-hover)] hover:text-[var(--text-primary)]'
@@ -298,7 +298,7 @@ export default function SettingsClient({
                       type="button"
                       onClick={() => handleUpdateSetting('business_type', item.id)}
                       className={clsx(
-                        'border p-4 text-left cursor-pointer transition-all',
+                        'border p-4 text-left cursor-pointer transition-colors',
                         settings.business_type === item.id
                           ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                           : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -378,7 +378,7 @@ export default function SettingsClient({
                   <label
                     key={item.id}
                     className={clsx(
-                      'flex items-start gap-4 border p-4 cursor-pointer transition-all',
+                      'flex items-start gap-4 border p-4 cursor-pointer transition-colors',
                       (settings as any).scan_schedule === item.id
                         ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
                         : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
@@ -506,7 +506,7 @@ export default function SettingsClient({
                               onChange={() => handleToggleCompetitor(comp)}
                               className="sr-only peer"
                             />
-                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--accent-primary)] relative"></div>
+                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:bg-[var(--accent-primary)] relative"></div>
                             <span className="ml-2 text-xs font-semibold min-w-[48px]" style={{ color: 'var(--text-secondary)' }}>
                               {comp.active ? 'Active' : 'Paused'}
                             </span>

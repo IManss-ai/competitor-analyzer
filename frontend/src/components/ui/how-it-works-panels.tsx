@@ -263,7 +263,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
           return (
             <div
               key={url}
-              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md border transition-all duration-200 ${
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md border transition-colors duration-200 ${
                 isScanned
                   ? 'bg-sky-950/20 border-sky-500/25 text-sky-300'
                   : 'bg-[var(--fill-subtle-hover)] border-[var(--border-default)] text-[var(--text-muted)]'
@@ -437,7 +437,7 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-md p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 transition-all duration-300 cursor-pointer"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-md p-6 md:p-8 gap-6 md:gap-8 hover:border-sky-500/30 transition-colors duration-300 cursor-pointer"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">
