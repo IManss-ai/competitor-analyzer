@@ -56,6 +56,13 @@ export default function RootLayout({
       className={`${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className={`${archivo.variable} font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
+        {/* No-JS / crawler / OG-snapshot fallback: Framer Motion SSRs scroll-reveal
+            content with inline opacity:0 that only clears via JS. Without JS those
+            regions stay blank for bots, so force them visible. Mirrors the
+            prefers-reduced-motion override in globals.css. */}
+        <noscript>
+          <style>{`[style*="opacity:0"],[style*="opacity: 0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <InlineScript html={`try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='paper'?'paper':'ink')}catch(e){document.documentElement.setAttribute('data-theme','ink')}`} />
         {children}
         <Analytics />
