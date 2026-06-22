@@ -569,9 +569,15 @@ export default function LandingPage() {
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               <ProductDemo />
-              <p className="text-center text-[var(--text-muted)] text-xs font-mono mt-6 max-w-md mx-auto leading-relaxed">
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -120px 0px' }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="text-center text-[var(--text-muted)] text-xs font-mono mt-6 max-w-md mx-auto leading-relaxed"
+              >
                 Every pricing, feature, and messaging change across all tracked competitors — refreshed every 4 hours.
-              </p>
+              </motion.p>
             </motion.div>
           ) : (
             <motion.div
