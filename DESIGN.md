@@ -153,7 +153,7 @@ All gaps/padding/margins use this scale. No arbitrary values.
 | Desktop    | 768px     | `md:`    | Primary layout target (most-used breakpoint) |
 | Wide       | 1024px    | `lg:`    | Max content width ~1280px, centered |
 
-- **Touch targets ≥ 44px** on every interactive element — nav links, theme toggle, footer links, toggles. (Landing nav/footer links currently fall short; fix on sight.)
+- **Touch targets ≥ 44px** on touch-reachable controls — mobile menu, theme toggle, CTAs, brand logo, footer links. **≥24px acceptable for pointer-only desktop nav** (WCAG AA 2.5.8) so the top bar stays slim (matches Linear/Stripe). Never rely on hover alone for clickability.
 - No horizontal scroll at any width; never `user-scalable=no` / `maximum-scale=1`.
 - `xl:` / `2xl:` intentionally unused — layouts top out at `lg`.
 
