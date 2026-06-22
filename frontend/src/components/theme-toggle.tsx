@@ -19,7 +19,7 @@ export default function ThemeToggle() {
             aria-pressed={active}
             aria-label={`${t} theme`}
             onClick={() => setTheme(t)}
-            className="px-2.5 py-1.5 max-md:py-2.5 max-md:px-3 transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center min-h-[44px] px-3.5 transition-colors cursor-pointer"
             style={{
               background: active ? 'var(--accent-subtle)' : 'transparent',
               color: active ? 'var(--accent-primary)' : 'var(--text-muted)',

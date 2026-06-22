@@ -199,7 +199,7 @@ export default function LandingPage() {
               : 'bg-[var(--surface-base)]/60 border-[var(--border-subtle)] backdrop-blur-md'
           }`}
         >
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center min-h-[44px] gap-2.5 group">
             <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
               <RivalscopeLogo size={13} className="text-sky-400" />
             </div>
@@ -213,7 +213,7 @@ export default function LandingPage() {
                 href={item.href}
                 onMouseEnter={() => setHoveredNav(item.key)}
                 onMouseLeave={() => setHoveredNav(null)}
-                className="relative py-1 hover:text-[var(--text-primary)] transition-colors duration-200"
+                className="relative py-2 hover:text-[var(--text-primary)] transition-colors duration-200"
               >
                 <span>{item.label}</span>
                 {hoveredNav === item.key && (
@@ -231,13 +231,13 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link href="/auth/login" className="hidden sm:block text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 py-1.5 whitespace-nowrap">
+            <Link href="/auth/login" className="hidden sm:inline-flex items-center min-h-[44px] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 whitespace-nowrap">
               Sign in
             </Link>
             <MotionLink
               href="/auth/login"
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 py-1.5 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
+              className="inline-flex items-center min-h-[44px] gap-1.5 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
             >
               Get started <ArrowRight size={10} />
             </MotionLink>
@@ -266,7 +266,7 @@ export default function LandingPage() {
             <div className="flex flex-col gap-5">
               {[...navItems, { label: 'Sign in', href: '/auth/login', key: 'signin' }].map((item, i) => (
                 <motion.div key={item.key} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}>
-                  <Link href={item.href} onClick={() => setMenuOpen(false)} className="text-2xl font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors inline-block">
+                  <Link href={item.href} onClick={() => setMenuOpen(false)} className="text-2xl font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors inline-flex items-center min-h-[44px] py-1">
                     {item.label}
                   </Link>
                 </motion.div>
@@ -778,9 +778,9 @@ export default function LandingPage() {
 
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Product</h4>
-              <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
+              <ul className="text-xs text-[var(--text-secondary)]">
                 {[{ label: 'How it works', href: '#how-it-works' }, { label: 'Live Dashboard', href: '#product' }, { label: 'Battle Card', href: '#product' }].map((l) => (
-                  <li key={l.label}><a href={l.href} className="hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
+                  <li key={l.label}><a href={l.href} className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">{l.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -796,10 +796,10 @@ export default function LandingPage() {
 
             <div className="space-y-3">
               <h4 className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)]">Links</h4>
-              <ul className="space-y-2 text-xs text-[var(--text-muted)]">
-                <li><a href="/privacy" className="hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="hover:text-[var(--text-primary)] transition-colors">Terms of Service</a></li>
-                <li><a href="mailto:manssjones@gmail.com" className="hover:text-[var(--text-primary)] transition-colors">Support</a></li>
+              <ul className="text-xs text-[var(--text-muted)]">
+                <li><a href="/privacy" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Terms of Service</a></li>
+                <li><a href="mailto:manssjones@gmail.com" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Support</a></li>
               </ul>
             </div>
           </div>
@@ -809,7 +809,7 @@ export default function LandingPage() {
               &copy; {new Date().getFullYear()} Rivalscope. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-[var(--text-muted)]">
-              <a href="https://github.com/IManss-ai/competitor-analyzer" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="hover:text-[var(--text-primary)] transition-colors">
+              <a href="https://github.com/IManss-ai/competitor-analyzer" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] hover:text-[var(--text-primary)] transition-colors">
                 <Github size={14} />
               </a>
             </div>
