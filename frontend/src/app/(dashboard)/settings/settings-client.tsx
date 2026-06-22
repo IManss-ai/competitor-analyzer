@@ -506,7 +506,7 @@ export default function SettingsClient({
                               onChange={() => handleToggleCompetitor(comp)}
                               className="sr-only peer"
                             />
-                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:bg-[var(--accent-primary)] relative"></div>
+                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[var(--border-strong)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--text-primary)] after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:bg-[var(--accent-primary)] relative"></div>
                             <span className="ml-2 text-xs font-semibold min-w-[48px]" style={{ color: 'var(--text-secondary)' }}>
                               {comp.active ? 'Active' : 'Paused'}
                             </span>
