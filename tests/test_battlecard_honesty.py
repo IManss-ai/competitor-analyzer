@@ -18,13 +18,17 @@ from main import app
 from app.db import Base, get_session
 from app.models import User, Competitor, Snapshot, ChangeEvent
 
-# Phrases the heuristic used to fabricate when there was nothing to diff.
+# Phrases the heuristic used to fabricate when there was nothing to diff —
+# invented changes AND invented "weaknesses" presented as fact.
 FABRICATED_PHRASES = [
     "Refined hero copy",
     "adjusting pricing structure",
     "updated homepage copy",
     "custom quote pricing instead of transparent flat rates",
     "launched a major feature",
+    "Pricing transparency issues on their homepage",
+    "Customer support delays reported in forums",
+    "Mobile user experience lags behind the desktop site",
 ]
 
 

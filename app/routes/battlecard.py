@@ -396,8 +396,11 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
         ).scalars().all()
         weaknesses = [c[:100] for c in complaints_in_db]
 
-    if not weaknesses:
-        # Static baseline weaknesses
+    # Static filler weaknesses are only acceptable on a change-driven card. On a
+    # baseline/quiet card (no real change) presenting invented weaknesses as fact
+    # is the same dishonesty as inventing a change (issue #3, bug #1) — leave them
+    # empty when we have no real complaints to show.
+    if not weaknesses and change_list_texts:
         weaknesses = [
             f"Pricing transparency issues on their homepage.",
             "Customer support delays reported in forums.",
