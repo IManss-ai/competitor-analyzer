@@ -88,6 +88,25 @@ def verify_session_token(token: str) -> dict | None:
         return None
 
 
+# --- Long-lived signed API bearer token (real authentication for the API) ---
+# Replaces the raw user_id as the API credential. Distinct salt from the 5-minute
+# login handoff so the two token types are not interchangeable. Carries only the
+# user_id; signature + expiry mean a forged or expired token is rejected.
+_api_serializer = _USTS(_SK, salt="api-bearer-token")
+API_TOKEN_MAX_AGE = 30 * 24 * 60 * 60  # 30 days
+
+def generate_api_token(user_id: str) -> str:
+    return _api_serializer.dumps({"user_id": str(user_id)})
+
+def verify_api_token(token: str) -> str | None:
+    """Return the user_id for a valid, unexpired api_token, else None."""
+    try:
+        data = _api_serializer.loads(token, max_age=API_TOKEN_MAX_AGE)
+    except Exception:
+        return None
+    return data.get("user_id") if isinstance(data, dict) else None
+
+
 def hash_password(password: str) -> str:
     """Hash password using SHA-256 with a static salt for dependency-free security."""
     salt = "competitor-analyzer-salt-2026-salt"
