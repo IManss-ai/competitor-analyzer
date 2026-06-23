@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Database, Pencil, Check, X, ExternalLink, Loader2, Wand2 } from 'lucide-react';
+import { useApiToken } from '@/lib/use-api-token';
 
 interface DataSourceField {
   key: 'g2_url' | 'trustpilot_url' | 'capterra_url' | 'careers_url';
@@ -47,6 +48,7 @@ interface DataSourcesPanelProps {
 }
 
 export default function DataSourcesPanel({ competitorId, userId, initialValues, onSaved }: DataSourcesPanelProps) {
+  const apiToken = useApiToken();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -80,7 +82,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`,
+          Authorization: `Bearer ${apiToken ?? userId}`,
         },
         body: JSON.stringify(draft),
       });
@@ -115,7 +117,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const res = await fetch(`${apiUrl}/api/v1/competitors/${competitorId}/probe-careers`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${userId}` },
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` },
       });
       if (!res.ok) throw new Error('probe failed');
       const data = await res.json();

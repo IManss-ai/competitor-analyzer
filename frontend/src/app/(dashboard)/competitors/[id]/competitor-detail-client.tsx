@@ -8,6 +8,7 @@ import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
 import { useChartPalette } from '@/lib/chart-theme';
+import { useApiToken } from '@/lib/use-api-token';
 
 const formatTimeAgo = (dateStr: string | null) => {
   if (!dateStr) return 'Never';
@@ -29,6 +30,7 @@ interface CompetitorDetailClientProps {
 }
 
 export default function CompetitorDetailClient({ userId, initialDetail }: CompetitorDetailClientProps) {
+  const apiToken = useApiToken();
   const [detail, setDetail] = useState(initialDetail);
   const [scanning, setScanning] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
@@ -68,13 +70,13 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}` 
+          Authorization: `Bearer ${apiToken ?? userId}` 
         }
       });
       if (res.ok) {
         // Reload detail data
         const reloadRes = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}/detail`, {
-          headers: { Authorization: `Bearer ${userId}` }
+          headers: { Authorization: `Bearer ${apiToken ?? userId}` }
         });
         if (reloadRes.ok) {
           const freshData = await reloadRes.json();
@@ -92,7 +94,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     setRegenerating(true);
     try {
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}?force=true`, {
-        headers: { Authorization: `Bearer ${userId}` }
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` }
       });
       if (res.ok) {
         const freshCard = await res.json();
@@ -112,7 +114,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}` 
+          Authorization: `Bearer ${apiToken ?? userId}` 
         },
         body: JSON.stringify({ name: editName, url: editUrl })
       });

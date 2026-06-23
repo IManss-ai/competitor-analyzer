@@ -1,6 +1,6 @@
 # Auth Hardening Spec — API bearer should not be the raw user_id
 
-**Status:** proposed (scoped by T3/QA on 2026-06-23, not yet implemented)
+**Status:** IMPLEMENTED (Option A) on branch `fix/auth-hardening-signed-token` → PR #21, 2026-06-23. Not yet merged/deployed — see the rollout sequence in the PR (set `ALLOW_LEGACY_UUID_BEARER=true`, deploy both halves, verify login, then set it `false`).
 **Severity:** HIGH (broken authentication)
 **Owner:** T1 (backend) + T2 (frontend) — coordinated change
 

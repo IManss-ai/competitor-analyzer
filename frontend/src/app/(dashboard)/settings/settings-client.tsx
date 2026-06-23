@@ -10,6 +10,7 @@ interface SettingsClientProps {
   initialSettings: SettingsData;
   initialCompetitors: Competitor[];
   userId: string;
+  apiToken?: string;
   checkoutUrl: string;
   portalUrl: string;
 }
@@ -52,10 +53,11 @@ export default function SettingsClient({
   initialSettings,
   initialCompetitors,
   userId,
+  apiToken,
   checkoutUrl,
   portalUrl,
 }: SettingsClientProps) {
-  const api = createApiClient(userId);
+  const api = createApiClient(userId, apiToken);
   const [activeTab, setActiveTab] = useState<'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing'>('profile');
 
   // Form states

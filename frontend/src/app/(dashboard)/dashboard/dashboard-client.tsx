@@ -11,6 +11,7 @@ import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
 import CountUp from '@/components/count-up';
+import { useApiToken } from '@/lib/use-api-token';
 
 interface DashboardClientProps {
   userId: string;
@@ -20,6 +21,7 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ userId, initialData, competitors, isLocalBusiness }: DashboardClientProps) {
+  const apiToken = useApiToken();
   const [dashboardData, setDashboardData] = useState<DashboardData>(initialData);
   const [activityDays, setActivityDays] = useState<{ date: string; change_count: number; scan_count: number }[]>([]);
   const [feedEvents, setFeedEvents] = useState<any[]>(initialData.events.slice(0, 20));
@@ -59,7 +61,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const refreshDashboard = async () => {
     try {
       const dbRes = await fetch(`${apiUrl}/api/v1/dashboard`, {
-        headers: { Authorization: `Bearer ${userId}` }
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` }
       });
       if (dbRes.ok) {
         const freshData = await dbRes.json();
@@ -80,7 +82,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   // Fetch 28-day activity
   useEffect(() => {
     fetch(`${apiUrl}/api/v1/dashboard/activity`, {
-      headers: { Authorization: `Bearer ${userId}` }
+      headers: { Authorization: `Bearer ${apiToken ?? userId}` }
     })
       .then(res => {
         if (!res.ok) throw new Error();
@@ -108,7 +110,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     setOnboardingCardError('');
     try {
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${compId}`, {
-        headers: { Authorization: `Bearer ${userId}` },
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` },
       });
       if (!res.ok) throw new Error('generate failed');
       setOnboardingCard(normalizeBattleCard(await res.json()));
@@ -169,7 +171,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     try {
       await fetch(`${apiUrl}/api/v1/onboarding/business-type`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userId}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiToken ?? userId}` },
         body: JSON.stringify({ business_type: type })
       });
     } catch (_) {}
@@ -202,7 +204,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`
+          Authorization: `Bearer ${apiToken ?? userId}`
         },
         body: JSON.stringify({
           url: urlVal,
@@ -223,7 +225,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       if (selectedBusinessType === 'local' && (onboardingMapsUrl || onboardingInstagram)) {
         await fetch(`${apiUrl}/api/v1/local/competitors/${data.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userId}` },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiToken ?? userId}` },
           body: JSON.stringify({
             google_maps_url: onboardingMapsUrl || null,
             instagram_handle: onboardingInstagram || null,
@@ -246,7 +248,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     setLoadingFeed(true);
     try {
       const res = await fetch(`${apiUrl}/api/v1/dashboard/feed?limit=20&offset=${feedOffset}`, {
-        headers: { Authorization: `Bearer ${userId}` }
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` }
       });
       if (res.ok) {
         const data = await res.json();
@@ -280,7 +282,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`
+          Authorization: `Bearer ${apiToken ?? userId}`
         }
       });
       if (res.ok) {

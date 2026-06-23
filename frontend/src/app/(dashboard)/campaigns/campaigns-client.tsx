@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Swords, Plus } from 'lucide-react';
 import { isAbortError } from '@/lib/fetch-utils';
+import { useApiToken } from '@/lib/use-api-token';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -23,6 +24,7 @@ interface CompetitorOption {
 }
 
 export default function CampaignsClient({ userId }: { userId: string }) {
+  const apiToken = useApiToken();
   const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
   const [competitors, setCompetitors] = useState<CompetitorOption[]>([]);
   const [selected, setSelected] = useState('');
@@ -30,7 +32,7 @@ export default function CampaignsClient({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
 
-  const headers = { Authorization: `Bearer ${userId}`, 'Content-Type': 'application/json' };
+  const headers = { Authorization: `Bearer ${apiToken ?? userId}`, 'Content-Type': 'application/json' };
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);

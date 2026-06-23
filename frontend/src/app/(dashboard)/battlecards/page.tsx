@@ -9,7 +9,7 @@ import BattlecardsClient from './battlecards-client';
 export default async function BattleCardsPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
-  const api = createApiClient(session.user!.user_id);
+  const api = createApiClient(session.user!.user_id, session.user!.api_token);
 
   const data = await api.getCompetitors();
 

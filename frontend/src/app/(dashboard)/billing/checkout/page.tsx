@@ -31,7 +31,7 @@ export default async function BillingCheckoutPage({
   // try/catch — otherwise the success path would be swallowed as an error.
   let checkoutUrl: string | null = null;
   try {
-    const api = createApiClient(session.user.user_id);
+    const api = createApiClient(session.user.user_id, session.user.api_token);
     const { url } = await api.getCheckoutUrl(plan);
     if (url) checkoutUrl = url;
   } catch {

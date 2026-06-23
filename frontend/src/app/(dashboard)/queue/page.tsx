@@ -9,7 +9,7 @@ import QueueManager from './queue-manager';
 export default async function QueuePage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
-  const api = createApiClient(session.user!.user_id);
+  const api = createApiClient(session.user!.user_id, session.user!.api_token);
   const data = await api.getQueue();
 
   return (

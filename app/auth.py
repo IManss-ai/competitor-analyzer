@@ -88,6 +88,47 @@ def verify_session_token(token: str) -> dict | None:
         return None
 
 
+# --- Long-lived signed API bearer token (real authentication for the API) ---
+# Replaces the raw user_id as the API credential. Distinct salt from the 5-minute
+# login handoff so the two token types are not interchangeable. Carries only the
+# user_id; signature + expiry mean a forged or expired token is rejected.
+_api_serializer = _USTS(_SK, salt="api-bearer-token")
+API_TOKEN_MAX_AGE = 30 * 24 * 60 * 60  # 30 days
+
+def generate_api_token(user_id: str) -> str:
+    return _api_serializer.dumps({"user_id": str(user_id)})
+
+def verify_api_token(token: str) -> str | None:
+    """Return the user_id for a valid, unexpired api_token, else None."""
+    try:
+        data = _api_serializer.loads(token, max_age=API_TOKEN_MAX_AGE)
+    except Exception:
+        return None
+    return data.get("user_id") if isinstance(data, dict) else None
+
+
+def resolve_bearer_user_id(token: str) -> str | None:
+    """Single source of truth for turning a bearer token into a user_id.
+
+    Preferred: a signed api_token (signature + expiry). Legacy: a raw user_id
+    UUID, accepted ONLY when ALLOW_LEGACY_UUID_BEARER is set (deprecation window;
+    off in production by default). Returns None if neither applies. Every path
+    that authenticates a bearer must go through this so the hole is closed in one
+    place. See docs/.../2026-06-23-AUTH-HARDENING-SPEC.md.
+    """
+    user_id = verify_api_token(token)
+    if user_id:
+        return user_id
+    from app.config import ALLOW_LEGACY_UUID_BEARER
+    if ALLOW_LEGACY_UUID_BEARER:
+        try:
+            uuid.UUID(token)
+            return token
+        except (ValueError, AttributeError, TypeError):
+            return None
+    return None
+
+
 def hash_password(password: str) -> str:
     """Hash password using SHA-256 with a static salt for dependency-free security."""
     salt = "competitor-analyzer-salt-2026-salt"

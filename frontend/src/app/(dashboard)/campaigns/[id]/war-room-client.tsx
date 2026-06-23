@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Check, X, RefreshCw, ArrowLeft, Sparkles } from 'lucide-react';
 import Topbar from '@/components/topbar';
 import { isAbortError } from '@/lib/fetch-utils';
+import { useApiToken } from '@/lib/use-api-token';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -49,11 +50,12 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export default function WarRoomClient({ campaignId, userId }: { campaignId: string; userId: string }) {
+  const apiToken = useApiToken();
   const [room, setRoom] = useState<WarRoom | null>(null);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
 
-  const headers = { Authorization: `Bearer ${userId}`, 'Content-Type': 'application/json' };
+  const headers = { Authorization: `Bearer ${apiToken ?? userId}`, 'Content-Type': 'application/json' };
 
   const load = useCallback(async (signal?: AbortSignal) => {
     try {
