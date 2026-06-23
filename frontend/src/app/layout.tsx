@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, IBM_Plex_Mono } from 'next/font/google';
+import { Space_Grotesk, IBM_Plex_Mono, Geist } from 'next/font/google';
 import { InlineScript } from '@/components/inline-script';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 // Redesign: Space Grotesk (appkittie language) flows through the existing
 // --font-archivo variable so the whole app re-fonts in one swap.
@@ -53,7 +57,7 @@ export default function RootLayout({
       data-theme="ink"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", archivo.variable, ibmPlexMono.variable, "font-sans", geist.variable)}
     >
       <body className={`${archivo.variable} font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50`} style={{ backgroundColor: 'var(--surface-base)' }}>
         {/* No-JS / crawler / OG-snapshot fallback: Framer Motion SSRs scroll-reveal
