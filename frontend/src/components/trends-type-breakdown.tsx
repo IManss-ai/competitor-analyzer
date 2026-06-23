@@ -26,7 +26,7 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
   if (!hasAnyChanges) {
     return (
       <div className="h-[220px] w-full flex items-center justify-center">
-        <p className="text-[12px] font-mono" style={{ color: 'var(--text-muted)' }}>
+        <p className="text-[12px] font-mono text-muted-foreground">
           No changes classified yet — the breakdown fills in as scans detect them.
         </p>
       </div>
@@ -53,11 +53,11 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
             tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--text-primary)', borderRadius: 'var(--radius-md)', border: `1px solid ${p.tooltipBorder}`, boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
-            itemStyle={{ color: 'var(--text-primary)', padding: '2px 0' }}
+            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--foreground)', borderRadius: 'var(--radius-md)', border: `1px solid ${p.tooltipBorder}`, fontSize: '11px', fontFamily: 'var(--font-mono)' }}
+            itemStyle={{ color: 'var(--foreground)', padding: '2px 0' }}
             cursor={{ fill: p.cursor }}
           />
-          <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }} />
+          <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)' }} />
           <Bar dataKey="pricing_change" name="Pricing Change" stackId="a" fill={p.warning} />
           <Bar dataKey="new_feature" name="New Feature" stackId="a" fill={p.positive} />
           <Bar dataKey="positioning_shift" name="Positioning Shift" stackId="a" fill={p.violet} />
