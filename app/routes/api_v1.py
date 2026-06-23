@@ -1033,19 +1033,31 @@ async def api_billing_checkout_url(
     user_id: str = Depends(require_api_user),
     db: Session = Depends(get_session)
 ):
+    import logging
     from app.billing import create_checkout_session
     from app.config import FRONTEND_URL
     user_uuid = uuid.UUID(user_id)
     user = db.get(User, user_uuid)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    url = await create_checkout_session(
-        user.email,
-        str(user.id),
-        plan_type=plan,
-        success_url=f"{FRONTEND_URL}/billing/success",
-        cancel_url=f"{FRONTEND_URL}/settings",
-    )
+    try:
+        url = await create_checkout_session(
+            user.email,
+            str(user.id),
+            plan_type=plan,
+            success_url=f"{FRONTEND_URL}/billing/success",
+            cancel_url=f"{FRONTEND_URL}/settings",
+        )
+    except ValueError as e:
+        # Billing not configured yet (missing Polar product ID / access token).
+        # Degrade gracefully instead of a raw 500 so the client can show a
+        # "billing unavailable" state rather than a crash.
+        logging.getLogger(__name__).warning("Checkout URL unavailable, billing not configured: %s", e)
+        raise HTTPException(status_code=503, detail="Billing is not available right now. Please try again later.")
+    except Exception as e:
+        # Polar SDK / network failure — same graceful degradation as above.
+        logging.getLogger(__name__).error("Checkout session creation failed: %s", e)
+        raise HTTPException(status_code=503, detail="Could not start checkout. Please try again later.")
     return {"url": url}
 
 
