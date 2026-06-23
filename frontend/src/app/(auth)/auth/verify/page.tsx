@@ -3,6 +3,7 @@
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 function VerifyContent() {
   const router = useRouter();
@@ -10,7 +11,7 @@ function VerifyContent() {
 
   useEffect(() => {
     const sessionToken = searchParams.get('session_token');
-    
+
     if (!sessionToken) {
       router.replace('/auth/login?error=missing_token');
       return;
@@ -25,12 +26,14 @@ function VerifyContent() {
   }, [router, searchParams]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--surface-base)' }}>
-      <div className="rounded-md p-8 max-w-sm w-full text-center" style={{ background: 'var(--surface-raised)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-card)' }}>
-        <Loader2 size={32} className="animate-spin mx-auto mb-4" style={{ color: 'var(--accent-primary)' }} />
-        <h1 className="text-lg font-semibold mb-2 tracking-tight" style={{ color: 'var(--text-primary)' }}>Verifying your link</h1>
-        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Please wait while we securely sign you in.</p>
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+      <Card className="max-w-sm w-full text-center">
+        <CardContent className="pt-8 pb-8">
+          <Loader2 size={32} className="animate-spin mx-auto mb-4 text-primary" />
+          <h1 className="text-lg font-semibold mb-2 tracking-tight text-foreground">Verifying your link</h1>
+          <p className="text-sm text-muted-foreground">Please wait while we securely sign you in.</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -38,10 +41,12 @@ function VerifyContent() {
 export default function VerifyPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'var(--surface-base)' }}>
-        <div className="rounded-md p-8 max-w-sm w-full text-center" style={{ background: 'var(--surface-raised)', border: '1px solid var(--border-default)', boxShadow: 'var(--shadow-card)' }}>
-          <Loader2 size={32} className="animate-spin mx-auto mb-4" style={{ color: 'var(--accent-primary)' }} />
-        </div>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+        <Card className="max-w-sm w-full text-center">
+          <CardContent className="pt-8 pb-8">
+            <Loader2 size={32} className="animate-spin mx-auto mb-4 text-primary" />
+          </CardContent>
+        </Card>
       </div>
     }>
       <VerifyContent />
