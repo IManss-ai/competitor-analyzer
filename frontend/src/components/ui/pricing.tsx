@@ -115,7 +115,7 @@ export function Pricing({
               opacity: { duration: 0.5 },
             }}
             className={cn(
-              `rounded-md border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative`,
+              `rounded-lg border-[1px] p-6 bg-card text-center lg:flex lg:flex-col lg:justify-center relative shadow-sm`,
               plan.isPopular ? "border-primary border-2" : "border-border",
               "flex flex-col",
               !plan.isPopular && "mt-5",
@@ -127,7 +127,7 @@ export function Pricing({
             )}
           >
             {plan.isPopular && (
-              <div className="absolute top-0 right-0 bg-primary py-0.5 px-2 rounded-bl-xl rounded-tr-xl flex items-center">
+              <div className="absolute top-0 right-0 bg-primary py-0.5 px-2 rounded-bl-lg rounded-tr-lg flex items-center">
                 <Star className="text-primary-foreground h-4 w-4 fill-current" />
                 <span className="text-primary-foreground ml-1 font-sans font-semibold">
                   Popular
@@ -190,7 +190,7 @@ export function Pricing({
                   "transform-gpu ring-offset-current transition-colors duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
                   plan.isPopular
                     ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-background text-foreground border-input"
+                    : "bg-card text-foreground border-input"
                 )}
               >
                 {plan.buttonText}

@@ -63,28 +63,28 @@ export default function ProductDemo() {
 
       {/* App window — soft lift so the frame has presence on paper-light
           (where the accent glow alone barely reads); glow carries it on ink. */}
-      <div className="overflow-hidden rounded-lg border border-[var(--border-default)] bg-[var(--surface-raised)] shadow-[var(--shadow-elevated)]">
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
         {/* Browser chrome */}
-        <div className="flex items-center gap-3 border-b border-[var(--border-default)] px-4 py-3 bg-[var(--surface-base)]">
+        <div className="flex items-center gap-3 border-b border-border px-4 py-3 bg-background">
           <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--border-strong)]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-border" />
+            <span className="h-2.5 w-2.5 rounded-full bg-border" />
+            <span className="h-2.5 w-2.5 rounded-full bg-border" />
           </div>
-          <div className="mx-auto flex max-w-xs flex-1 items-center justify-center gap-2 rounded border border-[var(--border-subtle)] bg-[var(--fill-subtle)] px-3 py-1">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--tone-positive)' }} />
-            <span className="truncate font-mono text-[10px] tracking-wide text-[var(--text-muted)]">
+          <div className="mx-auto flex max-w-xs flex-1 items-center justify-center gap-2 rounded-md border border-border bg-muted px-3 py-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="truncate font-mono text-[10px] tracking-wide text-muted-foreground">
               app.rivalscope.dev/command-center
             </span>
           </div>
-          <span className="hidden font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)] sm:inline">
+          <span className="hidden font-mono text-[9px] uppercase tracking-wider text-muted-foreground sm:inline">
             Live
           </span>
         </div>
 
         {/* Recording (one <video> per theme so sources reload on switch).
             Source is 2× the display size, so the slow Ken Burns zoom stays crisp. */}
-        <div className="relative aspect-[2600/1072] w-full overflow-hidden bg-[var(--surface-raised)]">
+        <div className="relative aspect-[2600/1072] w-full overflow-hidden bg-muted">
           <motion.video
             key={demoVariant}
             ref={videoRef}
