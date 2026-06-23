@@ -10,15 +10,19 @@ from app.db import get_session
 from app.models import App, AppPricing, AppTech, ChangeEvent, Competitor, ReviewSnapshot
 from app.discovery.search import search_apps
 from app.routes.api_v1 import require_api_user
+from app.auth import resolve_bearer_user_id
 from app.serialization import iso_utc
 
 router = APIRouter(prefix="/api/v1", tags=["discovery"])
 
 
 def _optional_user(authorization: str | None) -> str | None:
+    # Same signed-token gate as require_api_user: an unsigned/garbage bearer no
+    # longer counts as "signed in" (it gated paid sorting). Returns None unless
+    # the bearer resolves to a real user.
     if not authorization or not authorization.startswith("Bearer "):
         return None
-    return authorization.split(" ", 1)[1]
+    return resolve_bearer_user_id(authorization.split(" ", 1)[1])
 
 
 @router.get("/apps/search")

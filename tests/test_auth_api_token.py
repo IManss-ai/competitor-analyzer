@@ -67,22 +67,38 @@ class TestApiTokenAuth(unittest.TestCase):
         self.assertEqual(self._get_settings(generate_api_token(self.uid)).status_code, 200)
 
     def test_raw_uuid_rejected_when_legacy_off(self):
-        with patch("app.routes.api_v1.ALLOW_LEGACY_UUID_BEARER", False):
+        with patch("app.config.ALLOW_LEGACY_UUID_BEARER", False):
             self.assertEqual(self._get_settings(self.uid).status_code, 401)
             # signed token still works with legacy off
             self.assertEqual(self._get_settings(generate_api_token(self.uid)).status_code, 200)
 
     def test_raw_uuid_accepted_when_legacy_on(self):
-        with patch("app.routes.api_v1.ALLOW_LEGACY_UUID_BEARER", True):
+        with patch("app.config.ALLOW_LEGACY_UUID_BEARER", True):
             self.assertEqual(self._get_settings(self.uid).status_code, 200)
 
     def test_tampered_token_rejected_even_with_legacy_on(self):
         tampered = generate_api_token(self.uid)[:-3] + "xyz"
-        with patch("app.routes.api_v1.ALLOW_LEGACY_UUID_BEARER", True):
+        with patch("app.config.ALLOW_LEGACY_UUID_BEARER", True):
             self.assertEqual(self._get_settings(tampered).status_code, 401)
 
     def test_no_bearer_is_401(self):
         self.assertEqual(self.client.get("/api/v1/settings").status_code, 401)
+
+    # --- the discovery sort gate uses the same resolver ---
+    def test_discovery_sort_gate_requires_signed_token(self):
+        with patch("app.config.ALLOW_LEGACY_UUID_BEARER", False):
+            # a raw uuid no longer counts as "signed in" for paid sorting
+            r = self.client.get(
+                "/api/v1/apps/search?sort=newest",
+                headers={"Authorization": f"Bearer {self.uid}"},
+            )
+            self.assertEqual(r.status_code, 401)
+            # a valid signed token passes the gate
+            ok = self.client.get(
+                "/api/v1/apps/search?sort=newest",
+                headers={"Authorization": f"Bearer {generate_api_token(self.uid)}"},
+            )
+            self.assertEqual(ok.status_code, 200)
 
     # --- exchange mints a working api_token ---
     def test_exchange_returns_usable_api_token(self):
@@ -92,7 +108,7 @@ class TestApiTokenAuth(unittest.TestCase):
         api_token = resp.json().get("api_token")
         self.assertTrue(api_token)
         self.assertEqual(verify_api_token(api_token), self.uid)
-        with patch("app.routes.api_v1.ALLOW_LEGACY_UUID_BEARER", False):
+        with patch("app.config.ALLOW_LEGACY_UUID_BEARER", False):
             self.assertEqual(self._get_settings(api_token).status_code, 200)
 
 

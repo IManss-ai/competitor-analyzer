@@ -3,8 +3,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from app.db import get_session
 from app.models import User, Competitor, ChangeEvent, Snapshot, ApprovedAction, ReviewSnapshot, Review
-from app.auth import generate_session_token, verify_session_token, get_or_create_user, generate_magic_link_token, send_magic_link_email, generate_api_token, verify_api_token
-from app.config import ALLOW_LEGACY_UUID_BEARER
+from app.auth import generate_session_token, verify_session_token, get_or_create_user, generate_magic_link_token, send_magic_link_email, generate_api_token, resolve_bearer_user_id
 import json as _json
 from app.config import RESEND_API_KEY, FROM_EMAIL, APP_BASE_URL
 from datetime import datetime, timezone, timedelta, date
@@ -26,20 +25,9 @@ from app.serialization import iso_utc as _iso_utc
 def require_api_user(authorization: str = Header(default=None)) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.split(" ", 1)[1]
-    # Preferred path: a signed api_token (signature + expiry = real auth).
-    user_id = verify_api_token(token)
+    user_id = resolve_bearer_user_id(authorization.split(" ", 1)[1])
     if user_id:
         return user_id
-    # Legacy path: a raw user_id UUID. No signature/expiry — the broken-auth
-    # credential. Accepted only behind ALLOW_LEGACY_UUID_BEARER (off in prod by
-    # default) for the coordinated-rollout deprecation window. See AUTH-HARDENING-SPEC.
-    if ALLOW_LEGACY_UUID_BEARER:
-        try:
-            uuid.UUID(token)
-            return token
-        except ValueError:
-            pass
     raise HTTPException(status_code=401, detail="Not authenticated")
 
 
