@@ -56,12 +56,22 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-[var(--text-primary)]">4. Subscriptions & Billing</h2>
             <p>
-              We process subscription billing via secure, third-party payment gateways. Refunds and cancelations are governed by the specific tier and terms agreed during subscription signup.
+              Paid plans are billed in advance on a recurring monthly basis through our payment processor (Polar). Your subscription renews automatically each period until you cancel. After the free trial ends, accounts without an active paid subscription move to a read-only state: scheduled scans are paused and write actions (adding competitors, running scans, generating battle cards, approving actions) are disabled until you upgrade.
+            </p>
+          </section>
+
+          <section className="space-y-3" id="refunds">
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">5. Refunds & Cancellation</h2>
+            <p>
+              You can cancel anytime from the customer portal (Settings → Billing → Manage subscription). Cancellation stops future renewals; you keep paid access until the end of the billing period you have already paid for, after which your account reverts to the read-only state described above. Your data is retained — upgrading again restores full access.
+            </p>
+            <p>
+              We do not issue refunds for partial billing periods or for unused time on an active subscription. If you were charged in error or believe there is a billing problem, email <a href="mailto:support@rivalscope.dev" className="text-sky-400 hover:text-sky-300 transition-colors">support@rivalscope.dev</a> and we&apos;ll make it right.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">5. Limitation of Liability</h2>
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">6. Limitation of Liability</h2>
             <p>
               Rivalscope scans and playbooks are generated using automated algorithms and large language models. We do not warrant the absolute accuracy of classified changes or generated scripts. Rivalscope is provided &quot;as is&quot; with no warranty for specific outcomes.
             </p>

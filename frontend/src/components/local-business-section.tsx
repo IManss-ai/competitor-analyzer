@@ -7,12 +7,14 @@ interface LocalBusinessSectionProps {
   competitors: Competitor[];
   isLocalBusiness: boolean;
   userId: string;
+  readOnly?: boolean;
 }
 
 export default function LocalBusinessSection({
   competitors,
   isLocalBusiness,
   userId,
+  readOnly = false,
 }: LocalBusinessSectionProps) {
   if (!isLocalBusiness) return null;
 
@@ -95,6 +97,7 @@ export default function LocalBusinessSection({
               <LocalScanButton
                 competitorId={competitors[0].id}
                 userId={userId}
+                readOnly={readOnly}
               />
             )}
           </div>

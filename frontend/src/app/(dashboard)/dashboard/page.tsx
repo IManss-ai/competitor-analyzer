@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
+import { isReadOnly } from '@/lib/access';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import ScanNowButton from '@/components/scan-now-button';
@@ -22,7 +23,8 @@ export default async function DashboardPage() {
   ]);
   
   const isLocalBusiness = settings.business_type === 'local';
-  
+  const readOnly = isReadOnly(settings.subscription_status, settings.trial_ends_at);
+
   const reviewsPromises = compData.competitors.map(c => 
     api.getCompetitorReviews(c.id).catch(() => ({ snapshots: [], recent_complaints: [] }))
   );
@@ -35,14 +37,15 @@ export default async function DashboardPage() {
         title="Dashboard"
         subtitle="Your B2B SaaS Intel Headquarters"
         lastScan={dashboardData.last_scan}
-        actions={<ScanNowButton userId={session.user!.user_id} />}
+        actions={<ScanNowButton userId={session.user!.user_id} readOnly={readOnly} />}
       />
 
-      <DashboardClient 
+      <DashboardClient
         userId={session.user!.user_id}
         initialData={dashboardData}
         competitors={compData.competitors}
         isLocalBusiness={isLocalBusiness}
+        readOnly={readOnly}
       />
 
       <DashboardSection className="mt-6">
@@ -58,6 +61,7 @@ export default async function DashboardPage() {
             competitors={compData.competitors}
             isLocalBusiness={isLocalBusiness}
             userId={session.user!.user_id}
+            readOnly={readOnly}
           />
         </DashboardSection>
       )}

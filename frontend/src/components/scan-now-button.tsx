@@ -1,14 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { RefreshCw, Lock } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
-export default function ScanNowButton({ userId }: { userId: string }) {
+export default function ScanNowButton({ userId, readOnly = false }: { userId: string; readOnly?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
 
   const handleScan = async () => {
+    if (readOnly) return;
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -16,6 +19,11 @@ export default function ScanNowButton({ userId }: { userId: string }) {
         method: 'POST',
         headers: { Authorization: `Bearer ${userId}` },
       });
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 5000);
@@ -32,11 +40,12 @@ export default function ScanNowButton({ userId }: { userId: string }) {
       <button
         id="scan-now-btn"
         onClick={handleScan}
-        disabled={loading}
+        disabled={loading || readOnly}
+        title={readOnly ? 'Your trial has ended — upgrade to resume scans' : undefined}
         className="rs-btn-ghost text-[12px]"
       >
-        <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-        {loading ? 'Scanning…' : 'Scan Now'}
+        {readOnly ? <Lock size={13} /> : <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />}
+        {readOnly ? 'Upgrade to scan' : loading ? 'Scanning…' : 'Scan Now'}
       </button>
 
       <AnimatePresence>
