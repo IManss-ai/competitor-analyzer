@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 import { Database, Pencil, Check, X, ExternalLink, Loader2, Wand2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 
 interface DataSourceField {
   key: 'g2_url' | 'trustpilot_url' | 'capterra_url' | 'careers_url';
@@ -138,138 +143,149 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
   const connectedCount = Object.values(values).filter(Boolean).length;
 
   return (
-    <div className="rs-card p-5">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Database size={16} style={{ color: 'var(--accent-primary)' }} />
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Data Sources
-          </h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border border-[var(--border-default)] text-[var(--text-muted)]">
-            {connectedCount}/{SAAS_FIELDS.length} connected
-          </span>
+    <Card>
+      <CardContent className="pt-5 pb-5">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Database size={16} className="text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">
+              Data Sources
+            </h3>
+            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md border border-border text-muted-foreground">
+              {connectedCount}/{SAAS_FIELDS.length} connected
+            </span>
+          </div>
+          {!editing && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={startEdit}
+              className="cursor-pointer"
+            >
+              <Pencil size={12} />
+              Edit
+            </Button>
+          )}
         </div>
-        {!editing && (
-          <button
-            onClick={startEdit}
-            className="rs-btn-ghost !px-3 !py-2 text-xs cursor-pointer"
-          >
-            <Pencil size={12} />
-            Edit
-          </button>
-        )}
-      </div>
 
-      <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
-        Override auto-derived URLs when the homepage domain doesn&apos;t match the platform slug. Setting a Careers URL enables hiring-signal tracking.
-      </p>
+        <p className="text-xs text-muted-foreground mb-4">
+          Override auto-derived URLs when the homepage domain doesn&apos;t match the platform slug. Setting a Careers URL enables hiring-signal tracking.
+        </p>
 
-      <div className="space-y-3">
-        {SAAS_FIELDS.map(field => {
-          const currentValue = values[field.key];
-          const draftValue = draft[field.key];
-          const isCareers = field.key === 'careers_url';
-          return (
-            <div key={field.key} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
-                  {field.label}
-                </label>
-                <div className="flex items-center gap-2">
-                  {isCareers && !currentValue && (
-                    <button
-                      onClick={detectCareers}
-                      disabled={probingCareers}
-                      className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline disabled:opacity-50 cursor-pointer"
-                      style={{ color: 'var(--accent-primary)' }}
+        <div className="space-y-4">
+          {SAAS_FIELDS.map((field, index) => {
+            const currentValue = values[field.key];
+            const draftValue = draft[field.key];
+            const isCareers = field.key === 'careers_url';
+            return (
+              <div key={field.key}>
+                {index > 0 && <Separator className="mb-4" />}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-medium text-muted-foreground">
+                      {field.label}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      {isCareers && !currentValue && (
+                        <button
+                          onClick={detectCareers}
+                          disabled={probingCareers}
+                          className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline disabled:opacity-50 cursor-pointer text-primary"
+                        >
+                          {probingCareers ? <Loader2 size={9} className="animate-spin" /> : <Wand2 size={9} />}
+                          {probingCareers ? 'Detecting' : 'Detect'}
+                        </button>
+                      )}
+                      {isCareers && probeResult === 'not-found' && (
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--tone-warning)]">
+                          No common path matched
+                        </span>
+                      )}
+                      {!editing && currentValue && (
+                        <a
+                          href={currentValue}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline text-primary"
+                        >
+                          Open <ExternalLink size={9} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  {editing ? (
+                    <Input
+                      type="url"
+                      value={draftValue}
+                      onChange={e => updateDraft(field.key, e.target.value)}
+                      placeholder={field.placeholder}
+                      className="w-full text-xs font-mono"
+                    />
+                  ) : (
+                    <p
+                      className="text-xs font-mono truncate"
+                      style={{ color: currentValue ? undefined : undefined }}
+                      title={currentValue || 'Auto-derived from homepage'}
                     >
-                      {probingCareers ? <Loader2 size={9} className="animate-spin" /> : <Wand2 size={9} />}
-                      {probingCareers ? 'Detecting' : 'Detect'}
-                    </button>
+                      {currentValue
+                        ? <span className="text-foreground">{currentValue}</span>
+                        : <span className="italic text-muted-foreground">Auto-derived from homepage</span>
+                      }
+                    </p>
                   )}
-                  {isCareers && probeResult === 'not-found' && (
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--tone-warning)]">
-                      No common path matched
-                    </span>
-                  )}
-                  {!editing && currentValue && (
-                    <a
-                      href={currentValue}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline"
-                      style={{ color: 'var(--accent-primary)' }}
-                    >
-                      Open <ExternalLink size={9} />
-                    </a>
+                  {editing && (
+                    <p className="text-[10px] text-muted-foreground">
+                      {field.helpText}
+                    </p>
                   )}
                 </div>
               </div>
-              {editing ? (
-                <input
-                  type="url"
-                  value={draftValue}
-                  onChange={e => updateDraft(field.key, e.target.value)}
-                  placeholder={field.placeholder}
-                  className="rs-input w-full !py-2 !px-3 text-xs font-mono"
-                />
-              ) : (
-                <p
-                  className="text-xs font-mono truncate"
-                  style={{ color: currentValue ? 'var(--text-primary)' : 'var(--text-muted)' }}
-                  title={currentValue || 'Auto-derived from homepage'}
-                >
-                  {currentValue || <span className="italic">Auto-derived from homepage</span>}
-                </p>
-              )}
-              {editing && (
-                <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                  {field.helpText}
-                </p>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {editing && (
-        <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-[var(--border-default)]">
-          {error ? (
-            <span className="text-xs" style={{ color: 'var(--tone-danger)' }}>{error}</span>
-          ) : (
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
-              Empty fields clear the override
-            </span>
-          )}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={cancelEdit}
-              disabled={saving}
-              className="rs-btn-ghost !px-3 !py-2 text-xs cursor-pointer"
-            >
-              <X size={12} />
-              Cancel
-            </button>
-            <button
-              onClick={save}
-              disabled={saving}
-              className="rs-btn-primary !px-3 !py-2 text-xs cursor-pointer"
-            >
-              {saving ? (
-                <>
-                  <Loader2 size={12} className="animate-spin" />
-                  Saving
-                </>
-              ) : (
-                <>
-                  <Check size={12} />
-                  Save
-                </>
-              )}
-            </button>
-          </div>
+            );
+          })}
         </div>
-      )}
-    </div>
+
+        {editing && (
+          <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-border">
+            {error ? (
+              <span className="text-xs text-destructive">{error}</span>
+            ) : (
+              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                Empty fields clear the override
+              </span>
+            )}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={cancelEdit}
+                disabled={saving}
+                className="cursor-pointer"
+              >
+                <X size={12} />
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={save}
+                disabled={saving}
+                className="cursor-pointer"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin" />
+                    Saving
+                  </>
+                ) : (
+                  <>
+                    <Check size={12} />
+                    Save
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
