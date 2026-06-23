@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Pencil, X, Copy, CheckCircle2, RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Check, Pencil, X, Copy, CheckCircle2, RefreshCw, Lock } from 'lucide-react';
 import ChangeBadge from '@/components/change-badge';
 import type { QueueAction } from '@/lib/types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -9,19 +10,26 @@ import { motion, AnimatePresence } from 'motion/react';
 interface QueueManagerProps {
   initialActions: QueueAction[];
   userId: string;
+  // Read-only trial-freeze: gate "Approve action" and route to upgrade.
+  readOnly?: boolean;
 }
 
-export default function QueueManager({ initialActions, userId }: QueueManagerProps) {
+export default function QueueManager({ initialActions, userId, readOnly = false }: QueueManagerProps) {
   const [actions, setActions] = useState(initialActions);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [approving, setApproving] = useState<string | null>(null);
   const [approvedId, setApprovedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const router = useRouter();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   const handleApprove = async (id: string, editedText?: string) => {
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     setApproving(id);
     try {
       const res = await fetch(`${apiUrl}/api/v1/queue/${id}/approve`, {
@@ -32,6 +40,12 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
         },
         body: JSON.stringify({ edited_text: editedText }),
       });
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        setApproving(null);
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         setApprovedId(id);
         setTimeout(() => {
@@ -171,22 +185,25 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                   {/* Actions Buttons */}
                   <div className="flex items-center gap-3 mt-auto">
                     <motion.button
-                      whileTap={{ scale: 0.99 }}
+                      whileTap={readOnly ? undefined : { scale: 0.99 }}
                       onClick={() =>
                         handleApprove(
                           action.id,
                           editingId === action.id ? editText : undefined
                         )
                       }
-                      disabled={approving === action.id || approvedId === action.id}
+                      disabled={approving === action.id || approvedId === action.id || readOnly}
+                      title={readOnly ? 'Your trial has ended — upgrade to approve actions' : undefined}
                       className="rs-btn-primary cursor-pointer"
                     >
-                      {approving === action.id ? (
+                      {readOnly ? (
+                        <Lock size={15} />
+                      ) : approving === action.id ? (
                         <RefreshCw size={15} className="animate-spin" />
                       ) : (
                         <Check size={15}  />
                       )}
-                      <span>{approving === action.id ? 'Approving…' : 'Approve action'}</span>
+                      <span>{readOnly ? 'Upgrade to approve' : approving === action.id ? 'Approving…' : 'Approve action'}</span>
                     </motion.button>
 
                     {editingId === action.id ? (

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Trash2, Plus, ExternalLink, ChevronDown, Store } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Trash2, Plus, ExternalLink, ChevronDown, Store, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
 import { competitorDomain } from '@/lib/utils';
@@ -12,13 +13,17 @@ interface CompetitorManagerProps {
   initialCompetitors: Competitor[];
   initialAtLimit: boolean;
   userId: string;
+  // Read-only trial-freeze: gate Add Competitor and route to upgrade.
+  readOnly?: boolean;
 }
 
 export default function CompetitorManager({
   initialCompetitors,
   initialAtLimit,
   userId,
+  readOnly = false,
 }: CompetitorManagerProps) {
+  const router = useRouter();
   const [competitors, setCompetitors] = useState(initialCompetitors);
   const [atLimit, setAtLimit] = useState(initialAtLimit);
   const [showAdd, setShowAdd] = useState(false);
@@ -46,6 +51,10 @@ export default function CompetitorManager({
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     setAdding(true);
     setError('');
     const normalizedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
@@ -58,6 +67,12 @@ export default function CompetitorManager({
         },
         body: JSON.stringify({ url: normalizedUrl, name: name || undefined }),
       });
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        setAdding(false);
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         const newComp = await res.json();
 
@@ -133,12 +148,13 @@ export default function CompetitorManager({
           Track up to 7 competitor websites. We check for pricing changes, feature launches, and messaging shifts every week.
         </p>
         <button
-          onClick={() => setShowAdd(!showAdd)}
-          disabled={atLimit}
+          onClick={() => (readOnly ? router.push('/billing/checkout') : setShowAdd(!showAdd))}
+          disabled={atLimit || readOnly}
+          title={readOnly ? 'Your trial has ended — upgrade to add competitors' : undefined}
           className="rs-btn-primary flex-shrink-0 cursor-pointer"
         >
-          <Plus size={16} />
-          Add Competitor
+          {readOnly ? <Lock size={16} /> : <Plus size={16} />}
+          {readOnly ? 'Upgrade to add' : 'Add Competitor'}
         </button>
       </div>
 
@@ -183,10 +199,11 @@ export default function CompetitorManager({
                 </div>
                 <button
                   type="submit"
-                  disabled={adding}
+                  disabled={adding || readOnly}
+                  title={readOnly ? 'Your trial has ended — upgrade to add competitors' : undefined}
                   className="rs-btn-primary w-full md:w-auto cursor-pointer"
                 >
-                  {adding ? 'Adding…' : 'Add to watchlist'}
+                  {readOnly ? 'Upgrade to add' : adding ? 'Adding…' : 'Add to watchlist'}
                 </button>
               </form>
 
@@ -325,10 +342,12 @@ export default function CompetitorManager({
               <button onClick={() => { setShowAdd(true); setUrl('https://linear.app'); }} className="text-xs px-2 py-1 rounded transition-colors cursor-pointer" style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--border-default)' }}>linear.app</button>
             </div>
             <button
-              onClick={() => setShowAdd(true)}
+              onClick={() => (readOnly ? router.push('/billing/checkout') : setShowAdd(true))}
+              disabled={readOnly}
+              title={readOnly ? 'Your trial has ended — upgrade to add competitors' : undefined}
               className="rs-btn-primary cursor-pointer"
             >
-              Add your first competitor
+              {readOnly ? 'Upgrade to add competitors' : 'Add your first competitor'}
             </button>
           </div>
         </motion.div>
@@ -408,6 +427,7 @@ export default function CompetitorManager({
                         competitorId={comp.id}
                         competitorName={comp.name || hostname}
                         userId={userId}
+                        readOnly={readOnly}
                       />
                       <button
                         onClick={() => handleDelete(comp.id)}

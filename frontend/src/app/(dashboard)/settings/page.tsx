@@ -17,13 +17,22 @@ export default async function SettingsPage() {
     api.getCompetitors(true)
   ]);
 
+  // Drive which billing URL we pre-fetch off subscription status (not "did the
+  // portal call throw"): active subscribers get the customer portal ("Manage
+  // subscription"); everyone else gets a checkout URL ("Upgrade to Pro"). The
+  // client falls back to a live call if its prop is empty.
+  const isActive = data.subscription_status === 'active';
   let checkoutUrl = '';
   let portalUrl = '';
-  
-  try {
-    const res = await api.getPortalUrl();
-    portalUrl = res.url;
-  } catch (e) {
+
+  if (isActive) {
+    try {
+      const res = await api.getPortalUrl();
+      portalUrl = res.url;
+    } catch (e) {
+      console.error('Failed to fetch portal url:', e);
+    }
+  } else {
     try {
       const planType = data.business_type === 'local' ? 'local' : 'saas';
       const res = await api.getCheckoutUrl(planType);

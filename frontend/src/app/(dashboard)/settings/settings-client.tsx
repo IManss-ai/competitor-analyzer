@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { Competitor, SettingsData } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
-import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle } from 'lucide-react';
+import { isReadOnly } from '@/lib/access';
+import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle, Loader2 } from 'lucide-react';
 import clsx from 'clsx';
 
 interface SettingsClientProps {
@@ -61,7 +63,13 @@ export default function SettingsClient({
   // Form states
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
   const [competitors, setCompetitors] = useState<Competitor[]>(initialCompetitors);
-  
+
+  // Read-only trial-freeze + billing routing (derived from current settings).
+  const readOnlyAccess = isReadOnly(settings.subscription_status, settings.trial_ends_at);
+  const isActive = settings.subscription_status === 'active';
+  const planType: 'saas' | 'local' = settings.business_type === 'local' ? 'local' : 'saas';
+  const [billingBusy, setBillingBusy] = useState(false);
+
   // Password state
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -185,6 +193,11 @@ export default function SettingsClient({
   // Add Competitor
   const handleAddCompetitor = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Trial-freeze: adding a competitor is a paid/write action. Route to upgrade.
+    if (readOnlyAccess) {
+      window.location.href = '/billing/checkout';
+      return;
+    }
     if (!newUrl) {
       setAddStatus({ type: 'error', message: 'Competitor URL is required' });
       return;
@@ -212,6 +225,48 @@ export default function SettingsClient({
     text: 'text-[var(--text-secondary)]',
     bg: 'bg-[var(--fill-subtle-hover)]',
     border: 'border-[var(--border-default)]',
+  };
+
+  // ── Billing actions ──────────────────────────────────────────────────────
+  // Active subscribers manage their subscription via the Polar customer portal;
+  // everyone else upgrades via Polar hosted checkout. The server pre-fetches the
+  // relevant URL (props); we fall back to a live call if the prop is empty
+  // (e.g. the server fetch failed), then navigate the browser to it.
+  // (isActive / readOnlyAccess / planType / billingBusy are derived near the top.)
+  const goToCheckout = async () => {
+    if (billingBusy) return;
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+      return;
+    }
+    setBillingBusy(true);
+    try {
+      const { url } = await api.getCheckoutUrl(planType);
+      if (url) window.location.href = url;
+      else showToast('Checkout is not available right now. Please try again shortly.');
+    } catch {
+      showToast('Could not start checkout. Please try again shortly.');
+    } finally {
+      setBillingBusy(false);
+    }
+  };
+
+  const goToPortal = async () => {
+    if (billingBusy) return;
+    if (portalUrl) {
+      window.location.href = portalUrl;
+      return;
+    }
+    setBillingBusy(true);
+    try {
+      const { url } = await api.getPortalUrl();
+      if (url) window.location.href = url;
+      else showToast('The billing portal is not available right now. Please try again shortly.');
+    } catch {
+      showToast('Could not open the billing portal. Please try again shortly.');
+    } finally {
+      setBillingBusy(false);
+    }
   };
 
   return (
@@ -574,10 +629,13 @@ export default function SettingsClient({
 
                 <button
                   type="submit"
-                  disabled={isAdding}
+                  disabled={isAdding || readOnlyAccess}
+                  title={readOnlyAccess ? 'Your trial has ended — upgrade to add competitors' : undefined}
                   className="rs-btn-primary cursor-pointer flex items-center gap-2"
                 >
-                  {isAdding ? 'Adding…' : 'Add competitor'}
+                  {readOnlyAccess ? (
+                    <><Lock size={14} /> Upgrade to add competitors</>
+                  ) : isAdding ? 'Adding…' : 'Add competitor'}
                 </button>
               </form>
             </div>
@@ -647,27 +705,57 @@ export default function SettingsClient({
                 </div>
               </div>
 
-              {portalUrl && (
-                <div>
-                  <a
-                    href={portalUrl}
-                    className="rs-btn-primary cursor-pointer"
-                  >
-                    Manage billing
-                    <ExternalLink size={14} />
-                  </a>
-                </div>
-              )}
+              {/* Current plan + status line */}
+              <div className="flex items-center justify-between gap-3 mb-5 pb-5" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                <span className="rs-label">Current plan</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                  Rivalscope Pro · <span style={{ color: 'var(--text-secondary)' }}>{statusCfg.label}</span>
+                </span>
+              </div>
 
-              {checkoutUrl && (
+              {isActive ? (
+                /* Active subscriber → manage subscription via the Polar portal */
                 <div>
-                  <a
-                    href={checkoutUrl}
+                  <button
+                    type="button"
+                    onClick={goToPortal}
+                    disabled={billingBusy}
                     className="rs-btn-primary cursor-pointer"
                   >
+                    {billingBusy ? <Loader2 size={14} className="animate-spin" /> : null}
+                    Manage subscription
+                    <ExternalLink size={14} />
+                  </button>
+                  <p className="mt-3 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                    Cancel anytime from the customer portal. On cancellation your access reverts to
+                    read-only at the end of the billing period. See our{' '}
+                    <Link href="/terms" className="underline" style={{ color: 'var(--accent-primary)' }}>Refund &amp; Cancellation policy</Link>.
+                  </p>
+                </div>
+              ) : (
+                /* Trialing / expired / canceled → upgrade via Polar checkout */
+                <div>
+                  {readOnlyAccess && (
+                    <p className="mb-3 text-xs font-medium" style={{ color: 'var(--tone-danger)' }}>
+                      Your trial has ended — scans are paused. Upgrade to resume scans and actions.
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={goToCheckout}
+                    disabled={billingBusy}
+                    className="rs-btn-primary cursor-pointer"
+                  >
+                    {billingBusy ? <Loader2 size={14} className="animate-spin" /> : null}
                     Upgrade to Pro
                     <ExternalLink size={14} />
-                  </a>
+                  </button>
+                  <p className="mt-3 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                    By upgrading you agree to our{' '}
+                    <Link href="/terms" className="underline" style={{ color: 'var(--accent-primary)' }}>Terms</Link>{' '}&amp;{' '}
+                    <Link href="/privacy" className="underline" style={{ color: 'var(--accent-primary)' }}>Privacy</Link>.
+                    You can cancel anytime; access reverts to read-only on cancellation.
+                  </p>
                 </div>
               )}
             </div>

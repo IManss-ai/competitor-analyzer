@@ -20,9 +20,11 @@ import {
   ChevronRight,
   Menu,
   X,
+  Lock,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { isAbortError } from '@/lib/fetch-utils';
+import { isReadOnly } from '@/lib/access';
 
 interface SidebarProps {
   email: string;
@@ -119,7 +121,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   };
 
   const handleScanAll = async () => {
-    if (scanning) return;
+    if (scanning || readOnly) return;
     setScanning(true);
     setScanDone(false);
     setScanError(false);
@@ -131,6 +133,12 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
           Authorization: `Bearer ${userId}`,
         },
       });
+      // Trial-freeze: backend pauses scans and returns 402 once the trial ends.
+      if (res.status === 402) {
+        setScanning(false);
+        router.push('/billing/checkout');
+        return;
+      }
       if (!res.ok) throw new Error(`Scan request failed (${res.status})`);
       setScanDone(true);
       // The scan runs in the background; give it a moment, then refresh the
@@ -160,6 +168,10 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const planBadge = getPlanBadge();
   const isOnTrial = settings?.subscription_status === 'trialing';
   const trialProgress = Math.min(100, ((2 - trialDays) / 2) * 100);
+  // Read-only mirrors the backend trial-freeze (402 on paid/write actions).
+  // Gate the scan action on this — independent of isOnTrial, which stays true
+  // for an expired-but-still-"trialing" status.
+  const readOnly = settings ? isReadOnly(settings.subscription_status, settings.trial_ends_at) : false;
 
   // Close the drawer whenever navigation lands on a new page
   useEffect(() => {
@@ -412,10 +424,11 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         className="px-3 pb-4 pt-3 space-y-2"
         style={{ borderTop: '1px solid var(--border-default)' }}
       >
-        {/* Scan all button */}
+        {/* Scan all button — disabled with an upgrade nudge in read-only */}
         <button
           onClick={handleScanAll}
-          disabled={scanning}
+          disabled={scanning || readOnly}
+          title={readOnly ? 'Your trial has ended — upgrade to resume scans' : undefined}
           className="rs-btn-primary w-full text-[12px]"
           style={
             scanDone
@@ -433,11 +446,14 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               : undefined
           }
         >
-          <RefreshCw
-            size={12}
-            className={scanning ? 'animate-spin' : ''}
-          />
-          {scanning
+          {readOnly ? (
+            <Lock size={12} />
+          ) : (
+            <RefreshCw size={12} className={scanning ? 'animate-spin' : ''} />
+          )}
+          {readOnly
+            ? 'Upgrade to scan'
+            : scanning
             ? 'Scanning…'
             : scanError
             ? 'Scan failed — retry'

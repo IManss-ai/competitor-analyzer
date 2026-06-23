@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
+import { isReadOnly } from '@/lib/access';
 import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import Link from 'next/link';
@@ -18,7 +19,11 @@ export default async function CompetitorDetailPage({ params }: PageProps) {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id);
-  const detail = await api.getCompetitorDetail(id);
+  const [detail, settings] = await Promise.all([
+    api.getCompetitorDetail(id),
+    api.getSettings().catch(() => null),
+  ]);
+  const readOnly = settings ? isReadOnly(settings.subscription_status, settings.trial_ends_at) : false;
 
   return (
     <DashboardAnimator>
@@ -36,9 +41,10 @@ export default async function CompetitorDetailPage({ params }: PageProps) {
         subtitle="Deep dive competitor analytics and timeline"
       />
 
-      <CompetitorDetailClient 
+      <CompetitorDetailClient
         userId={session.user!.user_id}
         initialDetail={detail}
+        readOnly={readOnly}
       />
     </DashboardAnimator>
   );

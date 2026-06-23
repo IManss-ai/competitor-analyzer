@@ -1,24 +1,32 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { Zap, X } from 'lucide-react';
+import { Zap, X, Lock } from 'lucide-react';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from './battle-card-content';
 
 interface BattleCardProps {
   competitorId: string;
   competitorName: string;
   userId: string;
+  // Read-only trial-freeze: generation calls a paid model — route to upgrade.
+  readOnly?: boolean;
 }
 
-export default function BattleCard({ competitorId, competitorName, userId }: BattleCardProps) {
+export default function BattleCard({ competitorId, competitorName, userId, readOnly = false }: BattleCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [cardData, setCardData] = useState<BattleCardData | null>(null);
   const shouldReduceMotion = useReducedMotion();
+  const router = useRouter();
 
   const generateCard = async () => {
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     setIsOpen(true);
     if (cardData) return; // Already generated
 
@@ -33,6 +41,12 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
         },
       });
 
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        setIsOpen(false);
+        router.push('/billing/checkout');
+        return;
+      }
       if (!res.ok) {
         throw new Error('Failed to generate Battle Card');
       }
@@ -49,12 +63,13 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
   return (
     <>
       <motion.button
-        whileTap={{ scale: 0.99 }}
+        whileTap={readOnly ? undefined : { scale: 0.99 }}
         onClick={generateCard}
+        title={readOnly ? 'Your trial has ended — upgrade to generate battle cards' : undefined}
         className="px-3 py-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-2 transition-colors cursor-pointer"
       >
-        <Zap size={13} className="text-sky-400" />
-        <span>Battle Card</span>
+        {readOnly ? <Lock size={13} style={{ color: 'var(--text-muted)' }} /> : <Zap size={13} className="text-sky-400" />}
+        <span>{readOnly ? 'Upgrade' : 'Battle Card'}</span>
       </motion.button>
 
       <AnimatePresence>
