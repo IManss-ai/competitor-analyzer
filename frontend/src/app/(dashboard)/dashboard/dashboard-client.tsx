@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Building2, Star, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin } from 'lucide-react';
+import { Building2, Star, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, Lock } from 'lucide-react';
 import { DashboardData, Competitor } from '@/lib/types';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
@@ -17,9 +17,11 @@ interface DashboardClientProps {
   initialData: DashboardData;
   competitors: Competitor[];
   isLocalBusiness: boolean;
+  // Read-only trial-freeze: gate scan + add-competitor actions and route to upgrade.
+  readOnly?: boolean;
 }
 
-export default function DashboardClient({ userId, initialData, competitors, isLocalBusiness }: DashboardClientProps) {
+export default function DashboardClient({ userId, initialData, competitors, isLocalBusiness, readOnly = false }: DashboardClientProps) {
   const [dashboardData, setDashboardData] = useState<DashboardData>(initialData);
   const [activityDays, setActivityDays] = useState<{ date: string; change_count: number; scan_count: number }[]>([]);
   const [feedEvents, setFeedEvents] = useState<any[]>(initialData.events.slice(0, 20));
@@ -180,6 +182,12 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   // Submit onboarding competitor form
   const submitOnboardingCompetitor = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Trial-freeze: adding a competitor is a paid/write action. Route to upgrade
+    // instead of POSTing (the backend would 402 anyway).
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     // Read straight from the DOM inputs, falling back to React state — same
     // fix as the login form: password-manager/programmatic fills set
     // input.value without firing React's onChange, leaving state empty.
@@ -269,13 +277,13 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   };
 
   const scanNow = async (competitorId: string) => {
-    if (scanningCompId) return;
+    if (scanningCompId || readOnly) return;
     setScanningCompId(competitorId);
     try {
-      const endpoint = isLocalBusiness 
+      const endpoint = isLocalBusiness
         ? `${apiUrl}/api/v1/local/scan/${competitorId}`
         : `${apiUrl}/api/v1/scan/now`;
-        
+
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -283,6 +291,12 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           Authorization: `Bearer ${userId}`
         }
       });
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        setScanningCompId(null);
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         setScanDoneCompId(competitorId);
         setTimeout(() => {
@@ -521,13 +535,16 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
             <button
               type="submit"
-              disabled={submittingOnboarding}
+              disabled={submittingOnboarding || readOnly}
+              title={readOnly ? 'Your trial has ended — upgrade to add competitors' : undefined}
               className="w-full disabled:opacity-50 text-[var(--accent-text)] py-3 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
               style={{ backgroundColor: 'var(--accent-cta)' }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta-hover)')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta)')}
+              onMouseEnter={e => { if (!readOnly) e.currentTarget.style.backgroundColor = 'var(--accent-cta-hover)'; }}
+              onMouseLeave={e => { if (!readOnly) e.currentTarget.style.backgroundColor = 'var(--accent-cta)'; }}
             >
-              {submittingOnboarding ? (
+              {readOnly ? (
+                <><Lock size={16} /> Upgrade to add competitors</>
+              ) : submittingOnboarding ? (
                 <><Loader2 size={16} className="animate-spin" /> Creating…</>
               ) : (
                 'Add Competitor + Run First Scan'
@@ -830,8 +847,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     </div>
                     <span className="font-mono text-[10px] text-right" style={{ color: 'var(--text-muted)' }}>{formatTimeAgo(c.last_scanned)}</span>
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" className="p-2 cursor-pointer transition-colors flex-shrink-0" style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
-                        {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} style={{ color: 'var(--tone-positive)' }} /> : <RefreshCw size={13} />}
+                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId || readOnly} title={readOnly ? 'Your trial has ended — upgrade to resume scans' : 'Scan now'} className="p-2 cursor-pointer transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed" style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
+                        {readOnly ? <Lock size={13} /> : scanningCompId === c.id ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} style={{ color: 'var(--tone-positive)' }} /> : <RefreshCw size={13} />}
                       </button>
                       <Link href={`/competitors/${c.id}`} className="font-mono text-[10.5px] whitespace-nowrap" style={{ color: hot ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>Card →</Link>
                     </div>
@@ -1021,12 +1038,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => scanNow(comp.id)}
-                          disabled={!!scanningCompId}
-                          className="inline-flex items-center justify-center p-2 cursor-pointer transition-colors"
+                          disabled={!!scanningCompId || readOnly}
+                          className="inline-flex items-center justify-center p-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ border: '1px solid var(--border-default)', background: 'transparent', color: 'var(--text-muted)' }}
-                          title="Scan now"
+                          title={readOnly ? 'Your trial has ended — upgrade to resume scans' : 'Scan now'}
                         >
-                          {scanningCompId === comp.id ? (
+                          {readOnly ? (
+                            <Lock size={13} />
+                          ) : scanningCompId === comp.id ? (
                             <Loader2 size={13} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
                           ) : scanDoneCompId === comp.id ? (
                             <CheckCircle2 size={13} style={{ color: 'var(--tone-positive)' }} />

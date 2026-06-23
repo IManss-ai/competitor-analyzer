@@ -1,4 +1,5 @@
 import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, TrendsMetricsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData } from './types';
+import { PaymentRequiredError } from './access';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -21,6 +22,19 @@ class ApiClient {
       cache: 'no-store',
     });
     if (!res.ok) {
+      // Trial-freeze: the backend returns 402 on paid/write actions once a
+      // user's trial has expired. Surface a typed error so callers can show
+      // the upgrade prompt instead of a generic "API error" crash.
+      if (res.status === 402) {
+        let message: string | undefined;
+        try {
+          const data = await res.json();
+          message = data?.detail || data?.message;
+        } catch {
+          // non-JSON body — fall back to the default message
+        }
+        throw new PaymentRequiredError(message);
+      }
       const body = await res.text();
       throw new Error(`API error ${res.status}: ${body}`);
     }

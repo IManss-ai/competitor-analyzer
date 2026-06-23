@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Eye, EyeOff, Star, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
+import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Eye, EyeOff, Star, Clock, Circle, ChevronUp, ChevronDown, Lock } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
@@ -26,9 +27,12 @@ const formatTimeAgo = (dateStr: string | null) => {
 interface CompetitorDetailClientProps {
   userId: string;
   initialDetail: any;
+  // Read-only trial-freeze: gate Scan Now + battle-card generation, route to upgrade.
+  readOnly?: boolean;
 }
 
-export default function CompetitorDetailClient({ userId, initialDetail }: CompetitorDetailClientProps) {
+export default function CompetitorDetailClient({ userId, initialDetail, readOnly = false }: CompetitorDetailClientProps) {
+  const router = useRouter();
   const [detail, setDetail] = useState(initialDetail);
   const [scanning, setScanning] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
@@ -59,6 +63,10 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   };
 
   const handleScan = async () => {
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     setScanning(true);
     try {
       const endpoint = comp.business_type === 'local'
@@ -66,11 +74,17 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         : `${apiUrl}/api/v1/scan/now`;
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}` 
+          Authorization: `Bearer ${userId}`
         }
       });
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        setScanning(false);
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         // Reload detail data
         const reloadRes = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}/detail`, {
@@ -89,11 +103,21 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   };
 
   const handleRegenerateBattlecard = async () => {
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     setRegenerating(true);
     try {
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}?force=true`, {
         headers: { Authorization: `Bearer ${userId}` }
       });
+      // Trial-freeze: battle-card generation calls a paid model; backend 402s.
+      if (res.status === 402) {
+        setRegenerating(false);
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         const freshCard = await res.json();
         setDetail((prev: any) => ({ ...prev, battlecard: freshCard }));
@@ -291,10 +315,16 @@ ${card.win_conditions && card.win_conditions.length > 0
           <div className="flex items-center gap-2 self-start md:self-center">
             <button
               onClick={handleScan}
-              disabled={scanning}
+              disabled={scanning || readOnly}
+              title={readOnly ? 'Your trial has ended — upgrade to resume scans' : undefined}
               className="rs-btn-ghost px-4 py-2 text-sm font-semibold cursor-pointer"
             >
-              {scanning ? (
+              {readOnly ? (
+                <>
+                  <Lock size={16} />
+                  Upgrade to scan
+                </>
+              ) : scanning ? (
                 <>
                   <RefreshCw size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
                   Scanning…
@@ -663,10 +693,16 @@ ${card.win_conditions && card.win_conditions.length > 0
                 <div className="pt-2 text-center">
                   <button
                     onClick={handleRegenerateBattlecard}
-                    disabled={regenerating}
+                    disabled={regenerating || readOnly}
+                    title={readOnly ? 'Your trial has ended — upgrade to regenerate' : undefined}
                     className="rs-btn-ghost text-xs !py-2 !px-3 cursor-pointer"
                   >
-                    {regenerating ? (
+                    {readOnly ? (
+                      <>
+                        <Lock size={12} />
+                        Upgrade to regenerate
+                      </>
+                    ) : regenerating ? (
                       <>
                         <RefreshCw size={12} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
                         Regenerating…
@@ -687,11 +723,12 @@ ${card.win_conditions && card.win_conditions.length > 0
                 <p className="text-xs text-[var(--text-secondary)] max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
                 <button
                   onClick={handleRegenerateBattlecard}
-                  disabled={regenerating}
+                  disabled={regenerating || readOnly}
+                  title={readOnly ? 'Your trial has ended — upgrade to generate a battle card' : undefined}
                   className="rs-btn-primary cursor-pointer text-xs"
                 >
-                  {regenerating ? <RefreshCw size={12} className="animate-spin" /> : null}
-                  Generate Battle Card
+                  {readOnly ? <Lock size={12} /> : regenerating ? <RefreshCw size={12} className="animate-spin" /> : null}
+                  {readOnly ? 'Upgrade to generate' : 'Generate Battle Card'}
                 </button>
               </div>
             )}
