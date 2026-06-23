@@ -616,12 +616,24 @@ def _resolve_competitor(competitor_id: str, db: Session) -> Competitor:
     return comp
 
 
-def get_or_generate_battlecard(comp: Competitor, db: Session, force: bool = False) -> dict:
+def get_or_generate_battlecard(
+    comp: Competitor, db: Session, force: bool = False, allow_generate: bool = True
+) -> dict:
     """Cache-first battle card access for authenticated owner paths. Generates
-    (one paid call) only when there is no fresh AI card or force=True."""
+    (one paid call) only when there is no fresh AI card or force=True.
+
+    allow_generate=False (read-only / expired-trial callers) never triggers a
+    paid call: it returns the cached card if present, else the free heuristic
+    variant (not cached, so the owner's first real generation isn't masked)."""
     cached = _load_cache(comp.id, db)
     if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
         return json.loads(cached.payload)
+
+    if not allow_generate:
+        if cached:
+            return json.loads(cached.payload)
+        payload, _ = _generate(comp, db, allow_ai=False)
+        return payload
 
     payload, ai_generated = _generate(comp, db, allow_ai=True)
     _store_cache(comp.id, payload, ai_generated, db)

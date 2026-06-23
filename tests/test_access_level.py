@@ -17,7 +17,7 @@ from sqlalchemy.pool import StaticPool
 
 from main import app
 from app.db import Base, get_session
-from app.models import User, Competitor
+from app.models import User, Competitor, BattleCardCache
 from app.access import access_level, is_read_only
 
 
@@ -167,6 +167,65 @@ class TestSchedulerExcludesExpiredTrial(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(mock_scan.call_args[0][0], str(active.id))
         mock_send.assert_called_once()
         self.assertEqual(mock_send.call_args[1]["user_email"], "active@example.com")
+
+
+class TestBattlecardReadOnlyGuard(unittest.TestCase):
+    """The authenticated battlecard /generate path must not trigger a paid
+    generation for a read-only user: serve the cache if present, else 402."""
+
+    def setUp(self):
+        self.engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+        Base.metadata.create_all(self.engine)
+        self.SessionLocal = sessionmaker(bind=self.engine)
+
+        def override_get_session():
+            db = self.SessionLocal()
+            try:
+                yield db
+            finally:
+                db.close()
+
+        app.dependency_overrides[get_session] = override_get_session
+        self.client = TestClient(app, raise_server_exceptions=False)
+        self.db = self.SessionLocal()
+
+        # Read-only owner: trialing but trial expired.
+        self.user = User(email="ro@example.com", subscription_status="trialing",
+                         trial_ends_at=datetime.utcnow() - timedelta(days=1))
+        self.db.add(self.user)
+        self.db.commit()
+        self.db.refresh(self.user)
+        self.auth = {"Authorization": f"Bearer {self.user.id}"}
+
+        self.comp = Competitor(user_id=self.user.id, url="https://acme.com", name="Acme")
+        self.db.add(self.comp)
+        self.db.commit()
+        self.db.refresh(self.comp)
+
+    def tearDown(self):
+        self.db.close()
+        Base.metadata.drop_all(self.engine)
+        app.dependency_overrides.clear()
+
+    def test_read_only_no_cache_returns_402(self):
+        resp = self.client.get(f"/api/v1/battlecards/generate/{self.comp.id}", headers=self.auth)
+        self.assertEqual(resp.status_code, 402)
+        self.assertEqual(resp.json()["detail"], "Your trial has ended — upgrade to continue.")
+
+    def test_read_only_with_cache_returns_cached_card(self):
+        self.db.add(BattleCardCache(
+            competitor_id=self.comp.id,
+            payload='{"title": "Cached Card", "playbook": ["do x"]}',
+            ai_generated=True,
+        ))
+        self.db.commit()
+        resp = self.client.get(f"/api/v1/battlecards/generate/{self.comp.id}", headers=self.auth)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["title"], "Cached Card")
 
 
 if __name__ == "__main__":

@@ -643,10 +643,15 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
     ]
     
     # Latest battle card, cache-first: a detail page view only triggers a paid
-    # model call when no fresh AI card exists for this competitor yet.
+    # model call when no fresh AI card exists for this competitor yet. Read-only
+    # (expired-trial) users never trigger generation — they get the cache or the
+    # free heuristic, never a paid call.
     from app.routes.battlecard import get_or_generate_battlecard
+    from app.access import is_read_only
+    viewer = db.get(User, user_uuid)
+    can_generate = viewer is None or not is_read_only(viewer)
     try:
-        battlecard_data = get_or_generate_battlecard(comp, db)
+        battlecard_data = get_or_generate_battlecard(comp, db, allow_generate=can_generate)
     except Exception:
         battlecard_data = None
 
