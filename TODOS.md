@@ -11,3 +11,7 @@ Audited against DESIGN.md v3 "Intelligence Desk". None block any current merge; 
 - [ ] **[polish] `animate-pulse` ignores `prefers-reduced-motion`** — `how-it-works-panels.tsx:173,256,353`. Framer motion is covered by `MotionConfig reducedMotion="user"`, but raw Tailwind `animate-pulse` is not unless globally disabled. Verify global reduced-motion CSS kills Tailwind `animate-*`.
 
 > Note: `text-white` on the primary accent button is **not** a finding — DESIGN.md:137 explicitly allows it ("`text-white` is allowed here — accent surface").
+
+## Billing (found by /qa 2026-06-23, deferred)
+
+- [ ] **[high] Production checkout can't complete payment** — signup says "checkout after sign-in," but production Polar is misconfigured (sandbox token vs production-default server → 401 → graceful 503). Real trial users can't pay. Fix is built + held on `integration/polar-launch`, blocked on a verified production Polar account. Runbook: `docs/POLAR-GO-LIVE-RUNBOOK.md`. Not a frontend bug. (Not re-reproduced in the 2026-06-23 unauth QA run — flagged from prior investigation.)
