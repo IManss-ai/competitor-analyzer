@@ -799,7 +799,7 @@ export default function LandingPage() {
               <ul className="text-xs text-[var(--text-muted)]">
                 <li><a href="/privacy" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Privacy Policy</a></li>
                 <li><a href="/terms" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Terms of Service</a></li>
-                <li><a href="mailto:manssjones@gmail.com" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Support</a></li>
+                <li><a href="mailto:support@rivalscope.dev" className="inline-flex items-center min-h-[44px] hover:text-[var(--text-primary)] transition-colors">Support</a></li>
               </ul>
             </div>
           </div>
