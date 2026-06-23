@@ -8,9 +8,10 @@ import app.llm as llm
 
 from app.db import get_session
 from app.observability import note_degraded
-from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache
+from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache, User
 from app.pipeline.job_tracker import get_latest_hiring_signal
 from app.routes.api_v1 import require_api_user
+from app.access import is_read_only
 from app.serialization import iso_utc
 
 import uuid as _uuid
@@ -637,6 +638,17 @@ def generate_battlecard(
     comp = _resolve_competitor(competitor_id, db)
     if str(comp.user_id) != user_id:
         raise HTTPException(status_code=403, detail="Not your competitor")
+
+    # Read-only (expired trial) users may still VIEW a previously generated card,
+    # but must not trigger a new (uncached) paid generation — including force=true.
+    # Serve the cache if present; otherwise block with 402.
+    user = db.get(User, _uuid.UUID(user_id))
+    if user is not None and is_read_only(user):
+        cached = _load_cache(comp.id, db)
+        if cached:
+            return json.loads(cached.payload)
+        raise HTTPException(status_code=402, detail="Your trial has ended — upgrade to continue.")
+
     return get_or_generate_battlecard(comp, db, force=force)
 
 
