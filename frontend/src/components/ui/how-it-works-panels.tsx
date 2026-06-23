@@ -114,7 +114,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
               <motion.span
                 animate={{ opacity: [0, 1, 0] }}
                 transition={{ repeat: Infinity, duration: 0.8 }}
-                className="w-1 h-3.5 bg-sky-400 ml-0.5"
+                className="w-1 h-3.5 bg-primary ml-0.5"
               />
             )}
           </div>
@@ -141,7 +141,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
               <motion.span
                 animate={{ opacity: [0, 1, 0] }}
                 transition={{ repeat: Infinity, duration: 0.8 }}
-                className="w-1 h-3.5 bg-sky-400 ml-0.5"
+                className="w-1 h-3.5 bg-primary ml-0.5"
               />
             )}
           </div>
@@ -170,7 +170,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
               exit={{ y: 8, opacity: 0 }}
               className="bg-card border border-border text-muted-foreground font-mono text-[9px] px-2 py-1 rounded-md flex items-center gap-2 shadow-sm"
             >
-              <span className="w-1 h-1 rounded-full bg-sky-400 animate-pulse" />
+              <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
               2 competitors added
             </motion.div>
           )}
@@ -250,10 +250,10 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
           }}
           className="absolute w-14 h-14 rounded-full flex items-center justify-start pointer-events-none"
         >
-          <div className="w-1/2 h-[1px] bg-gradient-to-r from-sky-400 via-sky-500/20 to-transparent" />
+          <div className="w-1/2 h-[1px] bg-gradient-to-r from-primary via-primary/20 to-transparent" />
         </motion.div>
 
-        <Zap size={14} className="text-sky-400 animate-pulse relative z-10" />
+        <Zap size={14} className="text-primary animate-pulse relative z-10" />
       </div>
 
       {/* URL Stream Section */}
@@ -271,7 +271,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
             >
               <motion.span
                 animate={{
-                  backgroundColor: isScanned ? 'var(--accent-primary)' : 'var(--text-muted)',
+                  backgroundColor: isScanned ? 'var(--primary)' : 'var(--muted-foreground)',
                 }}
                 className="w-1.5 h-1.5 rounded-full"
               />
@@ -398,7 +398,7 @@ export default function HowItWorksPanels() {
       <div className="absolute left-4 md:left-8 top-6 bottom-6 w-[2px] bg-border rounded-full pointer-events-none">
         <motion.div
           style={{ scaleY, transformOrigin: 'top' }}
-          className="absolute inset-0 bg-[var(--accent-primary)] rounded-full"
+          className="absolute inset-0 bg-[var(--primary)] rounded-full"
         />
       </div>
 
@@ -422,8 +422,8 @@ export default function HowItWorksPanels() {
               <div className="absolute left-[-15px] md:left-[-31px] -translate-x-1/2 top-4 z-20 flex items-center justify-center">
                 <motion.div
                   animate={{
-                    borderColor: isHovered ? 'var(--accent-primary)' : 'color-mix(in srgb, var(--accent-primary) 20%, transparent)',
-                    backgroundColor: isHovered ? 'color-mix(in srgb, var(--accent-primary) 12%, transparent)' : 'color-mix(in srgb, var(--accent-primary) 5%, transparent)',
+                    borderColor: isHovered ? 'var(--primary)' : 'color-mix(in srgb, var(--primary) 20%, transparent)',
+                    backgroundColor: isHovered ? 'color-mix(in srgb, var(--primary) 12%, transparent)' : 'color-mix(in srgb, var(--primary) 5%, transparent)',
                   }}
                   transition={{ duration: 0.16, ease: [0, 0, 0.2, 1] }}
                   className="w-8 h-8 md:w-10 md:h-10 rounded-full border bg-card flex items-center justify-center text-xs md:text-sm font-mono font-bold text-primary"
