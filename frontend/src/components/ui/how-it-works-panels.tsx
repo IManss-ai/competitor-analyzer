@@ -168,7 +168,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
               initial={{ y: 8, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 8, opacity: 0 }}
-              className="bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-[9px] px-2 py-1 rounded-md flex items-center gap-2 shadow-md"
+              className="bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-[9px] px-2 py-1 rounded-md flex items-center gap-2 shadow-[var(--shadow-elevated)]"
             >
               <span className="w-1 h-1 rounded-full bg-sky-400 animate-pulse" />
               2 competitors added
