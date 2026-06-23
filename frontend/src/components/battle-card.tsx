@@ -7,6 +7,8 @@ import BattleCardContent, { BattleCardData, normalizeBattleCard } from './battle
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+const MotionButton = motion.create(Button);
+
 interface BattleCardProps {
   competitorId: string;
   competitorName: string;
@@ -50,15 +52,16 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
   return (
     <>
-      <Button
+      <MotionButton
         variant="outline"
         size="sm"
         onClick={generateCard}
         className="flex items-center gap-2 text-xs font-semibold"
+        whileTap={{ scale: 0.99 }}
       >
         <Zap size={13} className="text-primary" />
         <span>Battle Card</span>
-      </Button>
+      </MotionButton>
 
       <AnimatePresence>
         {isOpen && (
