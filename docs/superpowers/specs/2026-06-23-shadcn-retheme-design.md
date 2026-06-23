@@ -8,7 +8,7 @@
 
 ## 1. Summary
 
-Re-theme the whole product (marketing landing + auth + all dashboard screens) to the recognizable shadcn/ui neutral-modern aesthetic: zinc neutrals, soft `0.5rem` radius, subtle bordered cards, generous whitespace, one blue accent, light + dark (system-default). Execution is **Approach A**: stand up shadcn's token layer first (instant whole-app palette/radius shift via token aliasing), then replace hand-rolled components with shadcn primitives and restyle the bespoke pieces screen by screen.
+Re-theme the whole product (marketing landing + auth + all dashboard screens) to the recognizable shadcn/ui neutral-modern aesthetic: zinc neutrals, soft `0.5rem` radius, subtle bordered cards, generous whitespace, one blue accent, light + dark (**dark-first** default). Execution is **Approach A**: stand up shadcn's token layer first (instant whole-app palette/radius shift via token aliasing), then replace hand-rolled components with shadcn primitives and restyle the bespoke pieces screen by screen.
 
 This **supersedes** the v4 "Signal Desk" system (navy `#080b14` + electric-blue, sharp 4px, flat, dark-first, Space Grotesk). DESIGN.md and CLAUDE.md's design section are rewritten at the end.
 
@@ -22,14 +22,14 @@ This **supersedes** the v4 "Signal Desk" system (navy `#080b14` + electric-blue,
 | Approach | **A** — token-remap foundation, then component restyle screen-by-screen |
 | Font | **Geist Sans + Geist Mono** (replaces Space Grotesk + IBM Plex Mono) |
 | Style / base / radius | shadcn **new-york**, **zinc**, **0.5rem** |
-| Light/dark | both; **system-default** (`prefers-color-scheme`), dropping dark-first-always |
+| Light/dark | both; **dark-first** default (fresh visitor lands on dark, like v4); saved choice persists |
 
 ## 3. Goals / Non-goals
 
 **Goals**
 - Every surface reads as a cohesive shadcn neutral-modern product (not a recolored Signal Desk).
 - One blue accent used only on primary actions, links, focus/active, selected states.
-- Light + dark both correct (WCAG AA), system-default.
+- Light + dark both correct (WCAG AA), dark-first default.
 - No functional regressions: login → add competitor → scan → battle card still works.
 
 **Non-goals**
@@ -78,7 +78,7 @@ The change-type **semantic** colors (`pricing_change`/`feature_add`/etc. badge c
 Replace the `data-theme="ink|paper"` attribute system with shadcn's **`.dark` class** convention:
 - Dark tokens live under `.dark` (not `html[data-theme="ink"]` + OS-media fallback).
 - Rewire `lib/use-theme.ts`, the toggle (topbar + landing nav + login), and the pre-paint FOUC script in `layout.tsx` to toggle `.dark`.
-- Default = **system** (`prefers-color-scheme`); a saved choice persists. Drops the v4 "ink default regardless of OS" behavior.
+- Default = **dark** (the pre-paint script applies `.dark` for a fresh visitor); a saved choice persists and overrides. Keeps the v4 dark-first behavior, re-expressed via the `.dark` class instead of `data-theme="ink"`.
 - `useChartPalette()` (`lib/chart-theme.ts`) re-points to the new `--chart-*` tokens.
 
 ## 6. Typography
