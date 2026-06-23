@@ -203,7 +203,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={shouldReduceMotion ? { duration: 0 } : { delay: 2 * 0.07 }}
-          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5"
+          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 md:col-span-2"
           style={{ borderRadius: 'var(--radius-md)' }}
         >
           <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-warning)] mb-4">

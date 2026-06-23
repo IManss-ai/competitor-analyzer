@@ -259,7 +259,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                     disabled={savingSettings}
                     className="rs-btn-primary !px-3 !py-1 text-xs cursor-pointer"
                   >
-                    {savingSettings ? 'Saving...' : 'Save'}
+                    {savingSettings ? 'Saving…' : 'Save'}
                   </button>
                   <button 
                     onClick={() => setEditing(false)}
@@ -297,7 +297,7 @@ ${card.win_conditions && card.win_conditions.length > 0
               {scanning ? (
                 <>
                   <RefreshCw size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
-                  Scanning...
+                  Scanning…
                 </>
               ) : (
                 <>
@@ -669,7 +669,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                     {regenerating ? (
                       <>
                         <RefreshCw size={12} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
-                        Regenerating...
+                        Regenerating…
                       </>
                     ) : (
                       <>

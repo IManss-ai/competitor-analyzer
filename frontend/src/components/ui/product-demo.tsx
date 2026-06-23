@@ -70,7 +70,7 @@ export default function ProductDemo() {
           <div className="mx-auto flex max-w-xs flex-1 items-center justify-center gap-2 rounded border border-[var(--border-subtle)] bg-[var(--fill-subtle)] px-3 py-1">
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--tone-positive)' }} />
             <span className="truncate font-mono text-[10px] tracking-wide text-[var(--text-muted)]">
-              app.rivalscope.com/command-center
+              app.rivalscope.dev/command-center
             </span>
           </div>
           <span className="hidden font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)] sm:inline">

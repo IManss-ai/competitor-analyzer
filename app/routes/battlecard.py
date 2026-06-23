@@ -8,9 +8,10 @@ import app.llm as llm
 
 from app.db import get_session
 from app.observability import note_degraded
-from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache
+from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache, User
 from app.pipeline.job_tracker import get_latest_hiring_signal
 from app.routes.api_v1 import require_api_user
+from app.access import is_read_only
 from app.serialization import iso_utc
 
 import uuid as _uuid
@@ -615,12 +616,24 @@ def _resolve_competitor(competitor_id: str, db: Session) -> Competitor:
     return comp
 
 
-def get_or_generate_battlecard(comp: Competitor, db: Session, force: bool = False) -> dict:
+def get_or_generate_battlecard(
+    comp: Competitor, db: Session, force: bool = False, allow_generate: bool = True
+) -> dict:
     """Cache-first battle card access for authenticated owner paths. Generates
-    (one paid call) only when there is no fresh AI card or force=True."""
+    (one paid call) only when there is no fresh AI card or force=True.
+
+    allow_generate=False (read-only / expired-trial callers) never triggers a
+    paid call: it returns the cached card if present, else the free heuristic
+    variant (not cached, so the owner's first real generation isn't masked)."""
     cached = _load_cache(comp.id, db)
     if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
         return json.loads(cached.payload)
+
+    if not allow_generate:
+        if cached:
+            return json.loads(cached.payload)
+        payload, _ = _generate(comp, db, allow_ai=False)
+        return payload
 
     payload, ai_generated = _generate(comp, db, allow_ai=True)
     _store_cache(comp.id, payload, ai_generated, db)
@@ -637,6 +650,17 @@ def generate_battlecard(
     comp = _resolve_competitor(competitor_id, db)
     if str(comp.user_id) != user_id:
         raise HTTPException(status_code=403, detail="Not your competitor")
+
+    # Read-only (expired trial) users may still VIEW a previously generated card,
+    # but must not trigger a new (uncached) paid generation — including force=true.
+    # Serve the cache if present; otherwise block with 402.
+    user = db.get(User, _uuid.UUID(user_id))
+    if user is not None and is_read_only(user):
+        cached = _load_cache(comp.id, db)
+        if cached:
+            return json.loads(cached.payload)
+        raise HTTPException(status_code=402, detail="Your trial has ended — upgrade to continue.")
+
     return get_or_generate_battlecard(comp, db, force=force)
 
 

@@ -64,8 +64,8 @@ export default function PrivacyPage() {
             <h2 className="text-base font-semibold text-[var(--text-primary)]">5. Contact Support</h2>
             <p>
               If you have any questions regarding this privacy policy or want to request account deletion, contact our support desk at{' '}
-              <a href="mailto:support@rivalscope.com" className="text-sky-400 hover:underline">
-                support@rivalscope.com
+              <a href="mailto:support@rivalscope.dev" className="text-sky-400 hover:underline">
+                support@rivalscope.dev
               </a>.
             </p>
           </section>

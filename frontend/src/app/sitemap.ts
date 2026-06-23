@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-const SITE = 'https://competitor-analyzer-zeta.vercel.app';
+const SITE = 'https://rivalscope.dev';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [

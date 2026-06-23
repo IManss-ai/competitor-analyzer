@@ -20,13 +20,13 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://competitor-analyzer-zeta.vercel.app'),
+  metadataBase: new URL('https://rivalscope.dev'),
   title: 'Rivalscope — Competitor Intelligence for Growing Teams',
   description: 'Track competitor pricing changes, messaging shifts, and customer complaints. AI-generated sales playbooks delivered every Monday morning.',
   openGraph: {
     title: 'Rivalscope — Competitor Intelligence for Growing Teams',
     description: 'Track competitor pricing, reviews, and messaging shifts. AI sales playbooks every Monday.',
-    url: 'https://competitor-analyzer-zeta.vercel.app',
+    url: 'https://rivalscope.dev',
     siteName: 'Rivalscope',
     type: 'website',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Rivalscope — Competitor Intelligence' }],

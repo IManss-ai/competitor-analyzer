@@ -405,7 +405,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-primary)')}
           >
             {savingBusinessType ? (
-              <><Loader2 size={16} className="animate-spin" /> Saving...</>
+              <><Loader2 size={16} className="animate-spin" /> Saving…</>
             ) : (
               <>Continue as {selectedBusinessType === 'saas' ? 'SaaS' : 'Local Business'} <ArrowRight size={14} /></>
             )}
@@ -528,7 +528,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent-cta)')}
             >
               {submittingOnboarding ? (
-                <><Loader2 size={16} className="animate-spin" /> Creating...</>
+                <><Loader2 size={16} className="animate-spin" /> Creating…</>
               ) : (
                 'Add Competitor + Run First Scan'
               )}
@@ -559,8 +559,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   // ── ONBOARDING STEP 2: INLINE SCAN PROGRESS ──────────────────────────────
   if (onboardingStep === 1) {
     const statusMessages: Record<string, string> = {
-      fetching: 'Fetching page...',
-      analyzing: 'Analyzing changes...',
+      fetching: 'Fetching page…',
+      analyzing: 'Analyzing changes…',
       done: 'Done!',
       error: 'Error scanning.'
     };
@@ -943,7 +943,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 {loadingFeed ? (
                   <>
                     <Loader2 size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
-                    Loading...
+                    Loading…
                   </>
                 ) : (
                   'Load More Events'

@@ -186,7 +186,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       ) : (
                         <Check size={15}  />
                       )}
-                      <span>{approving === action.id ? 'Approving...' : 'Approve action'}</span>
+                      <span>{approving === action.id ? 'Approving…' : 'Approve action'}</span>
                     </motion.button>
 
                     {editingId === action.id ? (

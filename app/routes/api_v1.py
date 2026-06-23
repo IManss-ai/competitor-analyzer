@@ -33,6 +33,11 @@ def require_api_user(authorization: str = Header(default=None)) -> str:
     return user_id
 
 
+# Write-access guard (402 for read-only / expired-trial users). Imported after
+# the require_api_user definition because app.access lazily imports it back.
+from app.access import require_write_access
+
+
 # ── Auth endpoints ───────────────────────────────────────────────────────────
 
 @router.post("/auth/login")
@@ -408,7 +413,7 @@ def api_list_competitors(include_inactive: bool = False, user_id: str = Depends(
 
 
 @router.patch("/competitors/{competitor_id}")
-def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     c = db.execute(
         select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
@@ -441,7 +446,7 @@ def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depe
 @router.post("/competitors/{competitor_id}/probe-careers")
 async def api_probe_careers(
     competitor_id: str,
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
     db: Session = Depends(get_session),
 ):
     """Walk common careers paths against the competitor homepage; save and return the first match."""
@@ -509,7 +514,7 @@ def api_scan_status(job_id: str):
 
 
 @router.post("/competitors")
-def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     existing = db.execute(
         select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
@@ -638,10 +643,15 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
     ]
     
     # Latest battle card, cache-first: a detail page view only triggers a paid
-    # model call when no fresh AI card exists for this competitor yet.
+    # model call when no fresh AI card exists for this competitor yet. Read-only
+    # (expired-trial) users never trigger generation — they get the cache or the
+    # free heuristic, never a paid call.
     from app.routes.battlecard import get_or_generate_battlecard
+    from app.access import is_read_only
+    viewer = db.get(User, user_uuid)
+    can_generate = viewer is None or not is_read_only(viewer)
     try:
-        battlecard_data = get_or_generate_battlecard(comp, db)
+        battlecard_data = get_or_generate_battlecard(comp, db, allow_generate=can_generate)
     except Exception:
         battlecard_data = None
 
@@ -768,7 +778,7 @@ def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(ge
 
 
 @router.post("/queue/{action_id}/approve")
-def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     action = db.execute(
         select(ApprovedAction).where(ApprovedAction.id == uuid.UUID(action_id), ApprovedAction.user_id == user_uuid)
@@ -993,7 +1003,7 @@ def api_update_settings(payload: dict, user_id: str = Depends(require_api_user),
 # ── Scan ─────────────────────────────────────────────────────────────────────
 
 @router.post("/scan/now")
-async def api_scan_now(user_id: str = Depends(require_api_user)):
+async def api_scan_now(user_id: str = Depends(require_write_access)):
     from app.routes.scan import _run_scan_background
     import asyncio
     asyncio.create_task(_run_scan_background(user_id))
@@ -1001,7 +1011,7 @@ async def api_scan_now(user_id: str = Depends(require_api_user)):
 
 
 @router.post("/scan/reviews")
-async def api_scan_reviews(user_id: str = Depends(require_api_user)):
+async def api_scan_reviews(user_id: str = Depends(require_write_access)):
     from app.pipeline.review_scraper import scrape_competitor_reviews
     from app.db import SessionLocal
     import asyncio
@@ -1033,19 +1043,31 @@ async def api_billing_checkout_url(
     user_id: str = Depends(require_api_user),
     db: Session = Depends(get_session)
 ):
+    import logging
     from app.billing import create_checkout_session
     from app.config import FRONTEND_URL
     user_uuid = uuid.UUID(user_id)
     user = db.get(User, user_uuid)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    url = await create_checkout_session(
-        user.email,
-        str(user.id),
-        plan_type=plan,
-        success_url=f"{FRONTEND_URL}/billing/success",
-        cancel_url=f"{FRONTEND_URL}/settings",
-    )
+    try:
+        url = await create_checkout_session(
+            user.email,
+            str(user.id),
+            plan_type=plan,
+            success_url=f"{FRONTEND_URL}/billing/success",
+            cancel_url=f"{FRONTEND_URL}/settings",
+        )
+    except ValueError as e:
+        # Billing not configured yet (missing Polar product ID / access token).
+        # Degrade gracefully instead of a raw 500 so the client can show a
+        # "billing unavailable" state rather than a crash.
+        logging.getLogger(__name__).warning("Checkout URL unavailable, billing not configured: %s", e)
+        raise HTTPException(status_code=503, detail="Billing is not available right now. Please try again later.")
+    except Exception as e:
+        # Polar SDK / network failure — same graceful degradation as above.
+        logging.getLogger(__name__).error("Checkout session creation failed: %s", e)
+        raise HTTPException(status_code=503, detail="Could not start checkout. Please try again later.")
     return {"url": url}
 
 
