@@ -11,6 +11,8 @@ import { fadeUpVariants } from '@/lib/animations';
 import HowItWorksPanels from '@/components/ui/how-it-works-panels';
 import ProductDemo from '@/components/ui/product-demo';
 import ThemeToggle from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const MotionLink = motion.create(Link);
 
@@ -201,10 +203,10 @@ export default function LandingPage() {
           }`}
         >
           <Link href="/" className="flex items-center min-h-[44px] gap-3 group">
-            <div className="w-7 h-7 bg-sky-500/15 border border-sky-500/30 rounded flex items-center justify-center flex-shrink-0 group-hover:bg-sky-500/25 transition-colors">
-              <RivalscopeLogo size={13} className="text-sky-400" />
+            <div className="w-7 h-7 bg-muted border border-border rounded flex items-center justify-center flex-shrink-0 group-hover:bg-muted/70 transition-colors">
+              <RivalscopeLogo size={13} className="text-foreground" />
             </div>
-            <span className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">Rivalscope</span>
+            <span className="text-sm font-semibold text-foreground tracking-tight">Rivalscope</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-7 text-[11px] font-medium text-[var(--text-secondary)]">
@@ -232,16 +234,14 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link href="/auth/login" className="hidden sm:inline-flex items-center min-h-[44px] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 whitespace-nowrap">
+            <Link href="/auth/login" className="hidden sm:inline-flex items-center min-h-[44px] text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-3 whitespace-nowrap">
               Sign in
             </Link>
-            <MotionLink
-              href="/auth/login"
-              whileTap={{ scale: 0.97 }}
-              className="hidden sm:inline-flex items-center min-h-[44px] gap-2 text-xs font-semibold bg-[var(--accent-cta)] text-[var(--accent-text)] px-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors whitespace-nowrap"
-            >
-              Get started <ArrowRight size={10} />
-            </MotionLink>
+            <Button asChild size="sm" className="hidden sm:inline-flex gap-1.5">
+              <MotionLink href="/auth/login" whileTap={{ scale: 0.97 }}>
+                Get started <ArrowRight size={10} />
+              </MotionLink>
+            </Button>
             <motion.button
               onClick={() => setMenuOpen(!menuOpen)}
               whileTap={{ scale: 0.97 }}
@@ -279,11 +279,11 @@ export default function LandingPage() {
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section ref={heroRef} className="relative pt-32 pb-20 lg:pt-36 lg:pb-24 px-6 overflow-hidden">
-        {/* Signature gradient — the one glow moment per view */}
+        {/* Subtle neutral glow — keeps depth without blue decorative wash */}
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-16 w-[860px] max-w-[130vw] h-[480px] z-0"
-          style={{ background: 'radial-gradient(ellipse at center, var(--accent-glow), transparent 60%)' }}
+          style={{ background: 'radial-gradient(ellipse at center, color-mix(in oklch, var(--muted-foreground) 8%, transparent), transparent 65%)' }}
         />
 
         {/* Centered hero copy */}
@@ -292,10 +292,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 bg-[var(--accent-subtle)] border border-[var(--accent-border)] rounded px-4 py-2 mb-8"
+            className="inline-flex items-center gap-2 mb-8"
           >
-            <span className="sr-pulse" />
-            <span className="text-[11px] font-mono text-sky-500 tracking-[0.14em] uppercase font-semibold">Live competitor intelligence</span>
+            <Badge variant="outline" className="gap-2 px-3 py-1 text-xs font-medium rounded-full border-border text-muted-foreground">
+              <span className="sr-pulse" />
+              Live competitor intelligence
+            </Badge>
           </motion.div>
 
           <motion.h1
@@ -304,7 +306,7 @@ export default function LandingPage() {
             transition={{ duration: 0.45, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
             className="text-[40px] sm:text-[64px] lg:text-[84px] font-medium tracking-[-0.045em] leading-[0.98] text-[var(--text-primary)] text-balance max-w-[16ch]"
           >
-            Know what your rivals change. <span className="text-sky-500">Win the deal anyway.</span>
+            Know what your rivals change. Win the deal anyway.
           </motion.h1>
 
           <motion.p
@@ -329,8 +331,8 @@ export default function LandingPage() {
               'Get a ready-to-send sales play for every move',
             ].map((b) => (
               <div key={b} className="flex items-start gap-3">
-                <CheckCircle2 size={16} className="text-sky-500 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-[var(--text-primary)] leading-snug">{b}</span>
+                <CheckCircle2 size={16} className="text-muted-foreground flex-shrink-0 mt-0.5" />
+                <span className="text-sm text-foreground leading-snug">{b}</span>
               </div>
             ))}
           </motion.div>
@@ -341,18 +343,19 @@ export default function LandingPage() {
             transition={{ duration: 0.45, delay: 0.27, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center gap-3 mt-10"
           >
-            <MotionLink
-              href="/auth/login"
-              whileTap={{ scale: 0.97 }}
-              whileHover={{ scale: 1.02 }}
-              transition={HOVER_TRANSITION}
-              className="inline-flex items-center gap-2 bg-[var(--accent-cta)] text-[var(--accent-text)] font-semibold text-sm px-6 py-3 rounded hover:bg-[var(--accent-cta-hover)] transition-colors"
-            >
-              Start free trial <ArrowRight size={13} />
-            </MotionLink>
+            <Button asChild size="lg" className="gap-2 px-6">
+              <MotionLink
+                href="/auth/login"
+                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.02 }}
+                transition={HOVER_TRANSITION}
+              >
+                Start free trial <ArrowRight size={13} />
+              </MotionLink>
+            </Button>
             <a
               href="#product"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 py-3"
+              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-3"
             >
               See a live battle card <ArrowRight size={12} className="opacity-50" />
             </a>
@@ -366,7 +369,7 @@ export default function LandingPage() {
           >
             {['No card required', 'Cancel anytime', '5-min setup'].map((t) => (
               <span key={t} className="flex items-center gap-2">
-                <CheckCircle2 size={12} className="text-sky-500" /> {t}
+                <CheckCircle2 size={12} className="text-muted-foreground" /> {t}
               </span>
             ))}
           </motion.div>
@@ -380,25 +383,23 @@ export default function LandingPage() {
           transition={{ duration: 0.55, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-3xl mx-auto mt-16 relative z-10"
         >
-          <div className="relative bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-lg overflow-hidden">
-            {/* blue top-edge accent line */}
-            <div aria-hidden className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)' }} />
-            <div className="flex items-center justify-between px-4 py-4 border-b border-[var(--border-default)]">
+          <div className="relative bg-card border border-border rounded-lg overflow-hidden shadow-sm">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-border">
               <div className="flex items-center gap-2">
-                <TrendingUp size={14} className="text-sky-400" />
-                <span className="text-sm font-semibold text-[var(--text-primary)]">Intel Feed</span>
+                <TrendingUp size={14} className="text-muted-foreground" />
+                <span className="text-sm font-semibold text-foreground">Intel Feed</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="sr-pulse" />
-                <span className="text-[10px] font-mono text-sky-500 uppercase tracking-wider">Live</span>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Live</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 border-b border-[var(--border-default)]">
+            <div className="grid grid-cols-3 border-b border-border">
               {[{ v: '5', l: 'tracked' }, { v: '12', l: 'changes / wk' }, { v: '3', l: 'alerts' }].map((s, i) => (
-                <div key={s.l} className="px-4 py-3" style={i > 0 ? { borderLeft: '1px solid var(--border-subtle)' } : undefined}>
-                  <div className="text-lg font-bold font-mono tabular-nums text-[var(--text-primary)] leading-none">{s.v}</div>
-                  <div className="text-[9px] font-mono uppercase tracking-wider text-[var(--text-muted)] mt-2">{s.l}</div>
+                <div key={s.l} className="px-4 py-3" style={i > 0 ? { borderLeft: '1px solid var(--border)' } : undefined}>
+                  <div className="text-lg font-bold font-mono tabular-nums text-foreground leading-none">{s.v}</div>
+                  <div className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-2">{s.l}</div>
                 </div>
               ))}
             </div>
@@ -410,23 +411,23 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.4 + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex items-start gap-3 px-3 py-3 rounded hover:bg-[var(--fill-subtle-hover)] transition-colors cursor-default"
+                  className="flex items-start gap-3 px-3 py-3 rounded-md hover:bg-muted transition-colors cursor-default"
                 >
                   <span className={`text-[10px] px-2 py-0.5 rounded-sm font-mono font-medium flex-shrink-0 mt-0.5 ${TAG_STYLE[item.type] || TAG_STYLE.content}`}>
                     {item.type}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs font-semibold text-[var(--text-primary)]">{item.company}</span>
-                    <span className="text-xs text-[var(--text-secondary)] ml-2 leading-snug">{item.action}</span>
+                    <span className="text-xs font-semibold text-foreground">{item.company}</span>
+                    <span className="text-xs text-muted-foreground ml-2 leading-snug">{item.action}</span>
                   </div>
-                  <span className="text-[10px] font-mono text-[var(--text-muted)] whitespace-nowrap flex-shrink-0 pt-0.5">{item.time}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap flex-shrink-0 pt-0.5">{item.time}</span>
                 </motion.div>
               ))}
             </div>
 
-            <div className="px-4 py-3 border-t border-[var(--border-default)] flex items-center justify-between bg-[var(--fill-subtle-hover)]">
-              <span className="text-[11px] font-mono text-[var(--text-muted)]">5 competitors tracked</span>
-              <Link href="/auth/login" className="text-[11px] font-mono text-sky-400 hover:text-sky-300 transition-colors flex items-center gap-1">
+            <div className="px-4 py-3 border-t border-border flex items-center justify-between bg-muted/50">
+              <span className="text-[11px] font-mono text-muted-foreground">5 competitors tracked</span>
+              <Link href="/auth/login" className="text-[11px] font-mono text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                 View full feed <ArrowUpRight size={10} />
               </Link>
             </div>
