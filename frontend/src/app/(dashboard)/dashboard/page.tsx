@@ -61,6 +61,7 @@ export default async function DashboardPage() {
             competitors={compData.competitors}
             isLocalBusiness={isLocalBusiness}
             userId={session.user!.user_id}
+            readOnly={readOnly}
           />
         </DashboardSection>
       )}

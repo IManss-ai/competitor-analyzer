@@ -1,19 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Lock } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 interface LocalScanButtonProps {
   competitorId: string;
   userId: string;
+  readOnly?: boolean;
 }
 
-export default function LocalScanButton({ competitorId, userId }: LocalScanButtonProps) {
+export default function LocalScanButton({ competitorId, userId, readOnly = false }: LocalScanButtonProps) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
 
   const handleScan = async () => {
+    if (readOnly) {
+      router.push('/billing/checkout');
+      return;
+    }
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -23,6 +30,12 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
           Authorization: `Bearer ${userId}`,
         },
       });
+      // Trial-freeze: backend returns 402 once the trial ends.
+      if (res.status === 402) {
+        setLoading(false);
+        router.push('/billing/checkout');
+        return;
+      }
       if (res.ok) {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 5000);
@@ -38,11 +51,12 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
     <>
       <button
         onClick={handleScan}
-        disabled={loading}
+        disabled={loading || readOnly}
+        title={readOnly ? 'Your trial has ended — upgrade to resume scans' : undefined}
         className="rs-btn-primary text-[12px]"
       >
-        <Search size={14} className={loading ? 'animate-spin' : ''} />
-        {loading ? 'Scanning…' : 'Scan local competitors'}
+        {readOnly ? <Lock size={14} /> : <Search size={14} className={loading ? 'animate-spin' : ''} />}
+        {readOnly ? 'Upgrade to scan' : loading ? 'Scanning…' : 'Scan local competitors'}
       </button>
 
       <AnimatePresence>

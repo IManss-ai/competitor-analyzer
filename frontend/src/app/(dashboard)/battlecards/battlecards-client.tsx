@@ -10,9 +10,10 @@ import { competitorDomain } from '@/lib/utils';
 interface BattlecardsClientProps {
   competitors: Competitor[];
   userId: string;
+  readOnly?: boolean;
 }
 
-export default function BattlecardsClient({ competitors, userId }: BattlecardsClientProps) {
+export default function BattlecardsClient({ competitors, userId, readOnly = false }: BattlecardsClientProps) {
   if (competitors.length === 0) {
     return (
       <div className="rs-card p-10 flex flex-col items-center text-center">
@@ -102,6 +103,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
                     competitorId={comp.id}
                     competitorName={comp.name || hostname}
                     userId={userId}
+                    readOnly={readOnly}
                   />
                 </div>
               </div>

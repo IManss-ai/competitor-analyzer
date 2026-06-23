@@ -63,7 +63,13 @@ export default function SettingsClient({
   // Form states
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
   const [competitors, setCompetitors] = useState<Competitor[]>(initialCompetitors);
-  
+
+  // Read-only trial-freeze + billing routing (derived from current settings).
+  const readOnlyAccess = isReadOnly(settings.subscription_status, settings.trial_ends_at);
+  const isActive = settings.subscription_status === 'active';
+  const planType: 'saas' | 'local' = settings.business_type === 'local' ? 'local' : 'saas';
+  const [billingBusy, setBillingBusy] = useState(false);
+
   // Password state
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -187,6 +193,11 @@ export default function SettingsClient({
   // Add Competitor
   const handleAddCompetitor = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Trial-freeze: adding a competitor is a paid/write action. Route to upgrade.
+    if (readOnlyAccess) {
+      window.location.href = '/billing/checkout';
+      return;
+    }
     if (!newUrl) {
       setAddStatus({ type: 'error', message: 'Competitor URL is required' });
       return;
@@ -221,11 +232,7 @@ export default function SettingsClient({
   // everyone else upgrades via Polar hosted checkout. The server pre-fetches the
   // relevant URL (props); we fall back to a live call if the prop is empty
   // (e.g. the server fetch failed), then navigate the browser to it.
-  const isActive = settings.subscription_status === 'active';
-  const readOnly = isReadOnly(settings.subscription_status, settings.trial_ends_at);
-  const planType: 'saas' | 'local' = settings.business_type === 'local' ? 'local' : 'saas';
-  const [billingBusy, setBillingBusy] = useState(false);
-
+  // (isActive / readOnlyAccess / planType / billingBusy are derived near the top.)
   const goToCheckout = async () => {
     if (billingBusy) return;
     if (checkoutUrl) {
@@ -622,10 +629,13 @@ export default function SettingsClient({
 
                 <button
                   type="submit"
-                  disabled={isAdding}
+                  disabled={isAdding || readOnlyAccess}
+                  title={readOnlyAccess ? 'Your trial has ended — upgrade to add competitors' : undefined}
                   className="rs-btn-primary cursor-pointer flex items-center gap-2"
                 >
-                  {isAdding ? 'Adding…' : 'Add competitor'}
+                  {readOnlyAccess ? (
+                    <><Lock size={14} /> Upgrade to add competitors</>
+                  ) : isAdding ? 'Adding…' : 'Add competitor'}
                 </button>
               </form>
             </div>
@@ -725,7 +735,7 @@ export default function SettingsClient({
               ) : (
                 /* Trialing / expired / canceled → upgrade via Polar checkout */
                 <div>
-                  {readOnly && (
+                  {readOnlyAccess && (
                     <p className="mb-3 text-xs font-medium" style={{ color: 'var(--tone-danger)' }}>
                       Your trial has ended — scans are paused. Upgrade to resume scans and actions.
                     </p>
