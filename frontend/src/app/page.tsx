@@ -128,7 +128,8 @@ const navItems = [
   { label: 'Pricing', href: '#pricing', key: 'pricing' },
 ];
 
-const SPRING = { stiffness: 280, damping: 28, mass: 0.8 };
+// DESIGN.md:131 forbids spring physics; use --duration-base (160ms) + --ease-out.
+const HOVER_TRANSITION = { duration: 0.16, ease: [0, 0, 0.2, 1] as const };
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
@@ -344,7 +345,7 @@ export default function LandingPage() {
               href="/auth/login"
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.02 }}
-              transition={SPRING}
+              transition={HOVER_TRANSITION}
               className="inline-flex items-center gap-2 bg-[var(--accent-cta)] text-[var(--accent-text)] font-semibold text-sm px-6 py-3 rounded hover:bg-[var(--accent-cta-hover)] transition-colors"
             >
               Start free trial <ArrowRight size={13} />
@@ -749,7 +750,7 @@ export default function LandingPage() {
               href="/auth/login"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              transition={SPRING}
+              transition={HOVER_TRANSITION}
               className="inline-flex items-center gap-3 bg-[var(--accent-cta)] text-[var(--accent-text)] font-semibold px-8 py-4 rounded hover:bg-[var(--accent-cta-hover)] transition-colors text-sm"
             >
               <span>Start free trial</span>
