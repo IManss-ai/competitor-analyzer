@@ -13,7 +13,7 @@ import ReviewIntelligence from '@/components/review-intelligence';
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
-  const api = createApiClient(session.user!.user_id);
+  const api = createApiClient(session.user!.user_id, session.user!.api_token);
   
   const [dashboardData, compData, settings] = await Promise.all([
     api.getDashboard(),

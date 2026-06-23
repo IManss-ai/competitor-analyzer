@@ -9,7 +9,7 @@ import SettingsClient from './settings-client';
 export default async function SettingsPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
-  const api = createApiClient(session.user!.user_id);
+  const api = createApiClient(session.user!.user_id, session.user!.api_token);
   
   // Fetch settings and competitors (including inactive/paused ones) concurrently
   const [data, competitorsData] = await Promise.all([
@@ -40,6 +40,7 @@ export default async function SettingsPage() {
         initialSettings={data}
         initialCompetitors={competitorsData.competitors}
         userId={session.user!.user_id}
+        apiToken={session.user!.api_token}
         checkoutUrl={checkoutUrl}
         portalUrl={portalUrl}
       />

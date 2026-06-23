@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useApiToken } from '@/lib/use-api-token';
 
 interface LocalScanButtonProps {
   competitorId: string;
@@ -12,6 +13,7 @@ interface LocalScanButtonProps {
 export default function LocalScanButton({ competitorId, userId }: LocalScanButtonProps) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const apiToken = useApiToken();
 
   const handleScan = async () => {
     setLoading(true);
@@ -20,7 +22,7 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
       const res = await fetch(`${apiUrl}/api/v1/local/scan/${competitorId}`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${userId}`,
+          Authorization: `Bearer ${apiToken ?? userId}`,
         },
       });
       if (res.ok) {

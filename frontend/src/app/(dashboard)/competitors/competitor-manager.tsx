@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
 import { competitorDomain } from '@/lib/utils';
 import BattleCard from '@/components/battle-card';
+import { useApiToken } from '@/lib/use-api-token';
 
 interface CompetitorManagerProps {
   initialCompetitors: Competitor[];
@@ -19,6 +20,7 @@ export default function CompetitorManager({
   initialAtLimit,
   userId,
 }: CompetitorManagerProps) {
+  const apiToken = useApiToken();
   const [competitors, setCompetitors] = useState(initialCompetitors);
   const [atLimit, setAtLimit] = useState(initialAtLimit);
   const [showAdd, setShowAdd] = useState(false);
@@ -54,7 +56,7 @@ export default function CompetitorManager({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`,
+          Authorization: `Bearer ${apiToken ?? userId}`,
         },
         body: JSON.stringify({ url: normalizedUrl, name: name || undefined }),
       });
@@ -68,7 +70,7 @@ export default function CompetitorManager({
               method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${userId}`,
+                Authorization: `Bearer ${apiToken ?? userId}`,
               },
               body: JSON.stringify({
                 ...(googleMapsUrl && { google_maps_url: googleMapsUrl }),
@@ -110,7 +112,7 @@ export default function CompetitorManager({
     try {
       const res = await fetch(`${apiUrl}/api/v1/competitors/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${userId}` },
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` },
       });
       if (res.ok) {
         setCompetitors((prev) => prev.filter((c) => c.id !== id));

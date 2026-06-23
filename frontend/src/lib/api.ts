@@ -3,10 +3,13 @@ import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, T
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 class ApiClient {
-  private userId: string;
+  private bearer: string;
 
-  constructor(userId: string) {
-    this.userId = userId;
+  // Prefer the signed api_token; fall back to the raw userId only for the
+  // legacy deprecation window (backend rejects it once ALLOW_LEGACY_UUID_BEARER
+  // is off in production).
+  constructor(userId: string, apiToken?: string) {
+    this.bearer = apiToken || userId;
   }
 
   public async fetch<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -15,7 +18,7 @@ class ApiClient {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.userId}`,
+        Authorization: `Bearer ${this.bearer}`,
         ...options.headers,
       },
       cache: 'no-store',
@@ -140,8 +143,8 @@ class ApiClient {
   }
 }
 
-export function createApiClient(userId: string): ApiClient {
-  return new ApiClient(userId);
+export function createApiClient(userId: string, apiToken?: string): ApiClient {
+  return new ApiClient(userId, apiToken);
 }
 
 // Unauthenticated calls (for login)
@@ -154,7 +157,7 @@ export async function requestMagicLink(email: string): Promise<{ ok: boolean }> 
   return res.json();
 }
 
-export async function exchangeSessionToken(sessionToken: string): Promise<{ user_id: string; email: string } | null> {
+export async function exchangeSessionToken(sessionToken: string): Promise<{ user_id: string; email: string; api_token: string } | null> {
   const res = await fetch(`${API_BASE}/api/v1/auth/exchange`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
