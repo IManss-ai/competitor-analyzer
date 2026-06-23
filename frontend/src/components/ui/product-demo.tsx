@@ -11,6 +11,10 @@ import { useTheme } from '@/lib/use-theme';
  */
 export default function ProductDemo() {
   const { theme } = useTheme();
+  // Demo recordings are named by the legacy theme (paper/ink) and show the
+  // pre-shadcn UI; they need re-recording. Until then, map the new light/dark
+  // value to the existing asset names.
+  const demoVariant = theme === 'light' ? 'paper' : 'ink';
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [reduced, setReduced] = useState(false);
@@ -82,21 +86,21 @@ export default function ProductDemo() {
             Source is 2× the display size, so the slow Ken Burns zoom stays crisp. */}
         <div className="relative aspect-[2600/1072] w-full overflow-hidden bg-[var(--surface-raised)]">
           <motion.video
-            key={theme}
+            key={demoVariant}
             ref={videoRef}
             className="absolute inset-0 h-full w-full"
             style={{ transformOrigin: '50% 45%' }}
             animate={reduced ? undefined : { scale: [1, 1.06, 1.06, 1] }}
             transition={reduced ? undefined : { duration: 30, repeat: Infinity, ease: 'easeInOut', times: [0, 0.45, 0.55, 1] }}
-            poster={`/demo/command-center-${theme}.jpg`}
+            poster={`/demo/command-center-${demoVariant}.jpg`}
             muted
             loop
             playsInline
             autoPlay={!reduced}
             preload="metadata"
           >
-            <source src={`/demo/command-center-${theme}.webm`} type="video/webm" />
-            <source src={`/demo/command-center-${theme}.mp4`} type="video/mp4" />
+            <source src={`/demo/command-center-${demoVariant}.webm`} type="video/webm" />
+            <source src={`/demo/command-center-${demoVariant}.mp4`} type="video/mp4" />
           </motion.video>
         </div>
       </div>

@@ -10,7 +10,7 @@ export default function ThemeToggle() {
       className="inline-flex items-center font-mono text-[10px] tracking-[0.12em] uppercase select-none"
       style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}
     >
-      {(['paper', 'ink'] as const).map((t) => {
+      {(['light', 'dark'] as const).map((t) => {
         const active = theme === t;
         return (
           <button
