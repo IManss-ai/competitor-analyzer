@@ -3,6 +3,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import select
 from app.db import SessionLocal
+from app.access import access_level
 from app.models import User, Competitor, ChangeEvent, ApprovedAction
 from app.pipeline.scanner import scan_user_competitors
 from app.pipeline.review_scraper import scrape_competitor_reviews
@@ -94,6 +95,11 @@ async def _run_scan_and_brief(label, *extra_filters):
         for f in extra_filters:
             stmt = stmt.where(f)
         for user in db.execute(stmt).scalars().all():
+            # The SQL prefilter still matches trial-EXPIRED users (status stays
+            # "trialing"). access_level is the single source of truth — skip
+            # anyone who is no longer full-access so we don't scan/email them.
+            if access_level(user) != "full":
+                continue
             try:
                 await _scan_and_brief_user(user, db)
             except Exception as e:
