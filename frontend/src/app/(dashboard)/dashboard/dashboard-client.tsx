@@ -11,11 +11,9 @@ import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
 import CountUp from '@/components/count-up';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 
 interface DashboardClientProps {
   userId: string;
@@ -560,7 +558,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <div className="bg-card border border-border rounded-xl p-8 max-w-xl mx-auto shadow-sm text-center space-y-6 my-12">
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
           <div className="absolute inset-0 border-4 rounded-full border-border"></div>
-          <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin" style={{ borderTopColor: 'var(--primary)' }}></div>
+          <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
           <Building2 size={36} className="text-primary" />
         </div>
 

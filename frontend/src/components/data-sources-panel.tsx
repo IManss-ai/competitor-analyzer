@@ -224,7 +224,6 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
                   ) : (
                     <p
                       className="text-xs font-mono truncate"
-                      style={{ color: currentValue ? undefined : undefined }}
                       title={currentValue || 'Auto-derived from homepage'}
                     >
                       {currentValue
