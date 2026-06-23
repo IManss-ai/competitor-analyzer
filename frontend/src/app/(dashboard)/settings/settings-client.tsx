@@ -577,7 +577,7 @@ export default function SettingsClient({
                   disabled={isAdding}
                   className="rs-btn-primary cursor-pointer flex items-center gap-2"
                 >
-                  {isAdding ? 'Adding...' : 'Add competitor'}
+                  {isAdding ? 'Adding…' : 'Add competitor'}
                 </button>
               </form>
             </div>
