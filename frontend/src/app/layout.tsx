@@ -5,6 +5,7 @@ import { InlineScript } from '@/components/inline-script';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { cn } from "@/lib/utils";
+import { Toaster } from '@/components/ui/sonner';
 
 // shadcn neutral-modern: Geist Sans (UI/display) + Geist Mono (numerals/code).
 // The geist package exposes --font-geist-sans / --font-geist-mono, which the
@@ -55,6 +56,7 @@ export default function RootLayout({
         </noscript>
         <InlineScript html={`try{var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}`} />
         {children}
+        <Toaster />
         <Analytics />
       </body>
     </html>
