@@ -60,6 +60,13 @@ export default async function BillingCheckoutPage({
           Go to your dashboard
           <ArrowRight size={16} />
         </Link>
+
+        <p className="mt-5 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+          By upgrading you agree to our{' '}
+          <Link href="/terms" className="underline" style={{ color: 'var(--accent-primary)' }}>Terms</Link>{' '}&amp;{' '}
+          <Link href="/privacy" className="underline" style={{ color: 'var(--accent-primary)' }}>Privacy</Link>.
+          Cancel anytime; access reverts to read-only on cancellation, and we don&apos;t refund partial billing periods.
+        </p>
       </div>
     </div>
   );
