@@ -1,25 +1,32 @@
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function BillingSuccessPage() {
   return (
-    <div className="flex items-center justify-center min-h-[70vh]">
-      <div className="rs-card p-10 max-w-md w-full text-center">
-        <div className="mx-auto w-16 h-16 bg-[var(--tone-positive)]/10 border border-[var(--tone-positive)]/20 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle2 size={36} style={{ color: 'var(--tone-positive)' }} />
-        </div>
-        <h1 className="text-2xl font-semibold tracking-tight mb-3" style={{ color: 'var(--text-primary)' }}>You&apos;re all set!</h1>
-        <p className="text-sm mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          Your 2-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
-        </p>
-        <Link
-          href="/dashboard"
-          className="rs-btn-primary w-full cursor-pointer"
-        >
-          Go to dashboard
-          <ArrowRight size={16} />
-        </Link>
-      </div>
+    <div className="flex items-center justify-center min-h-[70vh] px-4">
+      <Card className="max-w-md w-full text-center">
+        <CardContent className="flex flex-col items-center pt-8 pb-8 gap-6">
+          <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+            <CheckCircle2 size={28} className="text-primary" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">
+              You&apos;re all set!
+            </h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Your 2-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
+            </p>
+          </div>
+          <Button asChild size="lg" className="w-full gap-2">
+            <Link href="/dashboard">
+              Go to dashboard
+              <ArrowRight size={16} />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
