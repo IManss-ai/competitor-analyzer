@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Zap, X } from 'lucide-react';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from './battle-card-content';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
+const MotionButton = motion.create(Button);
 
 interface BattleCardProps {
   competitorId: string;
@@ -48,14 +52,16 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
 
   return (
     <>
-      <motion.button
-        whileTap={{ scale: 0.99 }}
+      <MotionButton
+        variant="outline"
+        size="sm"
         onClick={generateCard}
-        className="px-3 py-2 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] rounded text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center gap-2 transition-colors cursor-pointer"
+        className="flex items-center gap-2 text-xs font-semibold"
+        whileTap={{ scale: 0.99 }}
       >
-        <Zap size={13} className="text-sky-400" />
+        <Zap size={13} className="text-primary" />
         <span>Battle Card</span>
-      </motion.button>
+      </MotionButton>
 
       <AnimatePresence>
         {isOpen && (
@@ -69,48 +75,49 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
               initial={shouldReduceMotion ? false : { scale: 0.96, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.96, opacity: 0, y: 15 }}
-              className="p-1 bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] w-full max-w-2xl shadow-[var(--shadow-modal)] relative my-8"
-              style={{ borderRadius: 'var(--radius-xl)' }}
+              className="w-full max-w-2xl shadow-xl relative my-8 bg-card border border-border rounded-xl overflow-hidden"
             >
-              {/* Inner Core */}
-              <div className="bg-[var(--surface-overlay)] border border-[var(--border-subtle)] overflow-hidden" style={{ borderRadius: 'var(--radius-lg)' }}>
-                {/* Header */}
-                <div className="p-6 border-b border-[var(--border-default)] bg-[var(--fill-subtle)]">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
-                        <Zap className="text-sky-400" size={18} />
-                        {competitorName} Battle Card
-                        {cardData?.variant === 'local' && (
-                          <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 border tag-green" style={{ borderRadius: 'var(--radius-sm)' }}>
-                            Local intel
-                          </span>
-                        )}
-                      </h3>
-                      <p className="text-[10px] text-[var(--text-muted)] mt-1 font-mono uppercase tracking-wider">
-                        {cardData?.variant === 'local'
-                          ? 'Reviews + social + reputation read'
-                          : 'Page changes + reviews + hiring read'}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setIsOpen(false)}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] text-[var(--text-secondary)] transition-colors cursor-pointer"
-                    >
-                      <X size={15} />
-                    </button>
+              {/* Header */}
+              <div className="p-6 border-b border-border bg-muted">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                      <Zap className="text-primary" size={18} />
+                      {competitorName} Battle Card
+                      {cardData?.variant === 'local' && (
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 h-auto rounded-sm"
+                        >
+                          Local intel
+                        </Badge>
+                      )}
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mt-1 font-mono uppercase tracking-wider">
+                      {cardData?.variant === 'local'
+                        ? 'Reviews + social + reputation read'
+                        : 'Page changes + reviews + hiring read'}
+                    </p>
                   </div>
-                  {cardData && (
-                    <div className="text-[9px] font-mono text-[var(--text-muted)] mt-3">
-                      GENERATED AT: {new Date(cardData.generated_at).toLocaleString().toUpperCase()}
-                    </div>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsOpen(false)}
+                    className="h-8 w-8 text-muted-foreground"
+                  >
+                    <X size={15} />
+                  </Button>
                 </div>
+                {cardData && (
+                  <div className="text-[9px] font-mono text-muted-foreground mt-3">
+                    GENERATED AT: {new Date(cardData.generated_at).toLocaleString().toUpperCase()}
+                  </div>
+                )}
+              </div>
 
-                {/* Content */}
-                <div className="min-h-[200px] flex flex-col justify-center">
-                  <BattleCardContent cardData={cardData} loading={loading} error={error} />
-                </div>
+              {/* Content */}
+              <div className="min-h-[200px] flex flex-col justify-center">
+                <BattleCardContent cardData={cardData} loading={loading} error={error} />
               </div>
             </motion.div>
           </motion.div>

@@ -15,13 +15,13 @@ export default async function QueuePage() {
   return (
     <div>
       <Topbar title="Action Queue" subtitle="Review AI-generated counter actions" />
-      
+
       {/* Page summary bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-6 pb-4 border-b border-[var(--border-subtle)]">
-        <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-6 pb-4 border-b border-border">
+        <div className="text-sm font-semibold text-foreground">
           {data.actions.length} {data.actions.length === 1 ? 'action' : 'actions'} pending review
         </div>
-        <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+        <div className="text-xs text-muted-foreground">
           Approving an action marks it complete and removes it from the queue
         </div>
       </div>

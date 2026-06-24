@@ -6,6 +6,11 @@ import { ArrowRight } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import { motion } from 'motion/react';
 import ThemeToggle from '@/components/theme-toggle';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 // Plausible intel-ledger rows for the left panel — the product demonstrating
 // itself. Static sample data, no live fetch on an unauthenticated page.
@@ -82,69 +87,57 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-[100dvh] flex relative" style={{ background: 'var(--surface-base)' }}>
+    <div className="min-h-[100dvh] flex relative bg-background">
 
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
 
       {/* ── Left: the briefing panel — the product demonstrating itself ── */}
-      <div
-        className="hidden lg:flex flex-col w-[46%] relative"
-        style={{ background: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)' }}
-      >
+      <div className="hidden lg:flex flex-col w-[46%] relative bg-card border-r border-border">
         <div className="flex flex-col h-full p-12 xl:p-16">
 
           {/* Masthead */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity max-w-fit">
-            <div
-              className="w-7 h-7 flex items-center justify-center"
-              style={{ background: 'var(--accent-primary)' }}
-            >
-              <RivalscopeLogo size={13} className="text-[var(--accent-text)]" />
+            <div className="w-7 h-7 flex items-center justify-center rounded bg-primary">
+              <RivalscopeLogo size={13} className="text-primary-foreground" />
             </div>
-            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            <span className="text-[15px] font-bold tracking-tight text-foreground">
               Rivalscope
             </span>
           </Link>
 
           {/* Dateline rule */}
-          <div
-            className="flex items-baseline justify-between mt-10 pb-2"
-            style={{ borderBottom: '2px solid var(--text-primary)' }}
-          >
-            <span className="text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: 'var(--text-muted)' }}>
+          <div className="flex items-baseline justify-between mt-10 pb-2 border-b-2 border-foreground">
+            <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
               Competitive intelligence desk
             </span>
-            <span className="text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>{today}</span>
+            <span className="text-[10px] font-mono text-muted-foreground">{today}</span>
           </div>
 
           {/* Headline */}
-          <h2
-            className="mt-8 text-[2.4rem] font-extrabold leading-[1.05] tracking-tight"
-            style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}
-          >
+          <h2 className="mt-8 text-[2.4rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-foreground">
             Know what changed
             <br />
             before your
             <br />
             customers do.
           </h2>
-          <p className="mt-5 text-[13px] leading-relaxed max-w-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-5 text-[13px] leading-relaxed max-w-sm text-muted-foreground">
             Rivalscope watches your competitors&apos; pages, pricing, reviews, and hiring —
             and turns every move into a plan you can execute.
           </p>
 
           {/* Live ledger — staggered terminal feed */}
           <div className="mt-10 flex-1 min-h-0">
-            <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3 text-muted-foreground">
               Detected this morning
             </p>
             <motion.div
               initial="hidden"
               animate="visible"
               variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14, delayChildren: 0.3 } } }}
-              style={{ borderTop: '1px solid var(--border-default)' }}
+              className="border-t border-border"
             >
               {LEDGER_ROWS.map((row) => (
                 <motion.div
@@ -153,14 +146,13 @@ export default function LoginPage() {
                     hidden: { opacity: 0, y: 6 },
                     visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
                   }}
-                  className="flex items-baseline gap-3 py-3"
-                  style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                  className="flex items-baseline gap-3 py-3 border-b border-border"
                 >
-                  <span className="text-[10px] font-mono shrink-0 tabular-nums" style={{ color: 'var(--text-muted)' }}>
+                  <span className="text-[10px] font-mono shrink-0 tabular-nums text-muted-foreground">
                     {row.time}
                   </span>
                   <span className={`badge ${row.tagClass} text-[9px] shrink-0`}>{row.tag}</span>
-                  <span className="text-[12px] leading-snug truncate" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="text-[12px] leading-snug truncate text-muted-foreground">
                     {row.text}
                   </span>
                 </motion.div>
@@ -169,18 +161,15 @@ export default function LoginPage() {
           </div>
 
           {/* Bottom stat strip */}
-          <div
-            className="grid grid-cols-3 pt-5 mt-8"
-            style={{ borderTop: '1px solid var(--border-default)' }}
-          >
+          <div className="grid grid-cols-3 pt-5 mt-8 border-t border-border">
             {[
               ['24/7', 'monitoring'],
               ['76+', 'apps indexed'],
               ['<24h', 'to action plan'],
             ].map(([num, label]) => (
               <div key={label}>
-                <p className="text-[18px] font-mono font-semibold tabular-nums" style={{ color: 'var(--text-primary)' }}>{num}</p>
-                <p className="text-[10px] font-mono uppercase tracking-wider mt-0.5" style={{ color: 'var(--text-muted)' }}>{label}</p>
+                <p className="text-[18px] font-mono font-semibold tabular-nums text-foreground">{num}</p>
+                <p className="text-[10px] font-mono uppercase tracking-wider mt-0.5 text-muted-foreground">{label}</p>
               </div>
             ))}
           </div>
@@ -193,108 +182,98 @@ export default function LoginPage() {
 
           {/* Mobile masthead */}
           <Link href="/" className="lg:hidden flex items-center gap-3 mb-10 hover:opacity-85 transition-opacity max-w-fit">
-            <div className="w-7 h-7 flex items-center justify-center" style={{ background: 'var(--accent-primary)' }}>
-              <RivalscopeLogo size={13} className="text-[var(--accent-text)]" />
+            <div className="w-7 h-7 flex items-center justify-center rounded bg-primary">
+              <RivalscopeLogo size={13} className="text-primary-foreground" />
             </div>
-            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Rivalscope</span>
+            <span className="text-[15px] font-bold tracking-tight text-foreground">Rivalscope</span>
           </Link>
 
-          <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3 text-muted-foreground">
             Access
           </p>
-          <h1
-            className="text-[26px] font-extrabold tracking-tight leading-tight"
-            style={{ color: 'var(--text-primary)', letterSpacing: '-0.025em' }}
-          >
+          <h1 className="text-[26px] font-extrabold tracking-[-0.025em] leading-tight text-foreground">
             Sign in to your desk
           </h1>
-          <p className="text-[13px] mt-2 mb-7" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-[13px] mt-2 mb-7 text-muted-foreground">
             New here? Your account is created on first sign-in — no separate signup.
           </p>
 
           {plan && (
-            <div
-              className="mb-5 px-4 py-3 flex items-center gap-3"
-              style={{ background: 'var(--accent-subtle)', border: '1px solid var(--accent-border)' }}
-            >
-              <span className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5"
-                    style={{ background: 'var(--accent-cta)', color: 'var(--accent-text)' }}>
+            <div className="mb-5 px-4 py-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30">
+              <Badge variant="default" className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2">
                 Plan
-              </span>
-              <span className="text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>
+              </Badge>
+              <span className="text-[12px] font-medium text-foreground">
                 {plan === 'local' ? 'Local Business — $19/mo' : 'SaaS Starter — $49/mo'}
               </span>
-              <span className="ml-auto text-[10px] font-mono" style={{ color: 'var(--text-muted)' }}>
+              <span className="ml-auto text-[10px] font-mono text-muted-foreground">
                 checkout after sign-in
               </span>
             </div>
           )}
 
           {error && (
-            <div
-              className="mb-5 px-4 py-3 text-[12px] font-medium"
-              style={{
-                background: 'color-mix(in srgb, var(--tone-danger) 8%, transparent)',
-                border: '1px solid color-mix(in srgb, var(--tone-danger) 28%, transparent)',
-                color: 'var(--tone-danger)',
-              }}
-            >
+            <div className="mb-5 px-4 py-3 text-[12px] font-medium rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleDirectLogin} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="rs-label block mb-2">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                className="rs-input"
-              />
-            </div>
+          <Card>
+            <CardContent className="pt-6">
+              <form onSubmit={handleDirectLogin} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">Email address</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    className="h-10"
+                  />
+                </div>
 
-            <div>
-              <label htmlFor="password" className="rs-label block mb-2">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={6}
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 6 characters"
-                className="rs-input"
-              />
-            </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    minLength={6}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Min. 6 characters"
+                    className="h-10"
+                  />
+                </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="rs-btn-primary w-full py-3 text-[13px] mt-1"
-            >
-              {loading ? 'Authenticating…' : 'Sign in'}
-              {!loading && <ArrowRight size={13} />}
-            </button>
-          </form>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-10 text-[13px] mt-1"
+                  size="lg"
+                >
+                  {loading ? 'Authenticating…' : 'Sign in'}
+                  {!loading && <ArrowRight size={13} />}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
 
-          <div className="mt-8 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+          <div className="mt-8 pt-5 flex items-center justify-between border-t border-border">
             <Link
               href="/"
-              className="text-[11px] font-mono inline-flex items-center gap-2 group"
-              style={{ color: 'var(--text-muted)' }}
+              className="text-[11px] font-mono inline-flex items-center gap-2 group text-muted-foreground hover:text-foreground transition-colors"
             >
               <span className="group-hover:-translate-x-0.5 transition-transform inline-block">←</span>
               Back to home
             </Link>
-            <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-[11px] font-mono text-muted-foreground">
               © {new Date().getFullYear()} Rivalscope
             </span>
           </div>

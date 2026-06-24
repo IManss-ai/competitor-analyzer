@@ -1,4 +1,5 @@
 import ThemeToggle from '@/components/theme-toggle';
+import { Separator } from '@/components/ui/separator';
 
 interface TopbarProps {
   title: string;
@@ -27,9 +28,9 @@ function getFormattedDateline(lastScan?: string | null) {
   const day = String(date.getDate()).padStart(2, '0');
   const monthName = months[date.getMonth()];
   const year = date.getFullYear();
-  
+
   const dateStr = `${dayName} ${day} ${monthName} ${year}`;
-  
+
   if (lastScan) {
     const relative = getRelativeTime(lastScan);
     return `${dateStr} · LAST SCAN: ${relative.toUpperCase()} · LIVE`;
@@ -39,27 +40,18 @@ function getFormattedDateline(lastScan?: string | null) {
 
 export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {
   return (
-    <header
-      className="flex items-end justify-between flex-wrap gap-3 mb-8 pb-4"
-      style={{ borderBottom: '2px solid var(--text-primary)' }}
-    >
+    <header className="flex items-end justify-between flex-wrap gap-3 mb-8 pb-4 border-b border-border">
       {/* Left — page title + broadsheet dateline */}
       <div>
-        <h1
-          className="text-[28px] font-extrabold leading-tight tracking-tight uppercase"
-          style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}
-        >
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-foreground">
           {title}
         </h1>
-        <div
-          className="text-[11px] font-mono uppercase tracking-[0.1em] mt-2 flex flex-wrap items-center gap-x-2"
-          style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
-        >
+        <div className="text-[11px] font-mono uppercase tracking-[0.08em] mt-1.5 flex flex-wrap items-center gap-x-2 text-muted-foreground">
           <span>{getFormattedDateline(lastScan)}</span>
           {subtitle && (
             <>
               <span>·</span>
-              <span className="normal-case tracking-normal" style={{ color: 'var(--text-secondary)' }}>
+              <span className="normal-case tracking-normal text-muted-foreground">
                 {subtitle}
               </span>
             </>
@@ -68,15 +60,13 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
       </div>
 
       {/* Right — theme toggle + actions */}
-      <div className="flex items-center gap-4 pb-0.5 flex-shrink-0">
+      <div className="flex items-center gap-3 pb-0.5 flex-shrink-0">
         <ThemeToggle />
 
         {/* Actions slot */}
         {actions && (
           <>
-            <div
-              style={{ width: '1px', height: '16px', background: 'var(--border-default)' }}
-            />
+            <Separator orientation="vertical" className="h-4" />
             <div>{actions}</div>
           </>
         )}

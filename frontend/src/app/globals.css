@@ -1,217 +1,112 @@
 @import 'tailwindcss';
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   RIVALSCOPE — Design System v4 "Signal Desk" (blue, dark-first)
-   Dual theme via shared token names: ink-dark is the brand default
-   (html[data-theme="ink"], set in layout.tsx + a prefers-color-scheme
-   fallback); paper-light is the :root alternate reachable via the theme toggle.
-   Accent: electric blue (#2e8bff / CTA #1e6bff ink · #345781 paper) — sky-* remapped
-   Spacing: 8pt scale (4, 8, 12, 16, 24, 32, 40, 48, 64)
-   Radius:  sharp — cards 6px, buttons/inputs 4px, badges 2px, pills 9999px
-   Type:    Space Grotesk (grotesk UI + display, via the --font-archivo alias) + IBM Plex Mono (data)
-   Motion:  minimal, crisp — no glow, no spring, no hover lift
+   RIVALSCOPE — Design System: shadcn neutral-modern (zinc + single blue accent)
+   Theme via the `.dark` class (shadcn convention); dark-first default applied by
+   the pre-paint script in layout.tsx. Tokens are shadcn oklch (zinc neutrals,
+   blue primary); the legacy Signal Desk token names are aliased to them below so
+   existing .rs-* markup keeps rendering during the migration (aliases retired in P4).
+   Color/radius utilities (--color-*, --radius-*) are emitted by the @theme inline
+   block at the end of this file; the `sky-*` scale is remapped there to the blue
+   primary so legacy sky-* utilities render the accent.
 ───────────────────────────────────────────────────────────────────────────── */
 
-@theme {
-  --color-background:           hsl(var(--background));
-  --color-foreground:           hsl(var(--foreground));
-  --color-card:                 hsl(var(--card));
-  --color-card-foreground:      hsl(var(--card-foreground));
-  --color-popover:              hsl(var(--popover));
-  --color-popover-foreground:   hsl(var(--popover-foreground));
-  --color-primary:              hsl(var(--primary));
-  --color-primary-foreground:   hsl(var(--primary-foreground));
-  --color-secondary:            hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted:                hsl(var(--muted));
-  --color-muted-foreground:     hsl(var(--muted-foreground));
-  --color-accent:               hsl(var(--accent));
-  --color-accent-foreground:    hsl(var(--accent-foreground));
-  --color-destructive:          hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border:               hsl(var(--border));
-  --color-input:                hsl(var(--input));
-  --color-ring:                 hsl(var(--ring));
-
-  /* Remap Tailwind's `sky` scale to the brand accent so every legacy
-     sky-* utility becomes the v4 accent with no per-component edits.
-     Values here are the PAPER defaults (slate-blue); ink overrides to
-     electric blue live below. */
-  --color-sky-50:  #eef3f9;
-  --color-sky-100: #dce7f2;
-  --color-sky-200: #b9cfe6;
-  --color-sky-300: #8fb0d4;
-  --color-sky-400: #4f7cb0;
-  --color-sky-500: #345781;
-  --color-sky-600: #2c4868;
-  --color-sky-700: #345781;
-  --color-sky-800: #2c4868;
-  --color-sky-900: #243a54;
-  --color-sky-950: #172534;
-}
-
 :root {
-  /* ── Tailwind HSL bridge (paper) ─────────────────────── */
-  --background:           40 30% 94%;   /* #f5f2ec */
-  --foreground:           30 11% 9%;    /* #1a1714 */
-  --card:                 0 0% 100%;
-  --card-foreground:      30 11% 9%;
-  --popover:              0 0% 100%;
-  --popover-foreground:   30 11% 9%;
-  --primary:              212 42% 36%;  /* #345781 */
-  --primary-foreground:   40 30% 96%;
-  --secondary:            40 20% 92%;
-  --secondary-foreground: 30 11% 9%;
-  --muted:                40 20% 92%;
-  --muted-foreground:     30 7% 56%;    /* #9a9186 */
-  --accent:               212 42% 36%;
-  --accent-foreground:    30 11% 9%;
-  --destructive:          0 60% 45%;
-  --destructive-foreground: 0 0% 100%;
-  --border:               30 12% 86%;
-  --input:                30 12% 88%;
-  --ring:                 212 42% 36%;
+  /* ── Radius (shadcn) ─────────────────────────────────── */
+  --radius: 0.5rem;
 
-  /* ── Fonts (unchanged) ───────────────────────────────── */
-  --font-sans:  var(--font-archivo), system-ui, sans-serif;
-  --font-mono:  var(--font-ibm-plex-mono), ui-monospace, monospace;
+  /* ── shadcn base tokens — LIGHT: zinc neutrals + blue primary ── */
+  --background:           oklch(1 0 0);
+  --foreground:           oklch(0.141 0.005 285.823);   /* zinc-950 */
+  --card:                 oklch(1 0 0);
+  --card-foreground:      oklch(0.141 0.005 285.823);
+  --popover:              oklch(1 0 0);
+  --popover-foreground:   oklch(0.141 0.005 285.823);
+  --primary:              oklch(0.546 0.245 262.881);    /* blue-600 */
+  --primary-foreground:   oklch(0.985 0 0);
+  --secondary:            oklch(0.967 0.001 286.375);    /* zinc-100 */
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted:                oklch(0.967 0.001 286.375);
+  --muted-foreground:     oklch(0.552 0.016 285.938);    /* zinc-500 */
+  --accent:               oklch(0.967 0.001 286.375);
+  --accent-foreground:    oklch(0.21 0.006 285.885);
+  --destructive:          oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border:               oklch(0.92 0.004 286.32);      /* zinc-200 */
+  --input:                oklch(0.871 0.006 286.286);    /* zinc-300 */
+  --ring:                 oklch(0.546 0.245 262.881);    /* = primary */
+  --chart-1:              oklch(0.646 0.222 41.116);
+  --chart-2:              oklch(0.6 0.118 184.704);
+  --chart-3:              oklch(0.398 0.07 227.392);
+  --chart-4:              oklch(0.828 0.189 84.429);
+  --chart-5:              oklch(0.769 0.188 70.08);
+  --sidebar:                     oklch(0.985 0 0);
+  --sidebar-foreground:          oklch(0.141 0.005 285.823);
+  --sidebar-primary:             oklch(0.546 0.245 262.881);
+  --sidebar-primary-foreground:  oklch(0.985 0 0);
+  --sidebar-accent:              oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground:   oklch(0.21 0.006 285.885);
+  --sidebar-border:              oklch(0.92 0.004 286.32);
+  --sidebar-ring:                oklch(0.546 0.245 262.881);
+
+  /* ── Fonts (Geist; --font-archivo kept as a legacy alias) ── */
+  --font-sans:  var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono:  var(--font-geist-mono), ui-monospace, monospace;
+  --font-archivo: var(--font-geist-sans);
   --sidebar-width: 240px;
 
-  /* ── Surfaces (paper) ────────────────────────────────── */
-  --surface-base:    #f5f2ec;
-  --surface-raised:  #ffffff;
-  --surface-overlay: #ffffff;
-  --surface-subtle:  #fbf9f5;
+  /* ── Radius scale (legacy names; matches the @theme inline scale) ── */
+  --radius-sm:   calc(var(--radius) * 0.6);
+  --radius-md:   calc(var(--radius) * 0.8);
+  --radius-lg:   var(--radius);
+  --radius-xl:   calc(var(--radius) * 1.4);
+  --radius-pill: 9999px;
 
-  /* ── Borders (paper) ─────────────────────────────────── */
-  --border-default: rgba(26,23,20,0.12);
-  --border-subtle:  rgba(26,23,20,0.07);
-  --border-strong:  rgba(26,23,20,0.22);
+  /* ── Legacy Signal Desk token aliases → shadcn tokens (retired in P4) ── */
+  --surface-base:    var(--background);
+  --surface-raised:  var(--card);
+  --surface-overlay: var(--popover);
+  --surface-subtle:  var(--muted);
+  --fill-subtle:        var(--muted);
+  --fill-subtle-hover:  var(--accent);
+  --hairline:        var(--border);
+  --border-default:  var(--border);
+  --border-subtle:   var(--border);
+  --border-strong:   var(--input);
+  --text-primary:    var(--foreground);
+  --text-secondary:  var(--muted-foreground);
+  --text-muted:      var(--muted-foreground);
+  --accent-primary:  var(--primary);
+  --accent-hover:    var(--primary);
+  --accent-cta:      var(--primary);
+  --accent-cta-hover: var(--primary);
+  --accent-deep:     var(--primary);
+  --accent-text:     var(--primary-foreground);
+  --accent-subtle:   color-mix(in oklch, var(--primary) 12%, transparent);
+  --accent-border:   var(--ring);
+  --accent-glow:     color-mix(in oklch, var(--primary) 28%, transparent);
 
-  /* ── Text (paper) ────────────────────────────────────── */
-  --text-primary:   #1a1714;
-  --text-secondary: #6b6258;
-  --text-muted:     #726b5e;   /* darkened from #9a9186 for WCAG AA (~4.8:1 on --surface-base) */
-
-  /* ── Accent — slate-blue (paper, darker for contrast) ── */
-  --accent-primary: #345781;
-  --accent-hover:   #2c4868;
-  --accent-subtle:  rgba(52,87,129,0.10);
-  --accent-border:  rgba(52,87,129,0.30);
-  --accent-glow:    rgba(52,87,129,0.18);
-  --accent-cta:     #345781;
-  --accent-cta-hover: #2c4868;
-  --accent-deep:    #243a54;
-  --accent-text:    #ffffff;   /* text ON accent fills; dark ink text on the lighter ink accent */
-
-  /* ── Semantic tones (match badge hues; paper-dark, ink overrides below) ── */
+  /* ── Semantic tones (match badge hues; light values, .dark overrides below) ── */
   --tone-positive: #1f5d3f;
   --tone-warning:  #8a5a12;
   --tone-danger:   #b3261e;
   --tone-repositioning: #6d4f9c;
   --tone-neutral:  #5b6470;
 
-  /* ── De-hardcoded fills (new, theme-aware) ───────────── */
-  --hairline:           rgba(26,23,20,0.06);
-  --fill-subtle:        rgba(26,23,20,0.03);
-  --fill-subtle-hover:  rgba(26,23,20,0.05);
-
-  /* ── Radius (unchanged) ──────────────────────────────── */
-  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 6px; --radius-xl: 8px; --radius-pill: 9999px;
-
-  /* ── Shadow — paper stays flat ───────────────────────── */
+  /* ── Shadow — flat cards; elevation only for floating overlays ── */
   --shadow-card:       none;
   --shadow-card-hover: none;
-  --shadow-elevated:   0 8px 24px rgba(26,23,20,0.10), 0 2px 6px rgba(26,23,20,0.06);
-  --shadow-modal:      0 24px 60px rgba(26,23,20,0.18), 0 4px 14px rgba(26,23,20,0.10);
+  --shadow-elevated:   0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-modal:      0 24px 60px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.10);
 
   /* ── Motion (unchanged) ──────────────────────────────── */
   --ease-smooth: cubic-bezier(0.16,1,0.3,1);
   --ease-out:    cubic-bezier(0.0,0.0,0.2,1);
   --duration-fast: 100ms; --duration-base: 160ms; --duration-slow: 240ms;
-}
-
-/* ── INK = "Signal Desk" (default theme): deep navy near-black, electric blue = signal
-   Linear-grade restraint. Electric blue (#2e8bff / CTA #1e6bff) is reserved for
-   signal + primary action; surfaces and most UI stay near-monochrome. The blue
-   CTA carries WHITE text (AA-verified); never a lime/dark-text accent. */
-html[data-theme="ink"] {
-  --background: 222 41% 6%;  --foreground: 222 30% 94%;
-  --card: 222 38% 9%;        --card-foreground: 222 30% 94%;
-  --popover: 222 34% 11%;    --popover-foreground: 222 30% 94%;
-  --primary: 220 100% 56%;   --primary-foreground: 0 0% 100%;
-  --secondary: 222 24% 16%;  --secondary-foreground: 222 30% 94%;
-  --muted: 222 22% 14%;      --muted-foreground: 220 16% 53%;
-  --accent: 213 100% 59%;    --accent-foreground: 0 0% 100%;
-  --destructive: 0 72% 60%;  --destructive-foreground: 0 0% 100%;
-  --border: 222 20% 18%;     --input: 222 20% 16%;  --ring: 213 100% 59%;
-
-  --surface-base: #080b14;  --surface-raised: #0e1320;
-  --surface-overlay: #121829; --surface-subtle: #161d2e;
-  --border-default: rgba(180,200,235,0.12);
-  --border-subtle:  rgba(180,200,235,0.06);
-  --border-strong:  rgba(180,200,235,0.22);
-  --text-primary: #e9edf6; --text-secondary: #9aa6bd; --text-muted: #828ea6;
-  --accent-primary: #2e8bff; --accent-hover: #54a3ff;
-  --accent-cta: #1e6bff; --accent-cta-hover: #1a60e6; --accent-deep: #0a2550;
-  --accent-subtle: rgba(46,139,255,0.12);
-  --accent-border: rgba(46,139,255,0.30);
-  --accent-glow:   rgba(46,139,255,0.28);
-  --accent-text:   #ffffff;
-  --tone-positive: #5aa07a;
-  --tone-warning:  #c79a4e;
-  --tone-danger:   #f87171;
-  --tone-repositioning: #9b7fc7;
-  --tone-neutral:  #9aa3af;
-  --hairline: rgba(180,200,235,0.05);
-  --fill-subtle: rgba(180,200,235,0.035);
-  --fill-subtle-hover: rgba(180,200,235,0.06);
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
-  --shadow-modal:    0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.55);
-
-  --color-sky-50:  #eaf3ff; --color-sky-300: #54a3ff;
-  --color-sky-400: #2e8bff; --color-sky-500: #2e8bff; --color-sky-600: #1e6bff;
-  --color-sky-700: #1657d6; --color-sky-950: #0a2550;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --background: 222 41% 6%;  --foreground: 222 30% 94%;
-    --card: 222 38% 9%;        --card-foreground: 222 30% 94%;
-    --popover: 222 34% 11%;    --popover-foreground: 222 30% 94%;
-    --primary: 220 100% 56%;   --primary-foreground: 0 0% 100%;
-    --secondary: 222 24% 16%;  --secondary-foreground: 222 30% 94%;
-    --muted: 222 22% 14%;      --muted-foreground: 220 16% 53%;
-    --accent: 213 100% 59%;    --accent-foreground: 0 0% 100%;
-    --destructive: 0 72% 60%;  --destructive-foreground: 0 0% 100%;
-    --border: 222 20% 18%;     --input: 222 20% 16%;  --ring: 213 100% 59%;
-    --surface-base: #080b14;  --surface-raised: #0e1320;
-    --surface-overlay: #121829; --surface-subtle: #161d2e;
-    --border-default: rgba(180,200,235,0.12);
-    --border-subtle:  rgba(180,200,235,0.06);
-    --border-strong:  rgba(180,200,235,0.22);
-    --text-primary: #e9edf6; --text-secondary: #9aa6bd; --text-muted: #828ea6;
-    --accent-primary: #2e8bff; --accent-hover: #54a3ff;
-    --accent-cta: #1e6bff; --accent-cta-hover: #1a60e6; --accent-deep: #0a2550;
-    --accent-subtle: rgba(46,139,255,0.12);
-    --accent-border: rgba(46,139,255,0.30);
-    --accent-glow:   rgba(46,139,255,0.28);
-    --accent-text:   #ffffff;
-    --tone-positive: #5aa07a;
-    --tone-warning:  #c79a4e;
-    --tone-danger:   #f87171;
-    --tone-repositioning: #9b7fc7;
-    --tone-neutral:  #9aa3af;
-    --hairline: rgba(180,200,235,0.05);
-    --fill-subtle: rgba(180,200,235,0.035);
-    --fill-subtle-hover: rgba(180,200,235,0.06);
-    --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
-    --shadow-modal:    0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.55);
-    --color-sky-50:  #eaf3ff; --color-sky-300: #54a3ff;
-    --color-sky-400: #2e8bff; --color-sky-500: #2e8bff; --color-sky-600: #1e6bff;
-    --color-sky-700: #1657d6; --color-sky-950: #0a2550;
-    color-scheme: dark;
-  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -233,10 +128,7 @@ html {
   height: 100%;
 }
 
-html[data-theme="ink"] { color-scheme: dark; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) { color-scheme: dark; }
-}
+.dark { color-scheme: dark; }
 
 body {
   font-family: var(--font-sans);
@@ -419,27 +311,27 @@ code, pre, .font-mono {
   color: #5b6470;
   border-color: rgba(91,100,112,0.30);
 }
-html[data-theme="ink"] .badge-pricing_change {
+.dark .badge-pricing_change {
   background: rgba(199,154,78,0.12);
   color: #c79a4e;
   border-color: rgba(199,154,78,0.35);
 }
-html[data-theme="ink"] .badge-feature_add, html[data-theme="ink"] .badge-new_feature {
+.dark .badge-feature_add, .dark .badge-new_feature {
   background: rgba(90,160,122,0.12);
   color: #5aa07a;
   border-color: rgba(90,160,122,0.35);
 }
-html[data-theme="ink"] .badge-repositioning, html[data-theme="ink"] .badge-positioning_shift {
+.dark .badge-repositioning, .dark .badge-positioning_shift {
   background: rgba(155,127,199,0.12);
   color: #9b7fc7;
   border-color: rgba(155,127,199,0.30);
 }
-html[data-theme="ink"] .badge-review_trend {
+.dark .badge-review_trend {
   background: rgba(79,157,157,0.12);
   color: #4f9d9d;
   border-color: rgba(79,157,157,0.35);
 }
-html[data-theme="ink"] .badge-minor_copy {
+.dark .badge-minor_copy {
   background: rgba(154,163,175,0.10);
   color: #9aa3af;
   border-color: rgba(154,163,175,0.30);
@@ -451,42 +343,12 @@ html[data-theme="ink"] .badge-minor_copy {
 .tag-violet { background: rgba(109,79,156,0.10); color: #6d4f9c; border-color: rgba(109,79,156,0.25); }
 .tag-red    { background: rgba(179,38,30,0.08);  color: #b3261e; border-color: rgba(179,38,30,0.25); }
 .tag-orange { background: rgba(154,84,28,0.10);  color: #9a541c; border-color: rgba(154,84,28,0.25); }
-html[data-theme="ink"] .tag-red    { background: rgba(248,113,113,0.10); color: #f87171; border-color: rgba(248,113,113,0.22); }
-html[data-theme="ink"] .tag-orange { background: rgba(251,146,60,0.10);  color: #fb923c; border-color: rgba(251,146,60,0.22); }
-html[data-theme="ink"] .tag-amber  { background: rgba(199,154,78,0.10);  color: #c79a4e; border-color: rgba(199,154,78,0.20); }
-html[data-theme="ink"] .tag-green  { background: rgba(90,160,122,0.10);  color: #5aa07a; border-color: rgba(90,160,122,0.20); }
-html[data-theme="ink"] .tag-blue   { background: rgba(46,139,255,0.10);  color: #2e8bff; border-color: rgba(46,139,255,0.22); }
-html[data-theme="ink"] .tag-violet { background: rgba(155,127,199,0.10); color: #9b7fc7; border-color: rgba(155,127,199,0.20); }
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) .tag-red    { background: rgba(248,113,113,0.10); color: #f87171; border-color: rgba(248,113,113,0.22); }
-  html:not([data-theme]) .tag-orange { background: rgba(251,146,60,0.10);  color: #fb923c; border-color: rgba(251,146,60,0.22); }
-  html:not([data-theme]) .tag-amber  { background: rgba(199,154,78,0.10);  color: #c79a4e; border-color: rgba(199,154,78,0.20); }
-  html:not([data-theme]) .tag-green  { background: rgba(90,160,122,0.10);  color: #5aa07a; border-color: rgba(90,160,122,0.20); }
-  html:not([data-theme]) .tag-blue   { background: rgba(46,139,255,0.10);  color: #2e8bff; border-color: rgba(46,139,255,0.22); }
-  html:not([data-theme]) .tag-violet { background: rgba(155,127,199,0.10); color: #9b7fc7; border-color: rgba(155,127,199,0.20); }
-}
-
-/* OS-dark fallback (no saved theme): match the ink badge hues */
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) .badge-pricing_change {
-    background: rgba(199,154,78,0.12); color: #c79a4e; border-color: rgba(199,154,78,0.35);
-  }
-  html:not([data-theme]) .badge-feature_add, html:not([data-theme]) .badge-new_feature {
-    background: rgba(90,160,122,0.12); color: #5aa07a; border-color: rgba(90,160,122,0.35);
-  }
-  html:not([data-theme]) .badge-repositioning, html:not([data-theme]) .badge-positioning_shift {
-    background: rgba(155,127,199,0.12); color: #9b7fc7; border-color: rgba(155,127,199,0.30);
-  }
-  html:not([data-theme]) .badge-review_trend {
-    background: rgba(79,157,157,0.12); color: #4f9d9d; border-color: rgba(79,157,157,0.35);
-  }
-  html:not([data-theme]) .badge-minor_copy {
-    background: rgba(154,163,175,0.10); color: #9aa3af; border-color: rgba(154,163,175,0.30);
-  }
-  html:not([data-theme]) .badge-initial_scan {
-    background: rgba(46,139,255,0.16); color: #2e8bff; border-color: rgba(46,139,255,0.38);
-  }
-}
+.dark .tag-red    { background: rgba(248,113,113,0.10); color: #f87171; border-color: rgba(248,113,113,0.22); }
+.dark .tag-orange { background: rgba(251,146,60,0.10);  color: #fb923c; border-color: rgba(251,146,60,0.22); }
+.dark .tag-amber  { background: rgba(199,154,78,0.10);  color: #c79a4e; border-color: rgba(199,154,78,0.20); }
+.dark .tag-green  { background: rgba(90,160,122,0.10);  color: #5aa07a; border-color: rgba(90,160,122,0.20); }
+.dark .tag-blue   { background: rgba(46,139,255,0.10);  color: #2e8bff; border-color: rgba(46,139,255,0.22); }
+.dark .tag-violet { background: rgba(155,127,199,0.10); color: #9b7fc7; border-color: rgba(155,127,199,0.20); }
 .badge-no_change {
   background: rgba(111,104,92,0.10);
   color: #6f685c;
@@ -497,7 +359,7 @@ html[data-theme="ink"] .tag-violet { background: rgba(155,127,199,0.10); color: 
   color: #345781;
   border-color: rgba(52,87,129,0.32);
 }
-html[data-theme="ink"] .badge-initial_scan {
+.dark .badge-initial_scan {
   background: rgba(46,139,255,0.16);
   color: #2e8bff;
   border-color: rgba(46,139,255,0.38);
@@ -662,4 +524,118 @@ html.lenis body {
 
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+
+@theme inline {
+  --font-heading:           var(--font-sans);
+  --font-sans:           var(--font-sans);
+  --color-sidebar-ring:           var(--sidebar-ring);
+  --color-sidebar-border:           var(--sidebar-border);
+  --color-sidebar-accent-foreground:           var(--sidebar-accent-foreground);
+  --color-sidebar-accent:           var(--sidebar-accent);
+  --color-sidebar-primary-foreground:           var(--sidebar-primary-foreground);
+  --color-sidebar-primary:           var(--sidebar-primary);
+  --color-sidebar-foreground:           var(--sidebar-foreground);
+  --color-sidebar:           var(--sidebar);
+  --color-chart-5:           var(--chart-5);
+  --color-chart-4:           var(--chart-4);
+  --color-chart-3:           var(--chart-3);
+  --color-chart-2:           var(--chart-2);
+  --color-chart-1:           var(--chart-1);
+  --color-ring:           var(--ring);
+  --color-input:           var(--input);
+  --color-border:           var(--border);
+  --color-destructive:           var(--destructive);
+  --color-accent-foreground:           var(--accent-foreground);
+  --color-accent:           var(--accent);
+  --color-muted-foreground:           var(--muted-foreground);
+  --color-muted:           var(--muted);
+  --color-secondary-foreground:           var(--secondary-foreground);
+  --color-secondary:           var(--secondary);
+  --color-primary-foreground:           var(--primary-foreground);
+  --color-primary:           var(--primary);
+  --color-popover-foreground:           var(--popover-foreground);
+  --color-popover:           var(--popover);
+  --color-card-foreground:           var(--card-foreground);
+  --color-card:           var(--card);
+  --color-foreground:           var(--foreground);
+  --color-background:           var(--background);
+  --color-destructive-foreground: var(--destructive-foreground);
+  /* Legacy `sky-*` scale remapped to the blue primary so existing sky-* utilities
+     render the accent (theme-aware via var(--primary)). */
+  --color-sky-50:   color-mix(in oklch, var(--primary) 10%, var(--background));
+  --color-sky-100:  color-mix(in oklch, var(--primary) 16%, var(--background));
+  --color-sky-200:  color-mix(in oklch, var(--primary) 28%, var(--background));
+  --color-sky-300:  color-mix(in oklch, var(--primary) 50%, var(--background));
+  --color-sky-400:  var(--primary);
+  --color-sky-500:  var(--primary);
+  --color-sky-600:  var(--primary);
+  --color-sky-700:  var(--primary);
+  --color-sky-800:  var(--primary);
+  --color-sky-900:  var(--ring);
+  --color-sky-950:  var(--card);
+  --radius-sm:           calc(var(--radius) * 0.6);
+  --radius-md:           calc(var(--radius) * 0.8);
+  --radius-lg:           var(--radius);
+  --radius-xl:           calc(var(--radius) * 1.4);
+  --radius-2xl:           calc(var(--radius) * 1.8);
+  --radius-3xl:           calc(var(--radius) * 2.2);
+  --radius-4xl:           calc(var(--radius) * 2.6);
+}
+
+.dark {
+  /* ── shadcn base tokens — DARK: zinc neutrals + brighter blue primary ── */
+  --background:           oklch(0.141 0.005 285.823);   /* zinc-950 */
+  --foreground:           oklch(0.985 0 0);
+  --card:                 oklch(0.21 0.006 285.885);    /* zinc-900 */
+  --card-foreground:      oklch(0.985 0 0);
+  --popover:              oklch(0.21 0.006 285.885);
+  --popover-foreground:   oklch(0.985 0 0);
+  --primary:              oklch(0.623 0.214 259.815);   /* blue-500 (brighter for dark) */
+  --primary-foreground:   oklch(0.985 0 0);
+  --secondary:            oklch(0.274 0.006 286.033);   /* zinc-800 */
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted:                oklch(0.274 0.006 286.033);
+  --muted-foreground:     oklch(0.705 0.015 286.067);   /* zinc-400 */
+  --accent:               oklch(0.274 0.006 286.033);
+  --accent-foreground:    oklch(0.985 0 0);
+  --destructive:          oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border:               oklch(1 0 0 / 10%);
+  --input:                oklch(1 0 0 / 15%);
+  --ring:                 oklch(0.623 0.214 259.815);   /* = primary */
+  --chart-1:              oklch(0.488 0.243 264.376);
+  --chart-2:              oklch(0.696 0.17 162.48);
+  --chart-3:              oklch(0.769 0.188 70.08);
+  --chart-4:              oklch(0.627 0.265 303.9);
+  --chart-5:              oklch(0.645 0.246 16.439);
+  --sidebar:                     oklch(0.21 0.006 285.885);
+  --sidebar-foreground:          oklch(0.985 0 0);
+  --sidebar-primary:             oklch(0.623 0.214 259.815);
+  --sidebar-primary-foreground:  oklch(0.985 0 0);
+  --sidebar-accent:              oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground:   oklch(0.985 0 0);
+  --sidebar-border:              oklch(1 0 0 / 10%);
+  --sidebar-ring:                oklch(0.623 0.214 259.815);
+
+  /* ── Dark overrides for non-alias tokens (shadows deeper, tones brighter) ── */
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
+  --shadow-modal:    0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.55);
+  --tone-positive: #5aa07a;
+  --tone-warning:  #c79a4e;
+  --tone-danger:   #f87171;
+  --tone-repositioning: #9b7fc7;
+  --tone-neutral:  #9aa3af;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
