@@ -117,7 +117,7 @@ export default function Landing() {
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Competitive intelligence, automated
             </div>
-            <h1 className="text-[44px] font-semibold leading-[1.05] tracking-[-0.02em] sm:text-[56px]">
+            <h1 className="font-display text-[46px] font-normal leading-[1.04] tracking-[-0.015em] sm:text-[60px]">
               Every competitor move — and the play to win.
             </h1>
             <p className="mt-6 max-w-[480px] text-[16px] leading-relaxed text-muted-foreground">
@@ -125,7 +125,7 @@ export default function Landing() {
               then drafts the battle card your team uses to close.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button size="lg" className="min-h-11 gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
+              <Button size="lg" variant="cta" className="min-h-11 gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
               <Button size="lg" variant="outline" className="min-h-11" asChild><a href="#product">See a sample battle card</a></Button>
             </div>
             <p className="mt-5 text-[13px] text-muted-foreground">No credit card · 2-minute setup · First report in minutes</p>
@@ -160,11 +160,11 @@ export default function Landing() {
         {/* PRODUCT — battle-card showcase */}
         <section id="product" className="scroll-mt-20 grid items-center gap-12 border-t border-border py-20 md:grid-cols-2">
           <div>
-            <h2 className="mb-5 text-[34px] font-semibold leading-[1.1] tracking-[-0.01em]">
+            <h2 className="mb-5 font-display text-[36px] font-normal leading-[1.08] tracking-[-0.01em]">
               From a dozen signals to one sales play.
             </h2>
             <p className="mb-7 max-w-[440px] text-[15px] leading-relaxed text-muted-foreground">
-              Rivalscope compiles every change, complaint and signal into a structured battle card —
+              Rivalscope compiles every change, complaint and signal into a structured battle card,
               so your reps walk in already knowing the win.
             </p>
             <div className="space-y-3.5">
@@ -186,14 +186,14 @@ export default function Landing() {
 
         {/* CTA CLOSER */}
         <section className="border-t border-border py-24 text-center">
-          <h2 className="mx-auto max-w-[620px] text-[36px] font-semibold leading-[1.08] tracking-[-0.01em]">
+          <h2 className="mx-auto max-w-[620px] font-display text-[38px] font-normal leading-[1.06] tracking-[-0.01em]">
             Stop guessing what your competitors are doing.
           </h2>
           <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
             Add a competitor and get your first battle card in minutes.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
-            <Button size="lg" className="gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
+            <Button size="lg" variant="cta" className="gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
             <Button size="lg" variant="outline" asChild><a href="mailto:support@rivalscope.dev">Book a demo</a></Button>
           </div>
         </section>
