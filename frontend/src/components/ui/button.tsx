@@ -10,6 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        // Premium Blue signature CTA — gradient + pill + glow. Scarce: hero / Upgrade / Analyze only.
+        cta: "rounded-full text-primary-foreground [background-image:var(--gradient-primary)] shadow-[0_8px_22px_-8px_color-mix(in_oklab,var(--primary)_70%,transparent)] hover:brightness-105 active:brightness-100",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
