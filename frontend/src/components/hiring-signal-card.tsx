@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Briefcase, TrendingUp, MinusCircle, AlertCircle } from 'lucide-react';
 
 interface HiringSignal {
@@ -28,16 +29,20 @@ const formatTimeAgo = (dateStr: string | null) => {
 };
 
 export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCardProps) {
+  // Gate relative-time text behind a mounted flag so SSR matches hydration.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   if (!careersUrl && !signal) {
     return (
-      <div className="rs-card p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <div className="flex items-center gap-2 mb-3">
-          <Briefcase size={16} style={{ color: 'var(--text-muted)' }} />
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+          <Briefcase size={16} className="text-muted-foreground" />
+          <h3 className="text-sm font-semibold text-foreground">
             Hiring Signals
           </h3>
         </div>
-        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+        <p className="text-xs text-muted-foreground">
           Add a Careers URL in Data Sources to track hiring patterns and surface strategic moves.
         </p>
       </div>
@@ -46,47 +51,47 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
 
   if (!signal) {
     return (
-      <div className="rs-card p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <div className="flex items-center gap-2 mb-3">
-          <Briefcase size={16} style={{ color: 'var(--accent-primary)' }} />
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+          <Briefcase size={16} className="text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">
             Hiring Signals
           </h3>
           <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border tag-amber">
             Pending first scan
           </span>
         </div>
-        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+        <p className="text-xs text-muted-foreground">
           Careers URL is set. The next weekly scan will collect hiring data for this competitor.
         </p>
       </div>
     );
   }
 
-  const lastUpdated = formatTimeAgo(signal.snapshot_at);
+  const lastUpdated = mounted ? formatTimeAgo(signal.snapshot_at) : null;
 
   return (
-    <div className="rs-card p-5">
+    <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Briefcase size={16} style={{ color: 'var(--accent-primary)' }} />
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+          <Briefcase size={16} className="text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">
             Hiring Signals
           </h3>
         </div>
         {lastUpdated && (
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
             Updated {lastUpdated}
           </span>
         )}
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="rounded border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider mb-1" style={{ color: 'var(--text-muted)' }}>
+        <div className="rounded border border-border bg-muted px-3 py-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider mb-1 text-muted-foreground">
             Open roles
           </div>
-          <div className="text-2xl font-bold font-mono" style={{ color: 'var(--text-primary)' }}>
+          <div className="text-2xl font-bold font-mono text-foreground">
             {signal.total_jobs}
           </div>
         </div>
@@ -98,28 +103,28 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
             {signal.new_postings}
           </div>
         </div>
-        <div className="rounded border border-[var(--border-default)] bg-[var(--fill-subtle)] px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-secondary)] mb-1 flex items-center gap-1">
+        <div className="rounded border border-border bg-muted px-3 py-3">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
             <MinusCircle size={9} /> Closed
           </div>
-          <div className="text-2xl font-bold font-mono text-[var(--text-primary)]">
+          <div className="text-2xl font-bold font-mono text-foreground">
             {signal.closed_postings}
           </div>
         </div>
       </div>
 
       {signal.strategic_signal ? (
-        <div className="rounded border border-sky-500/20 bg-sky-500/[0.04] p-4">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: 'var(--accent-primary)' }}>
+        <div className="rounded border border-primary/20 bg-primary/[0.04] p-4">
+          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2 text-primary">
             <AlertCircle size={11} />
             Pattern read
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+          <p className="text-sm leading-relaxed text-foreground">
             {signal.strategic_signal}
           </p>
         </div>
       ) : (
-        <p className="text-xs italic" style={{ color: 'var(--text-muted)' }}>
+        <p className="text-xs italic text-muted-foreground">
           No strategic pattern detected this week — hiring is flat or stable.
         </p>
       )}

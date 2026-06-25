@@ -17,11 +17,11 @@ export default function LocalBusinessSection({
   if (!isLocalBusiness) return null;
 
   return (
-    <div className="rs-card overflow-hidden mb-6">
-      <div className="px-6 py-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
+    <div className="rounded-xl border border-border bg-card overflow-hidden mb-6">
+      <div className="px-6 py-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Store size={18} className="text-sky-400" />
-          <h2 className="text-sm font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+          <Store size={18} className="text-primary" />
+          <h2 className="text-sm font-semibold tracking-tight text-foreground">
             Local Intelligence
           </h2>
         </div>
@@ -29,12 +29,12 @@ export default function LocalBusinessSection({
 
       {competitors.length === 0 ? (
         <div className="px-6 py-12 text-center">
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm text-muted-foreground">
             Add competitors to start tracking local intelligence
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-[var(--border-subtle)]">
+        <div className="divide-y divide-border">
           {competitors.map((comp) => {
             const hasGoogleMaps = !!comp.google_maps_url;
             const hasInstagram = !!comp.instagram_handle;
@@ -44,14 +44,14 @@ export default function LocalBusinessSection({
             return (
               <div key={comp.id} className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] flex items-center justify-center flex-shrink-0">
-                    <Store size={14} style={{ color: 'var(--text-muted)' }} />
+                  <div className="w-8 h-8 rounded bg-accent border border-border flex items-center justify-center flex-shrink-0">
+                    <Store size={14} className="text-muted-foreground" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                    <p className="text-sm font-medium truncate text-foreground">
                       {comp.name || comp.url}
                     </p>
-                    <p className="text-xs font-mono truncate" style={{ color: 'var(--text-muted)' }}>
+                    <p className="text-xs font-mono truncate text-muted-foreground">
                       {comp.url}
                     </p>
                   </div>
@@ -64,19 +64,19 @@ export default function LocalBusinessSection({
                     </span>
                   )}
                   {hasInstagram && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-[var(--fill-subtle-hover)] border border-[var(--border-default)] px-2 py-0.5 rounded-md" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-accent border border-border text-muted-foreground px-2 py-0.5 rounded-md">
                       Instagram
                     </span>
                   )}
                   {hasFacebook && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-sky-400/10 text-sky-300 border border-sky-400/20 px-2 py-0.5 rounded-md">
+                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-md">
                       Facebook
                     </span>
                   )}
                   {!hasAnyLocal && (
                     <Link
                       href="/competitors"
-                      className="text-xs text-sky-400 hover:text-sky-300 font-medium transition-colors"
+                      className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
                     >
                       Add local details →
                     </Link>
@@ -87,8 +87,8 @@ export default function LocalBusinessSection({
           })}
 
           {/* Empty state for social data */}
-          <div className="px-6 py-8 text-center bg-[var(--fill-subtle)]">
-            <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+          <div className="px-6 py-8 text-center bg-muted">
+            <p className="text-sm mb-4 text-muted-foreground">
               Social posts and Google reviews appear here after your next scan.
             </p>
             {competitors.length > 0 && (

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Button } from '@/components/ui/button';
 
 interface LocalScanButtonProps {
   competitorId: string;
@@ -36,14 +37,14 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
 
   return (
     <>
-      <button
+      <Button
+        size="sm"
         onClick={handleScan}
         disabled={loading}
-        className="rs-btn-primary text-[12px]"
       >
         <Search size={14} className={loading ? 'animate-spin' : ''} />
         {loading ? 'Scanning…' : 'Scan local competitors'}
-      </button>
+      </Button>
 
       <AnimatePresence>
         {showToast && (
@@ -52,12 +53,8 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 text-[13px] font-medium shadow-[var(--shadow-elevated)]"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 text-[13px] font-medium rounded-xl border border-border bg-card text-foreground"
             style={{
-              background: 'var(--surface-overlay)',
-              border: '1px solid var(--border-strong)',
-              color: 'var(--text-primary)',
-              borderRadius: 'var(--radius-xl)',
               boxShadow: 'var(--shadow-elevated)',
             }}
           >

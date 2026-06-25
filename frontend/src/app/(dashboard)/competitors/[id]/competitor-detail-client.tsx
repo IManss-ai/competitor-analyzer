@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -41,6 +41,11 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   const [savingSettings, setSavingSettings] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
+
+  // Gate time-dependent text (relative + locale/TZ-formatted dates) behind a
+  // mounted flag so SSR output matches first client render (avoids React #418).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Collapse states for Battlecard accordions
   const [cardOpenSections, setCardOpenSections] = useState<Record<string, boolean>>({
@@ -225,7 +230,9 @@ ${card.win_conditions && card.win_conditions.length > 0
       rating: s.avg_rating,
     }));
 
-  const lastScannedText = detail.scan_history && detail.scan_history.length > 0
+  const lastScannedText = !mounted
+    ? ''
+    : detail.scan_history && detail.scan_history.length > 0
     ? formatTimeAgo(detail.scan_history[0].fetched_at)
     : 'Never';
 
@@ -356,11 +363,13 @@ ${card.win_conditions && card.win_conditions.length > 0
                     };
 
                     const badgeClass = changeTypeStyles[event.change_type] || changeTypeStyles.minor_copy;
-                    const dateFormatted = new Date(event.detected_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    });
+                    const dateFormatted = mounted
+                      ? new Date(event.detected_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })
+                      : '';
 
                     return (
                       <div key={event.id} className="relative">
@@ -454,12 +463,14 @@ ${card.win_conditions && card.win_conditions.length > 0
                     detail.scan_history.map((scan: any) => (
                       <tr key={scan.id} className="hover:bg-muted/50 transition-colors">
                         <td className="px-5 py-4 whitespace-nowrap text-xs">
-                          {new Date(scan.fetched_at).toLocaleString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
+                          {mounted
+                            ? new Date(scan.fetched_at).toLocaleString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              })
+                            : ''}
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap font-mono text-xs">
                           {scan.char_count.toLocaleString()} chars
@@ -507,7 +518,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                     <div>
                       <h2 className="text-base font-semibold text-foreground">{comp.name || comp.url} Battle Card</h2>
                       <p className="text-[11px] mt-0.5 flex items-center gap-1 text-muted-foreground">
-                        <Calendar size={11} /> Week of {new Date(detail.battlecard.generated_at).toLocaleDateString()}
+                        <Calendar size={11} /> Week of {mounted ? new Date(detail.battlecard.generated_at).toLocaleDateString() : ''}
                       </p>
                     </div>
 
