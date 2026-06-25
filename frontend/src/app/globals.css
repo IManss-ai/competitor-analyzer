@@ -102,8 +102,8 @@
   --tone-neutral:  #5b6470;
 
   /* ── Shadow — flat cards; elevation only for floating overlays ── */
-  --shadow-card:       none;
-  --shadow-card-hover: none;
+  --shadow-card:       0 10px 16px rgba(28,28,35,.02), 0 6px 10px rgba(28,28,35,.04), 0 0 3px rgba(28,28,35,.09);
+  --shadow-card-hover: 0 16px 24px rgba(28,28,35,.04), 0 8px 14px rgba(28,28,35,.06), 0 0 3px rgba(28,28,35,.10);
   --shadow-elevated:   0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
   --shadow-modal:      0 24px 60px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.10);
 
@@ -634,6 +634,8 @@ html.lenis body {
   --sidebar-ring:                oklch(0.62 0.19 270);
 
   /* ── Dark overrides for non-alias tokens (shadows deeper, tones brighter) ── */
+  --shadow-card:       inset 0 1px 0 rgba(255,255,255,.05), 0 14px 28px -10px rgba(0,0,0,.7), 0 4px 10px -4px rgba(0,0,0,.5);
+  --shadow-card-hover: inset 0 1px 0 rgba(255,255,255,.06), 0 22px 40px -14px rgba(0,0,0,.75), 0 6px 14px -6px rgba(0,0,0,.6);
   --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
   --shadow-modal:    0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.55);
   --tone-positive: #5aa07a;
