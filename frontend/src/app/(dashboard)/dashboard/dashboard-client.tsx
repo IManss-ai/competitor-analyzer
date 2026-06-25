@@ -1083,7 +1083,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   }).sort((a, b) => b.signal - a.signal);
   const anyRealSignal = rankedComps.some((c: any) => c.latest && c.latest.change_type !== 'initial_scan' && c.latest.change_type !== 'no_change');
 
-  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' }).toUpperCase();
+  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' });
 
   return (
     <div className="space-y-5">
@@ -1094,7 +1094,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="bg-card border border-border rounded-xl shadow-sm p-6 lg:p-7"
       >
-        <div className="flex items-center gap-3 mb-4 font-mono text-[10.5px] tracking-[0.14em] uppercase text-muted-foreground">
+        <div className="flex items-center gap-3 mb-4 text-[12px] font-medium tracking-tight text-muted-foreground">
           {topIsReal ? (
             <span className="inline-flex items-center gap-2 text-primary">
               <span className="sr-pulse" /> Top signal
@@ -1102,7 +1102,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           ) : (
             <span className="text-muted-foreground">Briefing</span>
           )}
-          <span>· {dateLabel}</span>
+          <span className="font-mono">· {dateLabel}</span>
         </div>
 
         {topIsReal ? (
@@ -1162,13 +1162,13 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             { k: 'Avg review', v: dashboardData.avg_review_score, dec: 1, sub: 'all platforms' },
           ].map((m, i) => (
             <div key={m.k} className={`py-1 ${i > 0 ? 'pl-[18px] border-l border-border' : ''}`}>
-              <p className="text-[9.5px] font-mono uppercase tracking-[0.08em] text-muted-foreground">{m.k}</p>
+              <p className="text-[11px] font-medium tracking-tight text-muted-foreground">{m.k}</p>
               <p className="font-mono tabular-nums font-semibold text-[24px] leading-none mt-3" style={{ color: m.accent ? 'var(--primary)' : undefined, letterSpacing: '-0.02em' }}>
                 <span className={m.accent ? 'text-primary' : 'text-foreground'}>
                   {typeof m.v === 'number' ? <CountUp value={m.v} decimals={m.dec || 0} /> : '—'}
                 </span>
               </p>
-              <p className="text-[9.5px] mt-2 font-mono uppercase tracking-wider text-muted-foreground">{m.sub}</p>
+              <p className="text-[11px] mt-2 tracking-tight text-muted-foreground">{m.sub}</p>
             </div>
           ))}
         </div>
@@ -1189,11 +1189,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           <div className="flex items-center gap-4 flex-shrink-0">
             {activityDays.length > 0 && (
               <div className="hidden sm:flex items-center gap-2">
-                <span className="text-[9px] font-mono uppercase tracking-[0.08em] text-muted-foreground">28d</span>
+                <span className="text-[10px] font-mono tracking-[0.04em] text-muted-foreground">28d</span>
                 {renderSparkline(activityDays.map((d: any) => d.change_count))}
               </div>
             )}
-            <Link href="/competitors" className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">Manage →</Link>
+            <Link href="/competitors" className="text-[12px] font-medium tracking-tight text-muted-foreground hover:text-foreground transition-colors">Manage →</Link>
           </div>
         </div>
 

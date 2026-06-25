@@ -22,8 +22,8 @@ function getRelativeTime(dateString: string) {
 
 function getFormattedDateline(lastScan?: string | null) {
   const date = new Date();
-  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const dayName = days[date.getDay()];
   const day = String(date.getDate()).padStart(2, '0');
   const monthName = months[date.getMonth()];
@@ -33,7 +33,7 @@ function getFormattedDateline(lastScan?: string | null) {
 
   if (lastScan) {
     const relative = getRelativeTime(lastScan);
-    return `${dateStr} · LAST SCAN: ${relative.toUpperCase()}`;
+    return `${dateStr} · Last scan: ${relative}`;
   }
   return dateStr;
 }
@@ -46,7 +46,7 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
         <h1 className="text-2xl font-bold leading-tight tracking-tight text-foreground">
           {title}
         </h1>
-        <div className="text-[11px] font-mono uppercase tracking-[0.08em] mt-1.5 flex flex-wrap items-center gap-x-2 text-muted-foreground">
+        <div className="text-[11px] font-mono tracking-[0.04em] mt-1.5 flex flex-wrap items-center gap-x-2 text-muted-foreground">
           <span>{getFormattedDateline(lastScan)}</span>
           {subtitle && (
             <>

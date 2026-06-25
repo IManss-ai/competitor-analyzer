@@ -286,83 +286,79 @@ code, pre, .font-mono {
   font-family: var(--font-mono);
 }
 
+/* Calm, landing-aligned badge formula: translucent bg (~10%) + border (~30%),
+   theme-aware text. Light text = hue-700 (AA on white at 10px); dark text =
+   hue-500 (matches landing's text-{hue}-500). oklch shades, no saturated hex.
+   Hues encode type: pricing=amber, feature=emerald, repositioning=violet,
+   review=teal, minor/no_change=zinc, initial=blue. */
 .badge-pricing_change {
-  background: rgba(138,90,18,0.10);
-  color: #8a5a12;
-  border-color: rgba(138,90,18,0.35);
+  background: oklch(0.769 0.188 70.08 / 0.10);
+  color: oklch(0.555 0.163 48.998);       /* amber-700 */
+  border-color: oklch(0.769 0.188 70.08 / 0.30);
 }
 .badge-feature_add, .badge-new_feature {
-  background: rgba(31,93,63,0.10);
-  color: #1f5d3f;
-  border-color: rgba(31,93,63,0.35);
+  background: oklch(0.696 0.17 162.48 / 0.10);
+  color: oklch(0.508 0.118 165.612);      /* emerald-700 */
+  border-color: oklch(0.696 0.17 162.48 / 0.30);
 }
 .badge-repositioning, .badge-positioning_shift {
-  background: rgba(109,79,156,0.10);
-  color: #6d4f9c;
-  border-color: rgba(109,79,156,0.30);
+  background: oklch(0.606 0.25 292.717 / 0.10);
+  color: oklch(0.491 0.27 292.581);       /* violet-700 */
+  border-color: oklch(0.606 0.25 292.717 / 0.30);
 }
 .badge-review_trend {
-  background: rgba(44,111,111,0.10);
-  color: #2c6f6f;
-  border-color: rgba(44,111,111,0.35);
+  background: oklch(0.704 0.14 182.503 / 0.10);
+  color: oklch(0.437 0.078 188.216);      /* teal-700 */
+  border-color: oklch(0.704 0.14 182.503 / 0.30);
 }
 .badge-minor_copy {
-  background: rgba(91,100,112,0.10);
-  color: #5b6470;
-  border-color: rgba(91,100,112,0.30);
+  background: oklch(0.552 0.016 285.938 / 0.10);
+  color: oklch(0.442 0.017 285.786);      /* zinc-600 */
+  border-color: oklch(0.552 0.016 285.938 / 0.30);
 }
 .dark .badge-pricing_change {
-  background: rgba(199,154,78,0.12);
-  color: #c79a4e;
-  border-color: rgba(199,154,78,0.35);
+  color: oklch(0.769 0.188 70.08);        /* amber-500 */
 }
 .dark .badge-feature_add, .dark .badge-new_feature {
-  background: rgba(90,160,122,0.12);
-  color: #5aa07a;
-  border-color: rgba(90,160,122,0.35);
+  color: oklch(0.696 0.17 162.48);        /* emerald-500 */
 }
 .dark .badge-repositioning, .dark .badge-positioning_shift {
-  background: rgba(155,127,199,0.12);
-  color: #9b7fc7;
-  border-color: rgba(155,127,199,0.30);
+  color: oklch(0.606 0.25 292.717);       /* violet-500 */
 }
 .dark .badge-review_trend {
-  background: rgba(79,157,157,0.12);
-  color: #4f9d9d;
-  border-color: rgba(79,157,157,0.35);
+  color: oklch(0.704 0.14 182.503);       /* teal-500 */
 }
 .dark .badge-minor_copy {
-  background: rgba(154,163,175,0.10);
-  color: #9aa3af;
-  border-color: rgba(154,163,175,0.30);
+  color: oklch(0.705 0.015 286.067);      /* zinc-400 */
 }
-/* Landing demo tags — same semantic hues, theme-aware (paper-dark base, ink bright) */
-.tag-amber  { background: rgba(138,90,18,0.10);  color: #8a5a12; border-color: rgba(138,90,18,0.25); }
-.tag-green  { background: rgba(31,93,63,0.10);   color: #1f5d3f; border-color: rgba(31,93,63,0.25); }
-.tag-blue   { background: rgba(52,87,129,0.10);  color: #345781; border-color: rgba(52,87,129,0.25); }
-.tag-violet { background: rgba(109,79,156,0.10); color: #6d4f9c; border-color: rgba(109,79,156,0.25); }
-.tag-red    { background: rgba(179,38,30,0.08);  color: #b3261e; border-color: rgba(179,38,30,0.25); }
-.tag-orange { background: rgba(154,84,28,0.10);  color: #9a541c; border-color: rgba(154,84,28,0.25); }
-.dark .tag-red    { background: rgba(248,113,113,0.10); color: #f87171; border-color: rgba(248,113,113,0.22); }
-.dark .tag-orange { background: rgba(251,146,60,0.10);  color: #fb923c; border-color: rgba(251,146,60,0.22); }
-.dark .tag-amber  { background: rgba(199,154,78,0.10);  color: #c79a4e; border-color: rgba(199,154,78,0.20); }
-.dark .tag-green  { background: rgba(90,160,122,0.10);  color: #5aa07a; border-color: rgba(90,160,122,0.20); }
-.dark .tag-blue   { background: rgba(46,139,255,0.10);  color: #2e8bff; border-color: rgba(46,139,255,0.22); }
-.dark .tag-violet { background: rgba(155,127,199,0.10); color: #9b7fc7; border-color: rgba(155,127,199,0.20); }
+/* Landing demo tags — same semantic hues + formula, theme-aware. */
+.tag-amber  { background: oklch(0.769 0.188 70.08 / 0.10);  color: oklch(0.555 0.163 48.998);  border-color: oklch(0.769 0.188 70.08 / 0.30); }
+.tag-green  { background: oklch(0.696 0.17 162.48 / 0.10);  color: oklch(0.508 0.118 165.612); border-color: oklch(0.696 0.17 162.48 / 0.30); }
+.tag-blue   { background: oklch(0.623 0.214 259.815 / 0.10); color: oklch(0.488 0.243 264.376); border-color: oklch(0.623 0.214 259.815 / 0.30); }
+.tag-violet { background: oklch(0.606 0.25 292.717 / 0.10); color: oklch(0.491 0.27 292.581);  border-color: oklch(0.606 0.25 292.717 / 0.30); }
+.tag-red    { background: oklch(0.637 0.237 25.331 / 0.10);  color: oklch(0.505 0.213 27.518);  border-color: oklch(0.637 0.237 25.331 / 0.30); }
+.tag-orange { background: oklch(0.705 0.213 47.604 / 0.10);  color: oklch(0.553 0.195 38.402);  border-color: oklch(0.705 0.213 47.604 / 0.30); }
+.dark .tag-amber  { color: oklch(0.769 0.188 70.08); }
+.dark .tag-green  { color: oklch(0.696 0.17 162.48); }
+.dark .tag-blue   { color: oklch(0.623 0.214 259.815); }
+.dark .tag-violet { color: oklch(0.606 0.25 292.717); }
+.dark .tag-red    { color: oklch(0.637 0.237 25.331); }
+.dark .tag-orange { color: oklch(0.705 0.213 47.604); }
 .badge-no_change {
-  background: rgba(111,104,92,0.10);
-  color: #6f685c;
-  border-color: rgba(111,104,92,0.22);
+  background: oklch(0.552 0.016 285.938 / 0.10);
+  color: oklch(0.442 0.017 285.786);      /* zinc-600 */
+  border-color: oklch(0.552 0.016 285.938 / 0.30);
+}
+.dark .badge-no_change {
+  color: oklch(0.705 0.015 286.067);      /* zinc-400 */
 }
 .badge-initial_scan {
-  background: rgba(52,87,129,0.12);
-  color: #345781;
-  border-color: rgba(52,87,129,0.32);
+  background: oklch(0.623 0.214 259.815 / 0.10);
+  color: oklch(0.488 0.243 264.376);      /* blue-700 */
+  border-color: oklch(0.623 0.214 259.815 / 0.30);
 }
 .dark .badge-initial_scan {
-  background: rgba(46,139,255,0.16);
-  color: #2e8bff;
-  border-color: rgba(46,139,255,0.38);
+  color: oklch(0.623 0.214 259.815);      /* blue-500 (primary dark) */
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
