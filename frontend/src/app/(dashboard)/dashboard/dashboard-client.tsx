@@ -508,13 +508,13 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           initial={{ opacity: 0, scale: 0.97, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-md rounded-xl border border-border bg-card p-7 shadow-lg md:p-8"
+          className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-(--shadow-modal) md:p-8"
         >
           <div className="mb-7 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
               <Sparkles size={22} />
             </div>
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">Let&apos;s set up your competitive radar</h2>
+            <h2 className="font-display text-[26px] font-normal leading-[1.1] tracking-[-0.01em] text-foreground">Let&apos;s set up your competitive radar</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Tell us your website and we&apos;ll read it, build your profile, and find who you&apos;re up against.
             </p>
@@ -536,7 +536,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
             {magicError && <p className="text-xs font-medium text-destructive">{magicError}</p>}
 
-            <Button type="submit" size="lg" className="w-full">
+            <Button type="submit" size="lg" variant="cta" className="w-full">
               Analyze my business <ArrowRight size={14} />
             </Button>
             <p className="text-center text-xs text-muted-foreground">
@@ -601,7 +601,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           className="relative z-10 w-full max-w-lg space-y-5"
         >
           <div className="text-center">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">Here&apos;s what we found</h2>
+            <h2 className="font-display text-[26px] font-normal leading-[1.1] tracking-[-0.01em] text-foreground">Here&apos;s what we found</h2>
             <p className="mt-1.5 text-sm text-muted-foreground">Review it, edit anything that&apos;s off, then start tracking.</p>
           </div>
 
@@ -719,7 +719,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           {magicError && <p className="text-center text-xs font-medium text-destructive">{magicError}</p>}
 
           <div className="flex flex-col gap-2">
-            <Button onClick={startTracking} disabled={startingTracking} size="lg" className="w-full">
+            <Button onClick={startTracking} disabled={startingTracking} size="lg" variant="cta" className="w-full">
               {startingTracking ? (
                 <><Loader2 size={16} className="animate-spin" /> Setting up…</>
               ) : (
@@ -1107,7 +1107,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
         {topIsReal ? (
           <>
-            <h2 className="font-semibold tracking-tight leading-[1.15] max-w-2xl text-foreground" style={{ fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>
+            <h2 className="font-display font-normal tracking-tight leading-[1.15] max-w-2xl text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>
               <span className="text-primary">{topEvent.competitor_name}</span>{' — '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl line-clamp-3 text-muted-foreground">
@@ -1126,7 +1126,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </>
         ) : dashboardData.competitor_count > 0 ? (
           <>
-            <h2 className="font-semibold tracking-tight max-w-2xl text-foreground" style={{ fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>
+            <h2 className="font-display font-normal tracking-tight max-w-2xl text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>
               Watching <span className="text-primary">{dashboardData.competitor_count}</span> {dashboardData.competitor_count === 1 ? 'competitor' : 'competitors'}. No moves yet.
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">
@@ -1143,7 +1143,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </>
         ) : (
           <>
-            <h2 className="font-semibold tracking-tight text-foreground" style={{ fontSize: 'clamp(22px, 2.4vw, 30px)', letterSpacing: '-0.02em' }}>Add your first competitor.</h2>
+            <h2 className="font-display font-normal tracking-tight text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>Add your first competitor.</h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">Point Rivalscope at a competitor and we&apos;ll capture their homepage, reviews and hiring — then flag every move before it costs you a deal.</p>
             <div className="mt-5">
               <Button asChild>
