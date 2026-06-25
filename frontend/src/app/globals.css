@@ -17,28 +17,28 @@
 
 :root {
   /* ── Radius (shadcn) ─────────────────────────────────── */
-  --radius: 0.5rem;
+  --radius: 0.75rem;   /* Premium Blue: more confident (was 0.5rem) */
 
   /* ── shadcn base tokens — LIGHT: zinc neutrals + blue primary ── */
-  --background:           oklch(1 0 0);
+  --background:           oklch(0.99 0.003 285);        /* soft lavender-white (Premium Blue) */
   --foreground:           oklch(0.141 0.005 285.823);   /* zinc-950 */
   --card:                 oklch(1 0 0);
   --card-foreground:      oklch(0.141 0.005 285.823);
   --popover:              oklch(1 0 0);
   --popover-foreground:   oklch(0.141 0.005 285.823);
-  --primary:              oklch(0.546 0.245 262.881);    /* blue-600 */
+  --primary:              oklch(0.57 0.20 272);    /* blue-600 */
   --primary-foreground:   oklch(0.985 0 0);
   --secondary:            oklch(0.967 0.001 286.375);    /* zinc-100 */
-  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --secondary-foreground: oklch(0.185 0.008 286);
   --muted:                oklch(0.967 0.001 286.375);
   --muted-foreground:     oklch(0.552 0.016 285.938);    /* zinc-500 */
   --accent:               oklch(0.967 0.001 286.375);
-  --accent-foreground:    oklch(0.21 0.006 285.885);
+  --accent-foreground:    oklch(0.185 0.008 286);
   --destructive:          oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
   --border:               oklch(0.92 0.004 286.32);      /* zinc-200 */
   --input:                oklch(0.871 0.006 286.286);    /* zinc-300 */
-  --ring:                 oklch(0.546 0.245 262.881);    /* = primary */
+  --ring:                 oklch(0.57 0.20 272);    /* = primary */
   --chart-1:              oklch(0.646 0.222 41.116);
   --chart-2:              oklch(0.6 0.118 184.704);
   --chart-3:              oklch(0.398 0.07 227.392);
@@ -46,12 +46,12 @@
   --chart-5:              oklch(0.769 0.188 70.08);
   --sidebar:                     oklch(0.985 0 0);
   --sidebar-foreground:          oklch(0.141 0.005 285.823);
-  --sidebar-primary:             oklch(0.546 0.245 262.881);
+  --sidebar-primary:             oklch(0.57 0.20 272);
   --sidebar-primary-foreground:  oklch(0.985 0 0);
   --sidebar-accent:              oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground:   oklch(0.21 0.006 285.885);
+  --sidebar-accent-foreground:   oklch(0.185 0.008 286);
   --sidebar-border:              oklch(0.92 0.004 286.32);
-  --sidebar-ring:                oklch(0.546 0.245 262.881);
+  --sidebar-ring:                oklch(0.57 0.20 272);
 
   /* ── Fonts (Geist; --font-archivo kept as a legacy alias) ── */
   --font-sans:  var(--font-geist-sans), system-ui, sans-serif;
@@ -90,6 +90,9 @@
   --accent-subtle:   color-mix(in oklch, var(--primary) 12%, transparent);
   --accent-border:   var(--ring);
   --accent-glow:     color-mix(in oklch, var(--primary) 28%, transparent);
+
+  /* Premium Blue signature gradient — hero / primary CTA / logo mark ONLY (scarce). */
+  --gradient-primary: linear-gradient(135deg, var(--primary), oklch(0.72 0.14 264));
 
   /* ── Semantic tones (match badge hues; light values, .dark overrides below) ── */
   --tone-positive: #1f5d3f;
@@ -350,7 +353,7 @@ code, pre, .font-mono {
 .tag-orange { background: oklch(0.705 0.213 47.604 / 0.10);  color: oklch(0.553 0.195 38.402);  border-color: oklch(0.705 0.213 47.604 / 0.30); }
 .dark .tag-amber  { color: oklch(0.769 0.188 70.08); }
 .dark .tag-green  { color: oklch(0.696 0.17 162.48); }
-.dark .tag-blue   { color: oklch(0.623 0.214 259.815); }
+.dark .tag-blue   { color: oklch(0.62 0.19 270); }
 .dark .tag-violet { color: oklch(0.606 0.25 292.717); }
 .dark .tag-red    { color: oklch(0.637 0.237 25.331); }
 .dark .tag-orange { color: oklch(0.705 0.213 47.604); }
@@ -368,7 +371,7 @@ code, pre, .font-mono {
   border-color: oklch(0.623 0.214 259.815 / 0.30);
 }
 .dark .badge-initial_scan {
-  color: oklch(0.623 0.214 259.815);      /* blue-500 (primary dark) */
+  color: oklch(0.62 0.19 270);      /* blue-500 (primary dark) */
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -599,11 +602,11 @@ html.lenis body {
   /* ── shadcn base tokens — DARK: zinc neutrals + brighter blue primary ── */
   --background:           oklch(0.141 0.005 285.823);   /* zinc-950 */
   --foreground:           oklch(0.985 0 0);
-  --card:                 oklch(0.21 0.006 285.885);    /* zinc-900 */
+  --card:                 oklch(0.185 0.008 286);    /* zinc-900 */
   --card-foreground:      oklch(0.985 0 0);
-  --popover:              oklch(0.21 0.006 285.885);
+  --popover:              oklch(0.185 0.008 286);
   --popover-foreground:   oklch(0.985 0 0);
-  --primary:              oklch(0.623 0.214 259.815);   /* blue-500 (brighter for dark) */
+  --primary:              oklch(0.62 0.19 270);   /* blue-500 (brighter for dark) */
   --primary-foreground:   oklch(0.985 0 0);
   --secondary:            oklch(0.274 0.006 286.033);   /* zinc-800 */
   --secondary-foreground: oklch(0.985 0 0);
@@ -615,20 +618,20 @@ html.lenis body {
   --destructive-foreground: oklch(0.985 0 0);
   --border:               oklch(1 0 0 / 10%);
   --input:                oklch(1 0 0 / 15%);
-  --ring:                 oklch(0.623 0.214 259.815);   /* = primary */
+  --ring:                 oklch(0.62 0.19 270);   /* = primary */
   --chart-1:              oklch(0.488 0.243 264.376);
   --chart-2:              oklch(0.696 0.17 162.48);
   --chart-3:              oklch(0.769 0.188 70.08);
   --chart-4:              oklch(0.627 0.265 303.9);
   --chart-5:              oklch(0.645 0.246 16.439);
-  --sidebar:                     oklch(0.21 0.006 285.885);
+  --sidebar:                     oklch(0.185 0.008 286);
   --sidebar-foreground:          oklch(0.985 0 0);
-  --sidebar-primary:             oklch(0.623 0.214 259.815);
+  --sidebar-primary:             oklch(0.62 0.19 270);
   --sidebar-primary-foreground:  oklch(0.985 0 0);
   --sidebar-accent:              oklch(0.274 0.006 286.033);
   --sidebar-accent-foreground:   oklch(0.985 0 0);
   --sidebar-border:              oklch(1 0 0 / 10%);
-  --sidebar-ring:                oklch(0.623 0.214 259.815);
+  --sidebar-ring:                oklch(0.62 0.19 270);
 
   /* ── Dark overrides for non-alias tokens (shadows deeper, tones brighter) ── */
   --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.45);
