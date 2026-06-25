@@ -43,7 +43,7 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
     <header className="flex items-end justify-between flex-wrap gap-3 mb-8 pb-4 border-b border-border">
       {/* Left — page title + broadsheet dateline */}
       <div>
-        <h1 className="text-2xl font-bold leading-tight tracking-tight text-foreground">
+        <h1 className="font-display text-[28px] leading-[1.08] tracking-[-0.01em] text-foreground">
           {title}
         </h1>
         <div className="text-[11px] font-mono tracking-[0.04em] mt-1.5 flex flex-wrap items-center gap-x-2 text-muted-foreground">

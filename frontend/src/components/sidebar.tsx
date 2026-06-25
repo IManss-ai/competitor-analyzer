@@ -310,12 +310,19 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
       <div className="px-5 pt-5 pb-4 border-b border-sidebar-border">
         {/* Logo + wordmark */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 rounded-md bg-primary">
+          <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 rounded-md [background-image:var(--gradient-primary)] shadow-[0_4px_14px_-4px_color-mix(in_oklab,var(--primary)_60%,transparent)]">
             <RivalscopeLogo size={14} className="text-primary-foreground" />
           </div>
           <div className="leading-none">
             <span className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
               Rivalscope
+            </span>
+            <span className="mt-1.5 flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+              </span>
+              Live
             </span>
           </div>
         </div>
@@ -390,8 +397,8 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               />
             </div>
             <Link
-              href="/settings"
-              className="block w-full py-2 rounded-md text-[11px] font-semibold text-center bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
+              href="/settings?tab=billing"
+              className="block w-full py-2 rounded-full text-[11px] font-semibold text-center [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"
             >
               Upgrade to Pro
             </Link>
@@ -417,7 +424,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
       {/* ── Mobile top bar ───────────────────────────────────────── */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 flex items-center justify-between px-4 bg-background border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 flex items-center justify-center rounded-md bg-primary">
+          <div className="w-7 h-7 flex items-center justify-center rounded-md [background-image:var(--gradient-primary)]">
             <RivalscopeLogo size={12} className="text-primary-foreground" />
           </div>
           <span className="text-[14px] font-semibold tracking-tight text-foreground">
