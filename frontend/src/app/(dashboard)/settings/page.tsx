@@ -6,7 +6,16 @@ import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import SettingsClient from './settings-client';
 
-export default async function SettingsPage() {
+type SettingsTab = 'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing';
+const VALID_TABS: SettingsTab[] = ['profile', 'schedule', 'notifications', 'competitors', 'billing'];
+
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
+  const initialTab = VALID_TABS.includes(tab as SettingsTab) ? (tab as SettingsTab) : undefined;
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id);
@@ -42,6 +51,7 @@ export default async function SettingsPage() {
         userId={session.user!.user_id}
         checkoutUrl={checkoutUrl}
         portalUrl={portalUrl}
+        initialTab={initialTab}
       />
     </div>
   );

@@ -30,7 +30,10 @@ interface SettingsClientProps {
   userId: string;
   checkoutUrl: string;
   portalUrl: string;
+  initialTab?: SettingsTab;
 }
+
+type SettingsTab = 'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing';
 
 const statusConfig: Record<
   string,
@@ -48,9 +51,10 @@ export default function SettingsClient({
   userId,
   checkoutUrl,
   portalUrl,
+  initialTab,
 }: SettingsClientProps) {
   const api = createApiClient(userId);
-  const [activeTab, setActiveTab] = useState<'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing'>('profile');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab ?? 'profile');
 
   // Form states
   const [settings, setSettings] = useState<SettingsData>(initialSettings);

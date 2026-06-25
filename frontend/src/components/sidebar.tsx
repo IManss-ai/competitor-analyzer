@@ -390,7 +390,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
               />
             </div>
             <Link
-              href="/settings"
+              href="/settings?tab=billing"
               className="block w-full py-2 rounded-md text-[11px] font-semibold text-center bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Upgrade to Pro
