@@ -144,7 +144,7 @@ export default function LandingBattleCard() {
                 type="button"
                 onClick={() => setActive(comp)}
                 aria-pressed={isActive}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors ${
+                className={`inline-flex min-h-11 items-center justify-center rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors md:min-h-0 ${
                   isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'

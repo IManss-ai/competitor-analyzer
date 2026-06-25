@@ -59,7 +59,7 @@ function PricingBasic() {
   return (
     <div className="text-center">
       <motion.div {...reveal()}>
-        <h2 className="text-[40px] lg:text-[54px] font-medium tracking-[-0.02em] leading-[1.1] mb-5 text-foreground">
+        <h2 className="text-[34px] font-semibold tracking-[-0.01em] leading-[1.1] mb-5 text-foreground">
           Simple pricing.<br />
           <span className="text-muted-foreground">No surprises.</span>
         </h2>
@@ -106,7 +106,7 @@ function PricingBasic() {
                 {/* CTA */}
                 <Link
                   href={tier.href}
-                  className="inline-flex items-center justify-between w-full gap-4 bg-primary text-primary-foreground font-semibold pl-5 pr-2 py-3 rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
+                  className="inline-flex items-center justify-between w-full min-h-11 gap-4 bg-primary text-primary-foreground font-semibold pl-5 pr-2 py-3 rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
                 >
                   <span className="text-sm">{tier.cta}</span>
                   <span className="w-7 h-7 rounded-full bg-black/15 flex items-center justify-center">

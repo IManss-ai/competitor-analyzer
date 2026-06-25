@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import ThemeToggle from '@/components/theme-toggle';
 import { Separator } from '@/components/ui/separator';
 
@@ -39,6 +42,11 @@ function getFormattedDateline(lastScan?: string | null) {
 }
 
 export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {
+  // Gate time-dependent dateline behind a mounted flag so SSR text matches
+  // hydration (avoids React #418 from Date.now()/new Date() locale/TZ drift).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     <header className="flex items-end justify-between flex-wrap gap-3 mb-8 pb-4 border-b border-border">
       {/* Left — page title + broadsheet dateline */}
@@ -47,7 +55,7 @@ export default function Topbar({ title, subtitle, lastScan, actions }: TopbarPro
           {title}
         </h1>
         <div className="text-[11px] font-mono tracking-[0.04em] mt-1.5 flex flex-wrap items-center gap-x-2 text-muted-foreground">
-          <span>{getFormattedDateline(lastScan)}</span>
+          <span>{mounted ? getFormattedDateline(lastScan) : ' '}</span>
           {subtitle && (
             <>
               <span>·</span>
