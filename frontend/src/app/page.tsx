@@ -3,6 +3,7 @@ import { ArrowRight, Check, Bell, FileText, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import ThemeToggle from '@/components/theme-toggle';
+import LandingBattleCard from '@/components/landing-battlecard';
 
 // Rivalscope landing — refined "Intelligence Desk" direction (user-approved).
 // Anchored to the live shadcn neutral-modern tokens (zinc graphite + single blue).
@@ -63,44 +64,6 @@ function IntelFeed() {
       <div className="flex items-center justify-between border-t border-border px-5 py-3">
         <span className="font-mono text-xs text-muted-foreground">Top signal · Stripe</span>
         <span className="font-mono text-sm font-semibold text-primary">91</span>
-      </div>
-    </div>
-  );
-}
-
-function BattleCard() {
-  return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
-        <span className="text-sm font-medium text-card-foreground">Battle card · Stripe</span>
-        <span className="font-mono text-xs text-muted-foreground">Updated 3h ago</span>
-      </div>
-      <div className="space-y-3 p-4">
-        <div className="rounded-lg border border-border bg-background/40 p-4">
-          <div className="mb-1.5 text-xs font-medium text-card-foreground">Executive summary</div>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Stripe is moving upmarket — entry pricing is up and enterprise features shipped.
-            The window to win price-sensitive mid-market is open now.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-lg border border-border bg-background/40 p-4">
-            <div className="mb-2.5 text-xs font-medium text-card-foreground">Weak spots</div>
-            <ul className="space-y-2 text-[13px] text-muted-foreground">
-              <li>“Support takes days” — 41 reviews</li>
-              <li>Onboarding called confusing</li>
-              <li>No usage-based billing</li>
-            </ul>
-          </div>
-          <div className="rounded-lg border border-border bg-background/40 p-4">
-            <div className="mb-2.5 text-xs font-medium text-card-foreground">Top plays</div>
-            <ol className="space-y-2 text-[13px] text-card-foreground">
-              <li className="flex gap-2"><span className="font-mono text-primary">1</span>Lead with same-day support SLA</li>
-              <li className="flex gap-2"><span className="font-mono text-primary">2</span>Lock annual before their hike</li>
-              <li className="flex gap-2"><span className="font-mono text-muted-foreground">3</span>Pitch usage-based pricing</li>
-            </ol>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -210,7 +173,7 @@ export default function Landing() {
               Generate your first battle card <ArrowRight size={15} />
             </Link>
           </div>
-          <BattleCard />
+          <LandingBattleCard />
         </section>
 
         {/* PRICING — real, wired component (keeps its own heading) */}

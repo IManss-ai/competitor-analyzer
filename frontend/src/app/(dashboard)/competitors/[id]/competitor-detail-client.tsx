@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
+import HeadToHead from '@/components/head-to-head';
 import { useChartPalette } from '@/lib/chart-theme';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -230,6 +231,12 @@ ${card.win_conditions && card.win_conditions.length > 0
 
   return (
     <div className="space-y-6">
+      {/* HEAD-TO-HEAD — comparative verdict (self-hides when absent) */}
+      <HeadToHead
+        data={detail.battlecard?.head_to_head}
+        competitorName={comp.name || comp.url}
+      />
+
       {/* A) HEADER ROW */}
       <div className="bg-card border border-border rounded-xl p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

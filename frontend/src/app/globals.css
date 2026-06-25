@@ -468,6 +468,12 @@ code, pre, .font-mono {
   from { background-position: 200% 0; }
   to   { background-position: -200% 0; }
 }
+
+/* Subtle fade for keyed content swaps (e.g. landing battle-card tab change) */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .rs-skeleton {
   background: linear-gradient(
     90deg,
