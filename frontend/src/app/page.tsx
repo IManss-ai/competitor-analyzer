@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import ThemeToggle from '@/components/theme-toggle';
 import LandingBattleCard from '@/components/landing-battlecard';
+import MobileMenu from '@/components/landing-nav';
 
 // Rivalscope landing — refined "Intelligence Desk" direction (user-approved).
 // Anchored to the live shadcn neutral-modern tokens (zinc graphite + single blue).
@@ -91,7 +92,7 @@ export default function Landing() {
     <div className="min-h-[100dvh] bg-background text-foreground antialiased">
       <div className="mx-auto max-w-[1180px] px-6">
         {/* NAV */}
-        <nav className="flex h-16 items-center justify-between">
+        <nav className="relative flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-[13px] font-bold text-primary-foreground">R</div>
             <span className="text-[17px] font-semibold tracking-tight">Rivalscope</span>
@@ -104,7 +105,8 @@ export default function Landing() {
           <div className="flex items-center gap-2 text-sm">
             <ThemeToggle />
             <Link className="hidden px-2 text-muted-foreground transition-colors hover:text-foreground sm:inline" href={AUTH}>Sign in</Link>
-            <Button size="sm" asChild><Link href={AUTH}>Start free</Link></Button>
+            <Button size="sm" className="hidden md:inline-flex" asChild><Link href={AUTH}>Start free</Link></Button>
+            <MobileMenu />
           </div>
         </nav>
 
@@ -123,8 +125,8 @@ export default function Landing() {
               then drafts the battle card your team uses to close.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button size="lg" className="gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
-              <Button size="lg" variant="outline" asChild><a href="#product">See a sample battle card</a></Button>
+              <Button size="lg" className="min-h-11 gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
+              <Button size="lg" variant="outline" className="min-h-11" asChild><a href="#product">See a sample battle card</a></Button>
             </div>
             <p className="mt-5 text-[13px] text-muted-foreground">No credit card · 2-minute setup · First report in minutes</p>
           </div>
@@ -143,6 +145,7 @@ export default function Landing() {
 
         {/* HOW IT WORKS — features */}
         <section id="how-it-works" className="scroll-mt-20 grid gap-8 py-20 sm:grid-cols-3">
+          <h2 className="sr-only">How it works</h2>
           {FEATURES.map((f) => (
             <div key={f.title}>
               <span className="mb-4 grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-primary">
