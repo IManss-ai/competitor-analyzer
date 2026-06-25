@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { Instrument_Serif } from 'next/font/google';
 import { InlineScript } from '@/components/inline-script';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
@@ -10,6 +11,16 @@ import { Toaster } from '@/components/ui/sonner';
 // shadcn neutral-modern: Geist Sans (UI/display) + Geist Mono (numerals/code).
 // The geist package exposes --font-geist-sans / --font-geist-mono, which the
 // --font-sans / --font-mono tokens in globals.css resolve to.
+
+// Premium Blue: Instrument Serif display face — headlines ≥28px ONLY.
+// Exposes --font-instrument-serif, which the --font-display token resolves to.
+const instrumentSerif = Instrument_Serif({
+  weight: '400',
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://rivalscope.dev'),
@@ -44,7 +55,7 @@ export default function RootLayout({
       lang="en"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={cn("dark", "h-full", "antialiased", "font-sans", GeistSans.variable, GeistMono.variable)}
+      className={cn("dark", "h-full", "antialiased", "font-sans", GeistSans.variable, GeistMono.variable, instrumentSerif.variable)}
     >
       <body className="font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50" style={{ backgroundColor: 'var(--surface-base)' }}>
         {/* No-JS / crawler / OG-snapshot fallback: Framer Motion SSRs scroll-reveal
