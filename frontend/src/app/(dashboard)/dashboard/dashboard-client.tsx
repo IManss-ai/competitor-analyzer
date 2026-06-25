@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Building2, Star, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, Sparkles, Check } from 'lucide-react';
-import { DashboardData, Competitor, BusinessProfile, DiscoveredCompetitor } from '@/lib/types';
+import { DashboardData, Competitor, BusinessProfile, DiscoveredCompetitor, HeadToHead as HeadToHeadType } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
+import HeadToHead from '@/components/head-to-head';
 import CountUp from '@/components/count-up';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,6 +75,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const [onboardingCard, setOnboardingCard] = useState<BattleCardData | null>(null);
   const [onboardingCardLoading, setOnboardingCardLoading] = useState(false);
   const [onboardingCardError, setOnboardingCardError] = useState('');
+  // Comparative verdict (rides along the same battle-card response); self-hides
+  // when the user has no business profile.
+  const [onboardingHeadToHead, setOnboardingHeadToHead] = useState<HeadToHeadType | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const p = useChartPalette();
@@ -134,7 +138,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         headers: { Authorization: `Bearer ${userId}` },
       });
       if (!res.ok) throw new Error('generate failed');
-      setOnboardingCard(normalizeBattleCard(await res.json()));
+      const raw = await res.json();
+      setOnboardingCard(normalizeBattleCard(raw));
+      setOnboardingHeadToHead(raw.head_to_head ?? null);
     } catch (e) {
       if (isAbortError(e)) return;
       setOnboardingCardError('We could not build the report right now — you can open the Battle Card from your dashboard.');
@@ -982,6 +988,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       setOnboardingName('');
       setOnboardingG2Url('');
       setOnboardingCard(null);
+      setOnboardingHeadToHead(null);
       setOnboardingCardError('');
       setOnboardingStep(0);
     };
@@ -1006,6 +1013,13 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               : 'We scanned their site and compiled the intelligence below. We re-check automatically every week.'}
           </p>
         </div>
+
+        {/* Head-to-head verdict — the onboarding climax (self-hides when absent) */}
+        {!isError && onboardingHeadToHead && (
+          <div className="p-6 pb-0">
+            <HeadToHead data={onboardingHeadToHead} competitorName={compLabel} />
+          </div>
+        )}
 
         {/* The report itself (or graceful fallback) */}
         {!isError && (
