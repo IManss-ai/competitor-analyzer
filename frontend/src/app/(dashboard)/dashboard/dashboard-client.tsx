@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Building2, Star, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin } from 'lucide-react';
-import { DashboardData, Competitor } from '@/lib/types';
+import { Building2, Star, ArrowRight, Loader2, Globe, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Plus, Compass, CheckCircle2, MapPin, Sparkles, Check } from 'lucide-react';
+import { DashboardData, Competitor, BusinessProfile, DiscoveredCompetitor } from '@/lib/types';
+import { createApiClient } from '@/lib/api';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
@@ -33,11 +34,30 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const [scanningCompId, setScanningCompId] = useState<string | null>(null);
   const [scanDoneCompId, setScanDoneCompId] = useState<string | null>(null);
 
-  // Onboarding states
-  const [onboardingStep, setOnboardingStep] = useState<number>(() => {
-    return competitors.length === 0 ? -1 : 3;
+  // Onboarding states. Numeric steps (-1/0/1/2/3) are the legacy modal and are
+  // load-bearing (the scan poll keys on step === 1; finale on === 2). The magic
+  // flow adds string steps ('website' | 'analyzing' | 'review') at the FRONT;
+  // they're inert against the numeric guards by design. A fresh user lands on
+  // 'website'; -1/0 stay reachable as the profile-failure fallback.
+  type OnboardingStep = number | 'website' | 'analyzing' | 'review';
+  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>(() => {
+    return competitors.length === 0 ? 'website' : 3;
   });
   const [selectedBusinessType, setSelectedBusinessType] = useState<'saas' | 'local'>(isLocalBusiness ? 'local' : 'saas');
+
+  // Magic onboarding: user's own site → AI profile → discovered competitors.
+  // Kept SEPARATE from onboardingUrl/onboardingName (those belong to the legacy
+  // single-add + finale header); we only write into those at the hand-off.
+  const [magicUrl, setMagicUrl] = useState('');
+  const [magicError, setMagicError] = useState('');
+  const [analyzingLine, setAnalyzingLine] = useState(0);
+  const [profile, setProfile] = useState<BusinessProfile | null>(null);
+  const [profileName, setProfileName] = useState(''); // editable business name
+  const [discovered, setDiscovered] = useState<DiscoveredCompetitor[]>([]);
+  const [discoverReason, setDiscoverReason] = useState<string | null>(null);
+  const [checkedUrls, setCheckedUrls] = useState<Set<string>>(new Set());
+  const [manualUrl, setManualUrl] = useState('');
+  const [startingTracking, setStartingTracking] = useState(false);
   const [savingBusinessType, setSavingBusinessType] = useState(false);
   const [onboardingJobId, setOnboardingJobId] = useState<string | null>(null);
   const [onboardingCompId, setOnboardingCompId] = useState<string | null>(null);
@@ -164,6 +184,139 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       controller.abort();
     };
   }, [onboardingStep, onboardingJobId, userId, apiUrl]);
+
+  // ── MAGIC ONBOARDING ──────────────────────────────────────────────────────
+  const api = createApiClient(userId);
+
+  const ANALYZING_LINES = [
+    'Reading your site…',
+    'Building your profile…',
+    'Finding your competitors…',
+  ];
+
+  // Cycle the status lines while the (real) profile + discover calls run.
+  useEffect(() => {
+    if (onboardingStep !== 'analyzing') return;
+    setAnalyzingLine(0);
+    const id = setInterval(() => {
+      setAnalyzingLine((n) => Math.min(n + 1, ANALYZING_LINES.length - 1));
+    }, 1400);
+    return () => clearInterval(id);
+  }, [onboardingStep]);
+
+  // Step 1 → 2: profile the user's own site, then discover competitors.
+  const analyzeMyBusiness = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const urlVal = ((fd.get('magicUrl') as string) || magicUrl || '').trim();
+    if (!urlVal) {
+      setMagicError('Please enter your website.');
+      return;
+    }
+    setMagicUrl(urlVal);
+    setMagicError('');
+    setOnboardingStep('analyzing');
+
+    let prof: BusinessProfile | null = null;
+    try {
+      const res = await api.profileBusiness(urlVal);
+      prof = res.profile;
+      setProfile(prof);
+      setProfileName(prof.name || '');
+      // The profile decides saas vs local server-side; sync local state so the
+      // downstream scanNow / local-vs-saas branches behave.
+      setSelectedBusinessType(res.is_saas ? 'saas' : 'local');
+    } catch (err) {
+      if (isAbortError(err)) return;
+      // Network/AI fail must never trap the user — fall back to manual add.
+      setProfile(null);
+    }
+
+    // Discover competitors (best-effort; SaaS only on the backend).
+    try {
+      const disc = await api.discoverCompetitors();
+      const comps = disc.competitors || [];
+      setDiscovered(comps);
+      setDiscoverReason(disc.reason);
+      setCheckedUrls(new Set(comps.map((c) => c.url))); // all pre-checked
+    } catch (err) {
+      if (isAbortError(err)) return;
+      setDiscovered([]);
+      setDiscoverReason('none_suggested');
+    }
+
+    setOnboardingStep('review');
+  };
+
+  const toggleChecked = (url: string) => {
+    setCheckedUrls((prev) => {
+      const next = new Set(prev);
+      if (next.has(url)) next.delete(url);
+      else next.add(url);
+      return next;
+    });
+  };
+
+  // Add a single competitor and return its id + job_id (the inline POST shape;
+  // api.addCompetitor omits job_id which the finale needs).
+  const addOneCompetitor = async (url: string, name?: string): Promise<{ id: string; job_id: string } | null> => {
+    try {
+      const res = await fetch(`${apiUrl}/api/v1/competitors`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userId}` },
+        body: JSON.stringify({ url, name: name || '' }),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return { id: data.id, job_id: data.job_id };
+    } catch (e) {
+      if (!isAbortError(e)) console.error(e);
+      return null;
+    }
+  };
+
+  // Step 2 → existing scan/battlecard tail. Add every chosen competitor, then
+  // hand the FIRST one off to the legacy step 1 (poll) → 2 (battlecard) flow by
+  // populating onboardingCompId/JobId/Url/Name; the rest scan in the background.
+  const startTracking = async () => {
+    if (startingTracking) return;
+
+    // One uniform list across every `reason` branch: checked discovered comps +
+    // an optional manual URL.
+    const toAdd: { url: string; name?: string }[] = discovered
+      .filter((c) => checkedUrls.has(c.url))
+      .map((c) => ({ url: c.url, name: c.name }));
+    const manual = manualUrl.trim();
+    if (manual) toAdd.push({ url: manual });
+
+    if (toAdd.length === 0) {
+      setMagicError('Pick at least one competitor or add one by URL.');
+      return;
+    }
+
+    setStartingTracking(true);
+    setMagicError('');
+
+    const results = await Promise.all(toAdd.map((c) => addOneCompetitor(c.url, c.name)));
+    const added = toAdd
+      .map((c, i) => ({ ...c, res: results[i] }))
+      .filter((c) => c.res);
+
+    if (added.length === 0) {
+      setStartingTracking(false);
+      setMagicError('We could not add those competitors. Check the URLs and try again.');
+      return;
+    }
+
+    // Hand the primary off to the legacy poll → battlecard tail.
+    const primary = added[0];
+    setOnboardingCompId(primary.res!.id);
+    setOnboardingJobId(primary.res!.job_id);
+    setOnboardingName(primary.name || '');
+    setOnboardingUrl(primary.url);
+    setStartingTracking(false);
+    setOnboardingStep(1); // legacy scan-progress step
+  };
 
   // Business type selection handler
   const confirmBusinessType = async (type: 'saas' | 'local') => {
@@ -339,6 +492,246 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     if (diffHours < 24) return `${diffHours}h ago`;
     return `${diffDays}d ago`;
   };
+
+  // ── MAGIC STEP 1: YOUR WEBSITE ───────────────────────────────────────────
+  if (onboardingStep === 'website') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 w-full max-w-md rounded-xl border border-border bg-card p-7 shadow-lg md:p-8"
+        >
+          <div className="mb-7 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+              <Sparkles size={22} />
+            </div>
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">Let&apos;s set up your competitive radar</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Tell us your website and we&apos;ll read it, build your profile, and find who you&apos;re up against.
+            </p>
+          </div>
+
+          <form onSubmit={analyzeMyBusiness} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="magic-url">Your website</Label>
+              <Input
+                id="magic-url"
+                name="magicUrl"
+                type="text"
+                autoFocus
+                placeholder="yourcompany.com"
+                value={magicUrl}
+                onChange={(e) => setMagicUrl(e.target.value)}
+              />
+            </div>
+
+            {magicError && <p className="text-xs font-medium text-destructive">{magicError}</p>}
+
+            <Button type="submit" size="lg" className="w-full">
+              Analyze my business <ArrowRight size={14} />
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              Takes a few seconds. You can edit everything before we start tracking.
+            </p>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── MAGIC STEP 2: ANALYZING ──────────────────────────────────────────────
+  if (onboardingStep === 'analyzing') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 w-full max-w-md rounded-xl border border-border bg-card p-8 text-center shadow-lg"
+        >
+          <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+            <Sparkles size={22} className="animate-pulse" />
+          </div>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">Setting up your radar</h2>
+          <div className="mx-auto mt-5 flex max-w-xs flex-col gap-2.5">
+            {ANALYZING_LINES.map((line, i) => {
+              const done = i < analyzingLine;
+              const active = i === analyzingLine;
+              return (
+                <div key={line} className="flex items-center gap-2.5 text-sm">
+                  <span className="flex h-4 w-4 flex-none items-center justify-center">
+                    {done ? (
+                      <Check size={14} className="text-primary" />
+                    ) : active ? (
+                      <Loader2 size={14} className="animate-spin text-primary" />
+                    ) : (
+                      <span className="h-1.5 w-1.5 rounded-full bg-border" />
+                    )}
+                  </span>
+                  <span className={done || active ? 'text-foreground' : 'text-muted-foreground'}>{line}</span>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── MAGIC STEP 3: REVIEW PROFILE + COMPETITORS ───────────────────────────
+  if (onboardingStep === 'review') {
+    const isLocal = discoverReason === 'local' || selectedBusinessType === 'local';
+    return (
+      <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 py-8 sm:py-12">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 w-full max-w-lg space-y-5"
+        >
+          <div className="text-center">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">Here&apos;s what we found</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">Review it, edit anything that&apos;s off, then start tracking.</p>
+          </div>
+
+          {/* Your business */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="text-sm font-medium text-card-foreground">Your business</span>
+              {profile?.source === 'fallback' && (
+                <span className="rounded-md border border-border bg-secondary px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Best guess
+                </span>
+              )}
+            </div>
+
+            {profile ? (
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="profile-name">Business name</Label>
+                  <Input
+                    id="profile-name"
+                    type="text"
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                  />
+                </div>
+                {profile.one_liner && (
+                  <p className="text-sm leading-relaxed text-muted-foreground">{profile.one_liner}</p>
+                )}
+                <div className="grid grid-cols-2 gap-3 border-t border-border pt-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Category</p>
+                    <p className="mt-0.5 text-sm text-foreground">{profile.category || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Positioning</p>
+                    <p className="mt-0.5 text-sm text-foreground">{profile.positioning || '—'}</p>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">We read this from your site — edit anything that&apos;s off.</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                We couldn&apos;t read your site automatically — no problem. Add a competitor below and we&apos;ll take it from there.
+              </p>
+            )}
+          </div>
+
+          {/* Your top competitors */}
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-sm font-medium text-card-foreground">
+                {isLocal ? 'Your competitors' : 'Your top competitors'}
+              </span>
+              {!isLocal && discovered.length > 0 && (
+                <span className="font-mono text-xs text-muted-foreground">{checkedUrls.size} selected</span>
+              )}
+            </div>
+
+            {isLocal ? (
+              <p className="mb-4 text-sm text-muted-foreground">
+                We&apos;ll track competitors you add manually.
+              </p>
+            ) : discovered.length > 0 ? (
+              <div className="-mx-1.5 mb-4 mt-3 divide-y divide-border">
+                {discovered.map((c) => {
+                  const checked = checkedUrls.has(c.url);
+                  return (
+                    <button
+                      key={c.url}
+                      type="button"
+                      onClick={() => toggleChecked(c.url)}
+                      className="flex w-full items-start gap-3 rounded-lg px-1.5 py-3 text-left transition-colors hover:bg-muted"
+                    >
+                      <span
+                        className="mt-0.5 flex h-4 w-4 flex-none items-center justify-center rounded border transition-colors"
+                        style={{
+                          borderColor: checked ? 'var(--primary)' : 'var(--border)',
+                          backgroundColor: checked ? 'var(--primary)' : 'transparent',
+                        }}
+                      >
+                        {checked && <Check size={11} className="text-primary-foreground" />}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">{c.name}</span>
+                          <span className="truncate font-mono text-xs text-muted-foreground">{competitorDomain(c.url)}</span>
+                        </span>
+                        {c.why && <span className="mt-0.5 block text-[13px] leading-snug text-muted-foreground">{c.why}</span>}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="mb-4 mt-1 text-sm text-muted-foreground">
+                We couldn&apos;t auto-suggest competitors. Add your first one below.
+              </p>
+            )}
+
+            {/* Manual add — ALWAYS visible */}
+            <div className="space-y-1.5 border-t border-border pt-4">
+              <Label htmlFor="manual-url">
+                {isLocal || discovered.length === 0 ? 'Add your first competitor' : 'Add another by URL'}
+              </Label>
+              <Input
+                id="manual-url"
+                type="text"
+                placeholder="competitor.com"
+                value={manualUrl}
+                onChange={(e) => setManualUrl(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {magicError && <p className="text-center text-xs font-medium text-destructive">{magicError}</p>}
+
+          <div className="flex flex-col gap-2">
+            <Button onClick={startTracking} disabled={startingTracking} size="lg" className="w-full">
+              {startingTracking ? (
+                <><Loader2 size={16} className="animate-spin" /> Setting up…</>
+              ) : (
+                <>Start tracking <ArrowRight size={14} /></>
+              )}
+            </Button>
+            <button
+              type="button"
+              onClick={() => setOnboardingStep(3)}
+              className="mx-auto text-xs font-medium text-muted-foreground hover:text-foreground hover:underline"
+            >
+              Skip for now
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   // ── ONBOARDING STEP -1: BUSINESS TYPE SELECTION ──────────────────────────
   if (onboardingStep === -1) {
