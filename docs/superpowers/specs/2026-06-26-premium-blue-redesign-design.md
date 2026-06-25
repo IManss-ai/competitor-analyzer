@@ -61,8 +61,8 @@ Keep `--ease-smooth` / `--ease-out` / `--duration-*`. Add: **count-up** on stat 
 ## 4. Token mapping (concrete `globals.css` + `layout.tsx` changes)
 
 Most changes are **token-level** in `frontend/src/app/globals.css` `:root` + `.dark`, propagating through the **legacy alias layer** (`--surface-base`, `--text-primary`, `--accent-primary`, …) + the `sky-*`→`--primary` remap. **Verified against the codebase (2026-06-26 audit):** `0` hardcoded zinc/slate/gray neutrals and `0` raw hex in `.tsx` — so the **neutral + radius re-skin propagates for free**. Three things do **not** propagate by token-flip and are explicit Tier-0 work:
-- **~25 hardcoded `blue-*` utilities across 8 `.tsx` files** (e.g. `bg-blue-600`) → convert to `--primary`/`sky-*`. Stock `blue-*` ignores `--primary`; only the remapped `sky-*` follows it.
-- **Depth:** the shadcn `<Card>` uses `ring-1 ring-foreground/10` and **no box-shadow** — it does **not** read `--shadow-card`. Mercury depth is added in the shared `frontend/src/components/ui/card.tsx` (one file → all cards) and aligned with ad-hoc `shadow-sm/lg` usages (notably `dashboard-client.tsx`).
+- **Accent color propagates for free** — verified `0` pure `blue-*` utilities; the 31 `sky-*` usages across 8 files already remap to `--primary` theme-aware. No conversion task. (Re-verify with `grep -rE 'bg-blue-|text-blue-' --include=*.tsx` before relying on this.)
+- **Depth:** the shadcn `<Card>` uses `ring-1 ring-foreground/10` and **no box-shadow** — it does **not** read `--shadow-card`. Mercury depth is added in the shared `frontend/src/components/ui/card.tsx` (one file → all cards) and aligned with ad-hoc `shadow-sm/lg` usages (notably `dashboard-client.tsx`). **This is the one token that doesn't auto-propagate.**
 - **Display serif** never propagates by token; `.font-display` is applied per component on headlines.
 
 1. `--primary` (+ `.dark` variant) → Mercury blue oklch; `--ring`, `--sidebar-primary`, `--sidebar-ring` follow.
@@ -79,7 +79,7 @@ Most changes are **token-level** in `frontend/src/app/globals.css` `:root` + `.d
 
 ## 5. Scope tiers — what "live today" means honestly
 
-**Tier 0 — Foundation (lifts ALL routes; partly propagating, partly per-component):** (a) token swap — primary→Mercury blue, radius, dark/light surfaces (neutrals propagate free, verified); (b) convert the ~25 hardcoded `blue-*` utilities; (c) add Mercury depth in the shared `card.tsx`; (d) restyle the **global shell** (sidebar nav groups, topbar, account chip, theme toggle, pill primary CTA); (e) wire **Instrument Serif** + apply `.font-display` to headlines in shared components. **Lead with the propagating color/radius win** (cheap, every screen improves at once), then the bounded per-component depth/serif/blue-fix. Ship + verify both themes before Tier 1.
+**Tier 0 — Foundation (lifts ALL routes; mostly propagating):** (a) token swap — primary→Mercury blue, radius, dark/light surfaces, gradient (neutrals **and** the `sky-*` accent propagate free, verified: 0 pure `blue-*`); (b) add Mercury depth in the shared `card.tsx` (the one token that doesn't auto-propagate); (c) restyle the **global shell** (`components/sidebar.tsx` + `components/topbar.tsx`: nav groups, account chip, theme toggle, pill primary CTA); (d) wire **Instrument Serif** in `app/layout.tsx` + apply `.font-display` to headlines in shared components. **Lead with the propagating color/radius win** (cheap, every screen improves at once), then the bounded per-component depth/serif. Ship + verify both themes before Tier 1.
 
 **Tier 1 — Bespoke today (the demo path / where the pitch is won):**
 - **Landing `/`** — art-directed hero (Instrument Serif headline, gradient CTA, live battle-card demo), pricing, how-it-works.
