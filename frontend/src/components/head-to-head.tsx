@@ -17,7 +17,7 @@ function isEmpty(data?: HeadToHeadData | null): boolean {
 }
 
 function PointRow({ point, tone }: { point: HeadToHeadPoint; tone: 'win' | 'exposed' }) {
-  const accent = tone === 'win' ? 'text-emerald-500' : 'text-amber-500';
+  const accent = tone === 'win' ? 'text-emerald-500' : 'text-rose-500';
   return (
     <li className="flex gap-2.5">
       <Check size={15} className={`mt-0.5 flex-none ${accent}`} />
@@ -25,7 +25,7 @@ function PointRow({ point, tone }: { point: HeadToHeadPoint; tone: 'win' | 'expo
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm leading-snug text-card-foreground">{point.point}</span>
           {point.confidence === 'inferred' && (
-            <span className="rounded-md border border-border bg-secondary px-1.5 py-0.5 font-mono text-[10px] leading-none tracking-wide text-muted-foreground">
+            <span className="rounded-md border border-primary/30 bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] leading-none tracking-wide text-primary">
               inferred
             </span>
           )}
@@ -43,14 +43,15 @@ export default function HeadToHead({ data, competitorName }: HeadToHeadProps) {
   const hh = data as HeadToHeadData;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-(--shadow-card)">
       {/* Verdict */}
-      <div className="border-b border-border px-5 py-5 sm:px-6">
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          You vs. {competitorName}
+      <div className="relative border-b border-border px-5 py-6 sm:px-7">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-70" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+          Head-to-head · You vs. {competitorName}
         </p>
         {hh.verdict && (
-          <h2 className="mt-1.5 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-foreground sm:text-2xl">
+          <h2 className="font-display mt-2 text-[28px] leading-[1.12] tracking-[-0.01em] text-foreground sm:text-[32px]">
             {hh.verdict}
           </h2>
         )}
@@ -72,7 +73,7 @@ export default function HeadToHead({ data, competitorName }: HeadToHeadProps) {
             )}
           </div>
           <div className="bg-card p-5 sm:p-6">
-            <h3 className="mb-3 text-sm font-semibold text-amber-500">Where you&rsquo;re exposed</h3>
+            <h3 className="mb-3 text-sm font-semibold text-rose-500">Where you&rsquo;re exposed</h3>
             {hh.you_exposed?.length ? (
               <ul className="space-y-3">
                 {hh.you_exposed.map((p, i) => (
