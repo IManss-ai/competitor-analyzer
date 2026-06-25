@@ -143,6 +143,7 @@ export default function Landing() {
 
         {/* HOW IT WORKS — features */}
         <section id="how-it-works" className="scroll-mt-20 grid gap-8 py-20 sm:grid-cols-3">
+          <h2 className="sr-only">How Rivalscope works</h2>
           {FEATURES.map((f) => (
             <div key={f.title}>
               <span className="mb-4 grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-primary">
