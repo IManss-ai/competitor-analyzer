@@ -20,6 +20,11 @@ class User(Base):
     scan_schedule = Column(String, default="weekly")  # "weekly" | "biweekly"
     email_notifications = Column(Boolean, default=True)
     digest_email = Column(String, nullable=True)
+    # Magic onboarding: the user's OWN business, scraped + AI-profiled from their URL.
+    business_url = Column(String, nullable=True)
+    business_name = Column(String, nullable=True)
+    business_profile = Column(Text, nullable=True)     # JSON string (see app/onboarding/profiler.py)
+    onboarded_at = Column(DateTime, nullable=True)     # set when magic onboarding completes
 
 
 class Competitor(Base):

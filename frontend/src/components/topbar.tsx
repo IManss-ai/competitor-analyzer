@@ -33,9 +33,9 @@ function getFormattedDateline(lastScan?: string | null) {
 
   if (lastScan) {
     const relative = getRelativeTime(lastScan);
-    return `${dateStr} · LAST SCAN: ${relative.toUpperCase()} · LIVE`;
+    return `${dateStr} · LAST SCAN: ${relative.toUpperCase()}`;
   }
-  return `${dateStr} · SYSTEM ONLINE · LIVE`;
+  return dateStr;
 }
 
 export default function Topbar({ title, subtitle, lastScan, actions }: TopbarProps) {

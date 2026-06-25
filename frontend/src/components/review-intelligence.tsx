@@ -45,7 +45,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
     <div className="rs-card overflow-hidden">
       <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center gap-2">
         <Star size={15} className="text-[var(--tone-warning)]" />
-        <h2 className="text-sm font-bold text-[var(--text-primary)]">Review Intelligence</h2>
+        <h2 className="text-[17px] font-semibold text-foreground">Review Intelligence</h2>
         <span className="ml-auto text-[10px] text-[var(--text-muted)] font-mono">G2 · Trustpilot · Capterra</span>
       </div>
 

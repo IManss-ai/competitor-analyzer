@@ -123,6 +123,31 @@ export interface SettingsData {
 
 export type BusinessType = 'saas' | 'local';
 
+// Magic onboarding — AI profile of the user's own business + discovered rivals
+export interface BusinessProfile {
+  name: string;
+  one_liner: string;
+  category: string;
+  target_customer: string;
+  positioning: string;
+  key_features: string[];
+  socials: string[];
+  is_saas: boolean;
+  source: 'ai' | 'fallback';
+}
+
+export interface DiscoveredCompetitor {
+  name: string;
+  url: string;
+  why: string;
+  verified: boolean;
+}
+
+export interface DiscoveredCompetitorsData {
+  competitors: DiscoveredCompetitor[];
+  reason: null | 'local' | 'none_suggested' | 'low_confidence';
+}
+
 export interface SessionUser {
   user_id: string;
   email: string;

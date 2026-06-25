@@ -1,4 +1,4 @@
-import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, TrendsMetricsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData } from './types';
+import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, TrendsMetricsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData, BusinessProfile, DiscoveredCompetitorsData } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -106,6 +106,20 @@ class ApiClient {
     return this.fetch<any>(`/competitors/${competitorId}/detail`);
   }
 
+
+  // Magic onboarding
+  async profileBusiness(url: string): Promise<{ profile: BusinessProfile; is_saas: boolean }> {
+    return this.fetch('/onboarding/profile', {
+      method: 'POST',
+      body: JSON.stringify({ url }),
+    });
+  }
+
+  async discoverCompetitors(): Promise<DiscoveredCompetitorsData> {
+    return this.fetch<DiscoveredCompetitorsData>('/onboarding/discover', {
+      method: 'POST',
+    });
+  }
 
   // Local Business
   async setBusinessType(businessType: 'saas' | 'local'): Promise<void> {
