@@ -6,6 +6,7 @@ import { SessionUser } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
 import Sidebar from '@/components/sidebar';
 import MainContent from '@/components/main-content';
+import PaywallOverlay from '@/components/paywall-overlay';
 
 export default async function DashboardLayout({
   children,
@@ -20,18 +21,21 @@ export default async function DashboardLayout({
   }
 
   let pendingCount = 0;
+  let accessLevel = 'full';
   try {
     const api = createApiClient(session.user.user_id);
-    const dashboard = await api.getDashboard();
+    const [dashboard, settings] = await Promise.all([api.getDashboard(), api.getSettings()]);
     pendingCount = dashboard.pending_count;
+    accessLevel = settings.access_level ?? 'full';
   } catch {
-    // Non-fatal
+    // Non-fatal: default to full so a settings hiccup never locks a user out.
   }
 
   return (
     <div className="flex min-h-screen">
       <Sidebar email={session.user.email} userId={session.user.user_id} pendingCount={pendingCount} />
       <MainContent>{children}</MainContent>
+      {accessLevel === 'read_only' && <PaywallOverlay userId={session.user.user_id} />}
     </div>
   );
 }

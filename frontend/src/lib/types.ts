@@ -117,6 +117,7 @@ export interface SettingsData {
   id: string;
   email: string;
   subscription_status: string;
+  access_level?: 'full' | 'read_only';
   trial_ends_at: string | null;
   business_type?: BusinessType;
 }
