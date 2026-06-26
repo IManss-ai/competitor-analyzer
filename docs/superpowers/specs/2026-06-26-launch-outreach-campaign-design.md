@@ -29,7 +29,13 @@ Single hook (**free competitor teardown**), three layers:
 
 ## 3. Prerequisites — gates before any post goes live
 
-1. **GATE 1 — Offer-quality smoke test.** Run one real teardown on the live product end-to-end and confirm it returns the rich AI card, *not* the heuristic baseline. Tells: card depth/specificity, `ai_generated: true`, no `is_baseline` degrade, no `note_degraded` event. **If it's heuristic, the offer is dead until the AI provider is funded — stop and top up first.**
+1. **GATE 1 — Offer-quality smoke test.** Run one real teardown on the live product end-to-end. This decides which claims the copy is allowed to make, so observe four things, not just "AI vs heuristic":
+   - Is it the rich AI card or the heuristic fallback? (Tells: depth/specificity, `ai_generated: true`, no `note_degraded` event.) If heuristic, the offer is dead until the provider is funded; stop and top up first.
+   - Is `is_baseline` true? A cold scan of an untracked competitor returns a baseline card, so **"Detected Changes" will be empty**. Expected, not a bug.
+   - Are customer complaints (G2/Trustpilot) actually populated on a fresh competitor, or empty? If empty on cold scans, drop the "what they complain about" claim from the copy.
+   - Are strategic signals real or heuristic-empty?
+
+   **Implication for copy:** the teardown is sold as an *instant battle card* (positioning + complaints + signals + plays), never as "here's what changed." Change-detection is framed as the signup payoff (it watches them going forward). Gate 1 confirms exactly which card sections substantiate the proof line.
 2. **GATE 2 — Capacity cap.** "Free for the first 20" — creates urgency and bounds per-teardown AI cost. Adjustable.
 3. **GATE 3 — Provider funding confirmed.** Authenticated cards call the paid model; these have gone dry before (silent fallback to heuristic). Confirm funded before promising quality.
 
