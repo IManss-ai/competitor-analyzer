@@ -18,6 +18,7 @@ router = APIRouter(prefix="/api/v1")
 # (issue #3, bug #2). Shared across route modules; aliased here for existing call
 # sites and the test import path.
 from app.serialization import iso_utc as _iso_utc
+from app.access import require_write_access, access_level
 
 
 # ── Auth dependency ──────────────────────────────────────────────────────────
@@ -408,7 +409,7 @@ def api_list_competitors(include_inactive: bool = False, user_id: str = Depends(
 
 
 @router.patch("/competitors/{competitor_id}")
-def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     c = db.execute(
         select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
@@ -509,7 +510,7 @@ def api_scan_status(job_id: str):
 
 
 @router.post("/competitors")
-def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     existing = db.execute(
         select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
@@ -768,7 +769,7 @@ def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(ge
 
 
 @router.post("/queue/{action_id}/approve")
-def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     action = db.execute(
         select(ApprovedAction).where(ApprovedAction.id == uuid.UUID(action_id), ApprovedAction.user_id == user_uuid)
@@ -949,6 +950,7 @@ def api_settings(user_id: str = Depends(require_api_user), db: Session = Depends
         "id": str(user.id),
         "email": user.email,
         "subscription_status": user.subscription_status,
+        "access_level": access_level(user),
         "trial_ends_at": _iso_utc(user.trial_ends_at),
         "business_type": getattr(user, "business_type", None) or "saas",
         "scan_schedule": getattr(user, "scan_schedule", None) or "weekly",
@@ -981,6 +983,7 @@ def api_update_settings(payload: dict, user_id: str = Depends(require_api_user),
         "id": str(user.id),
         "email": user.email,
         "subscription_status": user.subscription_status,
+        "access_level": access_level(user),
         "trial_ends_at": _iso_utc(user.trial_ends_at),
         "business_type": getattr(user, "business_type", None) or "saas",
         "scan_schedule": getattr(user, "scan_schedule", None) or "weekly",
@@ -993,7 +996,7 @@ def api_update_settings(payload: dict, user_id: str = Depends(require_api_user),
 # ── Scan ─────────────────────────────────────────────────────────────────────
 
 @router.post("/scan/now")
-async def api_scan_now(user_id: str = Depends(require_api_user)):
+async def api_scan_now(user_id: str = Depends(require_write_access)):
     from app.routes.scan import _run_scan_background
     import asyncio
     asyncio.create_task(_run_scan_background(user_id))
@@ -1001,7 +1004,7 @@ async def api_scan_now(user_id: str = Depends(require_api_user)):
 
 
 @router.post("/scan/reviews")
-async def api_scan_reviews(user_id: str = Depends(require_api_user)):
+async def api_scan_reviews(user_id: str = Depends(require_write_access)):
     from app.pipeline.review_scraper import scrape_competitor_reviews
     from app.db import SessionLocal
     import asyncio

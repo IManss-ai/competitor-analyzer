@@ -783,10 +783,21 @@ def generate_battlecard(
     comp = _resolve_competitor(competitor_id, db)
     if str(comp.user_id) != user_id:
         raise HTTPException(status_code=403, detail="Not your competitor")
+    # Paywall: an already-locked user can't generate new cards. The owner's
+    # FIRST generation still passes (free_test_used is set AFTER success below).
+    from app.access import is_read_only
+    user = db.get(User, _uuid.UUID(user_id))
+    if user is not None and is_read_only(user):
+        raise HTTPException(status_code=402, detail="Your free test is done — upgrade to Pro to continue.")
     # Owner path: thread the owner's business profile so the card carries
     # head_to_head. The public/share path below passes no profile (and strips it).
     business_profile = _load_business_profile(user_id, db)
-    return get_or_generate_battlecard(comp, db, force=force, business_profile=business_profile)
+    result = get_or_generate_battlecard(comp, db, force=force, business_profile=business_profile)
+    # The first generated card is "the one test" — mark it used after success.
+    if user is not None and not user.free_test_used:
+        user.free_test_used = True
+        db.commit()
+    return result
 
 
 @router.get("/public/{competitor_id}")

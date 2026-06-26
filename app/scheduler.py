@@ -94,6 +94,11 @@ async def _run_scan_and_brief(label, *extra_filters):
         for f in extra_filters:
             stmt = stmt.where(f)
         for user in db.execute(stmt).scalars().all():
+            # Paywall: ongoing weekly monitoring is a paid feature — only scan
+            # full-access users (active / comped / not-yet-tested).
+            from app.access import access_level
+            if access_level(user) != "full":
+                continue
             try:
                 await _scan_and_brief_user(user, db)
             except Exception as e:
