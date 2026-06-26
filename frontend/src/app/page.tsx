@@ -83,7 +83,7 @@ function Avatars() {
 function ProductPanel() {
   return (
     <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
-      <div className="relative grid grid-cols-[188px_1fr] overflow-hidden rounded-t-2xl border border-border bg-card text-left shadow-[var(--shadow-card)]">
+      <div className="relative grid grid-cols-[188px_1fr] overflow-hidden rounded-t-xl border border-border bg-card text-left">
         {/* sidebar */}
         <div className="hidden border-r border-border bg-muted/40 p-3 sm:block">
           <div className="mb-3 flex items-center gap-2 px-1">
@@ -110,7 +110,7 @@ function ProductPanel() {
               <h3 className="font-display text-[19px] font-semibold">Dashboard</h3>
               <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Fri 26 Jun 2026 · Intel HQ</p>
             </div>
-            <span className="rounded-full px-3.5 py-1.5 text-[12px] font-semibold text-primary-foreground" style={{ backgroundImage: 'var(--gradient-primary)' }}>Scan now</span>
+            <span className="rounded-md border border-border px-3 py-1.5 text-[12px] font-medium text-muted-foreground">Scan now</span>
           </div>
           <div className="mb-4 grid grid-cols-4 gap-2.5">
             {[['Competitors', '12', '+3 this week'], ['Changes / 7d', '47', '+12'], ['Signals', '8', '2 strategic'], ['Queued plays', '5', 'ready']].map(([k, v, d], i) => (
@@ -169,28 +169,32 @@ export default function Landing() {
           <div className="flex items-center gap-2 text-sm">
             <ThemeToggle />
             <Link className="hidden px-2 text-muted-foreground transition-colors hover:text-foreground sm:inline" href={AUTH}>Sign in</Link>
-            <Button size="sm" variant="cta" className="hidden md:inline-flex" asChild><Link href={AUTH}>Start free</Link></Button>
+            <Link href={AUTH} className="hidden rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background transition-opacity hover:opacity-90 md:inline-flex">Start free</Link>
             <MobileMenu />
           </div>
         </nav>
 
-        {/* HERO — centered, AppKittie structure */}
-        <header className="pt-16 text-center md:pt-24">
-          <h1 className="mx-auto max-w-[18ch] font-display text-[clamp(40px,7vw,76px)] font-semibold leading-[1.01] tracking-[-0.03em]">
-            Win every deal <span style={gradText}>before your rival wakes up.</span>
+        {/* HERO — Linear port: left-aligned, monochrome, type-forward */}
+        <header className="pb-16 pt-20 md:pb-24 md:pt-28">
+          <h1 className="max-w-[760px] text-balance text-[clamp(38px,6vw,64px)] font-medium leading-[1.03] tracking-[-0.022em] text-foreground">
+            The competitive intelligence system for modern sales teams
           </h1>
-          <div className="mx-auto mt-9 grid max-w-[760px] grid-cols-1 gap-x-14 gap-y-3.5 text-left sm:grid-cols-2">
-            {HERO_FEATURES.map((f) => <FeatureBullet key={f}>{f}</FeatureBullet>)}
+          <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <p className="max-w-[520px] text-[15px] leading-relaxed text-muted-foreground">
+              Track every competitor&apos;s pricing, messaging, and hiring — then hand your reps the play that wins the deal.
+            </p>
+            <Link href={AUTH} className="group inline-flex items-center gap-1.5 whitespace-nowrap text-[14px] text-muted-foreground transition-colors hover:text-foreground">
+              <span className="font-medium text-foreground">New</span> Auto-generated battle cards
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
-          <div className="mt-10 flex flex-col items-center gap-3">
-            <Button size="lg" variant="cta" className="min-h-12 px-7 text-[15px]" asChild>
-              <Link href={AUTH}>Get started for free <ArrowRight size={16} /></Link>
-            </Button>
-            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-muted-foreground">No credit card · 2-minute setup</p>
-          </div>
-          <div className="mt-8 flex items-center justify-center gap-3 text-[13.5px] text-muted-foreground">
-            <Avatars />
-            Used by founders &amp; sales teams closing against fast-moving rivals
+          <div className="mt-9 flex items-center gap-2">
+            <Link href={AUTH} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-[14px] font-medium text-background transition-opacity hover:opacity-90">
+              Start free <ArrowRight size={15} />
+            </Link>
+            <Link href={AUTH} className="rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
+              Book a demo
+            </Link>
           </div>
 
           <ProductPanel />
