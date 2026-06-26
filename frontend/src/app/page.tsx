@@ -5,6 +5,7 @@ import { PricingBasic } from '@/components/ui/pricing-demo';
 import ThemeToggle from '@/components/theme-toggle';
 import LandingBattleCard from '@/components/landing-battlecard';
 import MobileMenu from '@/components/landing-nav';
+import { Reveal, RevealGroup, RevealItem } from '@/components/reveal';
 
 // Rivalscope landing — AppKittie-structure in our blue (user-approved direction).
 // Centered bold Space Grotesk hero + framed product panel with accent glow.
@@ -86,8 +87,12 @@ function ProductPanel() {
     <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[-6%] h-[80%] w-[82%] -translate-x-1/2"
-        style={{ background: 'radial-gradient(closest-side, color-mix(in oklab, var(--primary) 36%, transparent), transparent 72%)', filter: 'blur(12px)' }}
+        className="glow-breathe pointer-events-none absolute left-1/2 top-[-8%] h-[86%] w-[88%] -translate-x-1/2"
+        style={{
+          background:
+            'radial-gradient(58% 56% at 50% 42%, color-mix(in oklab, var(--primary) 40%, transparent), transparent 70%), radial-gradient(40% 42% at 50% 40%, color-mix(in oklab, var(--primary) 30%, transparent), transparent 76%)',
+          filter: 'blur(36px)',
+        }}
       />
       <div className="relative grid grid-cols-[188px_1fr] overflow-hidden rounded-t-2xl border border-border bg-card text-left shadow-[var(--shadow-card)]">
         {/* sidebar */}
@@ -162,7 +167,7 @@ export default function Landing() {
     <div className="min-h-[100dvh] overflow-x-hidden bg-background text-foreground antialiased">
       <div className="mx-auto max-w-[1180px] px-6">
         {/* NAV */}
-        <nav className="relative flex h-16 items-center justify-between">
+        <nav className="sticky top-0 z-50 -mx-6 flex h-16 items-center justify-between border-b border-border bg-background/92 px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <span className="h-7 w-7 rounded-md" style={{ backgroundImage: 'var(--gradient-primary)' }} />
             <span className="font-display text-[17px] font-semibold tracking-tight">Rivalscope</span>
@@ -204,35 +209,41 @@ export default function Landing() {
 
         {/* TRUST STRIP */}
         <section className="border-y border-border py-8">
-          <p className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-            Built for teams selling against fast-moving rivals
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-medium text-muted-foreground/70">
-            <span>Stripe</span><span>Linear</span><span>Notion</span><span>Figma</span><span>Vercel</span><span>Ramp</span>
-          </div>
+          <Reveal>
+            <p className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              Built for teams selling against fast-moving rivals
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-medium text-muted-foreground/70">
+              <span>Stripe</span><span>Linear</span><span>Notion</span><span>Figma</span><span>Vercel</span><span>Ramp</span>
+            </div>
+          </Reveal>
         </section>
 
         {/* HOW IT WORKS — feature cards */}
         <section id="how-it-works" className="scroll-mt-20 py-20">
-          <h2 className="mx-auto max-w-[20ch] text-center font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em]">
-            From a dozen signals to <span style={gradText}>one sales play.</span>
-          </h2>
-          <div className="mt-12 grid gap-5 sm:grid-cols-3">
+          <Reveal>
+            <h2 className="mx-auto max-w-[20ch] text-center font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em]">
+              From a dozen signals to <span style={gradText}>one sales play.</span>
+            </h2>
+          </Reveal>
+          <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-3">
             {FEATURES.map((f) => (
-              <div key={f.title} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-1">
-                <span className="mb-5 grid h-11 w-11 place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
-                  <f.icon size={19} />
-                </span>
-                <h3 className="font-display text-[17px] font-semibold">{f.title}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.desc}</p>
-              </div>
+              <RevealItem key={f.title}>
+                <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-[transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-primary/40">
+                  <span className="mb-5 grid h-11 w-11 place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
+                    <f.icon size={19} />
+                  </span>
+                  <h3 className="font-display text-[17px] font-semibold">{f.title}</h3>
+                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.desc}</p>
+                </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </section>
 
         {/* PRODUCT — battle-card showcase */}
         <section id="product" className="scroll-mt-20 grid items-center gap-12 border-t border-border py-20 md:grid-cols-2">
-          <div>
+          <Reveal>
             <h2 className="font-display text-[clamp(28px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.02em]">
               Every rival, on one battle card.
             </h2>
@@ -242,27 +253,33 @@ export default function Landing() {
             <Link href={AUTH} className="inline-flex items-center gap-2 text-[14px] font-medium text-primary hover:underline">
               Generate your first battle card <ArrowRight size={15} />
             </Link>
-          </div>
-          <LandingBattleCard />
+          </Reveal>
+          <Reveal delay={1}>
+            <LandingBattleCard />
+          </Reveal>
         </section>
 
         {/* PRICING */}
         <section id="pricing" className="scroll-mt-20 border-t border-border py-20">
-          <PricingBasic />
+          <Reveal>
+            <PricingBasic />
+          </Reveal>
         </section>
 
         {/* CTA CLOSER */}
         <section className="border-t border-border py-24 text-center">
-          <h2 className="mx-auto max-w-[20ch] font-display text-[clamp(30px,3.6vw,44px)] font-semibold leading-[1.05] tracking-[-0.02em]">
-            Stop guessing what your <span style={gradText}>competitors are doing.</span>
-          </h2>
-          <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
-            Add a competitor and get your first battle card in minutes.
-          </p>
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <Button size="lg" variant="cta" className="gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
-            <Button size="lg" variant="outline" asChild><a href="mailto:support@rivalscope.dev">Book a demo</a></Button>
-          </div>
+          <Reveal>
+            <h2 className="mx-auto max-w-[20ch] font-display text-[clamp(30px,3.6vw,44px)] font-semibold leading-[1.05] tracking-[-0.02em]">
+              Stop guessing what your <span style={gradText}>competitors are doing.</span>
+            </h2>
+            <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
+              Add a competitor and get your first battle card in minutes.
+            </p>
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <Button size="lg" variant="cta" className="gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
+              <Button size="lg" variant="outline" asChild><a href="mailto:support@rivalscope.dev">Book a demo</a></Button>
+            </div>
+          </Reveal>
         </section>
 
         {/* FOOTER */}
