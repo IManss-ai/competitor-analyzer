@@ -482,6 +482,18 @@ code, pre, .font-mono {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Ambient product-panel glow — slow opacity "breath" (AppKittie signature,
+   recolored to --primary). Opacity-only per DESIGN.md ("animate transform/
+   opacity only"); the global prefers-reduced-motion rule below freezes it. */
+@keyframes glow-breathe {
+  0%, 100% { opacity: calc(var(--glow-peak, 0.9) * 0.6); }
+  50%      { opacity: var(--glow-peak, 0.9); }
+}
+/* Light stays restrained, dark blooms full — founder's "adapt per theme". */
+.glow-breathe { --glow-peak: 0.72; animation: glow-breathe 6s ease-in-out infinite; }
+.dark .glow-breathe { --glow-peak: 1; }
+
 .rs-skeleton {
   background: linear-gradient(
     90deg,
