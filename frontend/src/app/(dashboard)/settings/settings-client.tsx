@@ -654,6 +654,12 @@ export default function SettingsClient({
                     </a>
                   </Button>
                 )}
+
+                {!portalUrl && !checkoutUrl && (
+                  <p className="text-sm text-muted-foreground">
+                    We could not start checkout right now. Please refresh and try again. If this keeps happening, contact support and we will get you upgraded.
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
