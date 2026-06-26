@@ -15,6 +15,9 @@ class User(Base):
     # stayed NULL on signup and the dashboard showed "0 days left / Upgrade to
     # Pro" the instant a user registered.
     trial_ends_at = Column(DateTime, nullable=True, default=lambda: datetime.utcnow() + timedelta(days=2))
+    # Usage-based paywall: set True once the user has had their one free test
+    # (first battle card generated). Drives access_level() lock.
+    free_test_used = Column(Boolean, nullable=False, default=False, server_default="false")
     created_at = Column(DateTime, default=func.now())
     business_type = Column(String, default="saas")  # "saas" | "local"
     scan_schedule = Column(String, default="weekly")  # "weekly" | "biweekly"
