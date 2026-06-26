@@ -1153,22 +1153,22 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </>
         )}
 
-        {/* Compact real metric strip — ledger, hairline-divided */}
-        <div className="mt-6 pt-5 grid grid-cols-2 sm:grid-cols-4 border-t border-border">
+        {/* Real metric cards — bordered, AppKittie product-panel style */}
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { k: 'Tracked', v: dashboardData.competitor_count, sub: 'competitors' },
             { k: 'Changes · 7d', v: dashboardData.changes_this_week || 0, sub: 'this week' },
             { k: 'Needs review', v: dashboardData.pending_count, sub: 'in queue', accent: dashboardData.pending_count > 0 },
             { k: 'Avg review', v: dashboardData.avg_review_score, dec: 1, sub: 'all platforms' },
-          ].map((m, i) => (
-            <div key={m.k} className={`py-1 ${i > 0 ? 'pl-[18px] border-l border-border' : ''}`}>
-              <p className="text-[11px] font-medium tracking-tight text-muted-foreground">{m.k}</p>
-              <p className="font-mono tabular-nums font-semibold text-[24px] leading-none mt-3" style={{ color: m.accent ? 'var(--primary)' : undefined, letterSpacing: '-0.02em' }}>
+          ].map((m) => (
+            <div key={m.k} className="rounded-xl border border-border bg-card/60 p-4 shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-0.5">
+              <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.1em] text-muted-foreground">{m.k}</p>
+              <p className="mt-2.5 font-mono text-[28px] font-semibold leading-none tabular-nums tracking-[-0.03em]" style={{ color: m.accent ? 'var(--primary)' : undefined }}>
                 <span className={m.accent ? 'text-primary' : 'text-foreground'}>
                   {typeof m.v === 'number' ? <CountUp value={m.v} decimals={m.dec || 0} /> : '—'}
                 </span>
               </p>
-              <p className="text-[11px] mt-2 tracking-tight text-muted-foreground">{m.sub}</p>
+              <p className="mt-2 text-[11px] text-muted-foreground">{m.sub}</p>
             </div>
           ))}
         </div>
