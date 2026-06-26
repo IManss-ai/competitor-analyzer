@@ -92,7 +92,9 @@
   --accent-glow:     color-mix(in oklch, var(--primary) 28%, transparent);
 
   /* Premium Blue signature gradient — hero / primary CTA / logo mark ONLY (scarce). */
-  --gradient-primary: linear-gradient(135deg, var(--primary), oklch(0.72 0.14 264));
+  /* De-neon stopgap: flattened to solid primary (no gradient) — gradient read as
+     toy/pet, not serious-tool. Kept as a gradient() so background-image stays valid. */
+  --gradient-primary: linear-gradient(var(--primary), var(--primary));
 
   /* ── Semantic tones (match badge hues; light values, .dark overrides below) ── */
   --tone-positive: #1f5d3f;

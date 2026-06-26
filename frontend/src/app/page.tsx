@@ -13,12 +13,10 @@ import { Reveal, RevealGroup, RevealItem } from '@/components/reveal';
 
 const AUTH = '/auth/login';
 
-// Signature gradient for the headline keyword (the "our colour gradient" the founder asked for).
+// De-neon stopgap: headline keyword is now solid foreground (gradient text read as
+// toy/pet, not serious-tool). Emphasis will be re-decided in the proper hero redesign.
 const gradText: React.CSSProperties = {
-  backgroundImage: 'linear-gradient(100deg, var(--primary), oklch(0.78 0.13 264))',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  color: 'transparent',
+  color: 'var(--foreground)',
 };
 
 type Tone = 'pricing' | 'feature' | 'hiring';
@@ -85,15 +83,6 @@ function Avatars() {
 function ProductPanel() {
   return (
     <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
-      <div
-        aria-hidden
-        className="glow-breathe pointer-events-none absolute left-1/2 top-[-8%] h-[86%] w-[88%] -translate-x-1/2"
-        style={{
-          background:
-            'radial-gradient(58% 56% at 50% 42%, color-mix(in oklab, var(--primary) 40%, transparent), transparent 70%), radial-gradient(40% 42% at 50% 40%, color-mix(in oklab, var(--primary) 30%, transparent), transparent 76%)',
-          filter: 'blur(36px)',
-        }}
-      />
       <div className="relative grid grid-cols-[188px_1fr] overflow-hidden rounded-t-2xl border border-border bg-card text-left shadow-[var(--shadow-card)]">
         {/* sidebar */}
         <div className="hidden border-r border-border bg-muted/40 p-3 sm:block">
