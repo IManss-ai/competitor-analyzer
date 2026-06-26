@@ -29,6 +29,14 @@ def access_level(user: User) -> str:
         return "full"
     if user.email and user.email.lower() in COMPED_EMAILS:
         return "full"
+    # A user who subscribed via Polar (has a billing relationship) is a paying
+    # customer, not a free-tester — never lock them, even while their Polar
+    # subscription is still in its trial (status mirrors Polar = "trialing").
+    # A CANCELED sub has status "canceled" and correctly falls through to lock.
+    if user.subscription_status == "trialing" and (
+        getattr(user, "polar_customer_id", None) or getattr(user, "polar_subscription_id", None)
+    ):
+        return "full"
     if not getattr(user, "free_test_used", False):
         return "full"
     return "read_only"

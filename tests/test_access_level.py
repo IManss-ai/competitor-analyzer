@@ -13,12 +13,15 @@ from fastapi import HTTPException
 import app.access as access
 
 
-def _user(email="u@example.com", status="trialing", free_test_used=False):
+def _user(email="u@example.com", status="trialing", free_test_used=False,
+          polar_customer_id=None, polar_subscription_id=None):
     return SimpleNamespace(
         id=uuid.uuid4(),
         email=email,
         subscription_status=status,
         free_test_used=free_test_used,
+        polar_customer_id=polar_customer_id,
+        polar_subscription_id=polar_subscription_id,
     )
 
 
@@ -57,6 +60,21 @@ class TestAccessLevel(unittest.TestCase):
         with patch.object(access, "PAYWALL_ENABLED", True), \
              patch.object(access, "COMPED_EMAILS", set()):
             u = _user(status="canceled", free_test_used=True)
+            self.assertEqual(access.access_level(u), "read_only")
+
+    def test_polar_subscriber_in_trial_is_full(self):
+        # Subscribed via Polar but mid Polar-trial (status mirrors "trialing").
+        # Must NOT be locked even though free_test_used is true — they're a customer.
+        with patch.object(access, "PAYWALL_ENABLED", True), \
+             patch.object(access, "COMPED_EMAILS", set()):
+            u = _user(status="trialing", free_test_used=True, polar_customer_id="cus_123")
+            self.assertEqual(access.access_level(u), "full")
+
+    def test_canceled_subscriber_locks_even_with_polar_id(self):
+        # A canceled subscription should lose access despite the Polar id.
+        with patch.object(access, "PAYWALL_ENABLED", True), \
+             patch.object(access, "COMPED_EMAILS", set()):
+            u = _user(status="canceled", free_test_used=True, polar_subscription_id="sub_123")
             self.assertEqual(access.access_level(u), "read_only")
 
 
