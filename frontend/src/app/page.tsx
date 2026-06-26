@@ -6,12 +6,19 @@ import ThemeToggle from '@/components/theme-toggle';
 import LandingBattleCard from '@/components/landing-battlecard';
 import MobileMenu from '@/components/landing-nav';
 
-// Rivalscope landing — refined "Intelligence Desk" direction (user-approved).
-// Anchored to the live shadcn neutral-modern tokens (zinc graphite + single blue).
-// Sentence case throughout; mono reserved for timestamps / numerals / data badges.
+// Rivalscope landing — AppKittie-structure in our blue (user-approved direction).
+// Centered bold Space Grotesk hero + framed product panel with accent glow.
 // No raw hex — semantic tokens only, theme-aware (dark default + light).
 
 const AUTH = '/auth/login';
+
+// Signature gradient for the headline keyword (the "our colour gradient" the founder asked for).
+const gradText: React.CSSProperties = {
+  backgroundImage: 'linear-gradient(100deg, var(--primary), oklch(0.78 0.13 264))',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  color: 'transparent',
+};
 
 type Tone = 'pricing' | 'feature' | 'hiring';
 
@@ -21,10 +28,10 @@ const TONE: Record<Tone, string> = {
   hiring: 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10',
 };
 
-const FEED: { mark: string; name: string; tone: Tone; label: string; desc: string; t: string }[] = [
-  { mark: 'S', name: 'Stripe', tone: 'pricing', label: 'Pricing', desc: 'Raised Starter to $29/mo, annual moved below the fold', t: '3h' },
-  { mark: 'L', name: 'Linear', tone: 'feature', label: 'Feature', desc: 'Shipped an AI assistant on the pricing page', t: '5h' },
-  { mark: 'N', name: 'Notion', tone: 'hiring', label: 'Hiring', desc: 'Opened 4 enterprise AE roles in EMEA', t: '1d' },
+const FEED: { mark: string; bg: string; name: string; tone: Tone; label: string; desc: string; t: string }[] = [
+  { mark: 'S', bg: '#635bff', name: 'Stripe', tone: 'pricing', label: 'Pricing', desc: 'Raised Starter to $29/mo, annual moved below the fold', t: '3h' },
+  { mark: 'L', bg: '#5e6ad2', name: 'Linear', tone: 'feature', label: 'Feature', desc: 'Shipped an AI assistant on the pricing page', t: '5h' },
+  { mark: 'N', bg: '#111111', name: 'Notion', tone: 'hiring', label: 'Hiring', desc: 'Opened 4 enterprise AE roles in EMEA', t: '1d' },
 ];
 
 function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
@@ -35,67 +42,130 @@ function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
   );
 }
 
-function IntelFeed() {
-  return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
-        <span className="text-sm font-medium text-card-foreground">Intel feed</span>
-        <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-          Live
-        </span>
-      </div>
-      <div className="divide-y divide-border">
-        {FEED.map((r) => (
-          <div key={r.name} className="flex items-start gap-3 px-5 py-3.5">
-            <span className="grid h-7 w-7 flex-none place-items-center rounded-md border border-border bg-secondary text-xs font-semibold text-secondary-foreground">
-              {r.mark}
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-card-foreground">{r.name}</span>
-                <Badge tone={r.tone}>{r.label}</Badge>
-                <span className="ml-auto font-mono text-xs text-muted-foreground">{r.t}</span>
-              </div>
-              <p className="mt-1 truncate text-[13px] text-muted-foreground">{r.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-between border-t border-border px-5 py-3">
-        <span className="font-mono text-xs text-muted-foreground">Top signal · Stripe</span>
-        <span className="font-mono text-sm font-semibold text-primary">91</span>
-      </div>
-    </div>
-  );
-}
+const HERO_FEATURES = [
+  'Track competitor pricing & page changes',
+  'Aggregate complaints from G2 & Trustpilot',
+  'Spot hiring & strategic signals early',
+  'Get 5 ranked plays to win every deal',
+];
 
-function CheckRow({ children }: { children: React.ReactNode }) {
+function FeatureBullet({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-3 text-[15px] text-muted-foreground">
-      <span className="mt-0.5 grid h-[18px] w-[18px] flex-none place-items-center rounded-md border border-primary/30 bg-primary/10">
-        <Check size={11} strokeWidth={3} className="text-primary" />
+    <div className="flex items-center gap-3 text-[15px] text-foreground/85">
+      <span className="grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-primary/45 bg-primary/15">
+        <Check size={12} strokeWidth={3} className="text-primary" />
       </span>
       <span>{children}</span>
     </div>
   );
 }
 
+function Avatars() {
+  const items = ['S', 'L', 'N', 'R'];
+  return (
+    <span className="flex">
+      {items.map((m, i) => (
+        <span
+          key={m}
+          className="grid h-7 w-7 place-items-center rounded-full border-2 border-background bg-secondary text-[11px] font-semibold text-secondary-foreground"
+          style={{ marginLeft: i ? -9 : 0 }}
+        >
+          {m}
+        </span>
+      ))}
+      <span className="grid h-7 w-7 place-items-center rounded-full border-2 border-background bg-primary/20 text-[11px] font-semibold text-primary" style={{ marginLeft: -9 }}>
+        +
+      </span>
+    </span>
+  );
+}
+
+// Framed product panel with an accent glow behind it — the AppKittie hero "screenshot".
+function ProductPanel() {
+  return (
+    <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[-6%] h-[80%] w-[82%] -translate-x-1/2"
+        style={{ background: 'radial-gradient(closest-side, color-mix(in oklab, var(--primary) 36%, transparent), transparent 72%)', filter: 'blur(12px)' }}
+      />
+      <div className="relative grid grid-cols-[188px_1fr] overflow-hidden rounded-t-2xl border border-border bg-card text-left shadow-[var(--shadow-card)]">
+        {/* sidebar */}
+        <div className="hidden border-r border-border bg-muted/40 p-3 sm:block">
+          <div className="mb-3 flex items-center gap-2 px-1">
+            <span className="h-[18px] w-[18px] rounded-md" style={{ backgroundImage: 'var(--gradient-primary)' }} />
+            <span className="font-display text-[13px] font-semibold">Rivalscope</span>
+          </div>
+          <p className="px-2 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground/70">Desk</p>
+          {['Dashboard', 'Competitors', 'Campaigns'].map((l, i) => (
+            <div key={l} className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] ${i === 0 ? 'bg-primary/12 font-medium text-primary' : 'text-muted-foreground'}`}>
+              <span className="h-3 w-3 rounded-[3px] bg-current opacity-55" />{l}
+            </div>
+          ))}
+          <p className="px-2 pb-1 pt-3 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground/70">Signal</p>
+          {['Intel Feed', 'Battle Cards', 'Trends'].map((l) => (
+            <div key={l} className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] text-muted-foreground">
+              <span className="h-3 w-3 rounded-[3px] bg-current opacity-55" />{l}
+            </div>
+          ))}
+        </div>
+        {/* main */}
+        <div className="p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h3 className="font-display text-[19px] font-semibold">Dashboard</h3>
+              <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Fri 26 Jun 2026 · Intel HQ</p>
+            </div>
+            <span className="rounded-full px-3.5 py-1.5 text-[12px] font-semibold text-primary-foreground" style={{ backgroundImage: 'var(--gradient-primary)' }}>Scan now</span>
+          </div>
+          <div className="mb-4 grid grid-cols-4 gap-2.5">
+            {[['Competitors', '12', '+3 this week'], ['Changes / 7d', '47', '+12'], ['Signals', '8', '2 strategic'], ['Queued plays', '5', 'ready']].map(([k, v, d], i) => (
+              <div key={k} className="rounded-xl border border-border bg-background/40 p-3">
+                <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{k}</p>
+                <p className="mt-1 font-mono text-[26px] font-semibold tabular-nums tracking-[-0.03em]" style={i === 3 ? { color: 'var(--primary)' } : undefined}>{v}</p>
+                <p className={`text-[11px] ${i === 3 ? 'text-muted-foreground' : 'text-emerald-500'}`}>{d}</p>
+              </div>
+            ))}
+          </div>
+          <div className="overflow-hidden rounded-xl border border-border bg-background/40">
+            <div className="flex items-center justify-between border-b border-border px-4 py-2.5 text-[12.5px] font-semibold">
+              Intel feed
+              <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />Live
+              </span>
+            </div>
+            {FEED.map((r) => (
+              <div key={r.name} className="flex items-center gap-3 border-b border-border px-4 py-2.5 last:border-0">
+                <span className="grid h-[26px] w-[26px] flex-none place-items-center rounded-[7px] text-[11px] font-semibold text-white" style={{ background: r.bg }}>{r.mark}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 text-[12.5px] font-semibold">{r.name}<Badge tone={r.tone}>{r.label}</Badge></div>
+                  <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">{r.desc}</p>
+                </div>
+                <span className="font-mono text-[10px] text-muted-foreground">{r.t}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const FEATURES = [
-  { icon: Bell, title: 'Always watching', desc: 'Pricing, pages, reviews and hiring tracked around the clock — you hear about changes before your prospects do.' },
+  { icon: Bell, title: 'Always watching', desc: 'Pricing, pages, reviews and hiring tracked around the clock. You hear about changes before your prospects do.' },
   { icon: FileText, title: 'One battle card per rival', desc: 'Every signal compiled into a structured card: summary, weak spots, and five ranked plays your reps can send.' },
   { icon: TrendingUp, title: 'Ranked by what wins', desc: 'Plays are ordered by impact and pulled from real complaints, so the first move is the one most likely to close.' },
 ];
 
 export default function Landing() {
   return (
-    <div className="min-h-[100dvh] bg-background text-foreground antialiased">
+    <div className="min-h-[100dvh] overflow-x-hidden bg-background text-foreground antialiased">
       <div className="mx-auto max-w-[1180px] px-6">
         {/* NAV */}
         <nav className="relative flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-[13px] font-bold text-primary-foreground">R</div>
-            <span className="text-[17px] font-semibold tracking-tight">Rivalscope</span>
+            <span className="h-7 w-7 rounded-md" style={{ backgroundImage: 'var(--gradient-primary)' }} />
+            <span className="font-display text-[17px] font-semibold tracking-tight">Rivalscope</span>
           </Link>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a className="transition-colors hover:text-foreground" href="#how-it-works">How it works</a>
@@ -105,37 +175,36 @@ export default function Landing() {
           <div className="flex items-center gap-2 text-sm">
             <ThemeToggle />
             <Link className="hidden px-2 text-muted-foreground transition-colors hover:text-foreground sm:inline" href={AUTH}>Sign in</Link>
-            <Button size="sm" className="hidden md:inline-flex" asChild><Link href={AUTH}>Start free</Link></Button>
+            <Button size="sm" variant="cta" className="hidden md:inline-flex" asChild><Link href={AUTH}>Start free</Link></Button>
             <MobileMenu />
           </div>
         </nav>
 
-        {/* HERO — asymmetric, left-weighted */}
-        <header className="grid items-center gap-12 pb-20 pt-16 md:grid-cols-[1.05fr_1fr] md:pt-24">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 text-[13px] text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Competitive intelligence, automated
-            </div>
-            <h1 className="font-display text-[46px] font-normal leading-[1.04] tracking-[-0.015em] sm:text-[60px]">
-              Every competitor move — and the play to win.
-            </h1>
-            <p className="mt-6 max-w-[480px] text-[16px] leading-relaxed text-muted-foreground">
-              Rivalscope watches competitor pricing, pages, reviews and hiring around the clock,
-              then drafts the battle card your team uses to close.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button size="lg" variant="cta" className="min-h-11 gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
-              <Button size="lg" variant="outline" className="min-h-11" asChild><a href="#product">See a sample battle card</a></Button>
-            </div>
-            <p className="mt-5 text-[13px] text-muted-foreground">No credit card · 2-minute setup · First report in minutes</p>
+        {/* HERO — centered, AppKittie structure */}
+        <header className="pt-16 text-center md:pt-24">
+          <h1 className="mx-auto max-w-[18ch] font-display text-[clamp(40px,7vw,76px)] font-semibold leading-[1.01] tracking-[-0.03em]">
+            Win every deal <span style={gradText}>before your rival wakes up.</span>
+          </h1>
+          <div className="mx-auto mt-9 grid max-w-[760px] grid-cols-1 gap-x-14 gap-y-3.5 text-left sm:grid-cols-2">
+            {HERO_FEATURES.map((f) => <FeatureBullet key={f}>{f}</FeatureBullet>)}
           </div>
-          <IntelFeed />
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <Button size="lg" variant="cta" className="min-h-12 px-7 text-[15px]" asChild>
+              <Link href={AUTH}>Get started for free <ArrowRight size={16} /></Link>
+            </Button>
+            <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-muted-foreground">No credit card · 2-minute setup</p>
+          </div>
+          <div className="mt-8 flex items-center justify-center gap-3 text-[13.5px] text-muted-foreground">
+            <Avatars />
+            Used by founders &amp; sales teams closing against fast-moving rivals
+          </div>
+
+          <ProductPanel />
         </header>
 
         {/* TRUST STRIP */}
         <section className="border-y border-border py-8">
-          <p className="mb-5 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             Built for teams selling against fast-moving rivals
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-medium text-muted-foreground/70">
@@ -143,51 +212,49 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* HOW IT WORKS — features */}
-        <section id="how-it-works" className="scroll-mt-20 grid gap-8 py-20 sm:grid-cols-3">
-          <h2 className="sr-only">How it works</h2>
-          {FEATURES.map((f) => (
-            <div key={f.title}>
-              <span className="mb-4 grid h-9 w-9 place-items-center rounded-lg border border-border bg-card text-primary">
-                <f.icon size={17} />
-              </span>
-              <h3 className="mb-2 text-[15px] font-semibold">{f.title}</h3>
-              <p className="text-[14px] leading-relaxed text-muted-foreground">{f.desc}</p>
-            </div>
-          ))}
+        {/* HOW IT WORKS — feature cards */}
+        <section id="how-it-works" className="scroll-mt-20 py-20">
+          <h2 className="mx-auto max-w-[20ch] text-center font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em]">
+            From a dozen signals to <span style={gradText}>one sales play.</span>
+          </h2>
+          <div className="mt-12 grid gap-5 sm:grid-cols-3">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-1">
+                <span className="mb-5 grid h-11 w-11 place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
+                  <f.icon size={19} />
+                </span>
+                <h3 className="font-display text-[17px] font-semibold">{f.title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.desc}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* PRODUCT — battle-card showcase */}
         <section id="product" className="scroll-mt-20 grid items-center gap-12 border-t border-border py-20 md:grid-cols-2">
           <div>
-            <h2 className="mb-5 font-display text-[36px] font-normal leading-[1.08] tracking-[-0.01em]">
-              From a dozen signals to one sales play.
+            <h2 className="font-display text-[clamp(28px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.02em]">
+              Every rival, on one battle card.
             </h2>
-            <p className="mb-7 max-w-[440px] text-[15px] leading-relaxed text-muted-foreground">
-              Rivalscope compiles every change, complaint and signal into a structured battle card,
-              so your reps walk in already knowing the win.
+            <p className="mb-7 mt-5 max-w-[440px] text-[15px] leading-relaxed text-muted-foreground">
+              Rivalscope compiles every change, complaint and signal into a structured battle card, so your reps walk in already knowing the win.
             </p>
-            <div className="space-y-3.5">
-              <CheckRow>Executive summary in one scan</CheckRow>
-              <CheckRow>Their weak spots, pulled from real reviews</CheckRow>
-              <CheckRow>Five ranked plays, copy-to-send</CheckRow>
-            </div>
-            <Link href={AUTH} className="mt-8 inline-flex items-center gap-2 text-[14px] font-medium text-primary hover:underline">
+            <Link href={AUTH} className="inline-flex items-center gap-2 text-[14px] font-medium text-primary hover:underline">
               Generate your first battle card <ArrowRight size={15} />
             </Link>
           </div>
           <LandingBattleCard />
         </section>
 
-        {/* PRICING — real, wired component (keeps its own heading) */}
+        {/* PRICING */}
         <section id="pricing" className="scroll-mt-20 border-t border-border py-20">
           <PricingBasic />
         </section>
 
         {/* CTA CLOSER */}
         <section className="border-t border-border py-24 text-center">
-          <h2 className="mx-auto max-w-[620px] font-display text-[38px] font-normal leading-[1.06] tracking-[-0.01em]">
-            Stop guessing what your competitors are doing.
+          <h2 className="mx-auto max-w-[20ch] font-display text-[clamp(30px,3.6vw,44px)] font-semibold leading-[1.05] tracking-[-0.02em]">
+            Stop guessing what your <span style={gradText}>competitors are doing.</span>
           </h2>
           <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
             Add a competitor and get your first battle card in minutes.
@@ -202,10 +269,9 @@ export default function Landing() {
         <footer className="flex flex-col items-center justify-between gap-4 border-t border-border py-8 text-sm text-muted-foreground sm:flex-row">
           <span>© 2026 Rivalscope</span>
           <div className="flex items-center gap-6">
-            <a className="transition-colors hover:text-foreground" href="/privacy">Privacy</a>
-            <a className="transition-colors hover:text-foreground" href="/terms">Terms</a>
-            <a className="transition-colors hover:text-foreground" href="mailto:support@rivalscope.dev">Support</a>
-            <a className="transition-colors hover:text-foreground" href="https://github.com/IManss-ai/competitor-analyzer" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
+            <a href="mailto:support@rivalscope.dev" className="transition-colors hover:text-foreground">Support</a>
           </div>
         </footer>
       </div>
