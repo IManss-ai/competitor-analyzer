@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Check, Pencil, X, Copy, CheckCircle2, RefreshCw } from 'lucide-react';
 import ChangeBadge from '@/components/change-badge';
 import type { QueueAction } from '@/lib/types';
+import { useMounted } from '@/lib/use-mounted';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,8 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
   const [approving, setApproving] = useState<string | null>(null);
   const [approvedId, setApprovedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  // Gate clock/locale-derived time so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -134,7 +137,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                   >
                     {action.action_type.replace(/_/g, ' ')}
                   </Badge>
-                  {action.change_event.detected_at && (
+                  {mounted && action.change_event.detected_at && (
                     <span className="text-[10px] font-mono border border-border px-2 py-0.5 rounded bg-muted text-muted-foreground">
                       {new Date(action.change_event.detected_at).toLocaleTimeString('en-US', {
                         hour: 'numeric',

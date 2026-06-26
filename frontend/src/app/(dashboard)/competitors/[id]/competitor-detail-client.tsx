@@ -226,7 +226,7 @@ ${card.win_conditions && card.win_conditions.length > 0
     .reverse()
     .filter((s: any) => s.avg_rating !== null)
     .map((s: any) => ({
-      date: new Date(s.snapshot_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: mounted ? new Date(s.snapshot_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
       rating: s.avg_rating,
     }));
 
@@ -473,7 +473,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                             : ''}
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap font-mono text-xs">
-                          {scan.char_count.toLocaleString()} chars
+                          {scan.char_count.toLocaleString('en-US')} chars
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap">
                           <span className={`badge ${

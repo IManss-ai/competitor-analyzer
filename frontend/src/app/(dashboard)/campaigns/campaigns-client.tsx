@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Swords, Plus } from 'lucide-react';
 import { isAbortError } from '@/lib/fetch-utils';
+import { useMounted } from '@/lib/use-mounted';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +33,8 @@ export default function CampaignsClient({ userId }: { userId: string }) {
   const [userProduct, setUserProduct] = useState('');
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  // Gate clock/locale-derived dates so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   const headers = { Authorization: `Bearer ${userId}`, 'Content-Type': 'application/json' };
 
@@ -143,7 +146,7 @@ export default function CampaignsClient({ userId }: { userId: string }) {
                 <p className="text-xs font-mono text-muted-foreground">{c.competitor_url}</p>
               </div>
               <span className="text-xs font-mono shrink-0 text-muted-foreground">
-                {c.last_plan_at ? `plan ${new Date(c.last_plan_at).toLocaleDateString()}` : 'plan pending'}
+                {mounted ? (c.last_plan_at ? `plan ${new Date(c.last_plan_at).toLocaleDateString()}` : 'plan pending') : ''}
               </span>
             </Link>
           ))}

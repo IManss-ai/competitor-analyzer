@@ -6,6 +6,7 @@ import { Trash2, Plus, ExternalLink, ChevronDown, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Competitor } from '@/lib/types';
 import { competitorDomain } from '@/lib/utils';
+import { useMounted } from '@/lib/use-mounted';
 import BattleCard from '@/components/battle-card';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,8 @@ export default function CompetitorManager({
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState('');
+  // Gate clock/locale-derived dates so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   // Local business fields
   const [isLocalBusiness, setIsLocalBusiness] = useState(false);
@@ -406,7 +409,7 @@ export default function CompetitorManager({
                     <div className="min-w-0">
                       <div className="text-[9px] uppercase tracking-wider font-mono mb-1 text-muted-foreground">Monitoring since</div>
                       <div className="text-sm font-medium font-mono text-muted-foreground">
-                        {comp.created_at ? new Date(comp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now'}
+                        {mounted ? (comp.created_at ? new Date(comp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now') : ''}
                       </div>
                     </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useMounted } from '@/lib/use-mounted';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
@@ -82,9 +83,12 @@ export default function LoginPage() {
     }
   };
 
-  const today = new Date().toLocaleDateString('en-US', {
+  // Gate the clock/locale-derived label behind mount so the SSR HTML matches
+  // the first client render (server is UTC, browser is local → React #418).
+  const mounted = useMounted();
+  const today = mounted ? new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  });
+  }) : '';
 
   return (
     <div className="min-h-[100dvh] flex relative bg-background">

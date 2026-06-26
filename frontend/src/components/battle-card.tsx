@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useMounted } from '@/lib/use-mounted';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Zap, X } from 'lucide-react';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from './battle-card-content';
@@ -21,6 +22,8 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
   const [error, setError] = useState('');
   const [cardData, setCardData] = useState<BattleCardData | null>(null);
   const shouldReduceMotion = useReducedMotion();
+  // Gate the locale-formatted timestamp so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   const generateCard = async () => {
     setIsOpen(true);
@@ -110,7 +113,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                 </div>
                 {cardData && (
                   <div className="text-[9px] font-mono text-muted-foreground mt-3">
-                    GENERATED AT: {new Date(cardData.generated_at).toLocaleString().toUpperCase()}
+                    GENERATED AT: {mounted ? new Date(cardData.generated_at).toLocaleString().toUpperCase() : ''}
                   </div>
                 )}
               </div>

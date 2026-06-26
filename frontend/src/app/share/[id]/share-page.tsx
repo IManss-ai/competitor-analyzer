@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useMounted } from '@/lib/use-mounted';
 import { motion } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-react';
 
@@ -19,6 +20,8 @@ interface BattleCardData {
 
 export default function SharePage({ card }: { card: BattleCardData }) {
   const [copied, setCopied] = useState(false);
+  // Gate the locale-formatted date so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   const handleCopyLink = async () => {
     try {
@@ -30,11 +33,11 @@ export default function SharePage({ card }: { card: BattleCardData }) {
     }
   };
 
-  const formattedDate = new Date(card.generated_at).toLocaleDateString('en-US', {
+  const formattedDate = mounted ? new Date(card.generated_at).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
-  });
+  }) : '';
 
   return (
     <div className="min-h-screen font-sans" style={{ background: 'var(--surface-base)', color: 'var(--text-primary)' }}>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useMounted } from '@/lib/use-mounted';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
@@ -82,6 +83,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const p = useChartPalette();
   const router = useRouter();
+  // Gate clock/locale-derived text so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   const refreshDashboard = async () => {
     try {
@@ -1083,7 +1086,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   }).sort((a, b) => b.signal - a.signal);
   const anyRealSignal = rankedComps.some((c: any) => c.latest && c.latest.change_type !== 'initial_scan' && c.latest.change_type !== 'no_change');
 
-  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' });
+  const dateLabel = mounted ? new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' }) : '';
 
   return (
     <div className="space-y-5">

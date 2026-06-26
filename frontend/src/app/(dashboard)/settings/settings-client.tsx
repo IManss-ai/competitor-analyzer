@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Competitor, SettingsData } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
+import { useMounted } from '@/lib/use-mounted';
 import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle, Database } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,6 +56,8 @@ export default function SettingsClient({
 }: SettingsClientProps) {
   const api = createApiClient(userId);
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab ?? 'profile');
+  // Gate the locale-formatted trial date so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   // Form states
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
@@ -605,11 +608,11 @@ export default function SettingsClient({
                         Trial ends
                       </p>
                       <p className="text-sm font-mono font-medium text-foreground">
-                        {new Date(settings.trial_ends_at).toLocaleDateString('en-US', {
+                        {mounted ? new Date(settings.trial_ends_at).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
-                        })}
+                        }) : ''}
                       </p>
                     </div>
                   )}

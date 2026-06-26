@@ -79,7 +79,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                           <StarRating rating={snap.avg_rating} />
                           {snap.total_reviews !== null && (
                             <span className="text-[11px] text-muted-foreground font-mono">
-                              {snap.total_reviews.toLocaleString()} reviews
+                              {snap.total_reviews.toLocaleString('en-US')} reviews
                             </span>
                           )}
                           {snap.complaint_count > 0 && (

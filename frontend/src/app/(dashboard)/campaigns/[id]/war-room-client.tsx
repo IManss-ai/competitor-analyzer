@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Check, X, RefreshCw, ArrowLeft, Sparkles } from 'lucide-react';
 import Topbar from '@/components/topbar';
 import { isAbortError } from '@/lib/fetch-utils';
+import { useMounted } from '@/lib/use-mounted';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +57,8 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
   const [room, setRoom] = useState<WarRoom | null>(null);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
+  // Gate clock/locale-derived dates so SSR matches first client render (#418).
+  const mounted = useMounted();
 
   const headers = { Authorization: `Bearer ${userId}`, 'Content-Type': 'application/json' };
 
@@ -250,7 +253,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                   {room.plan.executive_read}
                 </p>
                 <p className="text-[11px] font-mono text-muted-foreground">
-                  Trigger: {room.plan.trigger_summary} · {room.plan.generated_at ? new Date(room.plan.generated_at).toLocaleString() : ''}
+                  Trigger: {room.plan.trigger_summary} · {mounted && room.plan.generated_at ? new Date(room.plan.generated_at).toLocaleString() : ''}
                 </p>
               </CardContent>
             </Card>
@@ -305,7 +308,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                     {room.events.map((e, idx) => (
                       <div key={idx} className="flex gap-3 items-baseline">
                         <span className="text-[10px] font-mono shrink-0 w-20 text-muted-foreground">
-                          {e.detected_at ? new Date(e.detected_at).toLocaleDateString() : ''}
+                          {mounted && e.detected_at ? new Date(e.detected_at).toLocaleDateString() : ''}
                         </span>
                         {e.change_type && (
                           <span className={`text-[10px] font-mono badge badge-${e.change_type}`}>
