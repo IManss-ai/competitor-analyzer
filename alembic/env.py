@@ -15,8 +15,11 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
+# disable_existing_loggers=False: this runs at app startup (main.py _run_migrations),
+# and the default (True) would silently disable the app's module loggers, swallowing
+# runtime logs like "Checkout session creation failed". Keep app loggers alive.
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
