@@ -53,9 +53,9 @@ const signalItems = [
 ];
 
 interface SettingsData {
-  trial_ends_at?: string;
   business_type?: string;
   subscription_status?: string;
+  access_level?: 'full' | 'read_only';
 }
 
 function NavItem({
@@ -197,7 +197,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const [scanning, setScanning] = useState(false);
   const [scanDone, setScanDone] = useState(false);
   const [scanError, setScanError] = useState(false);
-  const [trialDays, setTrialDays] = useState(0);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -223,17 +222,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     fetchSettings();
     return () => controller.abort();
   }, [userId, apiUrl]);
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      if (settings?.trial_ends_at) {
-        const diff = new Date(settings.trial_ends_at).getTime() - Date.now();
-        setTrialDays(Math.max(0, Math.ceil(diff / (1000 * 3600 * 24))));
-      } else {
-        setTrialDays(0);
-      }
-    });
-  }, [settings?.trial_ends_at]);
 
   // In-page anchor links (e.g. Intel Feed -> /dashboard#feed) don't scroll via
   // Next's <Link> when the pathname already matches and only the hash changes
@@ -289,15 +277,19 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   };
 
   const getPlanBadge = () => {
-    if (!settings) return 'Trial';
+    if (!settings) return 'Free';
     if (settings.business_type === 'local') return 'Local';
     if (settings.subscription_status === 'active') return 'Pro';
-    return 'Trial';
+    return 'Free';
   };
 
   const planBadge = getPlanBadge();
-  const isOnTrial = settings?.subscription_status === 'trialing';
-  const trialProgress = Math.min(100, ((2 - trialDays) / 2) * 100);
+  const isPaid = settings?.subscription_status === 'active';
+  const isLocked = settings?.access_level === 'read_only';
+  // Usage-based model: nudge any non-paying user to upgrade. Once their one free
+  // test is spent the API reports access_level "read_only" (locked); before that
+  // they still have their free test available.
+  const showUpgrade = !!settings && !isPaid;
 
   // Close the drawer whenever navigation lands on a new page
   useEffect(() => {
@@ -378,24 +370,22 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             : 'Scan all now'}
         </Button>
 
-        {/* Trial upgrade banner */}
-        {isOnTrial && (
+        {/* Usage-based upgrade banner (free users) */}
+        {showUpgrade && (
           <div className="rounded-md p-3 space-y-2 bg-muted border border-border">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-medium text-muted-foreground">
-                {trialDays} days left
+                {isLocked ? 'Free test used' : '1 free test available'}
               </span>
               <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground">
-                Trial
+                Free
               </span>
             </div>
-            {/* Progress bar */}
-            <div className="w-full rounded-full overflow-hidden bg-border" style={{ height: '2px' }}>
-              <div
-                className="h-full rounded-full transition-[width] duration-500 ease-out bg-primary"
-                style={{ width: `${trialProgress}%` }}
-              />
-            </div>
+            <p className="text-[10px] leading-snug text-muted-foreground">
+              {isLocked
+                ? 'Upgrade to Pro to keep generating battle cards.'
+                : 'Upgrade any time for unlimited battle cards.'}
+            </p>
             <Link
               href="/settings?tab=billing"
               className="block w-full py-2 rounded-full text-[11px] font-semibold text-center [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"

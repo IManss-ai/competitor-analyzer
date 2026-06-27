@@ -35,7 +35,7 @@ const tiers: PricingTier[] = [
       "Review intelligence (G2, Trustpilot)",
       "Weekly email report",
     ],
-    cta: "Start free trial",
+    cta: "Start free",
     href: "/auth/login?plan=saas",
   },
   {
@@ -50,7 +50,7 @@ const tiers: PricingTier[] = [
       "Local Battle Card",
       "Weekly summary email",
     ],
-    cta: "Start free trial",
+    cta: "Start free",
     href: "/auth/login?plan=local",
   },
 ];
@@ -64,7 +64,7 @@ function PricingBasic() {
           <span className="text-muted-foreground">No surprises.</span>
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto text-base leading-relaxed mb-14">
-          Pick the plan that fits your business. Both include a 2-day free trial, no credit card required.
+          Pick the plan that fits your business. Start with your first battle card free — no credit card required.
         </p>
       </motion.div>
 
@@ -116,7 +116,7 @@ function PricingBasic() {
 
                 {/* Trial note */}
                 <p className="text-[11px] text-muted-foreground font-mono mt-4 text-center">
-                  2-day free trial, no credit card required
+                  First battle card free · no credit card required
                 </p>
               </CardContent>
             </Card>

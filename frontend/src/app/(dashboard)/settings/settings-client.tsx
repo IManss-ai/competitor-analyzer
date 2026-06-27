@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Competitor, SettingsData } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
-import { useMounted } from '@/lib/use-mounted';
 import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle, Database } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,7 +40,7 @@ const statusConfig: Record<
   { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }
 > = {
   active: { label: 'Active', variant: 'default' },
-  trialing: { label: 'Trial', variant: 'secondary' },
+  trialing: { label: 'Free', variant: 'secondary' },
   canceled: { label: 'Canceled', variant: 'destructive' },
   past_due: { label: 'Past due', variant: 'outline' },
 };
@@ -56,8 +55,6 @@ export default function SettingsClient({
 }: SettingsClientProps) {
   const api = createApiClient(userId);
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab ?? 'profile');
-  // Gate the locale-formatted trial date so SSR matches first client render (#418).
-  const mounted = useMounted();
 
   // Form states
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
@@ -602,17 +599,13 @@ export default function SettingsClient({
                     </div>
                   </div>
 
-                  {settings.trial_ends_at && (
+                  {settings.subscription_status !== 'active' && (
                     <div className="text-right">
                       <p className="text-xs font-medium uppercase tracking-wide mb-1 text-muted-foreground">
-                        Trial ends
+                        Free plan
                       </p>
-                      <p className="text-sm font-mono font-medium text-foreground">
-                        {mounted ? new Date(settings.trial_ends_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        }) : ''}
+                      <p className="text-sm font-medium text-foreground">
+                        {settings.access_level === 'read_only' ? 'Free test used' : '1 free test available'}
                       </p>
                     </div>
                   )}
