@@ -192,9 +192,9 @@ export default function Landing() {
             <Link href={AUTH} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-[14px] font-medium text-background transition-opacity hover:opacity-90">
               Start free <ArrowRight size={15} />
             </Link>
-            <Link href={AUTH} className="rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
+            <a href="mailto:support@rivalscope.dev" className="rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
               Book a demo
-            </Link>
+            </a>
           </div>
 
           <ProductPanel />
