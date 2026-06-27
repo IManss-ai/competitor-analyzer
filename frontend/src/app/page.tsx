@@ -83,7 +83,7 @@ function Avatars() {
 function ProductPanel() {
   return (
     <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
-      <div className="relative grid grid-cols-[188px_1fr] overflow-hidden rounded-t-xl border border-border bg-card text-left">
+      <div className="relative grid grid-cols-1 sm:grid-cols-[188px_1fr] overflow-hidden rounded-t-xl border border-border bg-card text-left">
         {/* sidebar */}
         <div className="hidden border-r border-border bg-muted/40 p-3 sm:block">
           <div className="mb-3 flex items-center gap-2 px-1">
@@ -112,7 +112,7 @@ function ProductPanel() {
             </div>
             <span className="rounded-md border border-border px-3 py-1.5 text-[12px] font-medium text-muted-foreground">Scan now</span>
           </div>
-          <div className="mb-4 grid grid-cols-4 gap-2.5">
+          <div className="mb-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {[['Competitors', '12', '+3 this week'], ['Changes / 7d', '47', '+12'], ['Signals', '8', '2 strategic'], ['Queued plays', '5', 'ready']].map(([k, v, d], i) => (
               <div key={k} className="rounded-xl border border-border bg-background/40 p-3">
                 <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{k}</p>
@@ -192,9 +192,9 @@ export default function Landing() {
             <Link href={AUTH} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-[14px] font-medium text-background transition-opacity hover:opacity-90">
               Start free <ArrowRight size={15} />
             </Link>
-            <Link href={AUTH} className="rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
+            <a href="mailto:support@rivalscope.dev" className="rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
               Book a demo
-            </Link>
+            </a>
           </div>
 
           <ProductPanel />

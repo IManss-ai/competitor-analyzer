@@ -9,7 +9,7 @@ import { Clock, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-// Entry point for "Start free trial" / upgrade CTAs (the auth callback routes
+// Entry point for "Start free" / upgrade CTAs (the auth callback routes
 // plan-signups here). It mints a Polar hosted-checkout session and redirects to
 // it. While billing is still being wired up (Polar unconfigured/unavailable),
 // the checkout-url call fails — we catch it and show a graceful "almost ready"
@@ -56,8 +56,8 @@ export default async function BillingCheckoutPage({
               Checkout is almost ready
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Your free trial is already active — you have full access to Rivalscope while we finish
-              wiring up payments. We&apos;ll email you the moment paid plans go live; there&apos;s nothing
+              You have full access to Rivalscope right now while we finish wiring up
+              payments. We&apos;ll email you the moment paid plans go live; there&apos;s nothing
               you need to do right now.
             </p>
           </div>

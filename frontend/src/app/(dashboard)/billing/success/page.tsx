@@ -16,7 +16,7 @@ export default function BillingSuccessPage() {
               You&apos;re all set!
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Your 2-day trial has started. You&apos;ll receive your first intelligence digest next Monday. Welcome to Rivalscope Pro.
+              You&apos;re on Rivalscope Pro. You&apos;ll receive your first intelligence digest next Monday. Welcome aboard.
             </p>
           </div>
           <Button asChild size="lg" className="w-full gap-2">
