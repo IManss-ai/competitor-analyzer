@@ -1,23 +1,19 @@
 import Link from 'next/link';
-import { ArrowRight, Check, Bell, FileText, TrendingUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 import { PricingBasic } from '@/components/ui/pricing-demo';
 import ThemeToggle from '@/components/theme-toggle';
-import LandingBattleCard from '@/components/landing-battlecard';
 import MobileMenu from '@/components/landing-nav';
-import { Reveal, RevealGroup, RevealItem } from '@/components/reveal';
+import { HowItWorks } from '@/components/landing/how-it-works';
+import { ProductShowcase } from '@/components/landing/product-showcase';
+import { LogoCloud } from '@/components/landing/logo-cloud';
+import { CtaCloser } from '@/components/landing/cta-closer';
+import { SiteFooter } from '@/components/landing/site-footer';
 
-// Rivalscope landing — AppKittie-structure in our blue (user-approved direction).
-// Centered bold Space Grotesk hero + framed product panel with accent glow.
-// No raw hex — semantic tokens only, theme-aware (dark default + light).
+// Rivalscope landing — serious-tool register (Linear port). Hero + framed product
+// panel set the tone; the sections below are rebuilt to match (see
+// docs/superpowers/specs/2026-06-28-landing-sections-redesign-design.md).
 
 const AUTH = '/auth/login';
-
-// De-neon stopgap: headline keyword is now solid foreground (gradient text read as
-// toy/pet, not serious-tool). Emphasis will be re-decided in the proper hero redesign.
-const gradText: React.CSSProperties = {
-  color: 'var(--foreground)',
-};
 
 type Tone = 'pricing' | 'feature' | 'hiring';
 
@@ -41,45 +37,7 @@ function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
   );
 }
 
-const HERO_FEATURES = [
-  'Track competitor pricing & page changes',
-  'Aggregate complaints from G2 & Trustpilot',
-  'Spot hiring & strategic signals early',
-  'Get 5 ranked plays to win every deal',
-];
-
-function FeatureBullet({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 text-[15px] text-foreground/85">
-      <span className="grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-primary/45 bg-primary/15">
-        <Check size={12} strokeWidth={3} className="text-primary" />
-      </span>
-      <span>{children}</span>
-    </div>
-  );
-}
-
-function Avatars() {
-  const items = ['S', 'L', 'N', 'R'];
-  return (
-    <span className="flex">
-      {items.map((m, i) => (
-        <span
-          key={m}
-          className="grid h-7 w-7 place-items-center rounded-full border-2 border-background bg-secondary text-[11px] font-semibold text-secondary-foreground"
-          style={{ marginLeft: i ? -9 : 0 }}
-        >
-          {m}
-        </span>
-      ))}
-      <span className="grid h-7 w-7 place-items-center rounded-full border-2 border-background bg-primary/20 text-[11px] font-semibold text-primary" style={{ marginLeft: -9 }}>
-        +
-      </span>
-    </span>
-  );
-}
-
-// Framed product panel with an accent glow behind it — the AppKittie hero "screenshot".
+// Framed product panel behind the hero — the dashboard "screenshot", flat (no glow).
 function ProductPanel() {
   return (
     <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
@@ -145,12 +103,6 @@ function ProductPanel() {
   );
 }
 
-const FEATURES = [
-  { icon: Bell, title: 'Always watching', desc: 'Pricing, pages, reviews and hiring tracked around the clock. You hear about changes before your prospects do.' },
-  { icon: FileText, title: 'One battle card per rival', desc: 'Every signal compiled into a structured card: summary, weak spots, and five ranked plays your reps can send.' },
-  { icon: TrendingUp, title: 'Ranked by what wins', desc: 'Plays are ordered by impact and pulled from real complaints, so the first move is the one most likely to close.' },
-];
-
 export default function Landing() {
   return (
     <div className="min-h-[100dvh] overflow-x-hidden bg-background text-foreground antialiased">
@@ -181,7 +133,7 @@ export default function Landing() {
           </h1>
           <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <p className="max-w-[520px] text-[15px] leading-relaxed text-muted-foreground">
-              Track every competitor&apos;s pricing, messaging, and hiring — then hand your reps the play that wins the deal.
+              Track every competitor&apos;s pricing, messaging, and hiring, then hand your reps the play that wins the deal.
             </p>
             <Link href={AUTH} className="group inline-flex items-center gap-1.5 whitespace-nowrap text-[14px] text-muted-foreground transition-colors hover:text-foreground">
               <span className="font-medium text-foreground">New</span> Auto-generated battle cards
@@ -200,90 +152,17 @@ export default function Landing() {
           <ProductPanel />
         </header>
 
-        {/* TRUST STRIP */}
-        <section className="border-y border-border py-8">
-          <Reveal>
-            <p className="mb-5 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-              Built for teams selling against fast-moving rivals
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-medium text-muted-foreground/70">
-              <span>Stripe</span><span>Linear</span><span>Notion</span><span>Figma</span><span>Vercel</span><span>Ramp</span>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* HOW IT WORKS — feature cards */}
-        <section id="how-it-works" className="scroll-mt-20 py-20">
-          <Reveal>
-            <h2 className="mx-auto max-w-[20ch] text-center font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em]">
-              From a dozen signals to <span style={gradText}>one sales play.</span>
-            </h2>
-          </Reveal>
-          <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-3">
-            {FEATURES.map((f) => (
-              <RevealItem key={f.title}>
-                <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-[transform,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-primary/40">
-                  <span className="mb-5 grid h-11 w-11 place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
-                    <f.icon size={19} />
-                  </span>
-                  <h3 className="font-display text-[17px] font-semibold">{f.title}</h3>
-                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.desc}</p>
-                </div>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </section>
-
-        {/* PRODUCT — battle-card showcase */}
-        <section id="product" className="scroll-mt-20 grid items-center gap-12 border-t border-border py-20 md:grid-cols-2">
-          <Reveal>
-            <h2 className="font-display text-[clamp(28px,3vw,36px)] font-semibold leading-[1.08] tracking-[-0.02em]">
-              Every rival, on one battle card.
-            </h2>
-            <p className="mb-7 mt-5 max-w-[440px] text-[15px] leading-relaxed text-muted-foreground">
-              Rivalscope compiles every change, complaint and signal into a structured battle card, so your reps walk in already knowing the win.
-            </p>
-            <Link href={AUTH} className="inline-flex items-center gap-2 text-[14px] font-medium text-primary hover:underline">
-              Generate your first battle card <ArrowRight size={15} />
-            </Link>
-          </Reveal>
-          <Reveal delay={1}>
-            <LandingBattleCard />
-          </Reveal>
-        </section>
+        <LogoCloud />
+        <HowItWorks />
+        <ProductShowcase />
 
         {/* PRICING */}
-        <section id="pricing" className="scroll-mt-20 border-t border-border py-20">
-          <Reveal>
-            <PricingBasic />
-          </Reveal>
+        <section id="pricing" className="scroll-mt-20 border-t border-border py-24">
+          <PricingBasic />
         </section>
 
-        {/* CTA CLOSER */}
-        <section className="border-t border-border py-24 text-center">
-          <Reveal>
-            <h2 className="mx-auto max-w-[20ch] font-display text-[clamp(30px,3.6vw,44px)] font-semibold leading-[1.05] tracking-[-0.02em]">
-              Stop guessing what your <span style={gradText}>competitors are doing.</span>
-            </h2>
-            <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
-              Add a competitor and get your first battle card in minutes.
-            </p>
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <Button size="lg" variant="cta" className="gap-2" asChild><Link href={AUTH}>Start free <ArrowRight size={16} /></Link></Button>
-              <Button size="lg" variant="outline" asChild><a href="mailto:support@rivalscope.dev">Book a demo</a></Button>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* FOOTER */}
-        <footer className="flex flex-col items-center justify-between gap-4 border-t border-border py-8 text-sm text-muted-foreground sm:flex-row">
-          <span>© 2026 Rivalscope</span>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
-            <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
-            <a href="mailto:support@rivalscope.dev" className="transition-colors hover:text-foreground">Support</a>
-          </div>
-        </footer>
+        <CtaCloser />
+        <SiteFooter />
       </div>
     </div>
   );
