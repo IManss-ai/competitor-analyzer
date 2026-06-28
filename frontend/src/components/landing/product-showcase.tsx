@@ -71,7 +71,7 @@ export function ProductShowcase() {
     <section id="product" className="scroll-mt-20 border-t border-border py-24">
       <Reveal>
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">The product</p>
-        <h2 className="mt-3 max-w-[16ch] font-display text-[clamp(28px,3vw,38px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
+        <h2 className="mt-3 max-w-[16ch] text-[clamp(28px,3vw,38px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
           Every rival, on one battle card.
         </h2>
         <p className="mt-5 max-w-[460px] text-[15px] leading-relaxed text-muted-foreground">
@@ -90,7 +90,7 @@ export function ProductShowcase() {
           <Reveal key={row.title}>
             <div className="grid items-center gap-8 bg-background p-8 md:grid-cols-2 md:gap-12 md:p-10">
               <div className={i % 2 === 1 ? 'md:order-2' : ''}>
-                <h3 className="font-display text-[20px] font-semibold tracking-[-0.01em] text-foreground">{row.title}</h3>
+                <h3 className="text-[20px] font-semibold tracking-[-0.01em] text-foreground">{row.title}</h3>
                 <p className="mt-3 max-w-[420px] text-[14px] leading-relaxed text-muted-foreground">{row.desc}</p>
               </div>
               <div className={i % 2 === 1 ? 'md:order-1' : ''}>{row.ui}</div>

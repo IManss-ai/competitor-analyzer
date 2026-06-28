@@ -62,7 +62,7 @@ function PricingBasic() {
     <div>
       <motion.div {...reveal()}>
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Pricing</p>
-        <h2 className="mt-3 font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
+        <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
           Simple pricing. <span className="text-muted-foreground">No surprises.</span>
         </h2>
         <p className="mt-5 max-w-[480px] text-[15px] leading-relaxed text-muted-foreground">

@@ -73,7 +73,7 @@ export function HowItWorks() {
     <section id="how-it-works" className="scroll-mt-20 border-t border-border py-24">
       <Reveal>
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">How it works</p>
-        <h2 className="mt-3 max-w-[20ch] font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
+        <h2 className="mt-3 max-w-[20ch] text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
           From a dozen signals to one sales play.
         </h2>
       </Reveal>
@@ -85,7 +85,7 @@ export function HowItWorks() {
             className="border-b border-border p-7 transition-colors duration-200 last:border-b-0 hover:bg-muted/20 sm:border-b-0 sm:border-r sm:last:border-r-0"
           >
             <p className="font-mono text-[12px] font-medium text-primary">{step.label}</p>
-            <h3 className="mt-3 font-display text-[17px] font-semibold tracking-[-0.01em] text-foreground">{step.title}</h3>
+            <h3 className="mt-3 text-[17px] font-semibold tracking-[-0.01em] text-foreground">{step.title}</h3>
             <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{step.desc}</p>
             <div className="mt-5">{step.fragment}</div>
           </RevealItem>

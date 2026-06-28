@@ -12,7 +12,7 @@ export function CtaCloser() {
   return (
     <section className="border-t border-border py-24 text-center">
       <Reveal>
-        <h2 className="mx-auto max-w-[20ch] font-display text-[clamp(30px,3.6vw,44px)] font-semibold leading-[1.05] tracking-[-0.02em] text-foreground">
+        <h2 className="mx-auto max-w-[20ch] text-[clamp(30px,3.6vw,44px)] font-semibold leading-[1.05] tracking-[-0.02em] text-foreground">
           Stop guessing what your competitors are doing.
         </h2>
         <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
