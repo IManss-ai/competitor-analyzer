@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Check } from 'lucide-react';
+import { motion } from 'motion/react';
+import { fadeUpVariants, staggerContainerVariants } from '@/lib/animations';
 
 // Interactive battle-card showcase for the landing #product section.
 // Restyled to the live shadcn neutral-modern landing aesthetic:
@@ -157,9 +159,19 @@ export default function LandingBattleCard() {
         </div>
       </div>
 
-      {/* Keyed fade on tab change — no spring/bounce, token-driven durations */}
-      <div key={active} className="space-y-3 p-4 [animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
+      {/* Quadrants stagger-assemble once on first view (container not keyed, so tab
+          switches don't replay it). Tab change = fast 160ms CSS fade on the inner
+          keyed wrappers. MotionConfig snaps the assemble to final for reduced-motion. */}
+      <motion.div
+        className="space-y-3 p-4"
+        variants={staggerContainerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '0px 0px -80px 0px' }}
+      >
         {/* Detected changes */}
+        <motion.div variants={fadeUpVariants}>
+        <div key={active} className="[animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
         <Quadrant title="Detected changes">
           <ul className="space-y-2.5">
             {card.changes.map((c, i) => (
@@ -170,9 +182,12 @@ export default function LandingBattleCard() {
             ))}
           </ul>
         </Quadrant>
+        </div>
+        </motion.div>
 
         {/* User complaints + Strategic signals */}
-        <div className="grid gap-3 sm:grid-cols-2">
+        <motion.div variants={fadeUpVariants}>
+        <div key={active} className="grid gap-3 sm:grid-cols-2 [animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
           <Quadrant title="User complaints">
             <ul className="space-y-2.5">
               {card.complaints.map((c, i) => (
@@ -198,8 +213,11 @@ export default function LandingBattleCard() {
             </ul>
           </Quadrant>
         </div>
+        </motion.div>
 
         {/* Top plays / Playbook */}
+        <motion.div variants={fadeUpVariants}>
+        <div key={active} className="[animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
         <Quadrant title="Top plays">
           <ol className="space-y-2">
             {card.moves.map((move, i) => (
@@ -212,7 +230,9 @@ export default function LandingBattleCard() {
             ))}
           </ol>
         </Quadrant>
-      </div>
+        </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

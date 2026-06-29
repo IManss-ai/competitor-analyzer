@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 const reveal = (delay = 0) => ({
   initial: { opacity: 0, y: 28 } as const,
@@ -15,7 +14,8 @@ const reveal = (delay = 0) => ({
 
 interface PricingTier {
   name: string;
-  badge?: string;
+  tag?: string;
+  highlighted?: boolean;
   price: string;
   target: string;
   features: string[];
@@ -26,6 +26,8 @@ interface PricingTier {
 const tiers: PricingTier[] = [
   {
     name: "SaaS Starter",
+    tag: "Most teams",
+    highlighted: true,
     price: "$49",
     target: "For SaaS founders and startups",
     features: [
@@ -40,7 +42,7 @@ const tiers: PricingTier[] = [
   },
   {
     name: "Local Business",
-    badge: "Local",
+    tag: "Local",
     price: "$19",
     target: "For salons, cafes, gyms, and local shops",
     features: [
@@ -57,65 +59,73 @@ const tiers: PricingTier[] = [
 
 function PricingBasic() {
   return (
-    <div className="text-center">
+    <div>
       <motion.div {...reveal()}>
-        <h2 className="text-[34px] font-semibold tracking-[-0.01em] leading-[1.1] mb-5 text-foreground">
-          Simple pricing.<br />
-          <span className="text-muted-foreground">No surprises.</span>
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Pricing</p>
+        <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
+          Simple pricing. <span className="text-muted-foreground">No surprises.</span>
         </h2>
-        <p className="text-muted-foreground max-w-md mx-auto text-base leading-relaxed mb-14">
-          Pick the plan that fits your business. Start with your first battle card free — no credit card required.
+        <p className="mt-5 max-w-[480px] text-[15px] leading-relaxed text-muted-foreground">
+          Run your first battle card free, no credit card. Upgrade anytime, billed instantly.
         </p>
       </motion.div>
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      <div className="mt-12 grid max-w-3xl gap-5 md:grid-cols-2">
         {tiers.map((tier, i) => (
-          <motion.div
-            key={tier.name}
-            {...reveal(i * 0.12)}
-          >
-            <Card className="relative text-left rounded-lg shadow-sm">
-              <CardContent className="p-8 flex flex-col h-full">
-                {/* Badge */}
-                {tier.badge && (
-                  <div className="absolute top-5 right-5">
-                    <Badge variant="outline">{tier.badge}</Badge>
-                  </div>
-                )}
-
+          <motion.div key={tier.name} {...reveal(i * 0.12)}>
+            <Card
+              className={`relative h-full rounded-xl text-left shadow-none ${
+                tier.highlighted ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
+              }`}
+            >
+              <CardContent className="flex h-full flex-col p-8">
                 {/* Header */}
-                <h3 className="text-lg font-semibold text-foreground mb-1">{tier.name}</h3>
-                <p className="text-sm text-muted-foreground mb-6">{tier.target}</p>
+                <div className="mb-1 flex items-center gap-2.5">
+                  <h3 className="text-[17px] font-semibold text-foreground">{tier.name}</h3>
+                  {tier.tag && (
+                    <span
+                      className={`rounded-md border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide ${
+                        tier.highlighted
+                          ? "border-primary/30 bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {tier.tag}
+                    </span>
+                  )}
+                </div>
+                <p className="mb-7 text-sm text-muted-foreground">{tier.target}</p>
 
-                {/* Price */}
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-bold tracking-tight text-foreground">{tier.price}</span>
-                  <span className="text-muted-foreground text-sm font-medium">/mo</span>
+                {/* Price — mono numerals */}
+                <div className="mb-8 flex items-baseline gap-1.5">
+                  <span className="font-mono text-5xl font-semibold tabular-nums tracking-[-0.02em] text-foreground">{tier.price}</span>
+                  <span className="font-mono text-sm text-muted-foreground">/mo</span>
                 </div>
 
                 {/* Features */}
-                <ul className="space-y-3 mb-8">
+                <ul className="mb-8 space-y-3">
                   {tier.features.map((feat) => (
                     <li key={feat} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <CheckCircle2 size={16} className="flex-shrink-0 mt-0.5 text-muted-foreground" />
+                      <Check size={15} strokeWidth={2.5} className="mt-0.5 flex-shrink-0 text-primary" />
                       <span>{feat}</span>
                     </li>
                   ))}
                 </ul>
 
-                {/* CTA */}
+                {/* CTA — rectangular (de-pilled) */}
                 <Link
                   href={tier.href}
-                  className="inline-flex items-center justify-between w-full min-h-11 gap-4 bg-primary text-primary-foreground font-semibold pl-5 pr-2 py-3 rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
+                  className={`group/cta mt-auto inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium transition-colors ${
+                    tier.highlighted
+                      ? "bg-foreground text-background hover:opacity-90"
+                      : "border border-border text-foreground hover:bg-muted/40"
+                  }`}
                 >
-                  <span className="text-sm">{tier.cta}</span>
-                  <span className="w-7 h-7 rounded-full bg-black/15 flex items-center justify-center">
-                    <ArrowRight size={13} />
-                  </span>
+                  {tier.cta}
+                  <ArrowRight size={15} className="transition-transform group-hover/cta:translate-x-0.5" />
                 </Link>
 
-                {/* Trial note */}
-                <p className="text-[11px] text-muted-foreground font-mono mt-4 text-center">
+                <p className="mt-4 text-center font-mono text-[11px] text-muted-foreground">
                   First battle card free · no credit card required
                 </p>
               </CardContent>

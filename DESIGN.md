@@ -31,7 +31,7 @@ All tokens are oklch. The `@theme inline` block emits them as Tailwind `--color-
 | `--card` | `oklch(1 0 0)` | white | Card surface |
 | `--card-foreground` | `oklch(0.141 0.005 285.823)` | zinc-950 | Card text |
 | `--popover` | `oklch(1 0 0)` | white | Popover/dropdown surface |
-| `--primary` | `oklch(0.546 0.245 262.881)` | blue-600 | **Single accent — CTAs, links, active, focus** |
+| `--primary` | `oklch(0.546 0.245 262.881)` | blue-600 | **Single accent — links, active, focus, signals, in-app cta** |
 | `--primary-foreground` | `oklch(0.985 0 0)` | near-white | Text on primary fills |
 | `--secondary` | `oklch(0.967 0.001 286.375)` | zinc-100 | Secondary surfaces |
 | `--muted` | `oklch(0.967 0.001 286.375)` | zinc-100 | Muted fills, subtle backgrounds |
@@ -64,6 +64,8 @@ All tokens are oklch. The `@theme inline` block emits them as Tailwind `--color-
 ## Accent Discipline — one blue, used sparingly
 
 Blue is the only brand color. It appears on: primary CTAs, active/selected nav items, links, focus rings, and signal/live dots. **Never as a background wash on content surfaces, never on decorative cards.** Not an error color (errors use `--destructive`).
+
+**Landing/marketing primary CTAs use monochrome foreground-fill** (`bg-foreground` — white-on-dark / black-on-light, Linear/Vercel register), **not** blue. Blue on a CTA is reserved for the **in-app** signature action button (the `cta` button variant — Upgrade/Analyze). On the landing, blue stays a pure signal color (links, active/selected, focus rings, signal/live dots, the highlighted-pricing-card ring).
 
 The `sky-*` Tailwind scale is remapped in `@theme inline` to the blue primary (theme-aware via `var(--primary)`), so legacy `sky-*` utilities render the accent color. Do not introduce raw blue hex outside the token system.
 
@@ -218,7 +220,7 @@ Chart colors come from `lib/chart-theme.ts`, consumed via `useChartPalette()` (t
 
 ## Do's & Don'ts
 
-**Do:** use shadcn primitives from `components/ui/`; use CSS-var tokens (`--background`, `--foreground`, `--primary`, `--muted`, `--border`, `--ring`, `--tone-*`); keep blue for primary CTAs, active state, focus rings, links, signal dots only; carry depth via zinc surface steps + hairline borders; use `tabular-nums` on every numeric/timestamp cell; draw charts from `useChartPalette()`.
+**Do:** use shadcn primitives from `components/ui/`; use CSS-var tokens (`--background`, `--foreground`, `--primary`, `--muted`, `--border`, `--ring`, `--tone-*`); keep blue for active state, focus rings, links, signal dots, and the in-app cta button only (landing primary CTAs are monochrome foreground-fill); carry depth via zinc surface steps + hairline borders; use `tabular-nums` on every numeric/timestamp cell; draw charts from `useChartPalette()`.
 
 **Don't ship:** hardcoded hex or `text-white`/`bg-white` outside of verified-contrast accent surfaces; raw blue hex outside `--primary`; 8px/12px radii (old v2 style); spring/bounce motion; `transition: all`; new code referencing the legacy `--surface-*`/`--text-*`/`--accent-*` token names (use shadcn names); blue as a decorative background wash on content cards; glassmorphism; emoji as headings.
 
@@ -238,6 +240,7 @@ Chart colors come from `lib/chart-theme.ts`, consumed via `useChartPalette()` (t
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-06-29 | Landing primary CTAs go monochrome (foreground-fill) | Faithful Linear/Vercel port + de-neon; blue stays a pure signal color. In-app `cta` variant (Upgrade/Analyze) keeps its blue gradient — marketing-vs-app boundary. |
 | 2026-06-23 | shadcn neutral-modern re-theme | Whole-app migration from v4 "Signal Desk" to shadcn/ui primitives + zinc neutrals + single blue primary; eliminates custom token sprawl, standardizes on shadcn component library. |
 | 2026-06-23 | Dark-first via `.dark` class (shadcn convention) | Replaces old `data-theme="ink|paper"` attribute. Pre-paint script in `layout.tsx` applies `.dark` on first visit; `localStorage 'theme'` persists choice. |
 | 2026-06-23 | Geist Sans + Geist Mono | Replaces Space Grotesk + IBM Plex Mono. Loaded via `geist` package. `--font-archivo` kept as alias during migration. |
