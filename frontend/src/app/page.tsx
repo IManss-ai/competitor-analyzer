@@ -9,6 +9,8 @@ import { LogoCloud } from '@/components/landing/logo-cloud';
 import { CtaCloser } from '@/components/landing/cta-closer';
 import { SiteFooter } from '@/components/landing/site-footer';
 import { MotionProvider } from '@/components/landing/motion-provider';
+import { RevealGroup, RevealItem } from '@/components/reveal';
+import { CountUp } from '@/components/ui/count-up';
 
 // Rivalscope landing — serious-tool register (Linear port). Hero + framed product
 // panel set the tone; the sections below are rebuilt to match (see
@@ -75,7 +77,7 @@ function ProductPanel() {
             {[['Competitors', '12', '+3 this week'], ['Changes / 7d', '47', '+12'], ['Signals', '8', '2 strategic'], ['Queued plays', '5', 'ready']].map(([k, v, d], i) => (
               <div key={k} className="rounded-xl border border-border bg-background/40 p-3">
                 <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{k}</p>
-                <p className="mt-1 font-mono text-[26px] font-semibold tabular-nums tracking-[-0.03em]" style={i === 3 ? { color: 'var(--primary)' } : undefined}>{v}</p>
+                <p className="mt-1 font-mono text-[26px] font-semibold tabular-nums tracking-[-0.03em]" style={i === 3 ? { color: 'var(--primary)' } : undefined}><CountUp to={Number(v)} /></p>
                 <p className={`text-[11px] ${i === 3 ? 'text-muted-foreground' : 'text-emerald-500'}`}>{d}</p>
               </div>
             ))}
@@ -87,16 +89,18 @@ function ProductPanel() {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />Live
               </span>
             </div>
-            {FEED.map((r) => (
-              <div key={r.name} className="flex items-center gap-3 border-b border-border px-4 py-2.5 last:border-0">
-                <span className="grid h-[26px] w-[26px] flex-none place-items-center rounded-[7px] text-[11px] font-semibold text-white" style={{ background: r.bg }}>{r.mark}</span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 text-[12.5px] font-semibold">{r.name}<Badge tone={r.tone}>{r.label}</Badge></div>
-                  <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">{r.desc}</p>
-                </div>
-                <span className="font-mono text-[10px] text-muted-foreground">{r.t}</span>
-              </div>
-            ))}
+            <RevealGroup>
+              {FEED.map((r) => (
+                <RevealItem key={r.name} className="flex items-center gap-3 border-b border-border px-4 py-2.5 last:border-0">
+                  <span className="grid h-[26px] w-[26px] flex-none place-items-center rounded-[7px] text-[11px] font-semibold text-white" style={{ background: r.bg }}>{r.mark}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 text-[12.5px] font-semibold">{r.name}<Badge tone={r.tone}>{r.label}</Badge></div>
+                    <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">{r.desc}</p>
+                  </div>
+                  <span className="font-mono text-[10px] text-muted-foreground">{r.t}</span>
+                </RevealItem>
+              ))}
+            </RevealGroup>
           </div>
         </div>
       </div>
