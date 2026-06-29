@@ -68,7 +68,7 @@ function ProductPanel() {
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="font-display text-[19px] font-semibold">Dashboard</h3>
+              <div className="font-display text-[19px] font-semibold">Dashboard</div>
               <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Fri 26 Jun 2026 · Intel HQ</p>
             </div>
             <span className="rounded-md border border-border px-3 py-1.5 text-[12px] font-medium text-muted-foreground">Scan now</span>
