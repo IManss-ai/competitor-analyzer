@@ -150,7 +150,7 @@ export default function Landing() {
             <p className="max-w-[520px] text-[15px] leading-relaxed text-muted-foreground">
               Pricing, messaging and hiring, watched around the clock and compiled into ranked sales plays your reps can send.
             </p>
-            <Link href={AUTH} className="group inline-flex items-center gap-1.5 whitespace-nowrap text-[14px] text-muted-foreground transition-colors hover:text-foreground">
+            <Link href={AUTH} className="group inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap text-[14px] text-muted-foreground transition-colors hover:text-foreground">
               <span className="font-medium text-foreground">New</span> Auto-generated battle cards
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
