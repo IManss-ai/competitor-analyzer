@@ -147,10 +147,10 @@ export default function Landing() {
             </Link>
           </div>
           <div className="mt-9 flex items-center gap-2">
-            <Link href={AUTH} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-[14px] font-medium text-background transition-opacity hover:opacity-90">
+            <Link href={AUTH} className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-[14px] font-medium text-background transition-opacity hover:opacity-90">
               Start free <ArrowRight size={15} />
             </Link>
-            <a href="mailto:support@rivalscope.dev" className="rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
+            <a href="mailto:support@rivalscope.dev" className="inline-flex min-h-11 items-center rounded-full px-4 py-2.5 text-[14px] text-muted-foreground transition-colors hover:text-foreground">
               Book a demo
             </a>
           </div>

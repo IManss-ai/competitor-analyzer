@@ -117,7 +117,7 @@ function PricingBasic() {
                   href={tier.href}
                   className={`group/cta mt-auto inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium transition-colors ${
                     tier.highlighted
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      ? "bg-foreground text-background hover:opacity-90"
                       : "border border-border text-foreground hover:bg-muted/40"
                   }`}
                 >

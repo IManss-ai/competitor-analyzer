@@ -19,10 +19,13 @@ export function CtaCloser() {
           Add a competitor and get your first battle card in minutes.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button size="lg" variant="cta" className="gap-2" asChild>
-            <Link href={AUTH}>Start free <ArrowRight size={16} /></Link>
-          </Button>
-          <Button size="lg" variant="outline" asChild>
+          <Link
+            href={AUTH}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-[15px] font-medium text-background transition-opacity hover:opacity-90"
+          >
+            Start free <ArrowRight size={16} />
+          </Link>
+          <Button size="lg" variant="outline" className="min-h-11 rounded-full px-6" asChild>
             <a href="mailto:support@rivalscope.dev">Book a demo</a>
           </Button>
         </div>
