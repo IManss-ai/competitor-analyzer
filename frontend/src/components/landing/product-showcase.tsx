@@ -71,7 +71,7 @@ export function ProductShowcase() {
     <section id="product" className="scroll-mt-20 border-t border-border py-24">
       <Reveal>
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">The product</p>
-        <h2 className="mt-3 max-w-[16ch] text-[clamp(28px,3vw,38px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
+        <h2 className="mt-3 max-w-[16ch] text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
           Every rival, on one battle card.
         </h2>
         <p className="mt-5 max-w-[460px] text-[15px] leading-relaxed text-muted-foreground">
