@@ -159,9 +159,10 @@ export default function LandingBattleCard() {
         </div>
       </div>
 
-      {/* Quadrants stagger-assemble on view; MotionConfig snaps to final for reduced-motion. */}
+      {/* Quadrants stagger-assemble once on first view (container not keyed, so tab
+          switches don't replay it). Tab change = fast 160ms CSS fade on the inner
+          keyed wrappers. MotionConfig snaps the assemble to final for reduced-motion. */}
       <motion.div
-        key={active}
         className="space-y-3 p-4"
         variants={staggerContainerVariants}
         initial="hidden"
@@ -170,6 +171,7 @@ export default function LandingBattleCard() {
       >
         {/* Detected changes */}
         <motion.div variants={fadeUpVariants}>
+        <div key={active} className="[animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
         <Quadrant title="Detected changes">
           <ul className="space-y-2.5">
             {card.changes.map((c, i) => (
@@ -180,10 +182,12 @@ export default function LandingBattleCard() {
             ))}
           </ul>
         </Quadrant>
+        </div>
         </motion.div>
 
         {/* User complaints + Strategic signals */}
-        <motion.div variants={fadeUpVariants} className="grid gap-3 sm:grid-cols-2">
+        <motion.div variants={fadeUpVariants}>
+        <div key={active} className="grid gap-3 sm:grid-cols-2 [animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
           <Quadrant title="User complaints">
             <ul className="space-y-2.5">
               {card.complaints.map((c, i) => (
@@ -208,10 +212,12 @@ export default function LandingBattleCard() {
               ))}
             </ul>
           </Quadrant>
+        </div>
         </motion.div>
 
         {/* Top plays / Playbook */}
         <motion.div variants={fadeUpVariants}>
+        <div key={active} className="[animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
         <Quadrant title="Top plays">
           <ol className="space-y-2">
             {card.moves.map((move, i) => (
@@ -224,6 +230,7 @@ export default function LandingBattleCard() {
             ))}
           </ol>
         </Quadrant>
+        </div>
         </motion.div>
       </motion.div>
     </div>
