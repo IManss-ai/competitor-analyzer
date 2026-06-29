@@ -56,12 +56,12 @@ function PlaysMini() {
 const ROWS = [
   {
     title: 'A live intel feed',
-    desc: 'Pricing, feature and hiring changes the moment they happen, categorized and timestamped so nothing slips past your team.',
+    desc: 'Every change, categorized and timestamped.',
     ui: <IntelFeedMini />,
   },
   {
     title: 'Five ranked plays per card',
-    desc: 'Pulled from real G2 and Trustpilot complaints, ordered by what closes. Each one is copy-to-send, so the first move is the one most likely to win.',
+    desc: 'Pulled from real complaints, ordered by what closes.',
     ui: <PlaysMini />,
   },
 ];
@@ -75,7 +75,7 @@ export function ProductShowcase() {
           Every rival, on one battle card.
         </h2>
         <p className="mt-5 max-w-[460px] text-[15px] leading-relaxed text-muted-foreground">
-          Rivalscope compiles every change, complaint and signal into one structured card, so your reps walk in already knowing the win.
+          Every change, complaint and signal — compiled into one card your reps can act on.
         </p>
       </Reveal>
 
