@@ -29,7 +29,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
 ];
 
 function FooterLink({ label, href }: { label: string; href: string }) {
-  const cls = 'block py-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground';
+  const cls = 'flex min-h-11 items-center text-[13px] text-muted-foreground transition-colors hover:text-foreground';
   if (href.startsWith('#') || href.startsWith('mailto:')) {
     return <a href={href} className={cls}>{label}</a>;
   }
@@ -61,9 +61,9 @@ export function SiteFooter() {
       <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-[13px] text-muted-foreground sm:flex-row">
         <span>© 2026 Rivalscope</span>
         <div className="flex items-center gap-6">
-          <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
-          <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
-          <a href="mailto:support@rivalscope.dev" className="transition-colors hover:text-foreground">Support</a>
+          <Link href="/privacy" className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">Privacy</Link>
+          <Link href="/terms" className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">Terms</Link>
+          <a href="mailto:support@rivalscope.dev" className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">Support</a>
         </div>
       </div>
     </footer>
