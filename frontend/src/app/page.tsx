@@ -8,6 +8,7 @@ import { ProductShowcase } from '@/components/landing/product-showcase';
 import { LogoCloud } from '@/components/landing/logo-cloud';
 import { CtaCloser } from '@/components/landing/cta-closer';
 import { SiteFooter } from '@/components/landing/site-footer';
+import { MotionProvider } from '@/components/landing/motion-provider';
 
 // Rivalscope landing — serious-tool register (Linear port). Hero + framed product
 // panel set the tone; the sections below are rebuilt to match (see
@@ -105,6 +106,7 @@ function ProductPanel() {
 
 export default function Landing() {
   return (
+    <MotionProvider>
     <div className="relative min-h-[100dvh] overflow-x-hidden bg-background text-foreground antialiased">
       {/* Atmospheric hero wash — Stripe-port depth, restrained single-accent blue (not neon) */}
       <div
@@ -174,5 +176,6 @@ export default function Landing() {
         <SiteFooter />
       </div>
     </div>
+    </MotionProvider>
   );
 }
