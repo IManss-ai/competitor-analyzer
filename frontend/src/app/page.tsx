@@ -134,12 +134,15 @@ export default function Landing() {
 
         {/* HERO — Linear port: left-aligned, monochrome, type-forward */}
         <header className="pb-16 pt-20 md:pb-24 md:pt-28">
+          <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Competitive intelligence for sales teams
+          </p>
           <h1 className="max-w-[760px] text-balance text-[clamp(38px,6vw,64px)] font-medium leading-[1.03] tracking-[-0.022em] text-foreground">
-            The competitive intelligence system for modern sales teams
+            Track every competitor. Turn each change into a winning play.
           </h1>
           <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <p className="max-w-[520px] text-[15px] leading-relaxed text-muted-foreground">
-              Track every competitor&apos;s pricing, messaging, and hiring, then hand your reps the play that wins the deal.
+              Pricing, messaging and hiring, watched around the clock and compiled into ranked sales plays your reps can send.
             </p>
             <Link href={AUTH} className="group inline-flex items-center gap-1.5 whitespace-nowrap text-[14px] text-muted-foreground transition-colors hover:text-foreground">
               <span className="font-medium text-foreground">New</span> Auto-generated battle cards
