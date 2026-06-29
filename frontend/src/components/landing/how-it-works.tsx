@@ -1,4 +1,5 @@
 import { Reveal, RevealGroup, RevealItem } from '@/components/reveal';
+import { PipelineLine } from '@/components/landing/pipeline-line';
 
 // §1 How it works — a 3-step pipeline (Connect / Detect / Win), each step showing a
 // real product fragment instead of a generic icon. Linear register: monochrome,
@@ -17,7 +18,7 @@ const STEPS = [
   {
     label: 'Connect',
     title: 'Add your rivals',
-    desc: 'Paste competitor URLs. We auto-discover their pricing, blog, and review pages.',
+    desc: 'Paste URLs — we map the rest.',
     fragment: (
       <div className="flex flex-wrap gap-1.5">
         <Chip>stripe.com</Chip>
@@ -29,7 +30,7 @@ const STEPS = [
   {
     label: 'Detect',
     title: 'We watch, around the clock',
-    desc: 'Pricing, page, review and hiring changes surface in a live intel feed.',
+    desc: 'Every change, the moment it lands.',
     fragment: (
       <div className="rounded-lg border border-border bg-background">
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
@@ -54,7 +55,7 @@ const STEPS = [
   {
     label: 'Win',
     title: 'Get the play',
-    desc: 'Every signal compiled into one battle card with five ranked plays your reps can send.',
+    desc: 'One card. Five ranked plays.',
     fragment: (
       <div className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-3 py-2.5">
         <span className="grid h-7 w-7 flex-none place-items-center rounded-md border border-primary/30 bg-primary/10 font-mono text-[11px] font-semibold text-primary">5</span>
@@ -78,7 +79,8 @@ export function HowItWorks() {
         </h2>
       </Reveal>
 
-      <RevealGroup className="mt-12 grid overflow-hidden rounded-xl border border-border sm:grid-cols-3">
+      <div className="mt-10 px-1"><PipelineLine /></div>
+      <RevealGroup className="mt-6 grid overflow-hidden rounded-xl border border-border sm:grid-cols-3">
         {STEPS.map((step) => (
           <RevealItem
             key={step.label}
