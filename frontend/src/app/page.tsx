@@ -41,7 +41,7 @@ function Badge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
 function ProductPanel() {
   return (
     <div className="relative mx-auto mt-16 max-w-[1040px] px-1">
-      <div className="relative grid grid-cols-1 sm:grid-cols-[188px_1fr] overflow-hidden rounded-t-xl border border-border bg-card text-left">
+      <div className="relative grid grid-cols-1 sm:grid-cols-[188px_1fr] overflow-hidden rounded-t-xl border border-border bg-card text-left shadow-[0_50px_140px_-50px_rgba(8,9,10,0.95)] ring-1 ring-foreground/[0.05]">
         {/* sidebar */}
         <div className="hidden border-r border-border bg-muted/40 p-3 sm:block">
           <div className="mb-3 flex items-center gap-2 px-1">
@@ -105,8 +105,14 @@ function ProductPanel() {
 
 export default function Landing() {
   return (
-    <div className="min-h-[100dvh] overflow-x-hidden bg-background text-foreground antialiased">
-      <div className="mx-auto max-w-[1180px] px-6">
+    <div className="relative min-h-[100dvh] overflow-x-hidden bg-background text-foreground antialiased">
+      {/* Atmospheric hero wash — Stripe-port depth, restrained single-accent blue (not neon) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[860px]"
+        style={{ background: 'radial-gradient(115% 56% at 50% -12%, color-mix(in oklab, var(--primary) 18%, transparent), transparent 60%)' }}
+      />
+      <div className="relative z-10 mx-auto max-w-[1180px] px-6">
         {/* NAV */}
         <nav className="sticky top-0 z-50 -mx-6 flex h-16 items-center justify-between border-b border-border bg-background/92 px-6">
           <Link href="/" className="flex items-center gap-2.5">

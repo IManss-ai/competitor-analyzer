@@ -80,8 +80,16 @@ export function ProductShowcase() {
       </Reveal>
 
       <Reveal delay={1} className="mt-12">
-        <div className="mx-auto max-w-[820px]">
-          <LandingBattleCard />
+        <div className="relative mx-auto max-w-[860px]">
+          {/* soft atmospheric backdrop so the card reads as a premium product shot */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-x-10 -inset-y-8 z-0"
+            style={{ background: 'radial-gradient(55% 50% at 50% 42%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 72%)' }}
+          />
+          <div className="relative z-10 rounded-xl shadow-[0_50px_140px_-55px_rgba(8,9,10,0.95)]">
+            <LandingBattleCard />
+          </div>
         </div>
       </Reveal>
 
