@@ -74,12 +74,25 @@ async def api_direct_login(payload: dict, db: Session = Depends(get_session)):
         db.refresh(user)
     else:
         if user.password_hash is None:
-            # Connect password for user who initially logged in via magic link
-            user.password_hash = hash_password(password)
-            db.commit()
-        elif not check_password(password, user.password_hash):
+            # SECURITY (P0): never bind a caller-supplied password to an existing
+            # passwordless (magic-link) account and hand back a session — that would
+            # be unauthenticated account takeover on knowledge of the email alone.
+            # Prove email ownership via a magic link instead; the real owner can set
+            # a password after signing in. Do NOT mutate password_hash here.
+            token = generate_magic_link_token(str(user.id), db)
+            link = f"{APP_BASE_URL}/auth/verify?token={token}"
+            try:
+                await send_magic_link_email(email, link, RESEND_API_KEY, FROM_EMAIL)
+            except Exception as exc:
+                print(f"[auth] magic-link email send failed for {email}: {exc}")
+                raise HTTPException(status_code=502, detail="Could not send the sign-in link email.")
+            raise HTTPException(
+                status_code=403,
+                detail="This account uses email sign-in. We've emailed you a secure sign-in link — check your inbox.",
+            )
+        if not check_password(password, user.password_hash):
             raise HTTPException(status_code=401, detail="Invalid password for this email address.")
-            
+
     session_token = generate_session_token(str(user.id), user.email)
     return {"ok": True, "session_token": session_token}
 

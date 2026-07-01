@@ -97,6 +97,27 @@ class TestApiV1Endpoints(unittest.TestCase):
         resp = self.client.post("/api/v1/auth/direct-login", json={"email": "x@y.com"})
         self.assertEqual(resp.status_code, 422)
 
+    def test_direct_login_passwordless_user_cannot_be_taken_over(self):
+        # SECURITY (P0): an existing magic-link user has password_hash None. A caller
+        # who only knows the email must NOT be able to bind a password + get a session.
+        from unittest.mock import patch, AsyncMock
+        victim = User(email="victim@example.com")  # passwordless (magic-link) account
+        self.db.add(victim)
+        self.db.commit()
+        with patch("app.routes.api_v1.send_magic_link_email", new=AsyncMock(return_value=None)):
+            resp = self.client.post(
+                "/api/v1/auth/direct-login",
+                json={"email": "victim@example.com", "password": "attacker-chosen"},
+            )
+        # No session may be issued to the caller.
+        self.assertNotEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 403)
+        self.assertNotIn("session_token", resp.json())
+        # The victim's password must NOT have been set to the attacker's value.
+        self.db.expire_all()
+        refreshed = self.db.query(User).filter(User.email == "victim@example.com").first()
+        self.assertIsNone(refreshed.password_hash)
+
     # ── dashboard feed / activity ─────────────────────────────────────────────
     def test_dashboard_feed_returns_change_events(self):
         resp = self.client.get("/api/v1/dashboard/feed", headers=self.auth)
