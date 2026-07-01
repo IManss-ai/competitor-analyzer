@@ -8,8 +8,8 @@
    RIVALSCOPE — Design System: shadcn neutral-modern (zinc + single blue accent)
    Theme via the `.dark` class (shadcn convention); dark-first default applied by
    the pre-paint script in layout.tsx. Tokens are shadcn oklch (zinc neutrals,
-   blue primary); the legacy Signal Desk token names are aliased to them below so
-   existing .rs-* markup keeps rendering during the migration (aliases retired in P4).
+   blue primary). The legacy Signal Desk alias layer was retired in P4 (2026-07-02);
+   everything — including the .rs-* utility classes below — uses shadcn tokens directly.
    Color/radius utilities (--color-*, --radius-*) are emitted by the @theme inline
    block at the end of this file; the `sky-*` scale is remapped there to the blue
    primary so legacy sky-* utilities render the accent.
@@ -53,11 +53,10 @@
   --sidebar-border:              oklch(0.92 0.004 286.32);
   --sidebar-ring:                oklch(0.57 0.20 272);
 
-  /* ── Fonts (Geist; --font-archivo kept as a legacy alias) ── */
+  /* ── Fonts (Geist) ── */
   --font-sans:  var(--font-geist-sans), system-ui, sans-serif;
   --font-mono:  var(--font-geist-mono), ui-monospace, monospace;
   --font-display: var(--font-geist-sans), system-ui, sans-serif;
-  --font-archivo: var(--font-geist-sans);
   --sidebar-width: 240px;
 
   /* ── Radius scale (legacy names; matches the @theme inline scale) ── */
@@ -66,30 +65,6 @@
   --radius-lg:   var(--radius);
   --radius-xl:   calc(var(--radius) * 1.4);
   --radius-pill: 9999px;
-
-  /* ── Legacy Signal Desk token aliases → shadcn tokens (retired in P4) ── */
-  --surface-base:    var(--background);
-  --surface-raised:  var(--card);
-  --surface-overlay: var(--popover);
-  --surface-subtle:  var(--muted);
-  --fill-subtle:        var(--muted);
-  --fill-subtle-hover:  var(--accent);
-  --hairline:        var(--border);
-  --border-default:  var(--border);
-  --border-subtle:   var(--border);
-  --border-strong:   var(--input);
-  --text-primary:    var(--foreground);
-  --text-secondary:  var(--muted-foreground);
-  --text-muted:      var(--muted-foreground);
-  --accent-primary:  var(--primary);
-  --accent-hover:    var(--primary);
-  --accent-cta:      var(--primary);
-  --accent-cta-hover: var(--primary);
-  --accent-deep:     var(--primary);
-  --accent-text:     var(--primary-foreground);
-  --accent-subtle:   color-mix(in oklch, var(--primary) 12%, transparent);
-  --accent-border:   var(--ring);
-  --accent-glow:     color-mix(in oklch, var(--primary) 28%, transparent);
 
   /* Premium Blue signature gradient — hero / primary CTA / logo mark ONLY (scarce). */
   /* De-neon stopgap: flattened to solid primary (no gradient) — gradient read as
@@ -138,8 +113,8 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--surface-base);
-  color: var(--text-primary);
+  background-color: var(--background);
+  color: var(--foreground);
   min-height: 100%;
   font-size: 16px;
   line-height: 1.5;
@@ -149,7 +124,7 @@ code, pre, .font-mono {
   font-family: var(--font-mono);
 }
 
-/* AppKittie-in-blue display face — Space Grotesk, bold headlines. */
+/* Display face — Geist Sans, bold headlines. */
 .font-display {
   font-family: var(--font-display);
   font-weight: 600;
@@ -162,7 +137,7 @@ code, pre, .font-mono {
 ───────────────────────────────────────────────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -174,11 +149,11 @@ code, pre, .font-mono {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--input);
   border-radius: var(--radius-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
+  background: var(--input);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -187,24 +162,24 @@ code, pre, .font-mono {
 
 /* Cards — sharp, flat, rules not shadows */
 .rs-card {
-  background: var(--surface-raised);
-  border: 1px solid var(--border-default);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   transition: border-color var(--duration-base) var(--ease-out);
 }
 .rs-card:hover {
-  border-color: var(--border-strong);
+  border-color: var(--input);
 }
 
 /* Inputs — sharp, subdued fill */
 .rs-input {
-  background: var(--fill-subtle);
-  border: 1px solid var(--border-default);
+  background: var(--muted);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 9px 13px;
   font-size: 13px;
-  color: var(--text-primary);
+  color: var(--foreground);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
@@ -212,22 +187,22 @@ code, pre, .font-mono {
   font-family: var(--font-sans);
 }
 .rs-input::placeholder {
-  color: var(--text-muted);
+  color: var(--muted-foreground);
 }
 .rs-input:focus {
   outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 28%, transparent);
 }
 
-/* Buttons — sharp, flat. Lime carries dark --accent-text, never #fff. */
+/* Buttons — sharp, flat. */
 .rs-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: var(--accent-cta);
-  color: var(--accent-text);
+  background: var(--primary);
+  color: var(--primary-foreground);
   border: none;
   border-radius: var(--radius-md);
   padding: 9px 16px;
@@ -241,7 +216,7 @@ code, pre, .font-mono {
   white-space: nowrap;
 }
 .rs-btn-primary:hover:not(:disabled) {
-  background: var(--accent-cta-hover);
+  background: var(--primary);
 }
 .rs-btn-primary:active:not(:disabled) {
   transform: translateY(1px);
@@ -257,8 +232,8 @@ code, pre, .font-mono {
   justify-content: center;
   gap: 6px;
   background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-default);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 8px 14px;
   font-size: 13px;
@@ -272,9 +247,9 @@ code, pre, .font-mono {
   white-space: nowrap;
 }
 .rs-btn-ghost:hover:not(:disabled) {
-  background: var(--fill-subtle-hover);
-  color: var(--text-primary);
-  border-color: var(--border-strong);
+  background: var(--accent);
+  color: var(--foreground);
+  border-color: var(--input);
 }
 .rs-btn-ghost:active:not(:disabled) {
   transform: translateY(1px);
@@ -282,8 +257,8 @@ code, pre, .font-mono {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CHANGE-TYPE BADGES — semantic, theme-aware, sharp 2px
-   Base values are paper-tuned (dark, ≥4.5:1 on white); html[data-theme="ink"]
-   overrides restore the brighter ink-tuned hues.
+   Base values are light-tuned (dark text, ≥4.5:1 on white); .dark overrides
+   restore the brighter dark-theme hues.
 ───────────────────────────────────────────────────────────────────────────── */
 
 .badge {
@@ -393,15 +368,15 @@ code, pre, .font-mono {
   50%       { box-shadow: 0 0 0 6px rgba(90,160,122,0.05); }
 }
 
-/* Signal pulse — electric-blue "live" dot for the Brief / live states (Signal Desk) */
+/* Signal pulse — primary-blue "live" dot for the Brief / live states */
 .sr-pulse {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent-primary); position: relative;
+  background: var(--primary); position: relative;
   display: inline-block; flex: 0 0 auto;
 }
 .sr-pulse::after {
   content: ''; position: absolute; inset: 0; border-radius: 50%;
-  background: var(--accent-primary); animation: sr-ping 2.2s ease-out infinite;
+  background: var(--primary); animation: sr-ping 2.2s ease-out infinite;
 }
 @keyframes sr-ping {
   0%   { transform: scale(1); opacity: 0.6; }
@@ -415,12 +390,12 @@ code, pre, .font-mono {
 
 .rs-divider {
   height: 1px;
-  background: var(--border-default);
+  background: var(--border);
   border: none;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   TYPOGRAPHY SCALE — Space Grotesk (via --font-archivo alias), institutional weights
+   TYPOGRAPHY SCALE — Geist Sans, institutional weights
 ───────────────────────────────────────────────────────────────────────────── */
 
 /* Readability pass: sizes bumped so the dashboard reads comfortably
@@ -429,44 +404,44 @@ code, pre, .font-mono {
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--foreground);
   line-height: 1.15;
 }
 .rs-heading-lg {
   font-size: 21px;
   font-weight: 700;
   letter-spacing: -0.015em;
-  color: var(--text-primary);
+  color: var(--foreground);
   line-height: 1.3;
 }
 .rs-heading-md {
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--text-primary);
+  color: var(--foreground);
 }
 .rs-heading-sm {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  color: var(--text-primary);
+  color: var(--foreground);
 }
 .rs-label {
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   font-family: var(--font-mono);
 }
 .rs-body {
   font-size: 15px;
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
   line-height: 1.65;
 }
 .rs-body-sm {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   line-height: 1.55;
 }
 
@@ -499,9 +474,9 @@ code, pre, .font-mono {
 .rs-skeleton {
   background: linear-gradient(
     90deg,
-    var(--fill-subtle) 25%,
-    var(--fill-subtle-hover) 50%,
-    var(--fill-subtle) 75%
+    var(--muted) 25%,
+    var(--accent) 50%,
+    var(--muted) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite;

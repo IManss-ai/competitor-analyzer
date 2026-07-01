@@ -56,7 +56,7 @@ export default function ProductDemo() {
         className="pointer-events-none absolute -inset-x-16 -inset-y-14 -z-10"
         style={{
           background:
-            'radial-gradient(62% 58% at 50% 46%, var(--accent-glow), transparent 70%), radial-gradient(42% 44% at 50% 44%, var(--accent-glow), transparent 76%)',
+            'radial-gradient(62% 58% at 50% 46%, color-mix(in oklch, var(--primary) 28%, transparent), transparent 70%), radial-gradient(42% 44% at 50% 44%, color-mix(in oklch, var(--primary) 28%, transparent), transparent 76%)',
           filter: 'blur(56px)',
         }}
       />

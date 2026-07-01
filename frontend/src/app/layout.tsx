@@ -55,7 +55,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("dark", "h-full", "antialiased", "font-sans", GeistSans.variable, GeistMono.variable, spaceGrotesk.variable)}
     >
-      <body className="font-sans antialiased min-h-full text-[var(--text-primary)] selection:bg-sky-500/20 selection:text-sky-50" style={{ backgroundColor: 'var(--surface-base)' }}>
+      <body className="font-sans antialiased min-h-full text-foreground selection:bg-sky-500/20 selection:text-sky-50" style={{ backgroundColor: 'var(--background)' }}>
         {/* No-JS / crawler / OG-snapshot fallback: Framer Motion SSRs scroll-reveal
             content with inline opacity:0 that only clears via JS. Without JS those
             regions stay blank for bots, so force them visible. Mirrors the

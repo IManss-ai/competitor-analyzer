@@ -40,22 +40,22 @@ export default function SharePage({ card }: { card: BattleCardData }) {
   }) : '';
 
   return (
-    <div className="min-h-screen font-sans" style={{ background: 'var(--surface-base)', color: 'var(--text-primary)' }}>
+    <div className="min-h-screen font-sans" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
       {/* HEADER */}
       <header
         className="py-4 px-6 sticky top-0 z-10 backdrop-blur-md"
-        style={{ background: 'color-mix(in srgb, var(--surface-base) 85%, transparent)', borderBottom: '1px solid var(--border-default)' }}
+        style={{ background: 'color-mix(in srgb, var(--background) 85%, transparent)', borderBottom: '1px solid var(--border)' }}
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>Intel</span>
-              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Battle Card</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--foreground)' }}>Intel</span>
+              <span className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Battle Card</span>
             </div>
-            <h1 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+            <h1 className="text-xl font-semibold" style={{ color: 'var(--foreground)' }}>
               {card.competitor_name}
             </h1>
-            <p className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>
               Generated {formattedDate}
             </p>
           </div>
@@ -87,22 +87,22 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <Zap size={16} className="text-sky-400" />
-            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
               What Changed
             </h2>
           </div>
           {card.is_baseline ? (
-            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
               Baseline captured — no changes recorded yet. New changes appear here after the next scan.
             </p>
           ) : card.what_changed.length === 0 ? (
-            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
               Your competitor has been quiet — no pricing or feature changes detected this week.
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
               {card.what_changed.map((bullet, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                   {typeof bullet === 'string' ? bullet : bullet.text}
                 </li>
               ))}
@@ -114,18 +114,18 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={16} style={{ color: 'var(--tone-danger)' }} />
-            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
               Their Weaknesses
             </h2>
           </div>
           {card.weaknesses.length === 0 ? (
-            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
               No known complaints or weaknesses tracked.
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
               {card.weaknesses.map((bullet, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                   {bullet}
                 </li>
               ))}
@@ -137,18 +137,18 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <MessageSquare size={16} style={{ color: 'var(--tone-warning)' }} />
-            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
               Your Talking Points
             </h2>
           </div>
           {card.talking_points.length === 0 ? (
-            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
               No talking points generated.
             </p>
           ) : (
             <ol className="space-y-2 list-decimal ml-4">
               {card.talking_points.map((point, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                   {point}
                 </li>
               ))}
@@ -160,18 +160,18 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <Trophy size={16} style={{ color: 'var(--tone-positive)' }} />
-            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
               Win Conditions
             </h2>
           </div>
           {card.win_conditions.length === 0 ? (
-            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
               No win conditions generated.
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
               {card.win_conditions.map((bullet, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                   {bullet}
                 </li>
               ))}
@@ -180,11 +180,11 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         </section>
 
         {/* FOOTER */}
-        <footer className="text-center pt-8 pb-16 mt-8" style={{ borderTop: '1px solid var(--border-default)' }}>
-          <p className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>
+        <footer className="text-center pt-8 pb-16 mt-8" style={{ borderTop: '1px solid var(--border)' }}>
+          <p className="text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>
             Powered by Rivalscope
           </p>
-          <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm mt-2" style={{ color: 'var(--muted-foreground)' }}>
             Track your competitors 24/7.{' '}
             <a href="/auth/login" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">
               Sign up free

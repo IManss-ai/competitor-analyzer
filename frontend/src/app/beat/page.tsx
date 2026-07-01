@@ -56,17 +56,17 @@ const SAMPLE_PLAYS = [
 
 export default function BeatPage() {
   return (
-    <div className="min-h-screen px-4 py-12" style={{ background: 'var(--surface-base)' }}>
+    <div className="min-h-screen px-4 py-12" style={{ background: 'var(--background)' }}>
       <div className="max-w-2xl mx-auto space-y-10">
         {/* Hero */}
         <header className="space-y-4 text-center">
           <p className="rs-label">Rivalscope · Action Plan</p>
-          <h1 className="text-3xl sm:text-4xl font-semibold leading-tight" style={{ color: 'var(--text-primary)' }}>
+          <h1 className="text-3xl sm:text-4xl font-semibold leading-tight" style={{ color: 'var(--foreground)' }}>
             Beat your top competitor.
             <br />
             Concrete plan, 24 hours, $29.
           </h1>
-          <p className="text-base leading-relaxed max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-base leading-relaxed max-w-xl mx-auto" style={{ color: 'var(--muted-foreground)' }}>
             Give us your site and your biggest competitor. We scan their pages, reviews, hiring, and what AI engines
             say about you both — then a real strategist turns it into 5 ranked moves you can execute this week.
             Not a dashboard. Not a report. A plan.
@@ -76,7 +76,7 @@ export default function BeatPage() {
               Get my plan — $29
             </a>
           </div>
-          <p className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>
             Delivered within 24h · Money-back if you call it generic
           </p>
         </header>
@@ -89,8 +89,8 @@ export default function BeatPage() {
             ['3. You get the plan', '5 ranked plays with first steps and drafted copy — reviewed by a human before it ships.'],
           ].map(([title, body]) => (
             <div key={title} className="rs-card p-4 space-y-1">
-              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</p>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{body}</p>
+              <p className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>{title}</p>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>{body}</p>
             </div>
           ))}
         </section>
@@ -99,14 +99,14 @@ export default function BeatPage() {
         <section className="space-y-4">
           <div className="text-center space-y-1">
             <h2 className="rs-label">What you actually get — sample plan</h2>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
               Anonymized from a real analysis. Yours is researched fresh for your matchup.
             </p>
           </div>
           <div className="rs-card p-6 space-y-5">
-            <div className="border-b pb-3" style={{ borderColor: 'var(--border-subtle)' }}>
-              <p className="text-xs font-mono mb-1" style={{ color: 'var(--text-muted)' }}>COMPETITIVE READ</p>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+            <div className="border-b pb-3" style={{ borderColor: 'var(--border)' }}>
+              <p className="text-xs font-mono mb-1" style={{ color: 'var(--muted-foreground)' }}>COMPETITIVE READ</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--foreground)' }}>
                 Your competitor is moving upmarket — price raise, enterprise language, slower shipping. That opens a
                 60-day window to own the self-serve segment they&apos;re abandoning.
               </p>
@@ -115,13 +115,13 @@ export default function BeatPage() {
               <div key={play.rank} className="flex gap-4">
                 <span
                   className="font-mono text-sm font-bold shrink-0 w-6 h-6 flex items-center justify-center"
-                  style={{ color: 'var(--accent-primary)', border: '1px solid var(--border-subtle)' }}
+                  style={{ color: 'var(--primary)', border: '1px solid var(--border)' }}
                 >
                   {play.rank}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{play.title}</p>
-                  <p className="text-xs leading-relaxed mt-1" style={{ color: 'var(--text-secondary)' }}>{play.body}</p>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>{play.title}</p>
+                  <p className="text-xs leading-relaxed mt-1" style={{ color: 'var(--muted-foreground)' }}>{play.body}</p>
                 </div>
               </div>
             ))}
@@ -133,7 +133,7 @@ export default function BeatPage() {
           <a href={CHECKOUT_URL} className="rs-btn-primary text-sm px-6 py-3 inline-block">
             Get my plan — $29
           </a>
-          <p className="text-xs leading-relaxed max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs leading-relaxed max-w-md mx-auto" style={{ color: 'var(--muted-foreground)' }}>
             Want this on autopilot? The full Rivalscope platform watches your competitors 24/7 and fires a plan
             whenever they make a move. <Link href="/" className="underline">See the platform</Link> or{' '}
             <Link href="/discover" className="underline">browse the app database</Link>.

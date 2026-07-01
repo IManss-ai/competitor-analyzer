@@ -226,7 +226,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
             cx="32"
             cy="32"
             r="28"
-            stroke="var(--accent-border)"
+            stroke="var(--ring)"
             strokeWidth="1.5"
             fill="none"
             strokeDasharray="176"

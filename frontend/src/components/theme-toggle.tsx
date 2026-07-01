@@ -8,7 +8,7 @@ export default function ThemeToggle() {
       role="group"
       aria-label="Theme"
       className="inline-flex items-center font-mono text-[10px] tracking-[0.12em] uppercase select-none"
-      style={{ border: '1px solid var(--border-default)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}
+      style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}
     >
       {(['light', 'dark'] as const).map((t) => {
         const active = theme === t;
@@ -21,8 +21,8 @@ export default function ThemeToggle() {
             onClick={() => setTheme(t)}
             className="inline-flex items-center justify-center min-h-[44px] px-4 transition-colors cursor-pointer"
             style={{
-              background: active ? 'var(--accent-subtle)' : 'transparent',
-              color: active ? 'var(--accent-primary)' : 'var(--text-muted)',
+              background: active ? 'color-mix(in oklch, var(--primary) 12%, transparent)' : 'transparent',
+              color: active ? 'var(--primary)' : 'var(--muted-foreground)',
             }}
           >
             {t}
