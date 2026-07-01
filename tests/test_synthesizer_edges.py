@@ -50,7 +50,10 @@ class TestSynthesizeBriefEdges(unittest.IsolatedAsyncioTestCase):
         mock_create.side_effect = Exception("boom")
         res = await synthesize_brief("", "https://comp.com", "b", "a", "pricing_change")
         self.assertIn("https://comp.com", res)
-        self.assertIn("restructured their pricing plans", res)
+        self.assertIn("changed their pricing", res)
+        # Heuristic must not fabricate specific prices (data-honesty; see
+        # tests/test_synthesizer_honesty.py).
+        self.assertNotIn("$", res)
         mock_note.assert_called_once()
         args = mock_note.call_args[0]
         self.assertEqual(args[0], "synthesizer")
@@ -61,26 +64,26 @@ class TestSynthesizeBriefEdges(unittest.IsolatedAsyncioTestCase):
     async def test_fallback_feature_add_branch(self, mock_create):
         mock_create.side_effect = Exception("boom")
         res = await synthesize_brief("Acme", "u", "b", "a", "feature_add")
-        self.assertIn("AI Copilot", res)
+        self.assertIn("shipped a feature", res)
         self.assertTrue(res.startswith("Acme"))
 
     @patch("app.pipeline.synthesizer.client.chat.completions.create", new_callable=AsyncMock)
     async def test_fallback_repositioning_branch(self, mock_create):
         mock_create.side_effect = Exception("boom")
         res = await synthesize_brief("Acme", "u", "b", "a", "repositioning")
-        self.assertIn("Operating System for Enterprise Productivity", res)
+        self.assertIn("shifted how they position themselves", res)
 
     @patch("app.pipeline.synthesizer.client.chat.completions.create", new_callable=AsyncMock)
     async def test_fallback_unknown_change_type_default_branch(self, mock_create):
         mock_create.side_effect = Exception("boom")
         res = await synthesize_brief("Acme", "u", "b", "a", "something_else")
-        self.assertIn("updated their homepage copy", res)
+        self.assertIn("minor copy or layout updates", res)
 
 
 class TestHeuristicSynthesize(unittest.TestCase):
     def test_minor_copy_maps_to_default(self):
         res = _synthesize_heuristically("Acme", "minor_copy")
-        self.assertIn("updated their homepage copy", res)
+        self.assertIn("minor copy or layout updates", res)
 
     def test_each_branch_distinct(self):
         pricing = _synthesize_heuristically("N", "pricing_change")
