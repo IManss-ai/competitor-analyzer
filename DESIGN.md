@@ -26,12 +26,12 @@ All tokens are oklch. The `@theme inline` block emits them as Tailwind `--color-
 
 | Token | Value | Approx | Usage |
 |-------|-------|--------|-------|
-| `--background` | `oklch(1 0 0)` | white | Page background |
+| `--background` | `oklch(0.99 0.003 285)` | soft lavender-white | Page background |
 | `--foreground` | `oklch(0.141 0.005 285.823)` | zinc-950 | Primary text |
 | `--card` | `oklch(1 0 0)` | white | Card surface |
 | `--card-foreground` | `oklch(0.141 0.005 285.823)` | zinc-950 | Card text |
 | `--popover` | `oklch(1 0 0)` | white | Popover/dropdown surface |
-| `--primary` | `oklch(0.546 0.245 262.881)` | blue-600 | **Single accent — links, active, focus, signals, in-app cta** |
+| `--primary` | `oklch(0.57 0.20 272)` | custom blue (hue 272) | **Single accent — links, active, focus, signals, in-app cta** |
 | `--primary-foreground` | `oklch(0.985 0 0)` | near-white | Text on primary fills |
 | `--secondary` | `oklch(0.967 0.001 286.375)` | zinc-100 | Secondary surfaces |
 | `--muted` | `oklch(0.967 0.001 286.375)` | zinc-100 | Muted fills, subtle backgrounds |
@@ -40,7 +40,7 @@ All tokens are oklch. The `@theme inline` block emits them as Tailwind `--color-
 | `--destructive` | `oklch(0.577 0.245 27.325)` | red | Error / destructive |
 | `--border` | `oklch(0.92 0.004 286.32)` | zinc-200 | Default borders |
 | `--input` | `oklch(0.871 0.006 286.286)` | zinc-300 | Input borders |
-| `--ring` | `oklch(0.546 0.245 262.881)` | = primary | Focus ring |
+| `--ring` | `oklch(0.57 0.20 272)` | = primary | Focus ring |
 
 ### Dark (`.dark`)
 
@@ -48,14 +48,14 @@ All tokens are oklch. The `@theme inline` block emits them as Tailwind `--color-
 |-------|-------|--------|-------|
 | `--background` | `oklch(0.141 0.005 285.823)` | zinc-950 | Page background |
 | `--foreground` | `oklch(0.985 0 0)` | near-white | Primary text |
-| `--card` | `oklch(0.21 0.006 285.885)` | zinc-900 | Card surface |
-| `--primary` | `oklch(0.623 0.214 259.815)` | blue-500 | **Single accent — brighter for dark bg** |
+| `--card` | `oklch(0.185 0.008 286)` | zinc-900 | Card surface |
+| `--primary` | `oklch(0.62 0.19 270)` | custom blue (hue 270) | **Single accent — brighter for dark bg** |
 | `--secondary` | `oklch(0.274 0.006 286.033)` | zinc-800 | Secondary surfaces |
 | `--muted` | `oklch(0.274 0.006 286.033)` | zinc-800 | Muted fills |
 | `--muted-foreground` | `oklch(0.705 0.015 286.067)` | zinc-400 | Placeholder, secondary text |
 | `--border` | `oklch(1 0 0 / 10%)` | white/10% | Default borders |
 | `--input` | `oklch(1 0 0 / 15%)` | white/15% | Input borders |
-| `--ring` | `oklch(0.623 0.214 259.815)` | = primary | Focus ring |
+| `--ring` | `oklch(0.62 0.19 270)` | = primary | Focus ring |
 
 `--chart-1` through `--chart-5` are also defined in both themes; charts read them via `useChartPalette()` (`lib/chart-theme.ts`) — blue/zinc palette. **Never hardcode a chart stroke/fill.**
 
@@ -80,7 +80,7 @@ Loaded via the `geist` npm package; fed into CSS variables:
 | `--font-geist-sans` → `--font-sans` | Geist Sans | UI text, display, nav, labels, paragraphs |
 | `--font-geist-mono` → `--font-mono` | Geist Mono | Code, numerals, timestamps, mono badges |
 
-`--font-archivo` is kept as a legacy alias → `var(--font-geist-sans)` so old markup that referenced it continues to render Geist during migration.
+The `--font-archivo` legacy alias was **removed in P4** (2026-07-02) — nothing references it; all type flows through `--font-sans` / `--font-mono` / `--font-display`.
 
 **Replaces** Space Grotesk + IBM Plex Mono from v4 "Signal Desk."
 
@@ -88,14 +88,14 @@ Loaded via the `geist` npm package; fed into CSS variables:
 
 ## Radius
 
-Base: `--radius: 0.5rem`. The scale derives from it:
+Base: `--radius: 0.75rem` ("Premium Blue" pass — was 0.5rem). The scale derives from it:
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--radius-sm` | `calc(var(--radius) * 0.6)` ≈ 0.3rem | Badges / tags |
-| `--radius-md` | `calc(var(--radius) * 0.8)` ≈ 0.4rem | Buttons / inputs (`rounded-lg`) |
-| `--radius-lg` | `var(--radius)` = 0.5rem | Standard elements |
-| `--radius-xl` | `calc(var(--radius) * 1.4)` ≈ 0.7rem | shadcn `<Card>` (`rounded-xl`) |
+| `--radius-sm` | `calc(var(--radius) * 0.6)` ≈ 0.45rem | Badges / tags |
+| `--radius-md` | `calc(var(--radius) * 0.8)` ≈ 0.6rem | Buttons / inputs (`rounded-lg`) |
+| `--radius-lg` | `var(--radius)` = 0.75rem | Standard elements |
+| `--radius-xl` | `calc(var(--radius) * 1.4)` ≈ 1.05rem | shadcn `<Card>` (`rounded-xl`) |
 | `--radius-pill` | `9999px` | Pills / avatars |
 
 shadcn `<Card>` uses `rounded-xl` by design — this is intentional, not a deviation.
@@ -125,12 +125,12 @@ All gaps/padding/margins use this scale. No arbitrary values.
 
 | Token | Value |
 |-------|-------|
-| `--shadow-card` | `none` |
-| `--shadow-card-hover` | `none` |
+| `--shadow-card` | subtle layered shadow — light: whisper-soft; dark: inset top-light + deep drop (see globals.css) |
+| `--shadow-card-hover` | slightly stronger variant of `--shadow-card` |
 | `--shadow-elevated` | light: `0 8px 24px rgba(0,0,0,0.10)` / dark: `0 8px 32px rgba(0,0,0,0.6)` |
 | `--shadow-modal` | light: `0 24px 60px rgba(0,0,0,0.18)` / dark: `0 24px 64px rgba(0,0,0,0.7)` |
 
-Depth is carried by zinc surface steps + hairline borders. Shadows only for floating overlays (dropdowns, modals, toasts).
+Depth is carried by zinc surface steps + hairline borders, with a whisper of card shadow (Premium Blue pass). Stronger elevation only for floating overlays (dropdowns, modals, toasts).
 
 ---
 
@@ -180,20 +180,11 @@ Semantic, theme-aware, defined in globals.css with `.dark` overrides. Use `chang
 
 ---
 
-## Legacy Alias Layer — transitional, retire in P4
+## Legacy Alias Layer — RETIRED (P4 complete, 2026-07-02)
 
-`globals.css` intentionally keeps a legacy-token alias block that maps old Signal Desk names to the new shadcn tokens:
+The transitional block that aliased old Signal Desk token names (`--surface-*`, `--text-*`, `--accent-*`, `--font-archivo`) to shadcn tokens has been **removed from `globals.css`**, and every usage was migrated to shadcn names — a mechanical 1:1 swap, except the two derived aliases (`--accent-subtle`, `--accent-glow`) which were inlined as `color-mix(in oklch, var(--primary) 12%|28%, transparent)`.
 
-```css
---surface-base:   var(--background);
---text-primary:   var(--foreground);
---accent-primary: var(--primary);
-/* … ~19 mappings total */
-```
-
-This allows approximately 19 not-yet-migrated files (some aux pages and shared components that still use `--surface-*`, `--text-*`, `--accent-*` token names) to keep rendering correctly in the new palette without a flag day.
-
-**TODO (P4):** Migrate all remaining legacy-token usages to direct shadcn token names (`--background`, `--foreground`, `--primary`, etc.), then remove the alias block entirely. Do not add new code that uses the legacy names — use the shadcn tokens directly.
+**Do not reintroduce the legacy names.** Use shadcn tokens directly (`--background`, `--foreground`, `--primary`, …). The `.rs-*` utility classes and the `sky-*` remap remain supported and are defined on shadcn tokens.
 
 ---
 
@@ -240,6 +231,7 @@ Chart colors come from `lib/chart-theme.ts`, consumed via `useChartPalette()` (t
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-07-02 | P4 complete — legacy Signal Desk alias layer retired | All remaining files (13) migrated to shadcn token names; alias block + `--font-archivo` removed from globals.css. Doc tables reconciled to code ("Premium Blue" pass: radius 0.75rem, hue-272/270 primary, soft-lavender light bg, subtle card shadows). |
 | 2026-06-29 | Landing primary CTAs go monochrome (foreground-fill) | Faithful Linear/Vercel port + de-neon; blue stays a pure signal color. In-app `cta` variant (Upgrade/Analyze) keeps its blue gradient — marketing-vs-app boundary. |
 | 2026-06-23 | shadcn neutral-modern re-theme | Whole-app migration from v4 "Signal Desk" to shadcn/ui primitives + zinc neutrals + single blue primary; eliminates custom token sprawl, standardizes on shadcn component library. |
 | 2026-06-23 | Dark-first via `.dark` class (shadcn convention) | Replaces old `data-theme="ink|paper"` attribute. Pre-paint script in `layout.tsx` applies `.dark` on first visit; `localStorage 'theme'` persists choice. |

@@ -83,7 +83,7 @@ class ApprovedAction(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     change_event_id = Column(UUID(as_uuid=True), ForeignKey("change_events.id"), nullable=False)
     action_type = Column(String, nullable=False)  # retention_email/pricing_copy/feature_response/social_draft
-    original_draft = Column(Text, nullable=False)  # GPT-4o output
+    original_draft = Column(Text, nullable=False)  # LLM draft output
     edited_text = Column(Text, nullable=True)      # founder's edited version (null = approved as-is)
     approved_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())

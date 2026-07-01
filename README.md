@@ -56,8 +56,8 @@ A single repository with a FastAPI backend at the root and a Next.js app in `fro
                         ┌─────────────────────────────┼─────────────────────────────┐
                         ▼                              ▼                              ▼
               ┌──────────────────┐         ┌──────────────────┐          ┌──────────────────────┐
-              │  Postgres/SQLite │         │ Scraper · OpenAI·│          │  Polar.sh (billing)  │
-              │  + Alembic       │         │  Anthropic       │          │                      │
+              │  Postgres/SQLite │         │ Scraper sidecar ·│          │  Polar.sh (billing)  │
+              │  + Alembic       │         │  DeepSeek        │          │                      │
               └──────────────────┘         └──────────────────┘          └──────────────────────┘
 ```
 
@@ -67,11 +67,11 @@ A single repository with a FastAPI backend at the root and a Next.js app in `fro
 |-------|------|
 | **Fetcher** | Pulls competitor page content via the Node Playwright/llm-scraper sidecar. |
 | **Differ** | Character-level diff, filtering noise below a net-change threshold. |
-| **Classifier** | `gpt-4o-mini` categorizes the change type. |
+| **Classifier** | DeepSeek (`deepseek-v4-flash`) categorizes the change type. |
 | **Synthesizer** | Builds weekly email briefs for subscribers. |
-| **Action generator** | Drafts response playbooks (`gpt-4o`) for the approval queue. |
+| **Action generator** | Drafts response playbooks (`deepseek-v4-flash`) for the approval queue. |
 
-The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7 days of changes, complaints, and signals and calls Claude (`claude-3-5-sonnet-20241022`, with prompt caching) to produce the structured 4-quadrant response.
+The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7 days of changes, complaints, and signals and calls DeepSeek (`deepseek-v4-flash`, thinking mode disabled) to produce the structured 4-quadrant response.
 
 ---
 
@@ -79,7 +79,7 @@ The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7
 
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy, Alembic, APScheduler, Uvicorn. SQLite for dev, PostgreSQL in production.
 - **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion (`motion/react`), Recharts.
-- **AI models:** `gpt-4o-mini` (classification & briefs), `gpt-4o` (playbook drafts), `claude-3-5-sonnet-20241022` (Battle Cards).
+- **AI models:** DeepSeek `deepseek-v4-flash` for everything (classification, briefs, playbook drafts, Battle Cards) via the OpenAI-compatible API — `app/llm.py` is the single source of truth, with deterministic heuristic fallbacks when no key is set.
 - **Services:** Node Playwright/llm-scraper sidecar (page fetch), Polar.sh (billing), Resend (transactional email).
 
 ---
