@@ -638,11 +638,16 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
         for s in snapshots
     ]
     
-    # Latest battle card, cache-first: a detail page view only triggers a paid
-    # model call when no fresh AI card exists for this competitor yet.
+    # Latest battle card, cache-first. A paid model call only fires for a
+    # full-access user with no fresh AI card. Read-only (trial-used, non-paying)
+    # users get cache-or-heuristic and NEVER a paid call — consistent with the
+    # /battlecards/generate 402, but the detail page still renders.
     from app.routes.battlecard import get_or_generate_battlecard
+    from app.access import is_read_only
     try:
-        battlecard_data = get_or_generate_battlecard(comp, db)
+        viewer = db.get(User, user_uuid)
+        allow_ai = not (viewer is not None and is_read_only(viewer))
+        battlecard_data = get_or_generate_battlecard(comp, db, allow_ai=allow_ai)
     except Exception:
         battlecard_data = None
 

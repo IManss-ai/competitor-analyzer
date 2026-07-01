@@ -739,16 +739,29 @@ def get_or_generate_battlecard(
     db: Session,
     force: bool = False,
     business_profile: dict | None = None,
+    allow_ai: bool = True,
 ) -> dict:
     """Cache-first battle card access for authenticated owner paths. Generates
     (one paid call) only when there is no fresh AI card or force=True.
 
     `business_profile` (the owner's onboarded business) rides into generation so
     the card ALSO carries a comparative `head_to_head` block. It only influences
-    a fresh generation — a fresh cached card is served as-is."""
+    a fresh generation — a fresh cached card is served as-is.
+
+    `allow_ai=False` is the read-only / paywalled path (e.g. a locked user opening
+    a competitor detail page): serve any existing cached card — even if stale —
+    else a free heuristic card, but NEVER a paid model call, and never cache the
+    heuristic (so the owner's first real generation isn't masked). This mirrors
+    the `/generate` 402 without breaking the page render."""
     cached = _load_cache(comp.id, db)
     if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
         return json.loads(cached.payload)
+
+    if not allow_ai:
+        if cached:
+            return json.loads(cached.payload)
+        payload, _ = _generate(comp, db, allow_ai=False, business_profile=business_profile)
+        return payload
 
     payload, ai_generated = _generate(comp, db, allow_ai=True, business_profile=business_profile)
     _store_cache(comp.id, payload, ai_generated, db)
