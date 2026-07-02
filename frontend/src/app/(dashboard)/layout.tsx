@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { redirect, unstable_rethrow } from 'next/navigation';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { SessionUser } from '@/lib/types';
@@ -27,7 +27,8 @@ export default async function DashboardLayout({
     const [dashboard, settings] = await Promise.all([api.getDashboard(), api.getSettings()]);
     pendingCount = dashboard.pending_count;
     accessLevel = settings.access_level ?? 'full';
-  } catch {
+  } catch (e) {
+    unstable_rethrow(e); // never swallow NEXT_REDIRECT (e.g. the 401 → login redirect)
     // Non-fatal: default to full so a settings hiccup never locks a user out.
   }
 

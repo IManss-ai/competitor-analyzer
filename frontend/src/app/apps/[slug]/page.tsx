@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { cache } from 'react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    alternates: { canonical: `/apps/${slug}` },
     openGraph: { title, description, siteName: 'Rivalscope', images: ['/og-image.png'] },
   };
 }
@@ -55,16 +57,7 @@ export default async function AppProfilePage({ params }: PageProps) {
   const { slug } = await params;
   const app = await fetchApp(slug);
 
-  if (!app) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
-        <div className="rs-card p-8 max-w-md text-center space-y-3">
-          <h1 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>App not found</h1>
-          <Link href="/discover" className="rs-btn-primary text-[13px]">Browse the database</Link>
-        </div>
-      </div>
-    );
-  }
+  if (!app) notFound(); // real 404 (not a soft-404 200) so crawlers drop dead slugs
 
   return (
     <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>

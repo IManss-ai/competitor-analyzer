@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { redirect, unstable_rethrow } from 'next/navigation';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { SessionUser } from '@/lib/types';
@@ -36,7 +36,8 @@ export default async function BillingCheckoutPage({
     const api = createApiClient(session.user.user_id);
     const { url } = await api.getCheckoutUrl(plan);
     if (url) checkoutUrl = url;
-  } catch {
+  } catch (e) {
+    unstable_rethrow(e); // never swallow NEXT_REDIRECT (e.g. the 401 → login redirect)
     checkoutUrl = null;
   }
 

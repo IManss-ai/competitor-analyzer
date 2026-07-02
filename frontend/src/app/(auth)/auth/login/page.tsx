@@ -23,6 +23,14 @@ const LEDGER_ROWS = [
   { time: '08:02', tag: 'POSITION', tagClass: 'badge-repositioning', text: 'Hero copy shifted from SMB to enterprise language' },
 ];
 
+// Friendly copy for the ?error= codes the auth callback/verify routes redirect
+// here with. Session tokens expire after 5 minutes, so invalid_token usually
+// means a stale sign-in handoff — recovery is simply signing in again.
+const URL_ERROR_COPY: Record<string, string> = {
+  missing_token: 'That sign-in link looks incomplete. Sign in with your email and password below.',
+  invalid_token: 'Your sign-in link expired or was already used. Please sign in again below.',
+};
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,8 +42,17 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const p = new URLSearchParams(window.location.search).get('plan');
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get('plan');
     if (p === 'saas' || p === 'local') setPlan(p);
+    const errCode = params.get('error');
+    if (errCode) {
+      setError(URL_ERROR_COPY[errCode] ?? 'Something went wrong signing you in. Please try again.');
+      // Strip the param so refresh/back/shared URLs don't re-show a stale error.
+      params.delete('error');
+      const qs = params.toString();
+      window.history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+    }
   }, []);
 
   const callbackBase = plan

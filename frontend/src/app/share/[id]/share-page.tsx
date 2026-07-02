@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMounted } from '@/lib/use-mounted';
 import { motion } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-react';
+import { battleCardItemText } from '@/components/battle-card-content';
 
 interface BattleCardData {
   title: string;
@@ -126,7 +127,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             <ul className="list-disc ml-4 space-y-2">
               {card.weaknesses.map((bullet, i) => (
                 <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {bullet}
+                  {battleCardItemText(bullet)}
                 </li>
               ))}
             </ul>
@@ -149,7 +150,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             <ol className="space-y-2 list-decimal ml-4">
               {card.talking_points.map((point, i) => (
                 <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {point}
+                  {battleCardItemText(point)}
                 </li>
               ))}
             </ol>
@@ -172,7 +173,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             <ul className="list-disc ml-4 space-y-2">
               {card.win_conditions.map((bullet, i) => (
                 <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {bullet}
+                  {battleCardItemText(bullet)}
                 </li>
               ))}
             </ul>

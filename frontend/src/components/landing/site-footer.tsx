@@ -10,6 +10,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: 'How it works', href: '#how-it-works' },
       { label: 'Product', href: '#product' },
       { label: 'Pricing', href: '#pricing' },
+      { label: 'App database', href: '/apps' },
     ],
   },
   {

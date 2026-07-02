@@ -8,6 +8,7 @@ import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
 import HeadToHead from '@/components/head-to-head';
+import { battleCardItemText } from '@/components/battle-card-content';
 import { useChartPalette } from '@/lib/chart-theme';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -195,17 +196,17 @@ ${card.what_changed && card.what_changed.length > 0
 
 THEIR WEAKNESSES:
 ${card.weaknesses && card.weaknesses.length > 0
-  ? card.weaknesses.map((w: string) => `- ${w}`).join('\n')
+  ? card.weaknesses.map((w: unknown) => `- ${battleCardItemText(w)}`).join('\n')
   : 'None identified.'}
 
 TALKING POINTS:
 ${card.talking_points && card.talking_points.length > 0
-  ? card.talking_points.map((tp: string, i: number) => `${i + 1}. ${tp}`).join('\n')
+  ? card.talking_points.map((tp: unknown, i: number) => `${i + 1}. ${battleCardItemText(tp)}`).join('\n')
   : 'None generated.'}
 
 WIN CONDITIONS:
 ${card.win_conditions && card.win_conditions.length > 0
-  ? card.win_conditions.map((wc: string) => `- ${wc}`).join('\n')
+  ? card.win_conditions.map((wc: unknown) => `- ${battleCardItemText(wc)}`).join('\n')
   : 'None generated.'}`;
 
     navigator.clipboard.writeText(text);
@@ -607,8 +608,8 @@ ${card.win_conditions && card.win_conditions.length > 0
                             <div className="p-4 text-xs space-y-2 bg-card">
                               {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.weaknesses.map((w: string, idx: number) => (
-                                    <li key={idx}>{w}</li>
+                                  {detail.battlecard.weaknesses.map((w: unknown, idx: number) => (
+                                    <li key={idx}>{battleCardItemText(w)}</li>
                                   ))}
                                 </ul>
                               ) : (
@@ -644,8 +645,8 @@ ${card.win_conditions && card.win_conditions.length > 0
                             <div className="p-4 text-xs space-y-2 bg-card">
                               {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
                                 <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.talking_points.map((tp: string, idx: number) => (
-                                    <li key={idx}>{tp}</li>
+                                  {detail.battlecard.talking_points.map((tp: unknown, idx: number) => (
+                                    <li key={idx}>{battleCardItemText(tp)}</li>
                                   ))}
                                 </ol>
                               ) : (
@@ -681,8 +682,8 @@ ${card.win_conditions && card.win_conditions.length > 0
                             <div className="p-4 text-xs space-y-2 bg-card">
                               {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.win_conditions.map((wc: string, idx: number) => (
-                                    <li key={idx}>{wc}</li>
+                                  {detail.battlecard.win_conditions.map((wc: unknown, idx: number) => (
+                                    <li key={idx}>{battleCardItemText(wc)}</li>
                                   ))}
                                 </ul>
                               ) : (

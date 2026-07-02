@@ -136,7 +136,7 @@ export default function BeatPage() {
           <p className="text-xs leading-relaxed max-w-md mx-auto" style={{ color: 'var(--muted-foreground)' }}>
             Want this on autopilot? The full Rivalscope platform watches your competitors 24/7 and fires a plan
             whenever they make a move. <Link href="/" className="underline">See the platform</Link> or{' '}
-            <Link href="/discover" className="underline">browse the app database</Link>.
+            <Link href="/apps" className="underline">browse the app database</Link>.
           </p>
         </section>
       </div>
