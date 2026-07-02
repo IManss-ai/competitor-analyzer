@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Request, Depends, BackgroundTasks, HTTPException
+from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.access import is_read_only
-from app.db import get_session, SessionLocal
-from app.models import User
+from app.access import require_write_access_session
+from app.db import SessionLocal
 from app.pipeline.scanner import scan_user_competitors
-from app.session import require_current_user
 import uuid
 
 router = APIRouter(prefix="/scan")
@@ -30,22 +28,12 @@ async def _run_scan_background(user_id: str):
 async def trigger_scan(
     request: Request,
     background_tasks: BackgroundTasks,
-    db=Depends(get_session),
-    user_id=Depends(require_current_user)
+    user_id=Depends(require_write_access_session)
 ):
     """
     Trigger an immediate scan for the current user.
     Runs in background — returns immediately with a "Scan started" message.
     """
-    # Paywall: a locked (free-test-used, non-paying) user must not trigger the
-    # paid scrape+classify pipeline. Session-cookie route, so require_write_access
-    # (Header-based) can't be dropped in — check inline instead.
-    user = db.get(User, uuid.UUID(user_id) if isinstance(user_id, str) else user_id)
-    if user is not None and is_read_only(user):
-        raise HTTPException(
-            status_code=402,
-            detail="Your free test is done — upgrade to Pro to continue.",
-        )
     background_tasks.add_task(_run_scan_background, user_id)
     return HTMLResponse(
         '<span class="text-xs text-zinc-400 font-mono animate-fade-in">Scanning…</span>'

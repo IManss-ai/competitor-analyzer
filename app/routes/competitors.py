@@ -5,6 +5,7 @@ from sqlalchemy import select
 from app.db import get_session
 from app.models import Competitor, User
 from app.session import require_current_user
+from app.access import require_write_access_session
 import uuid
 
 router = APIRouter(prefix="/competitors")
@@ -32,7 +33,7 @@ async def add_competitor(
     url: str = Form(...),
     name: str = Form(""),
     db=Depends(get_session),
-    user_id=Depends(require_current_user)
+    user_id=Depends(require_write_access_session)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
     existing = db.execute(

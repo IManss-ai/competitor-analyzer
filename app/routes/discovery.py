@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.db import get_session
 from app.models import App, AppPricing, AppTech, ChangeEvent, Competitor, ReviewSnapshot
 from app.discovery.search import search_apps
+from app.access import require_write_access
 from app.routes.api_v1 import require_api_user
 from app.serialization import iso_utc
 
@@ -110,7 +111,7 @@ def api_app_profile(slug: str, db: Session = Depends(get_session)):
 
 
 @router.post("/apps/{slug}/track")
-def api_track_app(slug: str, db: Session = Depends(get_session), user_id: str = Depends(require_api_user)):
+def api_track_app(slug: str, db: Session = Depends(get_session), user_id: str = Depends(require_write_access)):
     app_row = db.execute(select(App).where(App.slug == slug)).scalar_one_or_none()
     if not app_row:
         raise HTTPException(status_code=404, detail="App not found")

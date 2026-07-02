@@ -455,7 +455,7 @@ def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depe
 @router.post("/competitors/{competitor_id}/probe-careers")
 async def api_probe_careers(
     competitor_id: str,
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
     db: Session = Depends(get_session),
 ):
     """Walk common careers paths against the competitor homepage; save and return the first match."""
