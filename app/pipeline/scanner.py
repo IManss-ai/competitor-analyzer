@@ -9,7 +9,10 @@ from app.pipeline.action_generator import generate_actions_for_change
 from sqlalchemy import select
 
 def get_week_label(dt: datetime) -> str:
-    return dt.strftime("%Y-W%V")
+    # ISO year, not calendar year (%Y): around New Year they differ, and every
+    # reader builds comparison labels from isocalendar() (trends, api_v1).
+    iso = dt.isocalendar()
+    return f"{iso.year}-W{iso.week:02d}"
 
 
 def _make_initial_event(db, competitor, snapshot, net_char_delta: int, brief: str):

@@ -75,7 +75,7 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
         res = await scan_competitor(str(self.competitor.id), self.db)
         self.assertFalse(res.get("change_detected"))
         
-        # Third scan (meaningful change, length + 110 chars)
+        # Third scan (meaningful: the single 250-char token is rewritten to 360 chars)
         mock_fetch.return_value = ("A" * 360, None)
         mock_classify.return_value = "pricing_change"
         mock_synthesize.return_value = "Competitor updated pricing terms."
@@ -86,12 +86,12 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
         
         res = await scan_competitor(str(self.competitor.id), self.db)
         self.assertTrue(res.get("change_detected"))
-        self.assertEqual(res.get("net_delta"), 110)
+        self.assertEqual(res.get("net_delta"), 360)
         
         # Check change event is created (excluding the first-scan initial_scan event)
         events = self.db.query(ChangeEvent).filter(ChangeEvent.change_type != "initial_scan").all()
         self.assertEqual(len(events), 1)
-        self.assertEqual(events[0].net_char_delta, 110)
+        self.assertEqual(events[0].net_char_delta, 360)
         self.assertEqual(events[0].change_type, "pricing_change")
         self.assertEqual(events[0].brief_text, "Competitor updated pricing terms.")
         

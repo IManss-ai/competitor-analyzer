@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.db import Base
 from app.models import User, Competitor, Snapshot, ChangeEvent, ApprovedAction
-from app.pipeline.scanner import scan_competitor, scan_user_competitors
+from app.pipeline.scanner import scan_competitor, scan_user_competitors, get_week_label
 
 
 class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
@@ -167,15 +167,16 @@ class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
         self, mock_fetch, mock_classify, mock_profile
     ):
         mock_profile.return_value = "Now tracking Competitor 1."
-        mock_fetch.return_value = ("A" * 250, None)
+        base = "our platform provides workflow builders and activity feeds for growing teams " * 4
+        mock_fetch.return_value = (base, None)
         await scan_competitor(str(self.competitor.id), self.db)
 
-        # +50 chars is under the 100-char threshold -> not meaningful.
-        mock_fetch.return_value = ("A" * 300, None)
+        # 19 chars edited is under the 100-char threshold -> not meaningful.
+        mock_fetch.return_value = (base.strip() + " now with audit logs", None)
         res = await scan_competitor(str(self.competitor.id), self.db)
 
         self.assertFalse(res.get("change_detected"))
-        self.assertEqual(res.get("net_delta"), 50)
+        self.assertEqual(res.get("net_delta"), 19)
         mock_classify.assert_not_called()
         # Only the original initial_scan event remains.
         self.assertEqual(self.db.query(ChangeEvent).count(), 1)
@@ -217,6 +218,17 @@ class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
         results = await scan_user_competitors(self.user.id, self.db)
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["competitor_id"], str(self.competitor.id))
+
+    # --- week labels must use the ISO year, not the calendar year ---
+
+    def test_get_week_label_uses_iso_year_at_year_boundary(self):
+        from datetime import datetime
+        # Jan 1 2027 belongs to ISO week 2026-W53; '%Y-W%V' mislabels it 2027-W53
+        # and no isocalendar-based reader would ever match it.
+        self.assertEqual(get_week_label(datetime(2027, 1, 1)), "2026-W53")
+        self.assertEqual(get_week_label(datetime(2026, 12, 29)), "2026-W53")
+        # Mid-year labels are unchanged.
+        self.assertEqual(get_week_label(datetime(2026, 7, 1)), "2026-W27")
 
 
 if __name__ == "__main__":

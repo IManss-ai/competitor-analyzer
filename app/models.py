@@ -64,7 +64,7 @@ class ChangeEvent(Base):
     detected_at = Column(DateTime, default=func.now())
     snapshot_before_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id"), nullable=False)
     snapshot_after_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id"), nullable=False)
-    net_char_delta = Column(Integer, nullable=False)  # abs(after - before)
+    net_char_delta = Column(Integer, nullable=False)  # chars changed (edit magnitude), always >= 0
     change_type = Column(String, nullable=True)  # set by classifier in plan 01-02
     brief_text = Column(Text, nullable=True)      # set by synthesizer in plan 01-02
     week_label = Column(String, nullable=True)    # e.g. "2025-W23"
