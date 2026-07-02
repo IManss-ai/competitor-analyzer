@@ -1,11 +1,21 @@
 import difflib
 import re
+from collections import Counter
 
 CHANGE_THRESHOLD = 100  # chars changed (edit magnitude) on normalized main content body
 
 _WS = re.compile(r"\s+")
 _LINE_WS = re.compile(r"[ \t]+")
-_PRICE = re.compile(r"[$€£]\s?\d[\d,]*(?:\.\d+)?")
+# Three price notations (input is normalize()d, i.e. lowercase):
+#   symbol-prefix   $19  € 1,299.00  $1m
+#   symbol-postfix  9,99 €  19€   (European decimal comma allowed)
+#   code-prefix     usd 19  eur 9.99
+# Magnitude suffixes (k/m/b) are part of the token so $1m -> $1b is a change.
+_PRICE = re.compile(
+    r"[$€£]\s?\d[\d,]*(?:\.\d+)?[kmb]?"
+    r"|\d[\d.]*(?:,\d+)?\s?[$€£]"
+    r"|\b(?:usd|eur|gbp)\s?\d[\d,]*(?:[.,]\d+)?[kmb]?\b"
+)
 # Above this many words in a changed chunk, skip word-level refinement and
 # count the whole chunk coarsely — bounds SequenceMatcher on pathological
 # inputs (e.g. a single 100KB line from the direct-HTTP fallback).
@@ -48,13 +58,25 @@ def compute_net_char_delta(text_before: str, text_after: str) -> int:
     return abs(len(_normalize(text_after)) - len(_normalize(text_before)))
 
 
+def _chunk_cost(words: list[str]) -> int:
+    """Charge a run of words including one separator per word.
+
+    Using bare join-length undercounts scattered edits (each single-word
+    deletion also removes a boundary space the join never sees), which let
+    real bulk shrinkage slip under CHANGE_THRESHOLD."""
+    return sum(len(w) + 1 for w in words)
+
+
 def compute_chars_changed(text_before: str, text_after: str) -> int:
     """Edit magnitude: how many characters were actually edited between versions.
 
     Two-stage diff — lines first, then words within each changed chunk — so a
     rewrapped-but-identical word stream costs 0 while an in-place substitution
-    (e.g. '$19' -> '$29') costs its real size. The net length delta is blind
-    to same-length edits; this metric is always >= it.
+    (e.g. '$19' -> '$29') costs its real size. Lines whose content merely moved
+    position cost 0 (rotating testimonial/logo blocks are not edits). The net
+    length delta is blind to same-length edits; this metric targets the edited
+    characters themselves (±one separator per word), so pure length drift from
+    scattered deletions is counted, not just netted.
     """
     a_norm = _normalize(text_before)
     b_norm = _normalize(text_after)
@@ -65,31 +87,50 @@ def compute_chars_changed(text_before: str, text_after: str) -> int:
 
     a_lines = _normalize_lines(text_before)
     b_lines = _normalize_lines(text_after)
-    changed = 0
     # autojunk must stay False: with repetitive page vocab it junks popular
     # words/lines and inflates the cost to the whole page.
     line_sm = difflib.SequenceMatcher(None, a_lines, b_lines, autojunk=False)
-    for tag, a1, a2, b1, b2 in line_sm.get_opcodes():
-        if tag == "equal":
+    opcodes = [op for op in line_sm.get_opcodes() if op[0] != "equal"]
+
+    # A line deleted in one place and inserted verbatim in another is a MOVE,
+    # not an edit. SequenceMatcher never pairs a delete with a distant insert,
+    # so without this exemption every moved line is charged twice its length.
+    deleted = Counter()
+    inserted = Counter()
+    for _tag, a1, a2, b1, b2 in opcodes:
+        deleted.update(a_lines[a1:a2])
+        inserted.update(b_lines[b1:b2])
+    moved_a = deleted & inserted  # multiset of lines to exempt on each side
+    moved_b = moved_a.copy()
+
+    def _keep(line: str, budget: Counter) -> bool:
+        if budget[line] > 0:
+            budget[line] -= 1
+            return False
+        return True
+
+    changed = 0
+    for _tag, a1, a2, b1, b2 in opcodes:
+        a_kept = [ln for ln in a_lines[a1:a2] if _keep(ln, moved_a)]
+        b_kept = [ln for ln in b_lines[b1:b2] if _keep(ln, moved_b)]
+        a_words = " ".join(a_kept).split()
+        b_words = " ".join(b_kept).split()
+        if not a_words and not b_words:
             continue
-        a_words = " ".join(a_lines[a1:a2]).split()
-        b_words = " ".join(b_lines[b1:b2]).split()
-        a_chunk = " ".join(a_words)
-        b_chunk = " ".join(b_words)
         if (
             not a_words
             or not b_words
             or max(len(a_words), len(b_words)) > _REFINE_CAP_WORDS
         ):
-            changed += max(len(a_chunk), len(b_chunk))
+            changed += max(_chunk_cost(a_words), _chunk_cost(b_words))
             continue
         word_sm = difflib.SequenceMatcher(None, a_words, b_words, autojunk=False)
         for wtag, x1, x2, y1, y2 in word_sm.get_opcodes():
             if wtag == "equal":
                 continue
             changed += max(
-                len(" ".join(a_words[x1:x2])),
-                len(" ".join(b_words[y1:y2])),
+                _chunk_cost(a_words[x1:x2]),
+                _chunk_cost(b_words[y1:y2]),
             )
     return changed
 

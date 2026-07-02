@@ -171,12 +171,13 @@ class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
         mock_fetch.return_value = (base, None)
         await scan_competitor(str(self.competitor.id), self.db)
 
-        # 19 chars edited is under the 100-char threshold -> not meaningful.
+        # 20 chars edited (incl. word separators) is under the 100-char
+        # threshold -> not meaningful.
         mock_fetch.return_value = (base.strip() + " now with audit logs", None)
         res = await scan_competitor(str(self.competitor.id), self.db)
 
         self.assertFalse(res.get("change_detected"))
-        self.assertEqual(res.get("net_delta"), 19)
+        self.assertEqual(res.get("net_delta"), 20)
         mock_classify.assert_not_called()
         # Only the original initial_scan event remains.
         self.assertEqual(self.db.query(ChangeEvent).count(), 1)
