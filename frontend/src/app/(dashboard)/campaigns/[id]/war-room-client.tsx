@@ -283,7 +283,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                     <span className="text-xs w-32 truncate font-mono text-muted-foreground">{label}</span>
                     <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
                       <div
-                        className={`h-2.5 rounded-full transition-all ${accent ? 'bg-primary' : 'bg-muted-foreground/40'}`}
+                        className={`h-2.5 rounded-full transition-[width] duration-500 ease-out ${accent ? 'bg-primary' : 'bg-muted-foreground/40'}`}
                         style={{ width: `${share * 10}%` }}
                       />
                     </div>
