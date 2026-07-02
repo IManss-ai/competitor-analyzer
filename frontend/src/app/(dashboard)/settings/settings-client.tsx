@@ -28,6 +28,7 @@ interface SettingsClientProps {
   initialSettings: SettingsData;
   initialCompetitors: Competitor[];
   userId: string;
+  apiToken?: string;
   checkoutUrl: string;
   portalUrl: string;
   initialTab?: SettingsTab;
@@ -49,11 +50,12 @@ export default function SettingsClient({
   initialSettings,
   initialCompetitors,
   userId,
+  apiToken,
   checkoutUrl,
   portalUrl,
   initialTab,
 }: SettingsClientProps) {
-  const api = createApiClient(userId);
+  const api = createApiClient(userId, apiToken);
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab ?? 'profile');
 
   // Form states

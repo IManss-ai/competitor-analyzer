@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
   session.user = {
     user_id: userData.user_id,
     email: userData.email,
+    api_token: userData.api_token,
   };
   await session.save();
 

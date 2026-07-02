@@ -11,6 +11,7 @@ import HiringSignalCard from '@/components/hiring-signal-card';
 import HeadToHead from '@/components/head-to-head';
 import { battleCardItemText } from '@/components/battle-card-content';
 import { useChartPalette } from '@/lib/chart-theme';
+import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -34,6 +35,7 @@ interface CompetitorDetailClientProps {
 }
 
 export default function CompetitorDetailClient({ userId, initialDetail }: CompetitorDetailClientProps) {
+  const apiToken = useApiToken();
   const [detail, setDetail] = useState(initialDetail);
   const [scanning, setScanning] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
@@ -79,7 +81,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`
+          Authorization: `Bearer ${apiToken ?? userId}`
         }
       });
       if (res.status === 402) {
@@ -91,7 +93,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
       if (res.ok) {
         // Reload detail data
         const reloadRes = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}/detail`, {
-          headers: { Authorization: `Bearer ${userId}` }
+          headers: { Authorization: `Bearer ${apiToken ?? userId}` }
         });
         if (reloadRes.ok) {
           const freshData = await reloadRes.json();
@@ -109,7 +111,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     setRegenerating(true);
     try {
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}?force=true`, {
-        headers: { Authorization: `Bearer ${userId}` }
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` }
       });
       if (res.status === 402) {
         // Free test consumed → re-run the server layout so the paywall surfaces
@@ -135,7 +137,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`
+          Authorization: `Bearer ${apiToken ?? userId}`
         },
         body: JSON.stringify({ name: editName, url: editUrl })
       });

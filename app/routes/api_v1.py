@@ -3,7 +3,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from app.db import get_session
 from app.models import User, Competitor, ChangeEvent, Snapshot, ApprovedAction, ReviewSnapshot, Review
-from app.auth import generate_session_token, verify_session_token, get_or_create_user, generate_magic_link_token, send_magic_link_email
+from app.auth import generate_session_token, verify_session_token, get_or_create_user, generate_magic_link_token, send_magic_link_email, generate_api_token, resolve_bearer_user_id
 import json as _json
 from app.config import RESEND_API_KEY, FROM_EMAIL, APP_BASE_URL
 from datetime import datetime, timezone, timedelta, date
@@ -26,12 +26,10 @@ from app.access import require_write_access, access_level
 def require_api_user(authorization: str = Header(default=None)) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Not authenticated")
-    user_id = authorization.split(" ", 1)[1]
-    try:
-        uuid.UUID(user_id)
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid user ID")
-    return user_id
+    user_id = resolve_bearer_user_id(authorization.split(" ", 1)[1])
+    if user_id:
+        return user_id
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 
 # ── Auth endpoints ───────────────────────────────────────────────────────────
@@ -106,6 +104,9 @@ def api_exchange(payload: dict):
     return {
         "user_id": data["user_id"],
         "email": data["email"],
+        # Signed, long-lived API bearer. The frontend stores this in the iron
+        # session and sends it as `Authorization: Bearer <api_token>`.
+        "api_token": generate_api_token(data["user_id"]),
     }
 
 

@@ -17,7 +17,7 @@ export default async function CompetitorDetailPage({ params }: PageProps) {
   const { id } = await params;
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
-  const api = createApiClient(session.user!.user_id);
+  const api = createApiClient(session.user!.user_id, session.user!.api_token);
   const detail = await api.getCompetitorDetail(id);
 
   return (

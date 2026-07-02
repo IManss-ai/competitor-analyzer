@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { isAbortError } from '@/lib/fetch-utils';
+import { useApiToken } from '@/lib/use-api-token';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -190,6 +191,7 @@ function SidebarNav({
 }
 
 export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
+  const apiToken = useApiToken();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -206,7 +208,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
       try {
         const res = await fetch(`${apiUrl}/api/v1/settings`, {
           headers: {
-            Authorization: `Bearer ${userId}`,
+            Authorization: `Bearer ${apiToken ?? userId}`,
           },
           signal: controller.signal,
         });
@@ -254,7 +256,7 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`,
+          Authorization: `Bearer ${apiToken ?? userId}`,
         },
       });
       if (!res.ok) throw new Error(`Scan request failed (${res.status})`);

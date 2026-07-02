@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useApiToken } from '@/lib/use-api-token';
 
 /**
  * Hard-lock paywall shown over the app shell when the user's access_level is
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button';
 export default function PaywallOverlay({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const apiToken = useApiToken();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   const upgrade = async () => {
@@ -19,7 +21,7 @@ export default function PaywallOverlay({ userId }: { userId: string }) {
     setError('');
     try {
       const res = await fetch(`${apiUrl}/api/v1/billing/checkout-url?plan=saas`, {
-        headers: { Authorization: `Bearer ${userId}` },
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` },
       });
       if (!res.ok) throw new Error('checkout unavailable');
       const { url } = await res.json();

@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
 
 export default function ScanNowButton({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const apiToken = useApiToken();
   const router = useRouter();
 
   const handleScan = async () => {
@@ -17,7 +19,7 @@ export default function ScanNowButton({ userId }: { userId: string }) {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const res = await fetch(`${apiUrl}/api/v1/scan/now`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${userId}` },
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` },
       });
       if (res.status === 402) {
         // Free test consumed → re-run the server layout so the paywall surfaces

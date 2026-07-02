@@ -153,6 +153,10 @@ export interface SessionUser {
   user_id: string;
   email: string;
   business_type?: BusinessType;
+  // Signed API bearer token (app/auth.py generate_api_token). Sent as
+  // `Authorization: Bearer <api_token>`. Absent on sessions created before the
+  // auth-hardening upgrade — the dashboard layout forces a one-time re-login.
+  api_token?: string;
 }
 
 export interface BattleCardData {

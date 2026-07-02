@@ -6,6 +6,7 @@ import ChangeBadge from '@/components/change-badge';
 import type { QueueAction } from '@/lib/types';
 import { useMounted } from '@/lib/use-mounted';
 import { motion, AnimatePresence } from 'motion/react';
+import { useApiToken } from '@/lib/use-api-token';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ interface QueueManagerProps {
 }
 
 export default function QueueManager({ initialActions, userId }: QueueManagerProps) {
+  const apiToken = useApiToken();
   const [actions, setActions] = useState(initialActions);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
@@ -35,7 +37,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${userId}`,
+          Authorization: `Bearer ${apiToken ?? userId}`,
         },
         body: JSON.stringify({ edited_text: editedText }),
       });

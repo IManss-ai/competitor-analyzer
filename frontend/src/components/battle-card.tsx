@@ -5,6 +5,7 @@ import { useMounted } from '@/lib/use-mounted';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Zap, X } from 'lucide-react';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from './battle-card-content';
+import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -22,6 +23,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
   const [error, setError] = useState('');
   const [cardData, setCardData] = useState<BattleCardData | null>(null);
   const shouldReduceMotion = useReducedMotion();
+  const apiToken = useApiToken();
   // Gate the locale-formatted timestamp so SSR matches first client render (#418).
   const mounted = useMounted();
 
@@ -36,7 +38,7 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${competitorId}`, {
         headers: {
-          Authorization: `Bearer ${userId}`,
+          Authorization: `Bearer ${apiToken ?? userId}`,
         },
       });
 

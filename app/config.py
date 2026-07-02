@@ -32,6 +32,18 @@ APP_SECRET_KEY = os.environ["APP_SECRET_KEY"]
 APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:8000")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
+# Auth hardening: the API bearer must be a signed api_token (app/auth.py
+# generate_api_token), which has a signature + expiry. A raw user_id UUID is the
+# legacy, no-signature credential (broken auth) and is REJECTED in production by
+# default. Dev/test default to accepting it so the existing suite (inline
+# `Bearer <user_id>` headers) stays green. Set ALLOW_LEGACY_UUID_BEARER=true to
+# keep an accept-both deprecation window during a coordinated frontend+backend
+# rollout; set it false once both halves are live to fully close the hole.
+_IS_PROD = bool(os.environ.get("RAILWAY_ENVIRONMENT"))
+ALLOW_LEGACY_UUID_BEARER = os.environ.get(
+    "ALLOW_LEGACY_UUID_BEARER", "false" if _IS_PROD else "true"
+).lower() in ("1", "true", "yes")
+
 # ── Paywall (usage-based one-test model) ───────────────────────────────────
 # Feature flag — ships dark. When false, access_level() always returns "full".
 PAYWALL_ENABLED = os.environ.get("PAYWALL_ENABLED", "false").lower() == "true"

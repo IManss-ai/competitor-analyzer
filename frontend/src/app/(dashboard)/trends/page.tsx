@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 export default async function TrendsPage() {
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
-  const api = createApiClient(session.user!.user_id);
+  const api = createApiClient(session.user!.user_id, session.user!.api_token);
 
   // Fetch both datasets concurrently
   const [trendsData, metricsData] = await Promise.all([
