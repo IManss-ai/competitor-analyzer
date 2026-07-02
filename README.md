@@ -128,9 +128,9 @@ uvicorn main:app --reload --port 8000
 | Variable | Purpose |
 |----------|---------|
 | `DATABASE_URL` | DB connection (`sqlite:///./test.db` for dev). |
-| `OPENAI_API_KEY` | Change classification + copy drafting. |
+| `DEEPSEEK_API_KEY` | All AI features (classification, briefs, Battle Cards) + the scraper sidecar's llm-scraper extraction. |
+| `DEEPSEEK_BASE_URL` | Optional. DeepSeek API endpoint (default `https://api.deepseek.com`). |
 | `SCRAPER_URL` | URL of the Node Playwright/llm-scraper sidecar (combined container: `http://localhost:3001`). Unset → mock content in local dev. |
-| `ANTHROPIC_API_KEY` | Battle Card generation. |
 | `POLAR_ACCESS_TOKEN` / `POLAR_WEBHOOK_SECRET` | Subscription billing. |
 | `POLAR_SAAS_PRODUCT_ID` / `POLAR_LOCAL_PRODUCT_ID` | Polar product IDs for the $49 / $19 plans. |
 | `RESEND_API_KEY` | Magic-link / transactional email. |
@@ -139,7 +139,7 @@ uvicorn main:app --reload --port 8000
 
 ### Scraper sidecar
 
-`scraper-service/` is a Node/Express + Playwright + [llm-scraper](https://www.npmjs.com/package/llm-scraper) service that fetches and cleans competitor page content. In production it runs **inside the same container as the API** (started automatically by `scripts/start.sh`) and the backend reaches it at `http://localhost:3001`. It needs `OPENAI_API_KEY` for llm-scraper.
+`scraper-service/` is a Node/Express + Playwright + [llm-scraper](https://www.npmjs.com/package/llm-scraper) service that fetches and cleans competitor page content. In production it runs **inside the same container as the API** (started automatically by `scripts/start.sh`) and the backend reaches it at `http://localhost:3001`. llm-scraper reuses the backend's `DEEPSEEK_API_KEY` (same container, inherited env); without a real key `/scrape` returns 502 and the backend falls back to a direct HTTP fetch.
 
 To run it standalone for local dev:
 
