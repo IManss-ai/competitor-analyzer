@@ -1,5 +1,6 @@
 import assert from 'node:assert';
-import { withThinkingDisabled, aiAvailable } from '../src/deepseek.ts';
+import { generateText } from 'ai';
+import { withThinkingDisabled, aiAvailable, createDeepseekModel, DEEPSEEK_MODEL } from '../src/deepseek.ts';
 
 // --- withThinkingDisabled: injects thinking-off into JSON string bodies ---
 {
@@ -64,6 +65,40 @@ import { withThinkingDisabled, aiAvailable } from '../src/deepseek.ts';
     if (saved === undefined) delete process.env.DEEPSEEK_API_KEY;
     else process.env.DEEPSEEK_API_KEY = saved;
   }
+}
+
+// --- createDeepseekModel: thinking-off is WIRED into the provider, not just
+// --- available as a helper. Drives a real generateText call through the model
+// --- with a recording fetch and asserts the outgoing request body. This is the
+// --- regression guard for the #1 stack gotcha at its integration point.
+{
+  let capturedBody: any;
+  const recordingFetch = (async (_input: any, init?: RequestInit) => {
+    capturedBody = JSON.parse(init!.body as string);
+    return new Response(
+      JSON.stringify({
+        id: 'cmpl-test',
+        object: 'chat.completion',
+        created: 0,
+        model: DEEPSEEK_MODEL,
+        choices: [
+          { index: 0, message: { role: 'assistant', content: 'ok' }, finish_reason: 'stop' },
+        ],
+        usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
+      }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+  }) as typeof fetch;
+
+  const model = createDeepseekModel(recordingFetch);
+  const { text } = await generateText({ model, prompt: 'ping' });
+  assert.strictEqual(text, 'ok', 'canned completion must round-trip');
+  assert.deepStrictEqual(
+    capturedBody.thinking,
+    { type: 'disabled' },
+    'provider-level fetch must inject thinking-off into real calls',
+  );
+  assert.strictEqual(capturedBody.model, DEEPSEEK_MODEL, 'model id must be deepseek-v4-flash');
 }
 
 console.log('deepseek.test: PASS');

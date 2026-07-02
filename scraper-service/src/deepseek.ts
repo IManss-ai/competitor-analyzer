@@ -46,12 +46,12 @@ export function withThinkingDisabled(baseFetch: typeof fetch = globalThis.fetch)
  * key is absent — callers gate real usage on aiAvailable() (crash-guard, same
  * as app/llm.py get_*_client).
  */
-export function createDeepseekModel() {
+export function createDeepseekModel(baseFetch: typeof fetch = globalThis.fetch) {
   const provider = createOpenAI({
     name: 'deepseek',
     baseURL: process.env.DEEPSEEK_BASE_URL ?? 'https://api.deepseek.com',
     apiKey: process.env.DEEPSEEK_API_KEY || 'dummy',
-    fetch: withThinkingDisabled(),
+    fetch: withThinkingDisabled(baseFetch),
   });
   return provider(DEEPSEEK_MODEL);
 }
