@@ -52,3 +52,11 @@ SESSION-CHANGES-*.md
 
 # superpowers brainstorm visual companion
 .superpowers/
+
+# Local-only tooling and assets (not part of the product)
+.agents/
+.mcp.json
+skills-lock.json
+cand*_cover.png
+launch-video/
+docs/design-references/
