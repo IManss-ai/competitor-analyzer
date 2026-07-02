@@ -128,3 +128,16 @@ signups now persist `utm_source` / `utm_medium` / `utm_campaign` /
 and read results with:
 `SELECT email, created_at, utm_source, utm_campaign, signup_referrer FROM users WHERE utm_source IS NOT NULL ORDER BY created_at DESC;`
 (via `railway ssh`). External referrers are captured even without utm params.
+
+## Muntazar follow-up draft (send ~2026-07-03 if no reply to the 06-29 DM)
+
+> Hey Muntazar, following up on my last message. The free battle card offer
+> still stands: name one competitor you're up against and I'll send back what
+> Rivalscope digs up on them, no strings.
+>
+> Since we talked I also shipped a bunch of hardening on the product, so the
+> cards are sharper now. If the timing is off, no worries at all. Just tell me
+> what you're working on these days, I'm genuinely curious.
+
+Plain voice, no em dashes, one concrete ask. If he already replied, ignore
+this and continue that thread instead.
