@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { unstable_rethrow } from 'next/navigation';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
@@ -6,7 +7,16 @@ import { SessionUser } from '@/lib/types';
 import Topbar from '@/components/topbar';
 import SettingsClient from './settings-client';
 
-export default async function SettingsPage() {
+type SettingsTab = 'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing';
+const VALID_TABS: SettingsTab[] = ['profile', 'schedule', 'notifications', 'competitors', 'billing'];
+
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
+  const initialTab = VALID_TABS.includes(tab as SettingsTab) ? (tab as SettingsTab) : undefined;
   const cookieStore = await cookies();
   const session = await getIronSession<{ user?: SessionUser }>(cookieStore, sessionOptions);
   const api = createApiClient(session.user!.user_id, session.user!.api_token);
@@ -24,11 +34,13 @@ export default async function SettingsPage() {
     const res = await api.getPortalUrl();
     portalUrl = res.url;
   } catch (e) {
+    unstable_rethrow(e); // never swallow NEXT_REDIRECT (e.g. the 401 → login redirect)
     try {
       const planType = data.business_type === 'local' ? 'local' : 'saas';
       const res = await api.getCheckoutUrl(planType);
       checkoutUrl = res.url;
     } catch (checkoutErr) {
+      unstable_rethrow(checkoutErr);
       console.error('Failed to fetch checkout url:', checkoutErr);
     }
   }
@@ -43,6 +55,7 @@ export default async function SettingsPage() {
         apiToken={session.user!.api_token}
         checkoutUrl={checkoutUrl}
         portalUrl={portalUrl}
+        initialTab={initialTab}
       />
     </div>
   );

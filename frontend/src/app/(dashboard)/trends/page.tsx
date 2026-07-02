@@ -9,6 +9,8 @@ import TrendsTypeBreakdown from '@/components/trends-type-breakdown';
 import TrendsReviews from '@/components/trends-reviews';
 import TrendsHeatmap from '@/components/trends-heatmap';
 import Link from 'next/link';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default async function TrendsPage() {
   const cookieStore = await cookies();
@@ -39,57 +41,62 @@ export default async function TrendsPage() {
       <Topbar title="Trends" subtitle="Activity overview across your landscape" />
 
       {!hasCompetitors ? (
-        <div className="rs-card p-6">
-          <div className="px-6 py-24 text-center flex flex-col items-center">
-            <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-2 p-3 rounded-full bg-[var(--fill-subtle)] border border-[var(--border-default)]">
-              <div className="w-2.5 h-[30%] bg-[var(--fill-subtle-hover)] rounded-sm"></div>
-              <div className="w-2.5 h-[70%] bg-[var(--border-strong)] rounded-sm"></div>
-              <div className="w-2.5 h-[50%] bg-[var(--fill-subtle-hover)] rounded-sm"></div>
-              <div className="w-2.5 h-[90%] bg-[var(--border-strong)] rounded-sm"></div>
+        <Card>
+          <CardContent>
+            <div className="px-6 py-24 text-center flex flex-col items-center">
+              <div className="w-16 h-16 mx-auto mb-6 flex items-end justify-center gap-2 p-3 rounded-full bg-muted border border-border">
+                <div className="w-2.5 h-[30%] bg-muted-foreground/30 rounded-sm"></div>
+                <div className="w-2.5 h-[70%] bg-muted-foreground/60 rounded-sm"></div>
+                <div className="w-2.5 h-[50%] bg-muted-foreground/30 rounded-sm"></div>
+                <div className="w-2.5 h-[90%] bg-muted-foreground/60 rounded-sm"></div>
+              </div>
+
+              <h3 className="text-xl font-semibold tracking-tight mb-2 text-foreground">No data to show yet</h3>
+              <p className="text-sm max-w-sm mx-auto mb-8 leading-relaxed text-muted-foreground">
+                Trends will appear here once you add competitors and we complete the first weekly scan.
+              </p>
+              <Button asChild>
+                <Link href="/competitors">Add competitors</Link>
+              </Button>
             </div>
-            
-            <h3 className="text-xl font-semibold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>No data to show yet</h3>
-            <p className="text-sm max-w-sm mx-auto mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Trends will appear here once you add competitors and we complete the first weekly scan.
-            </p>
-            <Link 
-              href="/competitors" 
-              className="rs-btn-primary cursor-pointer"
-            >
-              Add competitors
-            </Link>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-6">
           {/* Top row: 2 charts side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* A) Change Frequency Chart */}
-            <div className="rs-card p-6">
-              <h2 className="rs-label mb-6">
-                Change frequency (Past 12 Weeks — Top 5)
-              </h2>
-              <TrendsChart data={changeFrequencyChartData} competitors={metricsData.weekly_changes} />
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Change frequency (Past 12 Weeks — Top 5)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TrendsChart data={changeFrequencyChartData} competitors={metricsData.weekly_changes} />
+              </CardContent>
+            </Card>
 
             {/* B) Change Type Breakdown Stacked Bar Chart */}
-            <div className="rs-card p-6">
-              <h2 className="rs-label mb-6">
-                Change type breakdown (Past 8 Weeks)
-              </h2>
-              <TrendsTypeBreakdown data={metricsData.type_breakdown} />
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Change type breakdown (Past 8 Weeks)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TrendsTypeBreakdown data={metricsData.type_breakdown} />
+              </CardContent>
+            </Card>
           </div>
 
           {/* Bottom row: Review trends & Density heatmap */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* C) Review Score Trends */}
-            <div className="rs-card p-6">
-              <h2 className="rs-label mb-6">
-                Review score trends
-              </h2>
-              <TrendsReviews trends={metricsData.review_trends} />
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Review score trends</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TrendsReviews trends={metricsData.review_trends} />
+              </CardContent>
+            </Card>
 
             {/* D) Alert Heatmap */}
             <TrendsHeatmap competitors={trendsData.competitors} weeks={trendsData.weeks} maxCount={maxCount} />

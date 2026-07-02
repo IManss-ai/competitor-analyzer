@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { unstable_rethrow } from 'next/navigation';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { createApiClient } from '@/lib/api';
@@ -18,13 +19,13 @@ export default async function DashboardPage() {
   const [dashboardData, compData, settings] = await Promise.all([
     api.getDashboard(),
     api.getCompetitors(),
-    api.getSettings().catch(() => ({ business_type: 'saas' as const, id: '', email: '', subscription_status: '', trial_ends_at: null }))
+    api.getSettings().catch((e) => { unstable_rethrow(e); return { business_type: 'saas' as const, id: '', email: '', subscription_status: '', trial_ends_at: null }; })
   ]);
   
   const isLocalBusiness = settings.business_type === 'local';
   
   const reviewsPromises = compData.competitors.map(c => 
-    api.getCompetitorReviews(c.id).catch(() => ({ snapshots: [], recent_complaints: [] }))
+    api.getCompetitorReviews(c.id).catch((e) => { unstable_rethrow(e); return { snapshots: [], recent_complaints: [] }; })
   );
   
   const reviewsData = await Promise.all(reviewsPromises);

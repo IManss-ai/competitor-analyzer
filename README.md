@@ -56,8 +56,8 @@ A single repository with a FastAPI backend at the root and a Next.js app in `fro
                         ┌─────────────────────────────┼─────────────────────────────┐
                         ▼                              ▼                              ▼
               ┌──────────────────┐         ┌──────────────────┐          ┌──────────────────────┐
-              │  Postgres/SQLite │         │ Scraper · OpenAI·│          │  Polar.sh (billing)  │
-              │  + Alembic       │         │  Anthropic       │          │                      │
+              │  Postgres/SQLite │         │ Scraper sidecar ·│          │  Polar.sh (billing)  │
+              │  + Alembic       │         │  DeepSeek        │          │                      │
               └──────────────────┘         └──────────────────┘          └──────────────────────┘
 ```
 
@@ -67,11 +67,11 @@ A single repository with a FastAPI backend at the root and a Next.js app in `fro
 |-------|------|
 | **Fetcher** | Pulls competitor page content via the Node Playwright/llm-scraper sidecar. |
 | **Differ** | Character-level diff, filtering noise below a net-change threshold. |
-| **Classifier** | `gpt-4o-mini` categorizes the change type. |
+| **Classifier** | DeepSeek (`deepseek-v4-flash`) categorizes the change type. |
 | **Synthesizer** | Builds weekly email briefs for subscribers. |
-| **Action generator** | Drafts response playbooks (`gpt-4o`) for the approval queue. |
+| **Action generator** | Drafts response playbooks (`deepseek-v4-flash`) for the approval queue. |
 
-The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7 days of changes, complaints, and signals and calls Claude (`claude-3-5-sonnet-20241022`, with prompt caching) to produce the structured 4-quadrant response.
+The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7 days of changes, complaints, and signals and calls DeepSeek (`deepseek-v4-flash`, thinking mode disabled) to produce the structured 4-quadrant response.
 
 ---
 
@@ -79,7 +79,7 @@ The **Battle Card** generator (`app/routes/battlecard.py`) aggregates the last 7
 
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy, Alembic, APScheduler, Uvicorn. SQLite for dev, PostgreSQL in production.
 - **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion (`motion/react`), Recharts.
-- **AI models:** `gpt-4o-mini` (classification & briefs), `gpt-4o` (playbook drafts), `claude-3-5-sonnet-20241022` (Battle Cards).
+- **AI models:** DeepSeek `deepseek-v4-flash` for everything (classification, briefs, playbook drafts, Battle Cards) via the OpenAI-compatible API — `app/llm.py` is the single source of truth, with deterministic heuristic fallbacks when no key is set.
 - **Services:** Node Playwright/llm-scraper sidecar (page fetch), Polar.sh (billing), Resend (transactional email).
 
 ---
@@ -128,9 +128,9 @@ uvicorn main:app --reload --port 8000
 | Variable | Purpose |
 |----------|---------|
 | `DATABASE_URL` | DB connection (`sqlite:///./test.db` for dev). |
-| `OPENAI_API_KEY` | Change classification + copy drafting. |
+| `DEEPSEEK_API_KEY` | All AI features (classification, briefs, Battle Cards) + the scraper sidecar's llm-scraper extraction. |
+| `DEEPSEEK_BASE_URL` | Optional. DeepSeek API endpoint (default `https://api.deepseek.com`). |
 | `SCRAPER_URL` | URL of the Node Playwright/llm-scraper sidecar (combined container: `http://localhost:3001`). Unset → mock content in local dev. |
-| `ANTHROPIC_API_KEY` | Battle Card generation. |
 | `POLAR_ACCESS_TOKEN` / `POLAR_WEBHOOK_SECRET` | Subscription billing. |
 | `POLAR_SAAS_PRODUCT_ID` / `POLAR_LOCAL_PRODUCT_ID` | Polar product IDs for the $49 / $19 plans. |
 | `RESEND_API_KEY` | Magic-link / transactional email. |
@@ -139,7 +139,7 @@ uvicorn main:app --reload --port 8000
 
 ### Scraper sidecar
 
-`scraper-service/` is a Node/Express + Playwright + [llm-scraper](https://www.npmjs.com/package/llm-scraper) service that fetches and cleans competitor page content. In production it runs **inside the same container as the API** (started automatically by `scripts/start.sh`) and the backend reaches it at `http://localhost:3001`. It needs `OPENAI_API_KEY` for llm-scraper.
+`scraper-service/` is a Node/Express + Playwright + [llm-scraper](https://www.npmjs.com/package/llm-scraper) service that fetches and cleans competitor page content. In production it runs **inside the same container as the API** (started automatically by `scripts/start.sh`) and the backend reaches it at `http://localhost:3001`. llm-scraper reuses the backend's `DEEPSEEK_API_KEY` (same container, inherited env); without a real key `/scrape` returns 502 and the backend falls back to a direct HTTP fetch.
 
 To run it standalone for local dev:
 

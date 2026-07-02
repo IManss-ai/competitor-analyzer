@@ -18,6 +18,7 @@ router = APIRouter(prefix="/api/v1")
 # (issue #3, bug #2). Shared across route modules; aliased here for existing call
 # sites and the test import path.
 from app.serialization import iso_utc as _iso_utc
+from app.access import require_write_access, access_level
 
 
 # ── Auth dependency ──────────────────────────────────────────────────────────
@@ -71,12 +72,25 @@ async def api_direct_login(payload: dict, db: Session = Depends(get_session)):
         db.refresh(user)
     else:
         if user.password_hash is None:
-            # Connect password for user who initially logged in via magic link
-            user.password_hash = hash_password(password)
-            db.commit()
-        elif not check_password(password, user.password_hash):
+            # SECURITY (P0): never bind a caller-supplied password to an existing
+            # passwordless (magic-link) account and hand back a session — that would
+            # be unauthenticated account takeover on knowledge of the email alone.
+            # Prove email ownership via a magic link instead; the real owner can set
+            # a password after signing in. Do NOT mutate password_hash here.
+            token = generate_magic_link_token(str(user.id), db)
+            link = f"{APP_BASE_URL}/auth/verify?token={token}"
+            try:
+                await send_magic_link_email(email, link, RESEND_API_KEY, FROM_EMAIL)
+            except Exception as exc:
+                print(f"[auth] magic-link email send failed for {email}: {exc}")
+                raise HTTPException(status_code=502, detail="Could not send the sign-in link email.")
+            raise HTTPException(
+                status_code=403,
+                detail="This account uses email sign-in. We've emailed you a secure sign-in link — check your inbox.",
+            )
+        if not check_password(password, user.password_hash):
             raise HTTPException(status_code=401, detail="Invalid password for this email address.")
-            
+
     session_token = generate_session_token(str(user.id), user.email)
     return {"ok": True, "session_token": session_token}
 
@@ -409,7 +423,7 @@ def api_list_competitors(include_inactive: bool = False, user_id: str = Depends(
 
 
 @router.patch("/competitors/{competitor_id}")
-def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     c = db.execute(
         select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
@@ -442,7 +456,7 @@ def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depe
 @router.post("/competitors/{competitor_id}/probe-careers")
 async def api_probe_careers(
     competitor_id: str,
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
     db: Session = Depends(get_session),
 ):
     """Walk common careers paths against the competitor homepage; save and return the first match."""
@@ -510,7 +524,7 @@ def api_scan_status(job_id: str):
 
 
 @router.post("/competitors")
-def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     existing = db.execute(
         select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
@@ -638,11 +652,16 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
         for s in snapshots
     ]
     
-    # Latest battle card, cache-first: a detail page view only triggers a paid
-    # model call when no fresh AI card exists for this competitor yet.
+    # Latest battle card, cache-first. A paid model call only fires for a
+    # full-access user with no fresh AI card. Read-only (trial-used, non-paying)
+    # users get cache-or-heuristic and NEVER a paid call — consistent with the
+    # /battlecards/generate 402, but the detail page still renders.
     from app.routes.battlecard import get_or_generate_battlecard
+    from app.access import is_read_only
     try:
-        battlecard_data = get_or_generate_battlecard(comp, db)
+        viewer = db.get(User, user_uuid)
+        allow_ai = not (viewer is not None and is_read_only(viewer))
+        battlecard_data = get_or_generate_battlecard(comp, db, allow_ai=allow_ai)
     except Exception:
         battlecard_data = None
 
@@ -769,7 +788,7 @@ def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(ge
 
 
 @router.post("/queue/{action_id}/approve")
-def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
+def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     action = db.execute(
         select(ApprovedAction).where(ApprovedAction.id == uuid.UUID(action_id), ApprovedAction.user_id == user_uuid)
@@ -950,6 +969,7 @@ def api_settings(user_id: str = Depends(require_api_user), db: Session = Depends
         "id": str(user.id),
         "email": user.email,
         "subscription_status": user.subscription_status,
+        "access_level": access_level(user),
         "trial_ends_at": _iso_utc(user.trial_ends_at),
         "business_type": getattr(user, "business_type", None) or "saas",
         "scan_schedule": getattr(user, "scan_schedule", None) or "weekly",
@@ -982,6 +1002,7 @@ def api_update_settings(payload: dict, user_id: str = Depends(require_api_user),
         "id": str(user.id),
         "email": user.email,
         "subscription_status": user.subscription_status,
+        "access_level": access_level(user),
         "trial_ends_at": _iso_utc(user.trial_ends_at),
         "business_type": getattr(user, "business_type", None) or "saas",
         "scan_schedule": getattr(user, "scan_schedule", None) or "weekly",
@@ -994,7 +1015,7 @@ def api_update_settings(payload: dict, user_id: str = Depends(require_api_user),
 # ── Scan ─────────────────────────────────────────────────────────────────────
 
 @router.post("/scan/now")
-async def api_scan_now(user_id: str = Depends(require_api_user)):
+async def api_scan_now(user_id: str = Depends(require_write_access)):
     from app.routes.scan import _run_scan_background
     import asyncio
     asyncio.create_task(_run_scan_background(user_id))
@@ -1002,7 +1023,7 @@ async def api_scan_now(user_id: str = Depends(require_api_user)):
 
 
 @router.post("/scan/reviews")
-async def api_scan_reviews(user_id: str = Depends(require_api_user)):
+async def api_scan_reviews(user_id: str = Depends(require_write_access)):
     from app.pipeline.review_scraper import scrape_competitor_reviews
     from app.db import SessionLocal
     import asyncio

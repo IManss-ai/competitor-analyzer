@@ -44,6 +44,15 @@ ALLOW_LEGACY_UUID_BEARER = os.environ.get(
     "ALLOW_LEGACY_UUID_BEARER", "false" if _IS_PROD else "true"
 ).lower() in ("1", "true", "yes")
 
+# ── Paywall (usage-based one-test model) ───────────────────────────────────
+# Feature flag — ships dark. When false, access_level() always returns "full".
+PAYWALL_ENABLED = os.environ.get("PAYWALL_ENABLED", "false").lower() == "true"
+# Comma-separated emails that are never locked (founder / staff), lower-cased.
+# Founder is hard-defaulted so we can never accidentally lock ourselves out.
+_comped_raw = os.environ.get("COMPED_EMAILS", "")
+COMPED_EMAILS = {e.strip().lower() for e in _comped_raw.split(",") if e.strip()}
+COMPED_EMAILS.add("nodes.kazakhstan@gmail.com")
+
 
 # In production (Railway), warn loudly if transactional email can't actually
 # reach real users. Resend's shared sender (onboarding@resend.dev) only

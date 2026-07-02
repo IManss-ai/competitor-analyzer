@@ -9,9 +9,11 @@ export function proxy(request: NextRequest) {
   // battle-card links, /discover, /apps, legal pages) is public. Listing the
   // protected prefixes — rather than the public ones — means a new public page
   // can never be locked behind login by omission.
+  // Keep in sync with the (dashboard) route-group segments (and robots.ts,
+  // which disallows the same set).
   const protectedRoutes = [
     '/battlecards', '/billing', '/campaigns', '/competitors',
-    '/dashboard', '/queue', '/settings', '/trends',
+    '/dashboard', '/discover', '/queue', '/settings', '/trends',
   ];
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 

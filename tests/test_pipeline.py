@@ -15,20 +15,20 @@ class TestPipeline(unittest.TestCase):
         self.assertIn(long_p, extracted)
         
     def test_differ_threshold(self):
-        # CHANGE_THRESHOLD = 100
-        text1 = "A" * 50
-        text2 = "A" * 160
-        text3 = "A" * 120
-        
-        # diff text1 vs text2 is 110 chars (> 100) -> meaningful
-        changed, delta = is_meaningful_change(text1, text2)
+        # CHANGE_THRESHOLD = 100 (chars actually edited, not net length delta)
+        base = "alpha beta gamma delta"
+
+        # ~135 new chars appended (> 100) -> meaningful
+        grown = base + " " + ("new enterprise tier with sso and audit logs " * 3)
+        changed, delta = is_meaningful_change(base, grown)
         self.assertTrue(changed)
-        self.assertEqual(delta, 110)
-        
-        # diff text1 vs text3 is 70 chars (<= 100) -> not meaningful
-        changed, delta = is_meaningful_change(text1, text3)
+        self.assertGreater(delta, 100)
+
+        # ~20 new chars appended (<= 100) -> not meaningful
+        small = base + " now with audit logs"
+        changed, delta = is_meaningful_change(base, small)
         self.assertFalse(changed)
-        self.assertEqual(delta, 70)
+        self.assertLessEqual(delta, 100)
 
 if __name__ == '__main__':
     unittest.main()

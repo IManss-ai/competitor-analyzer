@@ -1,14 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useApiToken } from '@/lib/use-api-token';
+import { Button } from '@/components/ui/button';
 
 export default function ScanNowButton({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const apiToken = useApiToken();
+  const router = useRouter();
 
   const handleScan = async () => {
     setLoading(true);
@@ -18,6 +21,12 @@ export default function ScanNowButton({ userId }: { userId: string }) {
         method: 'POST',
         headers: { Authorization: `Bearer ${apiToken ?? userId}` },
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 5000);
@@ -31,15 +40,16 @@ export default function ScanNowButton({ userId }: { userId: string }) {
 
   return (
     <>
-      <button
+      <Button
         id="scan-now-btn"
+        variant="outline"
+        size="sm"
         onClick={handleScan}
         disabled={loading}
-        className="rs-btn-ghost text-[12px]"
       >
         <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
         {loading ? 'Scanning…' : 'Scan Now'}
-      </button>
+      </Button>
 
       <AnimatePresence>
         {showToast && (
@@ -48,12 +58,8 @@ export default function ScanNowButton({ userId }: { userId: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 text-[13px] font-medium shadow-[var(--shadow-elevated)]"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 text-[13px] font-medium rounded-xl border border-border bg-card text-foreground"
             style={{
-              background: 'var(--surface-overlay)',
-              border: '1px solid var(--border-strong)',
-              color: 'var(--text-primary)',
-              borderRadius: 'var(--radius-xl)',
               boxShadow: 'var(--shadow-elevated)',
             }}
           >

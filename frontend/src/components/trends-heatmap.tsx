@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from 'react';
 import { useChartPalette } from '@/lib/chart-theme';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface HeatmapCompetitor {
   id: string;
@@ -43,24 +44,22 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
   // cell, levels 1-3 ramp opacity, level 3 is full accent with on-accent text.
   const heatStyle = (level: 0 | 1 | 2 | 3): CSSProperties => {
     if (level === 0) {
-      return { backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)' };
+      return { backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)', border: '1px solid var(--border)' };
     }
     const fills = { 1: 0.16, 2: 0.4, 3: 1 } as const;
     return {
       backgroundColor: level === 3 ? p.accent : rgba(fills[level]),
-      color: level === 3 ? 'var(--accent-text)' : 'var(--text-primary)',
+      color: level === 3 ? 'var(--primary-foreground)' : 'var(--foreground)',
       border: `1px solid ${level === 3 ? p.accent : rgba(fills[level] + 0.1)}`,
     };
   };
 
   return (
-    <div className="rs-card overflow-hidden">
-      <div className="px-6 py-5 border-b border-[var(--border-subtle)] flex items-center justify-between">
-        <h2 className="rs-label">
-          Activity density heatmap
-        </h2>
+    <Card className="overflow-hidden">
+      <CardHeader className="border-b border-border flex-row items-center justify-between">
+        <CardTitle>Activity density heatmap</CardTitle>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Less</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Less</span>
           {([0, 1, 2, 3] as const).map((level) => (
             <div
               key={level}
@@ -68,47 +67,46 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
               style={{ backgroundColor: heatStyle(level).backgroundColor, border: heatStyle(level).border }}
             />
           ))}
-          <span className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>More</span>
+          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">More</span>
         </div>
-      </div>
+      </CardHeader>
 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[var(--border-subtle)] bg-[var(--fill-subtle)]">
-              <th 
-                className="text-left text-[10px] font-mono uppercase tracking-wider px-6 py-4 sticky left-0 w-[180px] z-10"
-                style={{ color: 'var(--text-muted)', backgroundColor: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)' }}
+            <tr className="border-b border-border bg-muted">
+              <th
+                className="text-left text-[10px] font-mono uppercase tracking-wider px-6 py-4 sticky left-0 w-[180px] z-10 text-muted-foreground"
+                style={{ backgroundColor: 'var(--card)', borderRight: '1px solid var(--border)' }}
               >
                 Competitor
               </th>
               {weeks.map((week) => (
                 <th
                   key={week}
-                  className="text-center text-[10px] font-mono px-2 py-4 whitespace-nowrap"
-                  style={{ color: 'var(--text-muted)' }}
+                  className="text-center text-[10px] font-mono px-2 py-4 whitespace-nowrap text-muted-foreground"
                 >
                   {week.replace(/^\d{4}-/, '')}
                 </th>
               ))}
-              <th className="text-right text-[10px] font-mono uppercase tracking-wider px-6 py-4" style={{ color: 'var(--text-muted)' }}>
+              <th className="text-right text-[10px] font-mono uppercase tracking-wider px-6 py-4 text-muted-foreground">
                 Total
               </th>
             </tr>
           </thead>
           <tbody>
-            {competitors.map((comp, compIndex) => {
+            {competitors.map((comp) => {
               const total = comp.counts.reduce((a: number, b: number) => a + b, 0);
               return (
                 <tr
                   key={comp.id}
-                  className="border-b border-[var(--border-subtle)] last:border-0 hover:bg-[var(--fill-subtle-hover)] transition-colors"
+                  className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
                 >
-                  <td 
+                  <td
                     className="px-6 py-4 sticky left-0 z-10 transition-colors"
-                    style={{ backgroundColor: 'var(--surface-raised)', borderRight: '1px solid var(--border-default)' }}
+                    style={{ backgroundColor: 'var(--card)', borderRight: '1px solid var(--border)' }}
                   >
-                    <span className="text-sm font-medium truncate block max-w-[160px]" style={{ color: 'var(--text-primary)' }}>
+                    <span className="text-sm font-medium truncate block max-w-[160px] text-foreground">
                       {comp.name || comp.url}
                     </span>
                   </td>
@@ -124,7 +122,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                     </td>
                   ))}
                   <td className="px-6 py-4 text-right">
-                    <span className="text-sm font-semibold font-mono" style={{ color: 'var(--text-primary)' }}>
+                    <span className="text-sm font-semibold font-mono text-foreground">
                       {total}
                     </span>
                   </td>
@@ -134,6 +132,6 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
           </tbody>
         </table>
       </div>
-    </div>
+    </Card>
   );
 }

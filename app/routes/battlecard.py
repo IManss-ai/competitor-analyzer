@@ -8,7 +8,7 @@ import app.llm as llm
 
 from app.db import get_session
 from app.observability import note_degraded
-from app.models import Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache
+from app.models import User, Competitor, ChangeEvent, ReviewSnapshot, Review, SocialPost, BattleCardCache
 from app.pipeline.job_tracker import get_latest_hiring_signal
 from app.routes.api_v1 import require_api_user
 from app.serialization import iso_utc
@@ -41,8 +41,18 @@ def _has_new_intel(comp: Competitor, since: datetime, db: Session) -> bool:
             select(SocialPost.id).where(SocialPost.competitor_id == comp.id, SocialPost.fetched_at > since).limit(1)
         ).scalar_one_or_none()
         return new_post is not None
+    # Only real, classified changes count as new intel. Classifier-suppressed
+    # events (minor_copy / no_change) and baseline initial_scan events must NOT
+    # invalidate the cache — with the edit-magnitude differ, rotating page content
+    # emits minor_copy events every scan, which would otherwise trigger a paid
+    # regen on the next authenticated /generate.
     new_event = db.execute(
-        select(ChangeEvent.id).where(ChangeEvent.competitor_id == comp.id, ChangeEvent.detected_at > since).limit(1)
+        select(ChangeEvent.id).where(
+            ChangeEvent.competitor_id == comp.id,
+            ChangeEvent.detected_at > since,
+            ChangeEvent.change_type.isnot(None),
+            ChangeEvent.change_type.notin_(("minor_copy", "no_change", "initial_scan")),
+        ).limit(1)
     ).scalar_one_or_none()
     return new_event is not None
 
@@ -64,6 +74,75 @@ def _store_cache(comp_id, payload: dict, ai_generated: bool, db: Session) -> Non
     cached.ai_generated = ai_generated
     cached.generated_at = datetime.utcnow()
     db.commit()
+
+
+def _item_text(item) -> str | None:
+    """Coerce a battle-card list item to a display string.
+
+    The model usually returns plain strings but can emit `{type,text}` /
+    `{title,detail}` objects. Key priority mirrors mailer._play_to_text so the
+    email and the UI extract the same string from the same payload."""
+    if isinstance(item, str):
+        return item.strip() or None
+    if isinstance(item, dict):
+        for key in ("text", "detail", "title", "action", "description"):
+            val = item.get(key)
+            if isinstance(val, str) and val.strip():
+                return val.strip()
+        # Salvage an unknown-key dict by its longest non-empty string value rather
+        # than silently dropping real AI content. A dropped item flips
+        # ai_generated to False → a fabricated heuristic card is served, burning a
+        # free user's one test with no provenance.
+        vals = [v.strip() for v in item.values() if isinstance(v, str) and v.strip()]
+        if vals:
+            return max(vals, key=len)
+    return None
+
+
+def _coerce_str_list(items) -> list:
+    """Coerce a parsed LLM list to plain strings, dropping non-coercible items.
+    Object-shaped items must never reach battlecard_cache — every render surface
+    (modal, onboarding, detail page, public share) renders these as raw text."""
+    if not isinstance(items, list):
+        return []
+    return [t for t in (_item_text(i) for i in items) if t]
+
+
+# Every payload field that must render as flat strings. what_changed is
+# object-shaped ({type,text}) by design and handled separately below.
+_CACHED_STR_LIST_FIELDS = (
+    "weaknesses", "strategic_signals", "playbook",
+    "talking_points", "win_conditions", "actions",
+)
+
+
+def _read_cached_payload(cached: BattleCardCache) -> dict:
+    """Load a cached battle-card payload, re-coercing its list fields on read.
+
+    Rows written before the coercion fix can carry object-shaped items that crash
+    every render surface (React #31). Re-coercing here lets a poisoned row
+    self-heal instead of serving broken data for up to CACHE_MAX_AGE days.
+    head_to_head and every other field are left untouched."""
+    payload = json.loads(cached.payload)
+    if not isinstance(payload, dict):
+        return payload
+    for key in _CACHED_STR_LIST_FIELDS:
+        if key in payload:
+            payload[key] = _coerce_str_list(payload[key])
+    raw_changes = payload.get("what_changed")
+    if isinstance(raw_changes, list):
+        coerced = []
+        for item in raw_changes:
+            text = _item_text(item)
+            if not text:
+                continue
+            type_val = item.get("type") if isinstance(item, dict) else None
+            coerced.append({
+                "type": type_val if isinstance(type_val, str) and type_val else "change",
+                "text": text,
+            })
+        payload["what_changed"] = coerced
+    return payload
 
 
 LOCAL_SYSTEM_PROMPT = """You are a senior local business strategist advising an independent operator (restaurant, salon, gym, retail shop, etc.) on how to win against a nearby competitor.
@@ -204,9 +283,15 @@ Known customer complaints:
             parsed = json.loads(content)
             executive_summary = parsed.get("executive_summary", "")
             what_changed = parsed.get("what_changed", [])
-            weaknesses = parsed.get("weaknesses", weaknesses)
-            strategic_signals = parsed.get("strategic_signals", [])
-            playbook = parsed.get("playbook", [])
+            # Coerce string lists — what_changed stays object-shaped by design.
+            weaknesses = _coerce_str_list(parsed.get("weaknesses")) or weaknesses
+            strategic_signals = _coerce_str_list(parsed.get("strategic_signals"))
+            raw_playbook = parsed.get("playbook")
+            playbook = _coerce_str_list(raw_playbook)
+            # Plays returned but none salvageable — signal before the heuristic
+            # fallback fabricates a card, so the degradation is never silent.
+            if isinstance(raw_playbook, list) and raw_playbook and not playbook:
+                note_degraded("battlecard.local", "heuristic", "playbook_coerced_empty")
         except Exception as e:
             note_degraded("battlecard.local", "heuristic", "api_error", e)
     elif allow_ai:
@@ -347,9 +432,106 @@ def _baseline_saas_payload(comp: Competitor, weaknesses: list, hiring_signal_tex
     }
 
 
-def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = True) -> tuple[dict, bool]:
+def _normalize_head_to_head(raw) -> dict | None:
+    """Coerce the model's head_to_head into the canonical shape, dropping junk.
+    Returns None when there's nothing usable (so the key is omitted entirely).
+    `confidence` defaults to "inferred" unless the model explicitly said
+    "observed" — honest-by-default. Clamps to 2-4 points/column, 3 plays."""
+    if not isinstance(raw, dict):
+        return None
+
+    def _points(items):
+        out = []
+        for it in (items if isinstance(items, list) else []):
+            if not isinstance(it, dict):
+                continue
+            point = (it.get("point") or "").strip()
+            if not point:
+                continue
+            conf = "observed" if str(it.get("confidence", "")).lower() == "observed" else "inferred"
+            out.append({
+                "point": point,
+                "basis": (it.get("basis") or "").strip(),
+                "confidence": conf,
+            })
+        return out[:4]
+
+    you_win = _points(raw.get("you_win"))
+    you_exposed = _points(raw.get("you_exposed"))
+
+    plays = []
+    for i, p in enumerate(raw.get("plays") if isinstance(raw.get("plays"), list) else [], start=1):
+        if not isinstance(p, dict):
+            continue
+        title = (p.get("title") or "").strip()
+        if not title:
+            continue
+        try:
+            rank = int(p.get("rank", i))
+        except (TypeError, ValueError):
+            rank = i
+        plays.append({"rank": rank, "title": title, "detail": (p.get("detail") or "").strip()})
+    plays = plays[:3]
+
+    verdict = (raw.get("verdict") or "").strip()
+    # Nothing usable at all → omit the block rather than ship an empty husk.
+    if not (verdict or you_win or you_exposed or plays):
+        return None
+    return {
+        "verdict": verdict,
+        "you_win": you_win,
+        "you_exposed": you_exposed,
+        "plays": plays,
+    }
+
+
+def _head_to_head_prompt_block(profile: dict) -> str:
+    """Render the user's own business profile + the head-to-head instructions to
+    append to the SaaS battle-card prompt. Only included when a real profile
+    exists, so the model produces the comparative `head_to_head` block in the
+    SAME call (no second paid request)."""
+    feats = ", ".join(profile.get("key_features") or []) or "—"
+    return f"""
+
+--- YOUR BUSINESS (compare this AGAINST the competitor above) ---
+Name: {profile.get('name') or '—'}
+What you do: {profile.get('one_liner') or '—'}
+Category: {profile.get('category') or '—'}
+Target customer: {profile.get('target_customer') or '—'}
+Positioning: {profile.get('positioning') or '—'}
+Key features: {feats}
+
+ALSO add a top-level "head_to_head" key to your JSON, comparing YOUR BUSINESS
+against THIS competitor using only the data provided above:
+"head_to_head": {{
+  "verdict": "one honest sentence comparing your business to this competitor",
+  "you_win":     [{{"point": "where you beat them", "basis": "what this is grounded in", "confidence": "observed|inferred"}}],
+  "you_exposed": [{{"point": "where they beat you / you're at risk", "basis": "...", "confidence": "observed|inferred"}}],
+  "plays":       [{{"rank": 1, "title": "short play title", "detail": "concrete action, under 30 words"}}]
+}}
+Head-to-head rules:
+- Every point MUST cite its "basis".
+- Use "confidence":"observed" ONLY when the point is backed by a real complaint,
+  page change, or hiring fact in the data above. Otherwise "inferred".
+- 2-4 items per column, up to 3 plays. If competitor data is thin, return FEWER
+  points — NEVER pad or fabricate. Honesty over completeness."""
+
+
+def _generate_saas_battlecard(
+    comp: Competitor,
+    db: Session,
+    allow_ai: bool = True,
+    business_profile: dict | None = None,
+) -> tuple[dict, bool]:
     """Build the SaaS Battle Card from change events, complaints, and hiring
-    signals. Returns (payload, ai_generated)."""
+    signals. Returns (payload, ai_generated).
+
+    When `business_profile` is a non-empty dict (the requesting user has been
+    through magic onboarding), the SAME DeepSeek call ALSO emits a comparative
+    `head_to_head` block (you-win / you-exposed / plays). No second paid call,
+    no new table. Absent a profile, or on the heuristic/no-AI path, the
+    `head_to_head` key is omitted entirely — keeping the payload byte-compatible
+    with every existing (profile-less) caller and the public/share path."""
     comp_uuid = comp.id
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
     changes = db.execute(
@@ -431,6 +613,9 @@ def _generate_saas_battlecard(comp: Competitor, db: Session, allow_ai: bool = Tr
     what_changed = []
     strategic_signals = []
     playbook = []
+    # Comparative block — only populated when a real profile is supplied AND the
+    # model runs. Stays None on the heuristic path so the key is omitted.
+    head_to_head: dict | None = None
 
     if not is_dummy:
         client = llm.get_sync_client()
@@ -473,6 +658,11 @@ Recent changes detected:
 Known customer complaints/weaknesses:
 {weakness_str}{hiring_block}"""
 
+        # If the requesting user is onboarded, ask the SAME call to also emit the
+        # comparative head_to_head block (one paid call produces both).
+        if business_profile:
+            user_prompt += _head_to_head_prompt_block(business_profile)
+
         try:
             response = client.chat.completions.create(
                 model=llm.MODEL,
@@ -493,9 +683,19 @@ Known customer complaints/weaknesses:
             parsed = json.loads(content)
             executive_summary = parsed.get("executive_summary", "")
             what_changed = parsed.get("what_changed", [])
-            weaknesses = parsed.get("weaknesses", weaknesses)
-            strategic_signals = parsed.get("strategic_signals", [])
-            playbook = parsed.get("playbook", [])
+            # Coerce string lists — what_changed stays object-shaped by design.
+            weaknesses = _coerce_str_list(parsed.get("weaknesses")) or weaknesses
+            strategic_signals = _coerce_str_list(parsed.get("strategic_signals"))
+            raw_playbook = parsed.get("playbook")
+            playbook = _coerce_str_list(raw_playbook)
+            # The model returned plays but none survived coercion (nothing
+            # salvageable) — signal the degradation before the heuristic fallback
+            # fabricates a card, so it's never silent.
+            if isinstance(raw_playbook, list) and raw_playbook and not playbook:
+                note_degraded("battlecard", "heuristic", "playbook_coerced_empty")
+            # Only trust head_to_head when we actually asked for it (profile present).
+            if business_profile:
+                head_to_head = _normalize_head_to_head(parsed.get("head_to_head"))
         except Exception as e:
             note_degraded("battlecard", "heuristic", "api_error", e)
     elif allow_ai:
@@ -560,7 +760,7 @@ Known customer complaints/weaknesses:
                 playbook = [
                     f"Position our platform as the fastest developer-first alternative with zero setup friction.",
                     "Send target email playbooks focusing on our 24/7 dedicated engineering support lines.",
-                    "Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
+                    f"Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
                     "Highlight our high-touch onboarding experience for non-technical team managers.",
                     "Build comparison landing page detailing our direct integration performance."
                 ]
@@ -580,7 +780,7 @@ Known customer complaints/weaknesses:
         what_changed = []
 
     # Return rich battle card payload, actions maps to playbook for backwards compatibility
-    return {
+    payload = {
         "title": f"{comp.name or comp.url} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
         "executive_summary": executive_summary,
         "what_changed": what_changed,
@@ -594,13 +794,24 @@ Known customer complaints/weaknesses:
         "generated_at": iso_utc(datetime.now(timezone.utc)),
         "actions": playbook,
         "variant": "saas",
-    }, ai_generated
+    }
+    # Additive + byte-compatible: only attach head_to_head when it's real. Absent
+    # a profile or on the heuristic path it stays out of the payload entirely.
+    if head_to_head:
+        payload["head_to_head"] = head_to_head
+    return payload, ai_generated
 
 
-def _generate(comp: Competitor, db: Session, allow_ai: bool) -> tuple[dict, bool]:
+def _generate(
+    comp: Competitor,
+    db: Session,
+    allow_ai: bool,
+    business_profile: dict | None = None,
+) -> tuple[dict, bool]:
     if comp.business_type == "local":
+        # Local variant is out of scope for head-to-head; profile is ignored.
         return _generate_local_battlecard(comp, db, allow_ai=allow_ai)
-    return _generate_saas_battlecard(comp, db, allow_ai=allow_ai)
+    return _generate_saas_battlecard(comp, db, allow_ai=allow_ai, business_profile=business_profile)
 
 
 def _resolve_competitor(competitor_id: str, db: Session) -> Competitor:
@@ -615,16 +826,56 @@ def _resolve_competitor(competitor_id: str, db: Session) -> Competitor:
     return comp
 
 
-def get_or_generate_battlecard(comp: Competitor, db: Session, force: bool = False) -> dict:
+def get_or_generate_battlecard(
+    comp: Competitor,
+    db: Session,
+    force: bool = False,
+    business_profile: dict | None = None,
+    allow_ai: bool = True,
+) -> dict:
     """Cache-first battle card access for authenticated owner paths. Generates
-    (one paid call) only when there is no fresh AI card or force=True."""
+    (one paid call) only when there is no fresh AI card or force=True.
+
+    `business_profile` (the owner's onboarded business) rides into generation so
+    the card ALSO carries a comparative `head_to_head` block. It only influences
+    a fresh generation — a fresh cached card is served as-is.
+
+    `allow_ai=False` is the read-only / paywalled path (e.g. a locked user opening
+    a competitor detail page): serve any existing cached card — even if stale —
+    else a free heuristic card, but NEVER a paid model call, and never cache the
+    heuristic (so the owner's first real generation isn't masked). This mirrors
+    the `/generate` 402 without breaking the page render."""
     cached = _load_cache(comp.id, db)
     if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
-        return json.loads(cached.payload)
+        return _read_cached_payload(cached)
 
-    payload, ai_generated = _generate(comp, db, allow_ai=True)
+    if not allow_ai:
+        if cached:
+            return _read_cached_payload(cached)
+        payload, _ = _generate(comp, db, allow_ai=False, business_profile=business_profile)
+        return payload
+
+    payload, ai_generated = _generate(comp, db, allow_ai=True, business_profile=business_profile)
     _store_cache(comp.id, payload, ai_generated, db)
     return payload
+
+
+def _load_business_profile(user_id: str, db: Session) -> dict | None:
+    """Load the authenticated user's onboarded business profile (JSON on User).
+    Returns a dict only when present and well-formed; None otherwise (no profile,
+    not onboarded, or corrupt JSON) → generation skips head_to_head gracefully."""
+    try:
+        user_uuid = _uuid.UUID(str(user_id))
+    except (ValueError, TypeError):
+        return None
+    user = db.execute(select(User).where(User.id == user_uuid)).scalar_one_or_none()
+    if not user or not user.business_profile:
+        return None
+    try:
+        profile = json.loads(user.business_profile)
+    except (ValueError, TypeError):
+        return None
+    return profile if isinstance(profile, dict) and profile else None
 
 
 @router.get("/generate/{competitor_id}")
@@ -637,7 +888,21 @@ def generate_battlecard(
     comp = _resolve_competitor(competitor_id, db)
     if str(comp.user_id) != user_id:
         raise HTTPException(status_code=403, detail="Not your competitor")
-    return get_or_generate_battlecard(comp, db, force=force)
+    # Paywall: an already-locked user can't generate new cards. The owner's
+    # FIRST generation still passes (free_test_used is set AFTER success below).
+    from app.access import is_read_only
+    user = db.get(User, _uuid.UUID(user_id))
+    if user is not None and is_read_only(user):
+        raise HTTPException(status_code=402, detail="Your free test is done — upgrade to Pro to continue.")
+    # Owner path: thread the owner's business profile so the card carries
+    # head_to_head. The public/share path below passes no profile (and strips it).
+    business_profile = _load_business_profile(user_id, db)
+    result = get_or_generate_battlecard(comp, db, force=force, business_profile=business_profile)
+    # The first generated card is "the one test" — mark it used after success.
+    if user is not None and not user.free_test_used:
+        user.free_test_used = True
+        db.commit()
+    return result
 
 
 @router.get("/public/{competitor_id}")
@@ -651,11 +916,15 @@ def generate_public_battlecard(competitor_id: str, db: Session = Depends(get_ses
 
     cached = _load_cache(comp.id, db)
     if cached:
-        res = json.loads(cached.payload)
+        res = _read_cached_payload(cached)
     else:
         # No card generated yet: build the free heuristic variant. Don't cache
         # it, so the owner's first real (AI) generation isn't masked.
         res, _ = _generate(comp, db, allow_ai=False)
+    # head_to_head is the OWNER's private comparative self-assessment ("where
+    # you're exposed"). The cached payload may carry it, but this endpoint is
+    # public/crawlable — never leak it to anonymous viewers.
+    res.pop("head_to_head", None)
     res["competitor_name"] = comp.name or comp.url
     res["competitor_url"] = comp.url
     return res

@@ -3,6 +3,27 @@ from app.config import RESEND_API_KEY, FROM_EMAIL, APP_BASE_URL
 
 RESEND_API = "https://api.resend.com/emails"
 
+
+def _play_to_text(play) -> str | None:
+    """Coerce a playbook item to a display string for the email.
+
+    Playbook items are usually plain strings, but the AI generation path can
+    emit `{type,text}` / `{title,detail}` objects (see the battle-card field
+    shapes gotcha). Without this the email would render a raw dict."""
+    if isinstance(play, str):
+        return play.strip() or None
+    if isinstance(play, dict):
+        for key in ("text", "detail", "title", "action"):
+            val = play.get(key)
+            if isinstance(val, str) and val.strip():
+                return val.strip()
+        # Salvage an unknown-key dict by its longest non-empty string value rather
+        # than rendering a blank talking point (mirrors battlecard._item_text).
+        vals = [v.strip() for v in play.values() if isinstance(v, str) and v.strip()]
+        if vals:
+            return max(vals, key=len)
+    return None
+
 async def send_weekly_brief(
     user_email: str,
     user_id: str,
@@ -13,7 +34,7 @@ async def send_weekly_brief(
     from datetime import datetime, timezone, timedelta
     from app.db import SessionLocal
     from app.models import Competitor, Review
-    from app.routes.battlecard import generate_battlecard
+    from app.routes.battlecard import get_or_generate_battlecard
     from sqlalchemy import select, func
 
     db = SessionLocal()
@@ -67,11 +88,18 @@ async def send_weekly_brief(
                 
             # Only include if has changes
             if changes_list:
-                # Fetch key talking point (first item from battlecard)
+                # Fetch key talking point (first play from the battle card).
+                # Cache-first helper — a paid model call only if no fresh AI card
+                # exists yet. (The old code called the FastAPI route function with
+                # the wrong signature, so this always threw and stayed blank.)
+                # NOTE: uses allow_ai=True, so callers must only brief full-access
+                # users — the scheduler gates on access_level == "full" before
+                # dispatch (app/scheduler.py). Any new caller must do the same or
+                # pass allow_ai=not is_read_only(user) to avoid a paid-gen leak.
                 try:
-                    battlecard = generate_battlecard(str(comp.id), db)
+                    battlecard = get_or_generate_battlecard(comp, db)
                     talking_points = battlecard.get("talking_points", [])
-                    key_talking_point = talking_points[0] if talking_points else None
+                    key_talking_point = _play_to_text(talking_points[0]) if talking_points else None
                 except Exception:
                     key_talking_point = None
                     

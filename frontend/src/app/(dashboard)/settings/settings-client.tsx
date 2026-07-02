@@ -3,7 +3,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { Competitor, SettingsData } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
-import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle } from 'lucide-react';
+import { Lock, Mail, Check, ExternalLink, Trash2, Plus, Bell, Calendar, User as UserIcon, AlertTriangle, Database } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 import clsx from 'clsx';
 
 interface SettingsClientProps {
@@ -13,40 +31,19 @@ interface SettingsClientProps {
   apiToken?: string;
   checkoutUrl: string;
   portalUrl: string;
+  initialTab?: SettingsTab;
 }
+
+type SettingsTab = 'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing';
 
 const statusConfig: Record<
   string,
-  { label: string; dot: string; text: string; bg: string; border: string }
+  { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }
 > = {
-  active: {
-    label: 'Active',
-    dot: 'bg-[var(--tone-positive)]',
-    text: 'text-[var(--tone-positive)]',
-    bg: 'bg-[var(--tone-positive)]/10',
-    border: 'border-[var(--tone-positive)]/25',
-  },
-  trialing: {
-    label: 'Trial',
-    dot: 'bg-[var(--accent-primary)]',
-    text: 'text-[var(--accent-primary)]',
-    bg: 'bg-[var(--accent-subtle)]',
-    border: 'border-[var(--accent-border)]',
-  },
-  canceled: {
-    label: 'Canceled',
-    dot: 'bg-[var(--tone-danger)]',
-    text: 'text-[var(--tone-danger)]',
-    bg: 'bg-[var(--tone-danger)]/10',
-    border: 'border-[var(--tone-danger)]/25',
-  },
-  past_due: {
-    label: 'Past due',
-    dot: 'bg-[var(--tone-warning)]',
-    text: 'text-[var(--tone-warning)]',
-    bg: 'bg-[var(--tone-warning)]/10',
-    border: 'border-[var(--tone-warning)]/25',
-  },
+  active: { label: 'Active', variant: 'default' },
+  trialing: { label: 'Free', variant: 'secondary' },
+  canceled: { label: 'Canceled', variant: 'destructive' },
+  past_due: { label: 'Past due', variant: 'outline' },
 };
 
 export default function SettingsClient({
@@ -56,14 +53,15 @@ export default function SettingsClient({
   apiToken,
   checkoutUrl,
   portalUrl,
+  initialTab,
 }: SettingsClientProps) {
   const api = createApiClient(userId, apiToken);
-  const [activeTab, setActiveTab] = useState<'profile' | 'schedule' | 'notifications' | 'competitors' | 'billing'>('profile');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab ?? 'profile');
 
   // Form states
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
   const [competitors, setCompetitors] = useState<Competitor[]>(initialCompetitors);
-  
+
   // Password state
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -162,19 +160,8 @@ export default function SettingsClient({
     }
   };
 
-  // Delete Competitor — two-step inline confirm instead of a native confirm()
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const deleteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (deleteTimer.current) clearTimeout(deleteTimer.current); }, []);
+  // Delete Competitor — confirmed via AlertDialog
   const handleDeleteCompetitor = async (id: string) => {
-    if (pendingDeleteId !== id) {
-      setPendingDeleteId(id);
-      if (deleteTimer.current) clearTimeout(deleteTimer.current);
-      deleteTimer.current = setTimeout(() => setPendingDeleteId(null), 4000);
-      return;
-    }
-    if (deleteTimer.current) clearTimeout(deleteTimer.current);
-    setPendingDeleteId(null);
     try {
       await api.deleteCompetitor(id);
       setCompetitors(competitors.filter(c => c.id !== id));
@@ -208,49 +195,40 @@ export default function SettingsClient({
     }
   };
 
-  const statusCfg = statusConfig[settings.subscription_status] ?? {
-    label: settings.subscription_status,
-    dot: 'bg-[var(--text-muted)]',
-    text: 'text-[var(--text-secondary)]',
-    bg: 'bg-[var(--fill-subtle-hover)]',
-    border: 'border-[var(--border-default)]',
-  };
+  const statusCfg = statusConfig[settings.subscription_status] ?? { label: settings.subscription_status, variant: 'outline' as const };
+
+  const NAV_TABS = [
+    { id: 'profile', label: 'Profile', Icon: UserIcon },
+    { id: 'schedule', label: 'Scan Schedule', Icon: Calendar },
+    { id: 'notifications', label: 'Notifications', Icon: Bell },
+    { id: 'competitors', label: 'Competitors', Icon: Trash2 },
+    { id: 'billing', label: 'Billing & Plan', Icon: ExternalLink },
+  ] as const;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pb-12">
       {toast && (
         <div
           role="alert"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 text-[12px] font-medium flex items-center gap-3"
-          style={{
-            background: 'var(--surface-raised)',
-            border: '1px solid var(--error-border, rgba(185,28,28,0.25))',
-            color: 'var(--tone-danger)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-          }}
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 text-xs font-medium flex items-center gap-3 bg-popover ring-1 ring-foreground/10 rounded-lg text-destructive shadow-lg"
         >
           <AlertTriangle size={14} />
           {toast}
         </div>
       )}
+
       {/* Left Navigation Sidebar */}
       <aside className="lg:w-56 flex-shrink-0">
-        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-[var(--border-subtle)]">
-          {[
-            { id: 'profile', label: 'Profile', Icon: UserIcon },
-            { id: 'schedule', label: 'Scan Schedule', Icon: Calendar },
-            { id: 'notifications', label: 'Notifications', Icon: Bell },
-            { id: 'competitors', label: 'Competitors', Icon: Trash2 },
-            { id: 'billing', label: 'Billing & Plan', Icon: ExternalLink },
-          ].map((tab) => (
+        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-border">
+          {NAV_TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={clsx(
-                'flex items-center gap-3 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-150 cursor-pointer',
+                'flex items-center gap-3 px-3 py-2.5 text-sm font-medium whitespace-nowrap rounded-lg transition-colors duration-150 cursor-pointer',
                 activeTab === tab.id
-                  ? 'bg-[var(--accent-subtle)] text-[var(--text-primary)] border-b-[2px] lg:border-b-0 lg:border-l-[3px] border-[var(--accent-primary)] font-semibold'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--fill-subtle-hover)] hover:text-[var(--text-primary)]'
+                  ? 'bg-muted text-foreground border-b-2 lg:border-b-0 lg:border-l-2 border-primary'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
               )}
             >
               <tab.Icon size={16} />
@@ -262,104 +240,104 @@ export default function SettingsClient({
 
       {/* Right Content Area */}
       <div className="flex-1 max-w-2xl">
-        
+
         {/* A) PROFILE SECTION */}
         {activeTab === 'profile' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Profile settings</h2>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage your login email, security settings, and business profile.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Profile settings</h2>
+              <p className="text-sm text-muted-foreground">Manage your login email, security settings, and business profile.</p>
             </div>
 
             {/* General Profile Card */}
-            <div className="rs-card p-4 space-y-4">
-              <div>
-                <label className="rs-label block mb-2">
-                  Email address
-                </label>
-                <input
-                  type="email"
-                  disabled
-                  value={settings.email}
-                  className="rs-input opacity-50 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <label className="rs-label block mb-2">
-                  Business type
-                </label>
-                <p className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>Toggles features specific to your business model.</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { id: 'saas', title: 'B2B SaaS', desc: 'Price pages, feature tracking, plans' },
-                    { id: 'local', title: 'Local Business', desc: 'Google Maps, reviews, social tracking' }
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleUpdateSetting('business_type', item.id)}
-                      className={clsx(
-                        'border p-4 text-left cursor-pointer transition-colors',
-                        settings.business_type === item.id
-                          ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
-                          : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
-                      )}
-                    >
-                      <p className="text-sm font-semibold" style={{ color: settings.business_type === item.id ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
-                        {item.title}
-                      </p>
-                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{item.desc}</p>
-                    </button>
-                  ))}
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email-display">Email address</Label>
+                  <Input
+                    id="email-display"
+                    type="email"
+                    disabled
+                    value={settings.email}
+                    className="opacity-50 cursor-not-allowed"
+                  />
                 </div>
-              </div>
-            </div>
+
+                <div className="space-y-2">
+                  <Label>Business type</Label>
+                  <p className="text-xs text-muted-foreground">Toggles features specific to your business model.</p>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {[
+                      { id: 'saas', title: 'B2B SaaS', desc: 'Price pages, feature tracking, plans' },
+                      { id: 'local', title: 'Local Business', desc: 'Google Maps, reviews, social tracking' }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleUpdateSetting('business_type', item.id)}
+                        className={clsx(
+                          'border rounded-xl p-4 text-left cursor-pointer transition-colors',
+                          settings.business_type === item.id
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border bg-muted/30 hover:bg-muted/60'
+                        )}
+                      >
+                        <p className={clsx('text-sm font-semibold', settings.business_type === item.id ? 'text-primary' : 'text-foreground')}>
+                          {item.title}
+                        </p>
+                        <p className="text-xs mt-1 text-muted-foreground">{item.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Change Password Card */}
-            <div className="rs-card p-4">
-              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                <Lock size={16} />
-                Change Password
-              </h3>
-              <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                <div>
-                  <label className="rs-label block mb-2">New Password</label>
-                  <input
-                    type="password"
-                    name="new_password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Min. 6 characters"
-                    className="rs-input"
-                  />
-                </div>
-                <div>
-                  <label className="rs-label block mb-2">Confirm New Password</label>
-                  <input
-                    type="password"
-                    name="confirm_password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repeat new password"
-                    className="rs-input"
-                  />
-                </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lock size={16} />
+                  Change Password
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      name="new_password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Min. 6 characters"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      name="confirm_password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Repeat new password"
+                    />
+                  </div>
 
-                {passwordStatus.type && (
-                  <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-[var(--tone-danger)]')}>
-                    {passwordStatus.message}
-                  </p>
-                )}
+                  {passwordStatus.type && (
+                    <p className={clsx('text-xs font-medium', passwordStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-destructive')}>
+                      {passwordStatus.message}
+                    </p>
+                  )}
 
-                <button
-                  type="submit"
-                  className="rs-btn-primary cursor-pointer"
-                >
-                  Update password
-                </button>
-              </form>
-            </div>
+                  <Button type="submit">
+                    Update password
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -367,12 +345,12 @@ export default function SettingsClient({
         {activeTab === 'schedule' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Scan schedule</h2>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Configure how frequently Rivalscope crawls and scans tracked sites.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Scan schedule</h2>
+              <p className="text-sm text-muted-foreground">Configure how frequently Rivalscope crawls and scans tracked sites.</p>
             </div>
 
-            <div className="rs-card p-4 space-y-4">
-              <div className="space-y-3">
+            <Card>
+              <CardContent className="pt-6 space-y-3">
                 {[
                   { id: 'weekly', title: 'Weekly Scans', desc: 'Scans run every Monday at 8:00 AM UTC. Best for standard competitive tracking.' },
                   { id: 'biweekly', title: 'Bi-weekly Scans', desc: 'Scans run every Monday and Thursday at 8:00 AM UTC. Recommended for fast-moving markets.' }
@@ -380,10 +358,10 @@ export default function SettingsClient({
                   <label
                     key={item.id}
                     className={clsx(
-                      'flex items-start gap-4 border p-4 cursor-pointer transition-colors',
+                      'flex items-start gap-4 border rounded-xl p-4 cursor-pointer transition-colors',
                       (settings as any).scan_schedule === item.id
-                        ? 'border-[var(--accent-primary)] bg-[var(--accent-subtle)]'
-                        : 'border-[var(--border-subtle)] bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)]'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border bg-muted/30 hover:bg-muted/60'
                     )}
                   >
                     <input
@@ -392,16 +370,16 @@ export default function SettingsClient({
                       value={item.id}
                       checked={(settings as any).scan_schedule === item.id}
                       onChange={() => handleUpdateSetting('scan_schedule', item.id)}
-                      className="mt-1 accent-[var(--accent-primary)] cursor-pointer"
+                      className="mt-1 accent-[var(--primary)] cursor-pointer"
                     />
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{item.title}</p>
-                      <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{item.desc}</p>
+                      <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                      <p className="text-xs mt-1 text-muted-foreground">{item.desc}</p>
                     </div>
                   </label>
                 ))}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -409,49 +387,49 @@ export default function SettingsClient({
         {activeTab === 'notifications' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Notification preferences</h2>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Control how and where you receive intelligence briefings and change alerts.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Notification preferences</h2>
+              <p className="text-sm text-muted-foreground">Control how and where you receive intelligence briefings and change alerts.</p>
             </div>
 
-            <form onSubmit={handleNotificationsSubmit} className="rs-card p-4 space-y-6">
-              <label className="flex items-start gap-4 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={!!(settings as any).email_notifications}
-                  onChange={(e) => setSettings({ ...settings, email_notifications: e.target.checked } as any)}
-                  className="mt-1 accent-[var(--accent-primary)] cursor-pointer"
-                />
-                <div>
-                  <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Send weekly intelligence digest email</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>Receive a summary of competitor activity and generated talking points.</p>
-                </div>
-              </label>
+            <form onSubmit={handleNotificationsSubmit}>
+              <Card>
+                <CardContent className="pt-6 space-y-6">
+                  <div className="flex items-start gap-4">
+                    <Switch
+                      id="email-notifications"
+                      checked={!!(settings as any).email_notifications}
+                      onCheckedChange={(checked) => setSettings({ ...settings, email_notifications: checked } as any)}
+                    />
+                    <div className="space-y-1">
+                      <Label htmlFor="email-notifications" className="cursor-pointer">
+                        Send weekly intelligence digest email
+                      </Label>
+                      <p className="text-xs text-muted-foreground">Receive a summary of competitor activity and generated talking points.</p>
+                    </div>
+                  </div>
 
-              <div>
-                <label className="rs-label block mb-2">
-                  Digest delivery email
-                </label>
-                <input
-                  type="email"
-                  value={(settings as any).digest_email || ''}
-                  onChange={(e) => setSettings({ ...settings, digest_email: e.target.value } as any)}
-                  placeholder={settings.email}
-                  className="rs-input"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="digest-email">Digest delivery email</Label>
+                    <Input
+                      id="digest-email"
+                      type="email"
+                      value={(settings as any).digest_email || ''}
+                      onChange={(e) => setSettings({ ...settings, digest_email: e.target.value } as any)}
+                      placeholder={settings.email}
+                    />
+                  </div>
 
-              {notifStatus.type && (
-                <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-[var(--tone-danger)]')}>
-                  {notifStatus.message}
-                </p>
-              )}
+                  {notifStatus.type && (
+                    <p className={clsx('text-xs font-medium', notifStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-destructive')}>
+                      {notifStatus.message}
+                    </p>
+                  )}
 
-              <button
-                type="submit"
-                className="rs-btn-primary cursor-pointer"
-              >
-                Save notifications
-              </button>
+                  <Button type="submit">
+                    Save notifications
+                  </Button>
+                </CardContent>
+              </Card>
             </form>
           </div>
         )}
@@ -460,28 +438,30 @@ export default function SettingsClient({
         {activeTab === 'competitors' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Competitors list</h2>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage tracked websites, enable/disable scanning, or add new competitors.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Competitors list</h2>
+              <p className="text-sm text-muted-foreground">Manage tracked websites, enable/disable scanning, or add new competitors.</p>
             </div>
 
             {/* Quick List */}
-            <div className="rs-card overflow-hidden">
-              <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--fill-subtle)]">
-                <h3 className="rs-label">Tracked competitors</h3>
-              </div>
+            <Card className="overflow-hidden">
+              <CardHeader className="border-b border-border bg-muted/30">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Tracked competitors</CardTitle>
+              </CardHeader>
 
               {competitors.length === 0 ? (
-                <div className="p-6 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  No competitors added yet. Use the form below to add one.
-                </div>
+                <CardContent className="pt-6 pb-6">
+                  <p className="text-sm text-muted-foreground text-center">
+                    No competitors added yet. Use the form below to add one.
+                  </p>
+                </CardContent>
               ) : (
-                <div className="divide-y divide-[var(--border-subtle)]">
+                <div className="divide-y divide-border">
                   {competitors.map((comp) => {
                     const cleanUrl = comp.url.replace(/https?:\/\/(www\.)?/, '');
                     const faviconUrl = `https://www.google.com/s2/favicons?domain=${cleanUrl}&sz=32`;
-                    
+
                     return (
-                      <div key={comp.id} className="p-4 flex items-center justify-between gap-4">
+                      <div key={comp.id} className="px-4 py-3 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 min-w-0">
                           <img
                             src={faviconUrl}
@@ -489,100 +469,112 @@ export default function SettingsClient({
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/favicon.ico';
                             }}
-                            className="w-7 h-7 rounded border border-[var(--border-default)] bg-[var(--fill-subtle)] p-0.5"
+                            className="w-7 h-7 rounded-lg border border-border bg-muted p-0.5"
                           />
                           <div className="min-w-0">
-                            <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                            <p className="text-sm font-medium truncate text-foreground">
                               {comp.name || comp.url}
                             </p>
-                            <p className="text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{comp.url}</p>
+                            <p className="text-xs truncate text-muted-foreground">{comp.url}</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-4">
                           {/* Enable/Disable Toggle */}
-                          <label className="inline-flex items-center cursor-pointer select-none">
-                            <input
-                              type="checkbox"
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              id={`toggle-${comp.id}`}
                               checked={comp.active}
-                              onChange={() => handleToggleCompetitor(comp)}
-                              className="sr-only peer"
+                              onCheckedChange={() => handleToggleCompetitor(comp)}
                             />
-                            <div className="w-9 h-5 bg-[var(--fill-subtle-hover)] peer-focus:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-sky-400/60 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--surface-raised)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[var(--border-strong)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--text-primary)] after:border-[var(--border-strong)] after:border after:rounded-full after:h-4 after:w-4 after:transition-transform peer-checked:bg-[var(--accent-primary)] relative"></div>
-                            <span className="ml-2 text-xs font-semibold min-w-[48px]" style={{ color: 'var(--text-secondary)' }}>
+                            <Label htmlFor={`toggle-${comp.id}`} className="text-xs text-muted-foreground cursor-pointer min-w-[48px]">
                               {comp.active ? 'Active' : 'Paused'}
-                            </span>
-                          </label>
+                            </Label>
+                          </div>
 
-                          {/* Delete Button — first click arms, second click within 4s deletes */}
-                          <button
-                            onClick={() => handleDeleteCompetitor(comp.id)}
-                            className={clsx(
-                              'p-2 transition-colors cursor-pointer flex items-center gap-2',
-                              pendingDeleteId === comp.id
-                                ? 'text-[var(--tone-danger)] bg-[var(--tone-danger)]/10'
-                                : 'text-[var(--text-secondary)] hover:text-[var(--tone-danger)] hover:bg-[var(--tone-danger)]/10'
-                            )}
-                            title={pendingDeleteId === comp.id ? 'Click again to confirm' : 'Delete'}
-                          >
-                            <Trash2 size={16} />
-                            {pendingDeleteId === comp.id && (
-                              <span className="text-[10px] font-mono font-semibold uppercase tracking-wide">Confirm?</span>
-                            )}
-                          </button>
+                          {/* Delete Button — AlertDialog confirmation */}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                title="Delete"
+                              >
+                                <Trash2 size={16} />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Remove competitor?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will stop tracking <strong>{comp.name || comp.url}</strong> and delete all associated scan history. This cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  variant="destructive"
+                                  onClick={() => handleDeleteCompetitor(comp.id)}
+                                >
+                                  Remove
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
                     );
                   })}
                 </div>
               )}
-            </div>
+            </Card>
 
             {/* Add Competitor Card */}
-            <div className="rs-card p-4">
-              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                <Plus size={16} />
-                Add new competitor
-              </h3>
-              <form onSubmit={handleAddCompetitor} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="rs-label block mb-2">Competitor Name (optional)</label>
-                    <input
-                      type="text"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      placeholder="e.g. Acme Corp"
-                      className="rs-input"
-                    />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Plus size={16} />
+                  Add new competitor
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddCompetitor} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="new-name">Competitor Name (optional)</Label>
+                      <Input
+                        id="new-name"
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        placeholder="e.g. Acme Corp"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-url">Competitor Website (URL)</Label>
+                      <Input
+                        id="new-url"
+                        type="text"
+                        value={newUrl}
+                        onChange={(e) => setNewUrl(e.target.value)}
+                        placeholder="e.g. acme.com"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="rs-label block mb-2">Competitor Website (URL)</label>
-                    <input
-                      type="text"
-                      value={newUrl}
-                      onChange={(e) => setNewUrl(e.target.value)}
-                      placeholder="e.g. acme.com"
-                      className="rs-input"
-                    />
-                  </div>
-                </div>
 
-                {addStatus.type && (
-                  <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-[var(--tone-danger)]')}>
-                    {addStatus.message}
-                  </p>
-                )}
+                  {addStatus.type && (
+                    <p className={clsx('text-xs font-medium', addStatus.type === 'success' ? 'text-[var(--tone-positive)]' : 'text-destructive')}>
+                      {addStatus.message}
+                    </p>
+                  )}
 
-                <button
-                  type="submit"
-                  disabled={isAdding}
-                  className="rs-btn-primary cursor-pointer flex items-center gap-2"
-                >
-                  {isAdding ? 'Adding…' : 'Add competitor'}
-                </button>
-              </form>
-            </div>
+                  <Button type="submit" disabled={isAdding}>
+                    {isAdding ? 'Adding…' : 'Add competitor'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -590,89 +582,81 @@ export default function SettingsClient({
         {activeTab === 'billing' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Subscription & billing</h2>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Manage payment details, upgrade your account, or download invoices.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Subscription & billing</h2>
+              <p className="text-sm text-muted-foreground">Manage payment details, upgrade your account, or download invoices.</p>
             </div>
 
-            <div className="rs-card p-4">
-              <div className="flex items-start justify-between mb-8">
-                <div>
-                  <h3 className="text-base font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Rivalscope Pro</h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>$49<span className="text-sm font-normal" style={{ color: 'var(--text-secondary)' }}>/mo</span></span>
-                    <span
-                      className={clsx(
-                        'inline-flex items-center gap-2 px-3 py-0.5 border text-[11px] uppercase tracking-wide font-bold',
-                        statusCfg.bg,
-                        statusCfg.text,
-                        statusCfg.border
-                      )}
-                    >
-                      <span className={clsx('w-1 h-1 rounded-full', statusCfg.dot)} />
-                      {statusCfg.label}
-                    </span>
-                  </div>
-                </div>
-
-                {settings.trial_ends_at && (
-                  <div className="text-right">
-                    <p className="text-[11px] font-medium uppercase tracking-wide mb-1" style={{ color: 'var(--text-muted)' }}>
-                      Trial ends
-                    </p>
-                    <p className="text-sm font-mono font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {new Date(settings.trial_ends_at).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Plan Card Features */}
-              <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] p-4 mb-6">
-                <p className="rs-label mb-4">Included in Pro plan:</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
-                  {[
-                    "Track up to 7 competitors",
-                    "Weekly intelligence digest",
-                    "AI-generated talking points",
-                    "12-week historical trends",
-                    "Priority email support"
-                  ].map((feat, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <Check size={14} className="flex-shrink-0" style={{ color: 'var(--tone-positive)' }} />
-                      <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{feat}</span>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between mb-8">
+                  <div>
+                    <h3 className="text-base font-semibold mb-2 text-foreground">Rivalscope Pro</h3>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-semibold text-foreground">
+                        $49<span className="text-sm font-normal text-muted-foreground">/mo</span>
+                      </span>
+                      <Badge variant={statusCfg.variant}>
+                        {statusCfg.label}
+                      </Badge>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {portalUrl && (
-                <div>
-                  <a
-                    href={portalUrl}
-                    className="rs-btn-primary cursor-pointer"
-                  >
-                    Manage billing
-                    <ExternalLink size={14} />
-                  </a>
+                  {settings.subscription_status !== 'active' && (
+                    <div className="text-right">
+                      <p className="text-xs font-medium uppercase tracking-wide mb-1 text-muted-foreground">
+                        Free plan
+                      </p>
+                      <p className="text-sm font-medium text-foreground">
+                        {settings.access_level === 'read_only' ? 'Free test used' : '1 free test available'}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
 
-              {checkoutUrl && (
-                <div>
-                  <a
-                    href={checkoutUrl}
-                    className="rs-btn-primary cursor-pointer"
-                  >
-                    Upgrade to Pro
-                    <ExternalLink size={14} />
-                  </a>
+                {/* Plan Features */}
+                <div className="bg-muted/40 border border-border rounded-xl p-4 mb-6">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-4">Included in Pro plan:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+                    {[
+                      "Track up to 7 competitors",
+                      "Weekly intelligence digest",
+                      "AI-generated talking points",
+                      "12-week historical trends",
+                      "Priority email support"
+                    ].map((feat, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Check size={14} className="flex-shrink-0 text-[var(--tone-positive)]" />
+                        <span className="text-sm text-foreground">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {portalUrl && (
+                  <Button asChild>
+                    <a href={portalUrl}>
+                      Manage billing
+                      <ExternalLink size={14} />
+                    </a>
+                  </Button>
+                )}
+
+                {checkoutUrl && (
+                  <Button asChild>
+                    <a href={checkoutUrl}>
+                      Upgrade to Pro
+                      <ExternalLink size={14} />
+                    </a>
+                  </Button>
+                )}
+
+                {!portalUrl && !checkoutUrl && (
+                  <p className="text-sm text-muted-foreground">
+                    We could not start checkout right now. Please refresh and try again. If this keeps happening, contact support and we will get you upgraded.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           </div>
         )}
 

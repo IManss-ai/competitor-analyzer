@@ -15,7 +15,7 @@ const PLATFORM_STYLES: Record<string, { label: string; badge: string }> = {
 };
 
 function StarRating({ rating }: { rating: number | null }) {
-  if (rating === null) return <span className="text-[var(--text-muted)] text-xs">—</span>;
+  if (rating === null) return <span className="text-muted-foreground text-xs">—</span>;
   const full = Math.floor(rating);
   const half = rating - full >= 0.5;
   return (
@@ -29,11 +29,11 @@ function StarRating({ rating }: { rating: number | null }) {
               ? 'text-[var(--tone-warning)] fill-[var(--tone-warning)]'
               : i === full && half
               ? 'text-[var(--tone-warning)] fill-[var(--tone-warning)] [fill-opacity:0.4]'
-              : 'text-[var(--border-default)] fill-[var(--border-default)]'
+              : 'text-border fill-border'
           }
         />
       ))}
-      <span className="ml-1 text-[11px] font-mono text-[var(--text-primary)]">{rating.toFixed(1)}</span>
+      <span className="ml-1 text-[11px] font-mono text-foreground">{rating.toFixed(1)}</span>
     </span>
   );
 }
@@ -42,32 +42,32 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
   const hasData = reviewsData.some(d => d.snapshots && d.snapshots.length > 0);
 
   return (
-    <div className="rs-card overflow-hidden">
-      <div className="px-5 py-4 border-b border-[var(--border-default)] flex items-center gap-2">
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="px-5 py-4 border-b border-border flex items-center gap-2">
         <Star size={15} className="text-[var(--tone-warning)]" />
-        <h2 className="text-sm font-bold text-[var(--text-primary)]">Review Intelligence</h2>
-        <span className="ml-auto text-[10px] text-[var(--text-muted)] font-mono">G2 · Trustpilot · Capterra</span>
+        <h2 className="text-[17px] font-semibold text-foreground">Review Intelligence</h2>
+        <span className="ml-auto text-[10px] text-muted-foreground font-mono">G2 · Trustpilot · Capterra</span>
       </div>
 
       {!hasData ? (
         <div className="px-6 py-10 text-center">
-          <AlertCircle size={20} className="text-[var(--text-muted)] mx-auto mb-3" />
-          <p className="text-sm text-[var(--text-muted)]">Run a scan to populate review intelligence</p>
+          <AlertCircle size={20} className="text-muted-foreground mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Run a scan to populate review intelligence</p>
         </div>
       ) : (
-        <div className="divide-y divide-[var(--border-subtle)]">
+        <div className="divide-y divide-border">
           {competitors.map((comp, index) => {
             const data = reviewsData[index];
             if (!data || !data.snapshots || data.snapshots.length === 0) return null;
 
             return (
               <div key={comp.id} className="px-5 py-4">
-                <p className="text-xs font-bold text-[var(--text-primary)] mb-3 truncate">{comp.name || comp.url}</p>
+                <p className="text-xs font-bold text-foreground mb-3 truncate">{comp.name || comp.url}</p>
                 <div className="space-y-3">
                   {data.snapshots.map((snap, sIdx) => {
                     const style = PLATFORM_STYLES[snap.platform] ?? {
                       label: snap.platform,
-                      badge: 'bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-[var(--border-default)]',
+                      badge: 'bg-muted text-muted-foreground border-border',
                     };
 
                     return (
@@ -78,8 +78,8 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                           </span>
                           <StarRating rating={snap.avg_rating} />
                           {snap.total_reviews !== null && (
-                            <span className="text-[11px] text-[var(--text-muted)] font-mono">
-                              {snap.total_reviews.toLocaleString()} reviews
+                            <span className="text-[11px] text-muted-foreground font-mono">
+                              {snap.total_reviews.toLocaleString('en-US')} reviews
                             </span>
                           )}
                           {snap.complaint_count > 0 && (
@@ -94,7 +94,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                             {snap.top_complaints.map((c, cIdx) => (
                               <span
                                 key={cIdx}
-                                className="text-[11px] text-[var(--text-secondary)] bg-[var(--fill-subtle)] border border-[var(--border-subtle)] px-3 py-1 rounded"
+                                className="text-[11px] text-muted-foreground bg-muted border border-border px-3 py-1 rounded"
                               >
                                 {c}
                               </span>

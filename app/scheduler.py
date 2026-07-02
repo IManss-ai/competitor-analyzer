@@ -10,13 +10,29 @@ from app.pipeline.google_reviews_scraper import scrape_google_reviews
 from app.pipeline.social_tracker import scrape_social_posts
 from app.pipeline.job_tracker import scrape_job_postings
 from app.mailer import send_weekly_brief
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 logger = logging.getLogger(__name__)
 
 scheduler = AsyncIOScheduler()
 
-async def _scan_and_brief_user(user, db):
+# Classifier-suppressed types plus first-scan baselines: kept as rows for the
+# feed/audit trail, but they are not intel — never email them.
+_NOISE_CHANGE_TYPES = ("minor_copy", "no_change", "initial_scan")
+
+
+def _brief_window_days(label: str, user) -> int:
+    """How far back this brief looks, i.e. the gap since the user's PREVIOUS
+    brief. Biweekly-schedule users get both runs (Mon 8am + Thu 8am UTC); a
+    fixed 7-day lookback on each would mail every event twice."""
+    if label == "midweek":
+        return 3  # Thursday brief covers Mon 8am -> Thu 8am
+    if getattr(user, "scan_schedule", None) == "biweekly":
+        return 4  # Monday brief covers Thu 8am -> Mon 8am
+    return 7
+
+
+async def _scan_and_brief_user(user, db, lookback_days: int = 7):
     """Scan one user's competitors, gather this week's changes, and email the
     brief. Raises on failure — the per-user caller isolates and logs it."""
     # 1. Run competitor scans (saves snapshots, changes, and action drafts)
@@ -51,13 +67,17 @@ async def _scan_and_brief_user(user, db):
                 except Exception as e:
                     logger.warning("scheduler: social scrape failed for competitor %s: %s", comp.id, e)
 
-    # 2. Gather this week's change events
-    week_label = datetime.now(timezone.utc).strftime("%Y-W%V")
+    # 2. Gather change events since the previous brief (week_label equality
+    # dropped Tue-Sun on-demand scans: by Monday 8am they carry the previous
+    # ISO week's label). Suppressed/baseline events stay out of the email.
+    since = datetime.now(timezone.utc) - timedelta(days=lookback_days)
     events = db.execute(
         select(ChangeEvent, Competitor)
         .join(Competitor, ChangeEvent.competitor_id == Competitor.id)
         .where(Competitor.user_id == user.id)
-        .where(ChangeEvent.week_label == week_label)
+        .where(ChangeEvent.detected_at >= since)
+        .where(ChangeEvent.change_type.isnot(None))
+        .where(ChangeEvent.change_type.notin_(_NOISE_CHANGE_TYPES))
     ).all()
 
     change_summaries = [
@@ -94,8 +114,13 @@ async def _run_scan_and_brief(label, *extra_filters):
         for f in extra_filters:
             stmt = stmt.where(f)
         for user in db.execute(stmt).scalars().all():
+            # Paywall: ongoing weekly monitoring is a paid feature — only scan
+            # full-access users (active / comped / not-yet-tested).
+            from app.access import access_level
+            if access_level(user) != "full":
+                continue
             try:
-                await _scan_and_brief_user(user, db)
+                await _scan_and_brief_user(user, db, lookback_days=_brief_window_days(label, user))
             except Exception as e:
                 logger.warning("scheduler: %s run failed for user %s: %s", label, user.id, e)
     finally:

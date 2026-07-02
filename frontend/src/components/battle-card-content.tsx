@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Loader2, X, Copy, Check } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export interface BattleCardData {
   title: string;
@@ -19,25 +23,53 @@ export interface BattleCardData {
   is_baseline?: boolean;
 }
 
+// Coerce a battle-card list item to a display string. The API usually returns
+// plain strings, but LLM/cached payloads can carry {type,text} / {title,detail}
+// objects — rendering those raw throws React error #31. Key priority mirrors
+// the backend's _item_text (app/routes/battlecard.py) and mailer._play_to_text.
+export function battleCardItemText(item: unknown): string {
+  if (typeof item === 'string') return item;
+  if (item && typeof item === 'object') {
+    const obj = item as Record<string, unknown>;
+    for (const key of ['text', 'detail', 'title', 'action', 'description']) {
+      const val = obj[key];
+      if (typeof val === 'string' && val.trim()) return val;
+    }
+    // Salvage an unknown-key object by its longest non-empty string value rather
+    // than dropping real content (mirrors the backend _item_text fallback).
+    const vals = Object.values(obj).filter(
+      (v): v is string => typeof v === 'string' && v.trim().length > 0
+    );
+    if (vals.length) return vals.reduce((a, b) => (b.length > a.length ? b : a));
+  }
+  return '';
+}
+
+export function toStringList(raw: unknown): string[] {
+  return Array.isArray(raw) ? raw.map(battleCardItemText).filter(Boolean) : [];
+}
+
 // Normalize old API format (strings in what_changed, talking_points,
 // win_conditions) vs new format (objects in what_changed, playbook,
 // strategic_signals). Shared so the modal and the onboarding finale render
 // the exact same report shape.
 export function normalizeBattleCard(raw: any): BattleCardData {
   const whatChanged: { type: string; text: string }[] = Array.isArray(raw.what_changed)
-    ? raw.what_changed.map((item: unknown) =>
-        typeof item === 'string'
-          ? { type: 'change', text: item }
-          : (item as { type: string; text: string })
-      )
+    ? raw.what_changed
+        .map((item: any) =>
+          typeof item === 'string'
+            ? { type: 'change', text: item }
+            : { type: typeof item?.type === 'string' ? item.type : 'change', text: battleCardItemText(item) }
+        )
+        .filter((c: { text: string }) => c.text)
     : [];
   return {
     title: raw.title || '',
     executive_summary: raw.executive_summary || '',
     what_changed: whatChanged,
-    weaknesses: raw.weaknesses || [],
-    strategic_signals: raw.strategic_signals || raw.win_conditions || [],
-    playbook: raw.playbook || raw.talking_points || raw.actions || [],
+    weaknesses: toStringList(raw.weaknesses),
+    strategic_signals: toStringList(raw.strategic_signals ?? raw.win_conditions),
+    playbook: toStringList(raw.playbook ?? raw.talking_points ?? raw.actions),
     generated_at: raw.generated_at || new Date().toISOString(),
     variant: raw.variant === 'local' ? 'local' : 'saas',
     is_baseline: raw.is_baseline === true,
@@ -45,7 +77,7 @@ export function normalizeBattleCard(raw: any): BattleCardData {
 }
 
 function getBadgeClass(type: string | undefined | null) {
-  if (!type) return 'bg-[var(--fill-subtle)] text-[var(--text-muted)] border-[var(--border-default)]';
+  if (!type) return 'tag-amber';
   const t = type.toLowerCase();
   if (t.includes('price') || t.includes('pricing')) return 'tag-amber';
   if (t.includes('feature') || t.includes('add')) return 'tag-green';
@@ -53,8 +85,8 @@ function getBadgeClass(type: string | undefined | null) {
   if (t.includes('reputation')) return 'tag-red';
   if (t.includes('social') || t.includes('campaign')) return 'tag-green';
   if (t.includes('review')) return 'tag-amber';
-  if (t.includes('offer') || t.includes('new')) return 'bg-sky-400/10 text-sky-400 border-sky-400/20';
-  return 'bg-[var(--fill-subtle)] text-[var(--text-muted)] border-[var(--border-default)]';
+  if (t.includes('offer') || t.includes('new')) return 'tag-blue';
+  return 'tag-amber';
 }
 
 function getBadgeLabel(type: string | undefined | null) {
@@ -99,20 +131,28 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center text-[var(--text-secondary)] space-y-4 py-16">
-        <Loader2 size={32} className="animate-spin text-sky-400" />
-        <p className="text-xs font-mono uppercase tracking-wider animate-pulse">
-          {loadingLabel || 'Analyzing competitor intelligence...'}
-        </p>
+      <div className="p-6 space-y-5">
+        <Skeleton className="h-20 w-full rounded-xl" />
+        <div className="grid md:grid-cols-2 gap-4">
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-28 w-full rounded-xl md:col-span-2" />
+        </div>
+        <div className="flex flex-col items-center gap-2 pt-2">
+          <Loader2 size={20} className="animate-spin text-primary" />
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground animate-pulse">
+            {loadingLabel || 'Analyzing competitor intelligence...'}
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center text-[var(--tone-danger)] space-y-3 py-16 text-center">
-        <X size={32} className="text-[var(--tone-danger)]" />
-        <p className="text-sm font-medium">{error}</p>
+      <div className="flex flex-col items-center justify-center space-y-3 py-16 text-center">
+        <X size={32} className="text-destructive" />
+        <p className="text-sm font-medium text-destructive">{error}</p>
       </div>
     );
   }
@@ -123,12 +163,14 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
     <div className="p-6 space-y-5">
       {/* Executive Summary */}
       {cardData.executive_summary && (
-        <div className="p-4 bg-[var(--surface-raised)] border border-[var(--border-default)]" style={{ borderRadius: 'var(--radius-md)' }}>
-          <div className="text-[9px] font-mono font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">Executive Summary</div>
-          <p className="text-[var(--text-primary)] text-sm leading-relaxed italic">
-            &quot;{cardData.executive_summary}&quot;
-          </p>
-        </div>
+        <Card className="bg-muted border-border">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-[9px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">Executive Summary</p>
+            <p className="text-foreground text-sm leading-relaxed italic">
+              &quot;{cardData.executive_summary}&quot;
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {/* 2x2 Grid */}
@@ -139,38 +181,42 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={shouldReduceMotion ? { duration: 0 } : { delay: 0 * 0.07 }}
-          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5"
-          style={{ borderRadius: 'var(--radius-md)' }}
         >
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-sky-400 mb-4">
-            {cardData.variant === 'local' ? 'Activity This Week' : 'Detected Changes'}
-          </div>
-          {cardData.is_baseline ? (
-            <p className="text-xs text-[var(--text-muted)] italic">
-              {cardData.variant === 'local'
-                ? 'No activity yet — baseline captured. New reviews and posts appear after the next scan.'
-                : 'No changes detected yet — baseline captured. New changes appear after the next scan.'}
-            </p>
-          ) : (!cardData.what_changed || cardData.what_changed.length === 0) ? (
-            <p className="text-xs text-[var(--text-muted)] italic">
-              {cardData.variant === 'local'
-                ? 'Quiet week — no new reviews or social posts'
-                : 'No significant changes detected this week'}
-            </p>
-          ) : (
-            <div className="space-y-4">
-              {cardData.what_changed.map((change, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="flex">
-                    <span className={`text-[8px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 border ${getBadgeClass(change.type)}`} style={{ borderRadius: 'var(--radius-sm)' }}>
-                      {getBadgeLabel(change.type)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[var(--text-primary)] leading-normal">{change.text}</p>
+          <Card className="h-full bg-card border-border">
+            <CardHeader className="pb-3 pt-4 px-5">
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-primary">
+                {cardData.variant === 'local' ? 'Activity This Week' : 'Detected Changes'}
+              </p>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              {cardData.is_baseline ? (
+                <p className="text-xs text-muted-foreground italic">
+                  {cardData.variant === 'local'
+                    ? 'No activity yet — baseline captured. New reviews and posts appear after the next scan.'
+                    : 'No changes detected yet — baseline captured. New changes appear after the next scan.'}
+                </p>
+              ) : (!cardData.what_changed || cardData.what_changed.length === 0) ? (
+                <p className="text-xs text-muted-foreground italic">
+                  {cardData.variant === 'local'
+                    ? 'Quiet week — no new reviews or social posts'
+                    : 'No significant changes detected this week'}
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {cardData.what_changed.map((change, idx) => (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex">
+                        <span className={`text-[8px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 border rounded-sm ${getBadgeClass(change.type)}`}>
+                          {getBadgeLabel(change.type)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-foreground leading-normal">{change.text}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
 
         {/* Panel 2: User Complaints */}
@@ -178,24 +224,28 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={shouldReduceMotion ? { duration: 0 } : { delay: 1 * 0.07 }}
-          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5"
-          style={{ borderRadius: 'var(--radius-md)' }}
         >
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-danger)] mb-4">
-            User Complaints
-          </div>
-          {(!cardData.weaknesses || cardData.weaknesses.length === 0) ? (
-            <p className="text-xs text-[var(--text-muted)] italic">No customer complaints reported</p>
-          ) : (
-            <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
-              {cardData.weaknesses.map((weakness, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-[var(--tone-danger)] select-none">›</span>
-                  <span>{weakness}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <Card className="h-full bg-card border-border">
+            <CardHeader className="pb-3 pt-4 px-5">
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider" style={{ color: 'var(--tone-danger)' }}>
+                User Complaints
+              </p>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              {(!cardData.weaknesses || cardData.weaknesses.length === 0) ? (
+                <p className="text-xs text-muted-foreground italic">No customer complaints reported</p>
+              ) : (
+                <ul className="space-y-3 text-xs text-foreground leading-normal">
+                  {cardData.weaknesses.map((weakness, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="select-none" style={{ color: 'var(--tone-danger)' }}>›</span>
+                      <span>{weakness}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
 
         {/* Panel 3: Strategic Signals */}
@@ -203,24 +253,29 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={shouldReduceMotion ? { duration: 0 } : { delay: 2 * 0.07 }}
-          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 md:col-span-2"
-          style={{ borderRadius: 'var(--radius-md)' }}
+          className="md:col-span-2"
         >
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-warning)] mb-4">
-            Strategic Signals
-          </div>
-          {(!cardData.strategic_signals || cardData.strategic_signals.length === 0) ? (
-            <p className="text-xs text-[var(--text-muted)] italic">No strategic signals identified</p>
-          ) : (
-            <ul className="space-y-3 text-xs text-[var(--text-primary)] leading-normal">
-              {cardData.strategic_signals.map((signal, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-[var(--tone-warning)] select-none">›</span>
-                  <span>{signal}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <Card className="bg-card border-border">
+            <CardHeader className="pb-3 pt-4 px-5">
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider" style={{ color: 'var(--tone-warning)' }}>
+                Strategic Signals
+              </p>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              {(!cardData.strategic_signals || cardData.strategic_signals.length === 0) ? (
+                <p className="text-xs text-muted-foreground italic">No strategic signals identified</p>
+              ) : (
+                <ul className="space-y-3 text-xs text-foreground leading-normal">
+                  {cardData.strategic_signals.map((signal, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="select-none" style={{ color: 'var(--tone-warning)' }}>›</span>
+                      <span>{signal}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
 
         {/* Panel 4: Playbook */}
@@ -228,44 +283,51 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={shouldReduceMotion ? { duration: 0 } : { delay: 3 * 0.07 }}
-          className="bg-[var(--surface-raised)] border border-[var(--border-default)] p-5 md:col-span-2"
-          style={{ borderRadius: 'var(--radius-md)' }}
+          className="md:col-span-2"
         >
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[var(--tone-positive)] mb-4">
-            Playbook — This Week
-          </div>
-          {(!cardData.playbook || cardData.playbook.length === 0) ? (
-            <p className="text-xs text-[var(--text-muted)] italic">No playbook recommendations</p>
-          ) : (
-            <ol className="space-y-3">
-              {cardData.playbook.map((play, idx) => {
-                const rankStr = String(idx + 1).padStart(2, '0');
-                const isCopied = copiedIndex === idx;
-                return (
-                  <li
-                    key={idx}
-                    className="flex items-start justify-between gap-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] p-3 rounded border border-[var(--border-subtle)] transition-colors"
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="text-xs font-mono font-bold text-[var(--tone-positive)] mt-0.5">{rankStr}</span>
-                      <span className="text-xs text-[var(--text-primary)] leading-relaxed">{play}</span>
-                    </div>
-                    <button
-                      onClick={() => handleCopy(play, idx)}
-                      className="p-1 rounded bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer shrink-0 mt-0.5"
-                      title="Copy to clipboard"
-                    >
-                      {isCopied ? (
-                        <Check size={10} className="text-[var(--tone-positive)]" />
-                      ) : (
-                        <Copy size={10} />
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
+          <Card className="bg-card border-border">
+            <CardHeader className="pb-3 pt-4 px-5">
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider" style={{ color: 'var(--tone-positive)' }}>
+                Playbook — This Week
+              </p>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              {(!cardData.playbook || cardData.playbook.length === 0) ? (
+                <p className="text-xs text-muted-foreground italic">No playbook recommendations</p>
+              ) : (
+                <ol className="space-y-3">
+                  {cardData.playbook.map((play, idx) => {
+                    const rankStr = String(idx + 1).padStart(2, '0');
+                    const isCopied = copiedIndex === idx;
+                    return (
+                      <li
+                        key={idx}
+                        className="flex items-start justify-between gap-3 bg-muted hover:bg-muted/80 p-3 rounded-lg border border-border transition-colors"
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="text-xs font-mono font-bold mt-0.5" style={{ color: 'var(--tone-positive)' }}>{rankStr}</span>
+                          <span className="text-xs text-foreground leading-relaxed">{play}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleCopy(play, idx)}
+                          title="Copy to clipboard"
+                          className="shrink-0 mt-0.5 h-6 w-6 text-muted-foreground hover:text-foreground"
+                        >
+                          {isCopied ? (
+                            <Check size={10} style={{ color: 'var(--tone-positive)' }} />
+                          ) : (
+                            <Copy size={10} />
+                          )}
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
 
       </div>

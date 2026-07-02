@@ -77,7 +77,8 @@ class TestClassifierSynthesizer(unittest.IsolatedAsyncioTestCase):
         mock_create.side_effect = Exception("API error")
 
         res = await synthesize_brief("Comp", "https://comp.com", "before", "after", "pricing_change")
-        self.assertIn("restructured their pricing plans", res)
+        self.assertIn("changed their pricing", res)
+        self.assertNotIn("$", res)  # heuristic must not fabricate specific prices
 
 if __name__ == '__main__':
     unittest.main()

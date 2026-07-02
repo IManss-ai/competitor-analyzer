@@ -5,6 +5,7 @@ from sqlalchemy import select
 from app.db import get_session
 from app.models import ApprovedAction, ChangeEvent, Competitor, User
 from app.session import require_current_user
+from app.access import require_write_access_session
 from datetime import datetime, timezone
 import uuid
 
@@ -48,7 +49,7 @@ async def approve_action(
     action_id: str,
     edited_text: str = Form(None),
     db=Depends(get_session),
-    user_id=Depends(require_current_user)
+    user_id=Depends(require_write_access_session)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
     action_uuid = uuid.UUID(action_id) if isinstance(action_id, str) else action_id
@@ -76,7 +77,7 @@ async def dismiss_action(
     request: Request,
     action_id: str,
     db=Depends(get_session),
-    user_id=Depends(require_current_user)
+    user_id=Depends(require_write_access_session)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
     action_uuid = uuid.UUID(action_id) if isinstance(action_id, str) else action_id

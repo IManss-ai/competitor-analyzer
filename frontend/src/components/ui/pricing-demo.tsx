@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
 
 const reveal = (delay = 0) => ({
   initial: { opacity: 0, y: 28 } as const,
@@ -13,20 +14,20 @@ const reveal = (delay = 0) => ({
 
 interface PricingTier {
   name: string;
-  badge?: string;
-  badgeClass?: string;
+  tag?: string;
+  highlighted?: boolean;
   price: string;
   target: string;
   features: string[];
   cta: string;
   href: string;
-  borderClass: string;
-  accentClass: string;
 }
 
 const tiers: PricingTier[] = [
   {
     name: "SaaS Starter",
+    tag: "Most teams",
+    highlighted: true,
     price: "$49",
     target: "For SaaS founders and startups",
     features: [
@@ -36,15 +37,12 @@ const tiers: PricingTier[] = [
       "Review intelligence (G2, Trustpilot)",
       "Weekly email report",
     ],
-    cta: "Start free trial",
+    cta: "Start free",
     href: "/auth/login?plan=saas",
-    borderClass: "border border-sky-500/20",
-    accentClass: "text-sky-400",
   },
   {
     name: "Local Business",
-    badge: "Local",
-    badgeClass: "bg-sky-500/10 text-sky-400 border border-sky-500/20",
+    tag: "Local",
     price: "$19",
     target: "For salons, cafes, gyms, and local shops",
     features: [
@@ -54,75 +52,84 @@ const tiers: PricingTier[] = [
       "Local Battle Card",
       "Weekly summary email",
     ],
-    cta: "Start free trial",
+    cta: "Start free",
     href: "/auth/login?plan=local",
-    borderClass: "border border-sky-500/20",
-    accentClass: "text-sky-400",
   },
 ];
 
 function PricingBasic() {
   return (
-    <div className="text-center">
+    <div>
       <motion.div {...reveal()}>
-        <h2 className="text-[40px] lg:text-[54px] font-medium tracking-[-0.02em] leading-[1.1] mb-5 text-[var(--text-primary)]">
-          Simple pricing.<br />
-          <span className="text-[var(--text-muted)]">No surprises.</span>
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Pricing</p>
+        <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
+          Simple pricing. <span className="text-muted-foreground">No surprises.</span>
         </h2>
-        <p className="text-[var(--text-secondary)] max-w-md mx-auto text-base leading-relaxed mb-14">
-          Pick the plan that fits your business. Both include a 2-day free trial, no credit card required.
+        <p className="mt-5 max-w-[480px] text-[15px] leading-relaxed text-muted-foreground">
+          Run your first battle card free, no credit card. Upgrade anytime, billed instantly.
         </p>
       </motion.div>
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      <div className="mt-12 grid max-w-3xl gap-5 md:grid-cols-2">
         {tiers.map((tier, i) => (
-          <motion.div
-            key={tier.name}
-            {...reveal(i * 0.12)}
-            className={`relative bg-[var(--surface-raised)] border border-[var(--border-default)] rounded-md p-8 text-left hover:border-[var(--border-strong)] transition-colors duration-300`}
-          >
-            {/* Badge */}
-            {tier.badge && (
-              <span className={`absolute top-5 right-5 text-[10px] font-mono uppercase tracking-widest px-3 py-1 rounded-full ${tier.badgeClass}`}>
-                {tier.badge}
-              </span>
-            )}
-
-            {/* Header */}
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">{tier.name}</h3>
-            <p className="text-sm text-[var(--text-muted)] mb-6">{tier.target}</p>
-
-            {/* Price */}
-            <div className="flex items-baseline gap-1 mb-8">
-              <span className={`text-5xl font-bold tracking-tight ${tier.accentClass}`}>{tier.price}</span>
-              <span className="text-[var(--text-muted)] text-sm font-medium">/mo</span>
-            </div>
-
-            {/* Features */}
-            <ul className="space-y-3 mb-8">
-              {tier.features.map((feat) => (
-                <li key={feat} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
-                  <CheckCircle2 size={16}  className={`flex-shrink-0 mt-0.5 ${tier.accentClass}`} />
-                  <span>{feat}</span>
-                </li>
-              ))}
-            </ul>
-
-            {/* CTA */}
-            <Link
-              href={tier.href}
-              className="inline-flex items-center justify-between w-full gap-4 bg-[var(--accent-cta)] text-[var(--accent-text)] font-semibold pl-5 pr-2 py-3 rounded-full cursor-pointer hover:bg-[var(--accent-cta-hover)] transition-colors"
+          <motion.div key={tier.name} {...reveal(i * 0.12)}>
+            <Card
+              className={`relative h-full rounded-xl text-left shadow-none ${
+                tier.highlighted ? "border-primary/40 ring-1 ring-primary/20" : "border-border"
+              }`}
             >
-              <span className="text-sm">{tier.cta}</span>
-              <span className="w-7 h-7 rounded-full bg-black/15 flex items-center justify-center">
-                <ArrowRight size={13}  />
-              </span>
-            </Link>
+              <CardContent className="flex h-full flex-col p-8">
+                {/* Header */}
+                <div className="mb-1 flex items-center gap-2.5">
+                  <h3 className="text-[17px] font-semibold text-foreground">{tier.name}</h3>
+                  {tier.tag && (
+                    <span
+                      className={`rounded-md border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide ${
+                        tier.highlighted
+                          ? "border-primary/30 bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {tier.tag}
+                    </span>
+                  )}
+                </div>
+                <p className="mb-7 text-sm text-muted-foreground">{tier.target}</p>
 
-            {/* Trial note */}
-            <p className="text-[11px] text-[var(--text-muted)] font-mono mt-4 text-center">
-              2-day free trial, no credit card required
-            </p>
+                {/* Price — mono numerals */}
+                <div className="mb-8 flex items-baseline gap-1.5">
+                  <span className="font-mono text-5xl font-semibold tabular-nums tracking-[-0.02em] text-foreground">{tier.price}</span>
+                  <span className="font-mono text-sm text-muted-foreground">/mo</span>
+                </div>
+
+                {/* Features */}
+                <ul className="mb-8 space-y-3">
+                  {tier.features.map((feat) => (
+                    <li key={feat} className="flex items-start gap-3 text-sm text-muted-foreground">
+                      <Check size={15} strokeWidth={2.5} className="mt-0.5 flex-shrink-0 text-primary" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA — rectangular (de-pilled) */}
+                <Link
+                  href={tier.href}
+                  className={`group/cta mt-auto inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-medium transition-colors ${
+                    tier.highlighted
+                      ? "bg-foreground text-background hover:opacity-90"
+                      : "border border-border text-foreground hover:bg-muted/40"
+                  }`}
+                >
+                  {tier.cta}
+                  <ArrowRight size={15} className="transition-transform group-hover/cta:translate-x-0.5" />
+                </Link>
+
+                <p className="mt-4 text-center font-mono text-[11px] text-muted-foreground">
+                  First battle card free · no credit card required
+                </p>
+              </CardContent>
+            </Card>
           </motion.div>
         ))}
       </div>

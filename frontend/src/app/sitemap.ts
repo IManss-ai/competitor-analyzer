@@ -6,7 +6,8 @@ const SITE = 'https://rivalscope.dev';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: SITE, changeFrequency: 'weekly', priority: 1 },
-    { url: `${SITE}/discover`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE}/apps`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE}/beat`, changeFrequency: 'monthly', priority: 0.5 },
   ];
   try {
     const res = await fetch(`${API_BASE}/api/v1/apps-sitemap`, { next: { revalidate: 86400 } });

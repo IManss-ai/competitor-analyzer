@@ -22,7 +22,7 @@ export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
 
   if (allDates.length === 0) {
     return (
-      <div className="h-[220px] flex items-center justify-center border border-dashed border-[var(--border-default)] rounded text-sm bg-[var(--fill-subtle)]" style={{ color: 'var(--text-secondary)' }}>
+      <div className="h-[220px] flex items-center justify-center border border-dashed border-border rounded-lg text-sm bg-muted text-muted-foreground">
         No review score trends available yet.
       </div>
     );
@@ -59,17 +59,17 @@ export default function TrendsReviews({ trends }: { trends: ReviewTrend[] }) {
             tick={{ fill: p.tick, fontSize: 10, fontFamily: 'var(--font-mono)' }}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--text-primary)', borderRadius: 'var(--radius-md)', border: `1px solid ${p.tooltipBorder}`, boxShadow: 'var(--shadow-card)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}
-            itemStyle={{ color: 'var(--text-primary)', padding: '2px 0' }}
+            contentStyle={{ backgroundColor: p.tooltipBg, color: 'var(--foreground)', borderRadius: 'var(--radius-md)', border: `1px solid ${p.tooltipBorder}`, fontSize: '11px', fontFamily: 'var(--font-mono)' }}
+            itemStyle={{ color: 'var(--foreground)', padding: '2px 0' }}
             cursor={{ stroke: p.axis, strokeWidth: 1, strokeDasharray: '4 4' }}
           />
-          <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }} />
+          <Legend wrapperStyle={{ paddingTop: '24px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--muted-foreground)' }} />
           {trends.map((t, idx) => (
-            <Line 
+            <Line
               key={t.id}
-              type="monotone" 
-              dataKey={t.name} 
-              stroke={colors[idx % colors.length]} 
+              type="monotone"
+              dataKey={t.name}
+              stroke={colors[idx % colors.length]}
               strokeWidth={2}
               dot={{ r: 3, strokeWidth: 0 }}
               activeDot={{ r: 5 }}

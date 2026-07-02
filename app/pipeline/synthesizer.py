@@ -110,11 +110,33 @@ def _summarize_profile_heuristically(name: str, content: str) -> str:
 
 
 def _synthesize_heuristically(name: str, change_type: str) -> str:
+    """Number-free, change-type-grounded brief for the AI-unavailable path.
+
+    This runs only when the model call fails, so it knows just the competitor
+    name and the classified change_type — NOT the actual before/after copy. It
+    must therefore state the honest, generic implication of the change class and
+    point the founder at the source, never invent specifics (prices, feature
+    names, taglines). Fabricating those shipped false facts in the weekly email
+    for every competitor — same bug class as the battle-card fix (issue #3).
+    See tests/test_synthesizer_honesty.py.
+    """
     if change_type == "pricing_change":
-        return f"{name} restructured their pricing plans. The Starter plan increased to $29/mo (was $19/mo) and the Growth plan increased to $59/mo (was $49/mo). This signals a push to increase average revenue per user (ARPU) and capture greater margin from small-scale accounts."
+        return (
+            f"{name} changed their pricing this week. Open their pricing page to see exactly what "
+            f"moved and decide whether it opens room for you to win on price, packaging, or terms."
+        )
     elif change_type == "feature_add":
-        return f"{name} announced the launch of their new AI Copilot feature integration, allowing users to automatically generate project summaries and specs. This indicates they are actively building out AI-native workflows to retain accounts seeking automated tooling."
+        return (
+            f"{name} shipped a feature or product update. Check what they added and whether it "
+            f"overlaps your roadmap or targets a segment you also serve, then weigh a response."
+        )
     elif change_type == "repositioning":
-        return f"{name} shifted their core messaging to position the platform as an 'AI-Powered Operating System for Enterprise Productivity'. This indicates a strong transition away from SMB positioning towards high-value enterprise accounts and automated work pipelines."
+        return (
+            f"{name} shifted how they position themselves on their homepage. Compare their new "
+            f"messaging against yours to spot where their story now lands stronger — or weaker."
+        )
     else:
-        return f"{name} updated their homepage copy and page structure. The adjustments appear to optimize signup conversion rates and refine secondary feature benefits."
+        return (
+            f"{name} made minor copy or layout updates to their homepage. No clear strategic shift "
+            f"is evident, but it is worth a quick look to confirm nothing material changed."
+        )

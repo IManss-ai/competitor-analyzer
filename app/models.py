@@ -15,11 +15,19 @@ class User(Base):
     # stayed NULL on signup and the dashboard showed "0 days left / Upgrade to
     # Pro" the instant a user registered.
     trial_ends_at = Column(DateTime, nullable=True, default=lambda: datetime.utcnow() + timedelta(days=2))
+    # Usage-based paywall: set True once the user has had their one free test
+    # (first battle card generated). Drives access_level() lock.
+    free_test_used = Column(Boolean, nullable=False, default=False, server_default="false")
     created_at = Column(DateTime, default=func.now())
     business_type = Column(String, default="saas")  # "saas" | "local"
     scan_schedule = Column(String, default="weekly")  # "weekly" | "biweekly"
     email_notifications = Column(Boolean, default=True)
     digest_email = Column(String, nullable=True)
+    # Magic onboarding: the user's OWN business, scraped + AI-profiled from their URL.
+    business_url = Column(String, nullable=True)
+    business_name = Column(String, nullable=True)
+    business_profile = Column(Text, nullable=True)     # JSON string (see app/onboarding/profiler.py)
+    onboarded_at = Column(DateTime, nullable=True)     # set when magic onboarding completes
 
 
 class Competitor(Base):
@@ -56,7 +64,7 @@ class ChangeEvent(Base):
     detected_at = Column(DateTime, default=func.now())
     snapshot_before_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id"), nullable=False)
     snapshot_after_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id"), nullable=False)
-    net_char_delta = Column(Integer, nullable=False)  # abs(after - before)
+    net_char_delta = Column(Integer, nullable=False)  # chars changed (edit magnitude), always >= 0
     change_type = Column(String, nullable=True)  # set by classifier in plan 01-02
     brief_text = Column(Text, nullable=True)      # set by synthesizer in plan 01-02
     week_label = Column(String, nullable=True)    # e.g. "2025-W23"
@@ -75,7 +83,7 @@ class ApprovedAction(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     change_event_id = Column(UUID(as_uuid=True), ForeignKey("change_events.id"), nullable=False)
     action_type = Column(String, nullable=False)  # retention_email/pricing_copy/feature_response/social_draft
-    original_draft = Column(Text, nullable=False)  # GPT-4o output
+    original_draft = Column(Text, nullable=False)  # LLM draft output
     edited_text = Column(Text, nullable=True)      # founder's edited version (null = approved as-is)
     approved_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())

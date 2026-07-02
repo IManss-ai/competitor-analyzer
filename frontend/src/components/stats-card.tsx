@@ -24,7 +24,7 @@ export default function StatsCard({
   const [displayValue, setDisplayValue] = useState(0);
   const p = useChartPalette();
   const accentConfig: Record<string, { dot: string; bar: string }> = {
-    violet:  { dot: p.accent, bar: 'var(--accent-primary)' },
+    violet:  { dot: p.accent, bar: 'var(--primary)' },
     blue:    { dot: p.accentSoft, bar: p.accent },
     amber:   { dot: p.warning, bar: p.warning },
     emerald: { dot: p.positive, bar: p.positive },
@@ -47,7 +47,7 @@ export default function StatsCard({
 
   return (
     <motion.div
-      className="rs-card group relative overflow-hidden p-5"
+      className="group relative overflow-hidden p-5 rounded-xl border border-border bg-card transition-colors hover:border-input"
     >
       {/* Accent top border — replaces bottom sweep */}
       <div
@@ -57,7 +57,7 @@ export default function StatsCard({
 
       {/* Header row */}
       <div className="flex items-start justify-between mb-4 pt-1">
-        <p className="rs-label">{title}</p>
+        <p className="text-xs font-medium uppercase tracking-[0.08em] font-mono text-muted-foreground">{title}</p>
         <span
           className="w-2 h-2 rounded-full flex-shrink-0 mt-0.5"
           style={{ background: cfg.dot }}
@@ -67,10 +67,9 @@ export default function StatsCard({
       {/* Value + trend */}
       <div className="flex items-end justify-between">
         <p
-          className="text-[28px] font-semibold leading-none tracking-tight"
+          className="text-[28px] font-semibold leading-none tracking-tight text-foreground"
           style={{
             fontFamily: 'var(--font-mono)',
-            color: 'var(--text-primary)',
             letterSpacing: '-0.03em',
           }}
         >
@@ -88,7 +87,7 @@ export default function StatsCard({
                 ? { color: p.positive, background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
                 : trend === 'down'
                 ? { color: p.danger, background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.20)' }
-                : { color: 'var(--text-muted)', background: 'var(--fill-subtle)', borderColor: 'var(--border-default)' })
+                : { color: 'var(--muted-foreground)', background: 'var(--muted)', borderColor: 'var(--border)' })
             }}
           >
             {trend === 'up'   && <ArrowUp size={9} />}
@@ -101,8 +100,7 @@ export default function StatsCard({
 
       {subtitle && (
         <p
-          className="text-[11px] mt-2 font-mono"
-          style={{ color: 'var(--text-muted)' }}
+          className="text-[11px] mt-2 font-mono text-muted-foreground"
         >
           {subtitle}
         </p>

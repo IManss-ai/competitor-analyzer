@@ -76,7 +76,12 @@ async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str |
         return generate_mock_webpage(url, snapshot_count), None
 
     try:
-        async with httpx.AsyncClient(timeout=35.0) as client:
+        # Budget must cover the sidecar's worst case (30s Chromium render +
+        # 45s LLM extraction). A shorter timeout here made the fetch path
+        # flip-flop between LLM-structured and direct-HTTP serializations —
+        # each flip reads as a phantom full-page diff. Scans run in the
+        # background, so waiting is cheap; flapping is not.
+        async with httpx.AsyncClient(timeout=90.0) as client:
             resp = await client.post(f"{SCRAPER_URL}/scrape", json={"url": url})
             resp.raise_for_status()
             text = (resp.json().get("text") or "").strip()

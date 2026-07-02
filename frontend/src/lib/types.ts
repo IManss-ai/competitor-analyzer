@@ -117,11 +117,37 @@ export interface SettingsData {
   id: string;
   email: string;
   subscription_status: string;
+  access_level?: 'full' | 'read_only';
   trial_ends_at: string | null;
   business_type?: BusinessType;
 }
 
 export type BusinessType = 'saas' | 'local';
+
+// Magic onboarding — AI profile of the user's own business + discovered rivals
+export interface BusinessProfile {
+  name: string;
+  one_liner: string;
+  category: string;
+  target_customer: string;
+  positioning: string;
+  key_features: string[];
+  socials: string[];
+  is_saas: boolean;
+  source: 'ai' | 'fallback';
+}
+
+export interface DiscoveredCompetitor {
+  name: string;
+  url: string;
+  why: string;
+  verified: boolean;
+}
+
+export interface DiscoveredCompetitorsData {
+  competitors: DiscoveredCompetitor[];
+  reason: null | 'local' | 'none_suggested' | 'low_confidence';
+}
 
 export interface SessionUser {
   user_id: string;
@@ -135,6 +161,28 @@ export interface SessionUser {
 
 export interface BattleCardData {
   actions: string[];
+}
+
+// Head-to-Head: comparative verdict (user's business_profile vs a competitor).
+// Rides along on the battle-card response; absent/empty when the user has no
+// business profile or the AI path was unavailable.
+export interface HeadToHeadPoint {
+  point: string;
+  basis: string;
+  confidence: 'observed' | 'inferred';
+}
+
+export interface HeadToHeadPlay {
+  rank: number;
+  title: string;
+  detail: string;
+}
+
+export interface HeadToHead {
+  verdict: string;
+  you_win: HeadToHeadPoint[];
+  you_exposed: HeadToHeadPoint[];
+  plays: HeadToHeadPlay[];
 }
 
 export interface ReviewSnapshot {

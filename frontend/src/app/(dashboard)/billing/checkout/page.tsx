@@ -1,13 +1,15 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { redirect, unstable_rethrow } from 'next/navigation';
 import { getIronSession } from 'iron-session';
 import { sessionOptions } from '@/lib/session';
 import { SessionUser } from '@/lib/types';
 import { createApiClient } from '@/lib/api';
 import Link from 'next/link';
 import { Clock, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-// Entry point for "Start free trial" / upgrade CTAs (the auth callback routes
+// Entry point for "Start free" / upgrade CTAs (the auth callback routes
 // plan-signups here). It mints a Polar hosted-checkout session and redirects to
 // it. While billing is still being wired up (Polar unconfigured/unavailable),
 // the checkout-url call fails — we catch it and show a graceful "almost ready"
@@ -34,7 +36,8 @@ export default async function BillingCheckoutPage({
     const api = createApiClient(session.user.user_id, session.user.api_token);
     const { url } = await api.getCheckoutUrl(plan);
     if (url) checkoutUrl = url;
-  } catch {
+  } catch (e) {
+    unstable_rethrow(e); // never swallow NEXT_REDIRECT (e.g. the 401 → login redirect)
     checkoutUrl = null;
   }
 
@@ -43,24 +46,30 @@ export default async function BillingCheckoutPage({
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh]">
-      <div className="rs-card p-10 max-w-md w-full text-center">
-        <div className="mx-auto w-16 h-16 bg-[var(--accent-subtle)] border border-[var(--accent-border)] rounded-full flex items-center justify-center mb-6">
-          <Clock size={32} style={{ color: 'var(--accent)' }} />
-        </div>
-        <h1 className="text-2xl font-semibold tracking-tight mb-3" style={{ color: 'var(--text-primary)' }}>
-          Checkout is almost ready
-        </h1>
-        <p className="text-sm mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-          Your free trial is already active — you have full access to Rivalscope while we finish
-          wiring up payments. We&apos;ll email you the moment paid plans go live; there&apos;s nothing
-          you need to do right now.
-        </p>
-        <Link href="/dashboard" className="rs-btn-primary w-full cursor-pointer">
-          Go to your dashboard
-          <ArrowRight size={16} />
-        </Link>
-      </div>
+    <div className="flex items-center justify-center min-h-[70vh] px-4">
+      <Card className="max-w-md w-full text-center">
+        <CardContent className="flex flex-col items-center pt-8 pb-8 gap-6">
+          <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
+            <Clock size={28} className="text-muted-foreground" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">
+              Checkout is almost ready
+            </h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              You have full access to Rivalscope right now while we finish wiring up
+              payments. We&apos;ll email you the moment paid plans go live; there&apos;s nothing
+              you need to do right now.
+            </p>
+          </div>
+          <Button asChild size="lg" className="w-full gap-2">
+            <Link href="/dashboard">
+              Go to your dashboard
+              <ArrowRight size={16} />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

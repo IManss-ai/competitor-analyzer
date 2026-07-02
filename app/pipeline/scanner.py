@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from datetime import datetime, timezone
 from app.models import Competitor, Snapshot, ChangeEvent, ApprovedAction
@@ -9,7 +10,10 @@ from app.pipeline.action_generator import generate_actions_for_change
 from sqlalchemy import select
 
 def get_week_label(dt: datetime) -> str:
-    return dt.strftime("%Y-W%V")
+    # ISO year, not calendar year (%Y): around New Year they differ, and every
+    # reader builds comparison labels from isocalendar() (trends, api_v1).
+    iso = dt.isocalendar()
+    return f"{iso.year}-W{iso.week:02d}"
 
 
 def _make_initial_event(db, competitor, snapshot, net_char_delta: int, brief: str):
@@ -99,8 +103,10 @@ async def scan_competitor(competitor_id: str, db) -> dict:
         .scalar_one_or_none()
     )
 
+    # is_meaningful_change runs a CPU-bound difflib pass; a pathological page
+    # (LLM run-on) could block the event loop for seconds, so offload it.
     changed, delta = (
-        is_meaningful_change(prev_snapshot.raw_text, main_content)
+        await asyncio.to_thread(is_meaningful_change, prev_snapshot.raw_text, main_content)
         if prev_snapshot else (False, char_count)
     )
 

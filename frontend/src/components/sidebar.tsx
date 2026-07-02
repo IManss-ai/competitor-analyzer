@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { clsx } from 'clsx';
+import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
 import {
@@ -19,11 +19,18 @@ import {
   RefreshCw,
   ChevronRight,
   Menu,
-  X,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { isAbortError } from '@/lib/fetch-utils';
 import { useApiToken } from '@/lib/use-api-token';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+} from '@/components/ui/sheet';
 
 interface SidebarProps {
   email: string;
@@ -47,9 +54,140 @@ const signalItems = [
 ];
 
 interface SettingsData {
-  trial_ends_at?: string;
   business_type?: string;
   subscription_status?: string;
+  access_level?: 'full' | 'read_only';
+}
+
+function NavItem({
+  href,
+  label,
+  Icon,
+  isActive,
+  hasBadge,
+  pendingCount,
+  onHashNav,
+}: {
+  href: string;
+  label: string;
+  Icon: React.ElementType;
+  isActive: boolean;
+  hasBadge?: boolean;
+  pendingCount?: number;
+  onHashNav?: (e: React.MouseEvent, href: string) => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={href.includes('#') && onHashNav ? (e) => onHashNav(e, href) : undefined}
+      className={cn(
+        'group relative flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors duration-150',
+        isActive
+          ? 'bg-primary/10 text-primary'
+          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+      )}
+    >
+      {/* Active left rail */}
+      {isActive && (
+        <motion.div
+          layoutId="activeNavRail"
+          className="absolute left-0 top-0 bottom-0 w-0.5 rounded-r-full bg-primary"
+          transition={{ duration: 0.15, ease: 'easeOut' }}
+        />
+      )}
+
+      <Icon
+        size={15}
+        className="flex-shrink-0"
+        strokeWidth={isActive ? 2 : 1.75}
+      />
+      <span className="flex-1 truncate">{label}</span>
+
+      {hasBadge && pendingCount && pendingCount > 0 && (
+        <Badge
+          variant="default"
+          className="text-[9px] font-bold px-1.5 py-0 h-4 rounded-sm leading-none tabular-nums"
+        >
+          {pendingCount}
+        </Badge>
+      )}
+
+      {!isActive && (
+        <ChevronRight
+          size={11}
+          className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
+        />
+      )}
+    </Link>
+  );
+}
+
+function SidebarNav({
+  pathname,
+  pendingCount,
+  onHashNav,
+}: {
+  pathname: string;
+  pendingCount?: number;
+  onHashNav: (e: React.MouseEvent, href: string) => void;
+}) {
+  return (
+    <nav className="flex-1 py-3 px-3 space-y-4 overflow-y-auto">
+      <div>
+        <p className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase text-muted-foreground">
+          DESK
+        </p>
+        <div className="space-y-0.5">
+          {deskItems.map(({ href, label, Icon }) => {
+            const isActive =
+              pathname === href ||
+              (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
+            const hasBadge = href === '/queue';
+            return (
+              <NavItem
+                key={href}
+                href={href}
+                label={label}
+                Icon={Icon}
+                isActive={isActive}
+                hasBadge={hasBadge}
+                pendingCount={pendingCount}
+                onHashNav={onHashNav}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      <Separator className="mx-3 w-auto" />
+
+      <div>
+        <p className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase text-muted-foreground">
+          SIGNAL
+        </p>
+        <div className="space-y-0.5">
+          {signalItems.map(({ href, label, Icon }) => {
+            const isActive =
+              pathname === href ||
+              (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
+            const hasBadge = href === '/queue';
+            return (
+              <NavItem
+                key={href}
+                href={href}
+                label={label}
+                Icon={Icon}
+                isActive={isActive}
+                hasBadge={hasBadge}
+                pendingCount={pendingCount}
+                onHashNav={onHashNav}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </nav>
+  );
 }
 
 export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
@@ -61,7 +199,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   const [scanning, setScanning] = useState(false);
   const [scanDone, setScanDone] = useState(false);
   const [scanError, setScanError] = useState(false);
-  const [trialDays, setTrialDays] = useState(0);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -87,17 +224,6 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
     fetchSettings();
     return () => controller.abort();
   }, [userId, apiUrl]);
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      if (settings?.trial_ends_at) {
-        const diff = new Date(settings.trial_ends_at).getTime() - Date.now();
-        setTrialDays(Math.max(0, Math.ceil(diff / (1000 * 3600 * 24))));
-      } else {
-        setTrialDays(0);
-      }
-    });
-  }, [settings?.trial_ends_at]);
 
   // In-page anchor links (e.g. Intel Feed -> /dashboard#feed) don't scroll via
   // Next's <Link> when the pathname already matches and only the hash changes
@@ -153,287 +279,85 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
   };
 
   const getPlanBadge = () => {
-    if (!settings) return 'Trial';
+    if (!settings) return 'Free';
     if (settings.business_type === 'local') return 'Local';
     if (settings.subscription_status === 'active') return 'Pro';
-    return 'Trial';
+    return 'Free';
   };
 
   const planBadge = getPlanBadge();
-  const isOnTrial = settings?.subscription_status === 'trialing';
-  const trialProgress = Math.min(100, ((2 - trialDays) / 2) * 100);
+  const isPaid = settings?.subscription_status === 'active';
+  const isLocked = settings?.access_level === 'read_only';
+  // Usage-based model: nudge any non-paying user to upgrade. Once their one free
+  // test is spent the API reports access_level "read_only" (locked); before that
+  // they still have their free test available.
+  const showUpgrade = !!settings && !isPaid;
 
   // Close the drawer whenever navigation lands on a new page
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  return (
-    <>
-    {/* Mobile top bar — the fixed sidebar has no room below md */}
-    <div
-      className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 flex items-center justify-between px-4"
-      style={{
-        background: 'var(--surface-base)',
-        borderBottom: '1px solid var(--border-default)',
-      }}
-    >
-      <div className="flex items-center gap-3">
-        <div
-          className="w-7 h-7 flex items-center justify-center"
-          style={{ background: 'var(--accent-primary)' }}
-        >
-          <RivalscopeLogo size={12} className="text-[var(--accent-text)]" />
-        </div>
-        <span className="text-[14px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-          Rivalscope
-        </span>
-      </div>
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
-        aria-expanded={mobileOpen}
-        className="flex items-center justify-center w-11 h-11 -mr-2 cursor-pointer"
-        style={{ color: 'var(--text-primary)' }}
-      >
-        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-    </div>
-
-    {/* Backdrop for the mobile drawer */}
-    {mobileOpen && (
-      <div
-        className="md:hidden fixed inset-0 z-40"
-        style={{ background: 'rgba(26,23,20,0.45)' }}
-        onClick={() => setMobileOpen(false)}
-        aria-hidden="true"
-      />
-    )}
-
-    <aside
-      style={{
-        width: 'var(--sidebar-width)',
-        background: 'var(--surface-base)',
-        borderRight: '1px solid var(--border-default)',
-      }}
-      className={clsx(
-        'fixed top-0 left-0 h-full flex flex-col z-40',
-        'max-md:z-50 max-md:transition-transform max-md:duration-200 max-md:ease-out',
-        !mobileOpen && 'max-md:-translate-x-full'
-      )}
-    >
+  const SidebarInner = (
+    <div className="flex flex-col h-full bg-sidebar border-sidebar-border">
       {/* ── Brand ──────────────────────────────────────────────────── */}
-      <div
-        className="px-5 pt-5 pb-4"
-        style={{ borderBottom: '1px solid var(--border-default)' }}
-      >
+      <div className="px-5 pt-5 pb-4 border-b border-sidebar-border">
         {/* Logo + wordmark */}
         <div className="flex items-center gap-3 mb-4">
-          <div
-            className="w-8 h-8 flex items-center justify-center flex-shrink-0"
-            style={{ background: 'var(--accent-primary)' }}
-          >
-            <RivalscopeLogo size={14} className="text-[var(--accent-text)]" />
+          <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 rounded-md [background-image:var(--gradient-primary)] shadow-[0_4px_14px_-4px_color-mix(in_oklab,var(--primary)_60%,transparent)]">
+            <RivalscopeLogo size={14} className="text-primary-foreground" />
           </div>
           <div className="leading-none">
-            <span className="text-[15px] font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            <span className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
               Rivalscope
+            </span>
+            <span className="mt-1.5 flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+              </span>
+              Live
             </span>
           </div>
         </div>
 
         {/* User profile pill */}
-        <div
-          className="flex items-center justify-between gap-2 rounded px-3 py-2"
-          style={{
-            background: 'var(--fill-subtle)',
-            border: '1px solid var(--border-default)',
-          }}
-        >
+        <div className="flex items-center justify-between gap-2 rounded-md px-3 py-2 bg-muted border border-border">
           <p
-            className="text-[12px] font-medium truncate min-w-0"
-            style={{ color: 'var(--text-secondary)' }}
+            className="text-[12px] font-medium truncate min-w-0 text-muted-foreground"
             title={email}
           >
             {email}
           </p>
-          <span
-            className="flex-shrink-0 px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wide"
-            style={{
-              background: planBadge === 'Pro'
-                ? 'color-mix(in srgb, var(--accent-primary) 15%, transparent)'
-                : 'var(--fill-subtle)',
-              color: planBadge === 'Pro' ? 'var(--accent-primary)' : 'var(--text-muted)',
-              border: planBadge === 'Pro'
-                ? '1px solid color-mix(in srgb, var(--accent-primary) 28%, transparent)'
-                : '1px solid var(--border-default)',
-            }}
+          <Badge
+            variant={planBadge === 'Pro' ? 'default' : 'secondary'}
+            className="flex-shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0 h-4 rounded-sm"
           >
             {planBadge}
-          </span>
+          </Badge>
         </div>
       </div>
 
       {/* ── Navigation ─────────────────────────────────────────────── */}
-      <nav className="flex-1 py-3 px-3 space-y-4 overflow-y-auto">
-        <div>
-          <div className="px-3 mb-2 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            DESK
-          </div>
-          <div className="space-y-0.5">
-            {deskItems.map(({ href, label, Icon }) => {
-              const isActive =
-                pathname === href ||
-                (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
-              const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
-
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
-                  className={clsx(
-                    'group relative flex items-center gap-3 px-3 py-3 text-[13px] font-medium transition-colors duration-150',
-                    !isActive && 'hover:text-[var(--text-primary)]'
-                  )}
-                  style={
-                    isActive
-                      ? { background: 'var(--accent-subtle)', color: 'var(--accent-primary)' }
-                      : { color: 'var(--text-secondary)' }
-                  }
-                >
-                  {/* Active left rule — sharp, no glow (DESIGN.md) */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeNavRail"
-                      className="absolute left-0 top-0 bottom-0"
-                      style={{ width: '2px', background: 'var(--accent-primary)' }}
-                      transition={{ duration: 0.15, ease: 'easeOut' }}
-                    />
-                  )}
-
-                  <Icon
-                    size={15}
-                    className="flex-shrink-0"
-                    strokeWidth={isActive ? 2 : 1.75}
-                  />
-                  <span className="flex-1 truncate">{label}</span>
-
-                  {hasBadge && (
-                    <span
-                      className="text-[var(--accent-text)] text-[9px] font-bold px-2 py-0.5 rounded-[2px] leading-none"
-                      style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
-                    >
-                      {pendingCount}
-                    </span>
-                  )}
-
-                  {/* Subtle hover arrow for non-active */}
-                  {!isActive && (
-                    <ChevronRight
-                      size={11}
-                      className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
-                      style={{ color: 'var(--text-muted)' }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <div className="px-3 mb-2 text-[10px] font-mono tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            SIGNAL
-          </div>
-          <div className="space-y-0.5">
-            {signalItems.map(({ href, label, Icon }) => {
-              const isActive =
-                pathname === href ||
-                (href !== '/dashboard' && !href.includes('#') && pathname.startsWith(href));
-              const hasBadge = href === '/queue' && pendingCount && pendingCount > 0;
-
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={href.includes('#') ? (e) => handleHashNav(e, href) : undefined}
-                  className={clsx(
-                    'group relative flex items-center gap-3 px-3 py-3 text-[13px] font-medium transition-colors duration-150',
-                    !isActive && 'hover:text-[var(--text-primary)]'
-                  )}
-                  style={
-                    isActive
-                      ? { background: 'var(--accent-subtle)', color: 'var(--accent-primary)' }
-                      : { color: 'var(--text-secondary)' }
-                  }
-                >
-                  {/* Active left rule — sharp, no glow (DESIGN.md) */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeNavRail"
-                      className="absolute left-0 top-0 bottom-0"
-                      style={{ width: '2px', background: 'var(--accent-primary)' }}
-                      transition={{ duration: 0.15, ease: 'easeOut' }}
-                    />
-                  )}
-
-                  <Icon
-                    size={15}
-                    className="flex-shrink-0"
-                    strokeWidth={isActive ? 2 : 1.75}
-                  />
-                  <span className="flex-1 truncate">{label}</span>
-
-                  {hasBadge && (
-                    <span
-                      className="text-[var(--accent-text)] text-[9px] font-bold px-2 py-0.5 rounded-[2px] leading-none"
-                      style={{ background: 'var(--accent-cta)', fontFamily: 'var(--font-mono)' }}
-                    >
-                      {pendingCount}
-                    </span>
-                  )}
-
-                  {/* Subtle hover arrow for non-active */}
-                  {!isActive && (
-                    <ChevronRight
-                      size={11}
-                      className="opacity-0 group-hover:opacity-40 transition-opacity flex-shrink-0"
-                      style={{ color: 'var(--text-muted)' }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
+      <SidebarNav
+        pathname={pathname}
+        pendingCount={pendingCount}
+        onHashNav={handleHashNav}
+      />
 
       {/* ── Bottom actions ──────────────────────────────────────────── */}
-      <div
-        className="px-3 pb-4 pt-3 space-y-2"
-        style={{ borderTop: '1px solid var(--border-default)' }}
-      >
+      <div className="px-3 pb-4 pt-3 space-y-2 border-t border-sidebar-border">
         {/* Scan all button */}
-        <button
+        <Button
           onClick={handleScanAll}
           disabled={scanning}
-          className="rs-btn-primary w-full text-[12px]"
-          style={
-            scanDone
-              ? {
-                  background: 'color-mix(in srgb, var(--tone-positive) 12%, transparent)',
-                  border: '1px solid color-mix(in srgb, var(--tone-positive) 26%, transparent)',
-                  color: 'var(--tone-positive)',
-                }
-              : scanError
-              ? {
-                  background: 'color-mix(in srgb, var(--tone-danger) 12%, transparent)',
-                  border: '1px solid color-mix(in srgb, var(--tone-danger) 26%, transparent)',
-                  color: 'var(--tone-danger)',
-                }
-              : undefined
-          }
+          variant="default"
+          size="sm"
+          className={cn(
+            'w-full text-[12px]',
+            scanDone && 'bg-emerald-600/10 border border-emerald-600/25 text-emerald-600 hover:bg-emerald-600/15',
+            scanError && 'bg-destructive/10 border border-destructive/25 text-destructive hover:bg-destructive/15'
+          )}
         >
           <RefreshCw
             size={12}
@@ -446,48 +370,27 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
             : scanDone
             ? 'Queued!'
             : 'Scan all now'}
-        </button>
+        </Button>
 
-        {/* Trial upgrade banner */}
-        {isOnTrial && (
-          <div
-            className="rounded p-3 space-y-2"
-            style={{
-              background: 'var(--fill-subtle)',
-              border: '1px solid var(--border-default)',
-            }}
-          >
+        {/* Usage-based upgrade banner (free users) */}
+        {showUpgrade && (
+          <div className="rounded-md p-3 space-y-2 bg-muted border border-border">
             <div className="flex items-center justify-between">
-              <span
-                className="text-[11px] font-medium"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                {trialDays} days left
+              <span className="text-[11px] font-medium text-muted-foreground">
+                {isLocked ? 'Free test used' : '1 free test available'}
               </span>
-              <span
-                className="text-[9px] font-mono uppercase tracking-wider"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                Trial
+              <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground">
+                Free
               </span>
             </div>
-            {/* Progress bar */}
-            <div
-              className="w-full rounded-full overflow-hidden"
-              style={{ height: '2px', background: 'var(--fill-subtle-hover)' }}
-            >
-              <div
-                className="h-full rounded-full transition-[width] duration-500 ease-out"
-                style={{
-                  width: `${trialProgress}%`,
-                  background: 'var(--accent-primary)',
-                }}
-              />
-            </div>
+            <p className="text-[10px] leading-snug text-muted-foreground">
+              {isLocked
+                ? 'Upgrade to Pro to keep generating battle cards.'
+                : 'Upgrade any time for unlimited battle cards.'}
+            </p>
             <Link
-              href="/settings"
-              className="block w-full py-2 rounded-md text-[11px] font-semibold text-center text-[var(--accent-text)] transition-colors"
-              style={{ background: 'var(--accent-cta)' }}
+              href="/settings?tab=billing"
+              className="block w-full py-2 rounded-full text-[11px] font-semibold text-center [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"
             >
               Upgrade to Pro
             </Link>
@@ -498,23 +401,54 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
         <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-2 rounded text-[12px] cursor-pointer transition-colors"
-            style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';
-              (e.currentTarget as HTMLButtonElement).style.background = 'var(--fill-subtle)';
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)';
-              (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-            }}
+            className="flex items-center gap-2 w-full px-2 py-2 rounded-md text-[12px] cursor-pointer transition-colors text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             <LogOut size={13} />
             <span>Sign out</span>
           </button>
         </form>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* ── Mobile top bar ───────────────────────────────────────── */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 flex items-center justify-between px-4 bg-background border-b border-border">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 flex items-center justify-center rounded-md [background-image:var(--gradient-primary)]">
+            <RivalscopeLogo size={12} className="text-primary-foreground" />
+          </div>
+          <span className="text-[14px] font-semibold tracking-tight text-foreground">
+            Rivalscope
+          </span>
+        </div>
+
+        {/* Mobile Sheet trigger */}
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+              className="-mr-2"
+            >
+              <Menu size={20} />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" showCloseButton className="p-0 w-[240px] sm:w-[240px] bg-sidebar border-sidebar-border">
+            {SidebarInner}
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* ── Desktop sidebar ──────────────────────────────────────── */}
+      <aside
+        style={{ width: 'var(--sidebar-width)' }}
+        className="hidden md:flex fixed top-0 left-0 h-full flex-col z-40 border-r border-sidebar-border"
+      >
+        {SidebarInner}
+      </aside>
     </>
   );
 }

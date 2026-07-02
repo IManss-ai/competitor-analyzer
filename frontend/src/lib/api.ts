@@ -1,6 +1,14 @@
-import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, TrendsMetricsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData } from './types';
+import { redirect } from 'next/navigation';
+import { DashboardData, CompetitorListData, Competitor, QueueData, TrendsData, TrendsMetricsData, SettingsData, BattleCardData, CompetitorReviewsData, SocialPost, LocalCompetitorData, BusinessProfile, DiscoveredCompetitorsData } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+export class ApiError extends Error {
+  constructor(public readonly status: number, body: string) {
+    super(`API error ${status}: ${body}`);
+    this.name = 'ApiError';
+  }
+}
 
 class ApiClient {
   private bearer: string;
@@ -25,7 +33,13 @@ class ApiClient {
     });
     if (!res.ok) {
       const body = await res.text();
-      throw new Error(`API error ${res.status}: ${body}`);
+      // Server-side only: a stale session should land on login, not an error
+      // boundary. redirect() is unsupported in client event handlers, so the
+      // client-side callers keep the plain throw path.
+      if (res.status === 401 && typeof window === 'undefined') {
+        redirect('/auth/login');
+      }
+      throw new ApiError(res.status, body);
     }
     return res.json();
   }
@@ -109,6 +123,20 @@ class ApiClient {
     return this.fetch<any>(`/competitors/${competitorId}/detail`);
   }
 
+
+  // Magic onboarding
+  async profileBusiness(url: string): Promise<{ profile: BusinessProfile; is_saas: boolean }> {
+    return this.fetch('/onboarding/profile', {
+      method: 'POST',
+      body: JSON.stringify({ url }),
+    });
+  }
+
+  async discoverCompetitors(): Promise<DiscoveredCompetitorsData> {
+    return this.fetch<DiscoveredCompetitorsData>('/onboarding/discover', {
+      method: 'POST',
+    });
+  }
 
   // Local Business
   async setBusinessType(businessType: 'saas' | 'local'): Promise<void> {

@@ -1,14 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Eye, EyeOff, Star, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
+import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
+import HeadToHead from '@/components/head-to-head';
+import { battleCardItemText } from '@/components/battle-card-content';
 import { useChartPalette } from '@/lib/chart-theme';
 import { useApiToken } from '@/lib/use-api-token';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const formatTimeAgo = (dateStr: string | null) => {
   if (!dateStr) return 'Never';
@@ -40,7 +45,12 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   const [savingSettings, setSavingSettings] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
-  
+
+  // Gate time-dependent text (relative + locale/TZ-formatted dates) behind a
+  // mounted flag so SSR output matches first client render (avoids React #418).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   // Collapse states for Battlecard accordions
   const [cardOpenSections, setCardOpenSections] = useState<Record<string, boolean>>({
     changes: true,
@@ -55,6 +65,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const comp = detail.competitor;
   const chart = useChartPalette();
+  const router = useRouter();
 
   const toggleSection = (section: string) => {
     setCardOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -68,11 +79,17 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
         : `${apiUrl}/api/v1/scan/now`;
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiToken ?? userId}` 
+          Authorization: `Bearer ${apiToken ?? userId}`
         }
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         // Reload detail data
         const reloadRes = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}/detail`, {
@@ -96,6 +113,12 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}?force=true`, {
         headers: { Authorization: `Bearer ${apiToken ?? userId}` }
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         const freshCard = await res.json();
         setDetail((prev: any) => ({ ...prev, battlecard: freshCard }));
@@ -112,9 +135,9 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     try {
       const res = await fetch(`${apiUrl}/api/v1/local/competitors/${comp.id}`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiToken ?? userId}` 
+          Authorization: `Bearer ${apiToken ?? userId}`
         },
         body: JSON.stringify({ name: editName, url: editUrl })
       });
@@ -134,8 +157,8 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 
   // Word-level diff highlighter
   const renderDiff = (before: string, after: string) => {
-    if (!before) return <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{after}</p>;
-    if (!after) return <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{before}</p>;
+    if (!before) return <p className="text-sm text-foreground">{after}</p>;
+    if (!after) return <p className="text-sm text-foreground">{before}</p>;
 
     const beforeWords = before.split(/\s+/);
     const afterWords = after.split(/\s+/);
@@ -164,17 +187,17 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
         <div className="p-3 bg-[var(--tone-danger)]/5 border border-[var(--tone-danger)]/15 rounded">
           <span className="text-[10px] uppercase font-bold text-[var(--tone-danger)] tracking-wider block mb-1">Before</span>
-          <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto" style={{ color: 'var(--text-secondary)' }}>{beforeRender}</div>
+          <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto text-muted-foreground">{beforeRender}</div>
         </div>
         <div className="p-3 bg-[var(--tone-positive)]/5 border border-[var(--tone-positive)]/15 rounded">
           <span className="text-[10px] uppercase font-bold text-[var(--tone-positive)] tracking-wider block mb-1">After</span>
-          <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto" style={{ color: 'var(--text-primary)' }}>{afterRender}</div>
+          <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto text-foreground">{afterRender}</div>
         </div>
       </div>
     );
   };
 
-  // Text formatter for Copy Copy
+  // Text formatter for Copy
   const copyBattlecardToClipboard = () => {
     const card = detail.battlecard;
     if (!card) return;
@@ -183,23 +206,23 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 Generated at: ${new Date(card.generated_at).toLocaleDateString()}
 
 RECENT CHANGES:
-${card.what_changed && card.what_changed.length > 0 
-  ? card.what_changed.map((c: string | { text: string }) => `- ${typeof c === 'string' ? c : c.text}`).join('\n')
+${card.what_changed && card.what_changed.length > 0
+  ? card.what_changed.map((c: unknown) => `- ${battleCardItemText(c)}`).join('\n')
   : 'No pricing or feature changes detected.'}
 
 THEIR WEAKNESSES:
-${card.weaknesses && card.weaknesses.length > 0 
-  ? card.weaknesses.map((w: string) => `- ${w}`).join('\n') 
+${card.weaknesses && card.weaknesses.length > 0
+  ? card.weaknesses.map((w: unknown) => `- ${battleCardItemText(w)}`).join('\n')
   : 'None identified.'}
 
 TALKING POINTS:
-${card.talking_points && card.talking_points.length > 0 
-  ? card.talking_points.map((tp: string, i: number) => `${i + 1}. ${tp}`).join('\n') 
+${card.talking_points && card.talking_points.length > 0
+  ? card.talking_points.map((tp: unknown, i: number) => `${i + 1}. ${battleCardItemText(tp)}`).join('\n')
   : 'None generated.'}
 
 WIN CONDITIONS:
-${card.win_conditions && card.win_conditions.length > 0 
-  ? card.win_conditions.map((wc: string) => `- ${wc}`).join('\n') 
+${card.win_conditions && card.win_conditions.length > 0
+  ? card.win_conditions.map((wc: unknown) => `- ${battleCardItemText(wc)}`).join('\n')
   : 'None generated.'}`;
 
     navigator.clipboard.writeText(text);
@@ -220,101 +243,111 @@ ${card.win_conditions && card.win_conditions.length > 0
     .reverse()
     .filter((s: any) => s.avg_rating !== null)
     .map((s: any) => ({
-      date: new Date(s.snapshot_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: mounted ? new Date(s.snapshot_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
       rating: s.avg_rating,
     }));
 
-  const lastScannedText = detail.scan_history && detail.scan_history.length > 0
+  const lastScannedText = !mounted
+    ? ''
+    : detail.scan_history && detail.scan_history.length > 0
     ? formatTimeAgo(detail.scan_history[0].fetched_at)
     : 'Never';
 
   return (
     <div className="space-y-6">
+      {/* HEAD-TO-HEAD — comparative verdict (self-hides when absent) */}
+      <HeadToHead
+        data={detail.battlecard?.head_to_head}
+        competitorName={comp.name || comp.url}
+      />
+
       {/* A) HEADER ROW */}
-      <div className="rs-card p-5">
+      <div className="bg-card border border-border rounded-xl p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <img 
+            <img
               src={`https://www.google.com/s2/favicons?domain=${(comp.url.split('://')[1] || comp.url).split('/')[0]}&sz=64`}
               alt=""
-              className="w-12 h-12 rounded bg-[var(--fill-subtle)] border border-[var(--border-default)] p-2 flex-shrink-0"
+              className="w-12 h-12 rounded-lg bg-muted border border-border p-2 flex-shrink-0"
             />
             <div>
               {editing ? (
-                <div className="flex items-center gap-2 mt-1">
-                  <input
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  <Input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="rs-input !py-1 !px-2 text-sm max-w-[150px]"
+                    className="h-7 text-sm max-w-[150px]"
                     placeholder="Name"
                   />
-                  <input
+                  <Input
                     type="text"
                     value={editUrl}
                     onChange={(e) => setEditUrl(e.target.value)}
-                    className="rs-input !py-1 !px-2 text-xs max-w-[200px]"
+                    className="h-7 text-xs max-w-[200px]"
                     placeholder="URL"
                   />
-                  <button 
+                  <Button
+                    size="sm"
                     onClick={saveCompetitorSettings}
                     disabled={savingSettings}
-                    className="rs-btn-primary !px-3 !py-1 text-xs cursor-pointer"
                   >
                     {savingSettings ? 'Saving…' : 'Save'}
-                  </button>
-                  <button 
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
                     onClick={() => setEditing(false)}
-                    className="rs-btn-ghost !px-3 !py-1 text-xs cursor-pointer"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <>
-                  <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{comp.name || comp.url}</h1>
-                  <a 
-                    href={comp.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-xs hover:underline inline-flex items-center gap-1 mt-0.5"
-                    style={{ color: 'var(--text-secondary)' }}
+                  <h1 className="text-xl font-bold text-foreground">{comp.name || comp.url}</h1>
+                  <a
+                    href={comp.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-muted-foreground hover:text-foreground hover:underline inline-flex items-center gap-1 mt-0.5 transition-colors"
                   >
                     <Globe size={12} /> {comp.url}
                   </a>
                 </>
               )}
-              <p className="text-xs mt-1 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
+              <p className="text-xs mt-1 flex items-center gap-2 text-muted-foreground">
                 <Clock size={12} /> Last scanned {lastScannedText}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 self-start md:self-center">
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleScan}
               disabled={scanning}
-              className="rs-btn-ghost px-4 py-2 text-sm font-semibold cursor-pointer"
             >
               {scanning ? (
                 <>
-                  <RefreshCw size={16} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
+                  <RefreshCw size={14} className="animate-spin text-primary" />
                   Scanning…
                 </>
               ) : (
                 <>
-                  <RefreshCw size={16} />
+                  <RefreshCw size={14} />
                   Scan Now
                 </>
               )}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setEditing(true)}
-              className="rs-btn-ghost px-4 py-2 text-sm font-semibold cursor-pointer"
             >
-              <Pencil size={16} />
+              <Pencil size={14} />
               Edit
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -323,19 +356,19 @@ ${card.win_conditions && card.win_conditions.length > 0
         {/* LEFT COLUMN: Timeline & Scan History (2/3 width) */}
         <div className="lg:col-span-2 space-y-6">
           {/* B) CHANGE TIMELINE */}
-          <div className="rs-card overflow-hidden">
-            <div className="px-5 py-4 border-b border-[var(--border-subtle)]">
-              <h2 className="text-sm font-bold text-[var(--text-primary)]">Change History</h2>
-              <p className="text-xs text-[var(--text-secondary)]">Archived snapshots and diff analyzer</p>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-border">
+              <h2 className="text-sm font-semibold text-foreground">Change History</h2>
+              <p className="text-xs text-muted-foreground">Archived snapshots and diff analyzer</p>
             </div>
 
             <div className="p-5">
               {detail.change_events.length === 0 ? (
-                <div className="text-center py-8 text-sm text-[var(--text-muted)]">
+                <div className="text-center py-8 text-sm text-muted-foreground">
                   No changes detected yet for this competitor.
                 </div>
               ) : (
-                <div className="relative border-l-2 border-[var(--border-subtle)] pl-6 ml-3 space-y-8 py-2">
+                <div className="relative border-l-2 border-border pl-6 ml-3 space-y-8 py-2">
                   {detail.change_events.map((event: any) => {
                     const isExpanded = expandedEventId === event.id;
                     const changeTypeStyles: Record<string, string> = {
@@ -345,42 +378,46 @@ ${card.win_conditions && card.win_conditions.length > 0
                       review_trend: 'badge badge-review_trend',
                       minor_copy: 'badge badge-minor_copy',
                     };
-                    
+
                     const badgeClass = changeTypeStyles[event.change_type] || changeTypeStyles.minor_copy;
-                    const dateFormatted = new Date(event.detected_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                    });
+                    const dateFormatted = mounted
+                      ? new Date(event.detected_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })
+                      : '';
 
                     return (
                       <div key={event.id} className="relative">
                         {/* Timeline Bullet */}
-                        <div className="absolute -left-[32px] top-1.5 bg-[var(--surface-raised)] p-0.5 rounded-full">
-                          <Circle size={10} style={{ color: 'var(--accent-primary)' }} />
+                        <div className="absolute -left-[32px] top-1.5 bg-card p-0.5 rounded-full">
+                          <Circle size={10} className="text-primary" />
                         </div>
 
-                        <div className="bg-[var(--fill-subtle)] border border-[var(--border-subtle)] rounded-md overflow-hidden transition-colors duration-300">
+                        <div className="bg-muted/40 border border-border rounded-lg overflow-hidden transition-colors duration-300">
                           {/* Event Header */}
-                          <div 
+                          <div
                             onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-[var(--fill-subtle-hover)] transition-colors"
+                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-muted/70 transition-colors"
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-xs font-semibold text-[var(--text-primary)]">{dateFormatted}</span>
-                                <span className="text-[10px] text-[var(--text-muted)] font-mono">({event.week_label})</span>
+                                <span className="text-xs font-semibold text-foreground">{dateFormatted}</span>
+                                <span className="text-[10px] text-muted-foreground font-mono">({event.week_label})</span>
                               </div>
-                              <p className="text-xs mt-0.5 truncate max-w-[280px] md:max-w-[400px]" style={{ color: 'var(--text-secondary)' }}>
+                              <p className="text-xs mt-0.5 truncate max-w-[280px] md:max-w-[400px] text-muted-foreground">
                                 {event.brief_text || "Copy differences scanned."}
                               </p>
                             </div>
-                            
+
                             <div className="flex items-center gap-2 flex-shrink-0">
                               <span className={badgeClass}>
                                 {event.change_type.replace(/_/g, ' ')}
                               </span>
-                              {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                              {isExpanded
+                                ? <ChevronUp size={16} className="text-muted-foreground" />
+                                : <ChevronDown size={16} className="text-muted-foreground" />}
                             </div>
                           </div>
 
@@ -391,14 +428,14 @@ ${card.win_conditions && card.win_conditions.length > 0
                                 initial={{ height: 0 }}
                                 animate={{ height: 'auto' }}
                                 exit={{ height: 0 }}
-                                className="border-t border-[var(--border-subtle)] overflow-hidden"
+                                className="border-t border-border overflow-hidden"
                               >
-                                <div className="p-4 bg-[var(--fill-subtle)]">
-                                  <p className="text-sm font-semibold text-[var(--text-primary)] mb-2">Analysis Summary</p>
-                                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
+                                <div className="p-4 bg-muted/30">
+                                  <p className="text-sm font-semibold text-foreground mb-2">Analysis Summary</p>
+                                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
 
                                   <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-semibold text-[var(--text-primary)]">Text Diff Viewer</span>
+                                    <span className="text-xs font-semibold text-foreground">Text Diff Viewer</span>
                                     {event.net_char_delta !== 0 && (
                                       <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
                                         event.net_char_delta > 0 ? 'tag-green border' : 'tag-red border'
@@ -422,36 +459,38 @@ ${card.win_conditions && card.win_conditions.length > 0
           </div>
 
           {/* E) SCAN HISTORY */}
-          <div className="rs-card overflow-hidden">
-            <div className="px-5 py-4 border-b border-[var(--border-subtle)]">
-              <h2 className="text-sm font-bold text-[var(--text-primary)]">Scan Logs</h2>
-              <p className="text-xs text-[var(--text-secondary)]">Full database raw crawl history</p>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-border">
+              <h2 className="text-sm font-semibold text-foreground">Scan Logs</h2>
+              <p className="text-xs text-muted-foreground">Full database raw crawl history</p>
             </div>
-            
+
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <table className="w-full text-left text-sm text-muted-foreground">
                 <thead>
-                  <tr className="border-b border-[var(--border-subtle)] bg-[var(--fill-subtle)]">
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Date</th>
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>File Size</th>
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Status</th>
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Changes</th>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Date</th>
+                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">File Size</th>
+                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</th>
+                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Changes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border-subtle)]">
+                <tbody className="divide-y divide-border">
                   {detail.scan_history && detail.scan_history.length > 0 ? (
                     detail.scan_history.map((scan: any) => (
-                      <tr key={scan.id} className="hover:bg-[var(--fill-subtle)] transition-colors">
+                      <tr key={scan.id} className="hover:bg-muted/50 transition-colors">
                         <td className="px-5 py-4 whitespace-nowrap text-xs">
-                          {new Date(scan.fetched_at).toLocaleString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
+                          {mounted
+                            ? new Date(scan.fetched_at).toLocaleString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              })
+                            : ''}
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap font-mono text-xs">
-                          {scan.char_count.toLocaleString()} chars
+                          {scan.char_count.toLocaleString('en-US')} chars
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap">
                           <span className={`badge ${
@@ -462,18 +501,18 @@ ${card.win_conditions && card.win_conditions.length > 0
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap text-xs font-semibold">
                           {scan.changes_detected > 0 ? (
-                            <span className="inline-flex items-center gap-1" style={{ color: 'var(--accent-primary)' }}>
+                            <span className="inline-flex items-center gap-1 text-primary">
                               <Zap size={12} /> {scan.changes_detected} found
                             </span>
                           ) : (
-                            <span style={{ color: 'var(--text-muted)' }}>None</span>
+                            <span className="text-muted-foreground">None</span>
                           )}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="px-5 py-8 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
+                      <td colSpan={4} className="px-5 py-8 text-center text-sm text-muted-foreground">
                         No scans recorded yet.
                       </td>
                     </tr>
@@ -487,225 +526,241 @@ ${card.win_conditions && card.win_conditions.length > 0
         {/* RIGHT COLUMN: Battle Card & Review Analytics (1/3 width) */}
         <div className="space-y-6">
           {/* C) BATTLE CARD */}
-          <div className="rs-card relative overflow-hidden border-l-[4px]" style={{ borderLeftColor: 'var(--accent-primary)', padding: '20px' }}>
-            {detail.battlecard ? (
-              <div className="space-y-5">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-base font-bold text-[var(--text-primary)]">{comp.name || comp.url} Battle Card</h2>
-                    <p className="text-[11px] mt-0.5 flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
-                      <Calendar size={11} /> Week of {new Date(detail.battlecard.generated_at).toLocaleDateString()}
-                    </p>
+          <div className="bg-card border border-border rounded-xl overflow-hidden border-l-[3px] border-l-primary">
+            <div className="p-5">
+              {detail.battlecard ? (
+                <div className="space-y-5">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="text-base font-semibold text-foreground">{comp.name || comp.url} Battle Card</h2>
+                      <p className="text-[11px] mt-0.5 flex items-center gap-1 text-muted-foreground">
+                        <Calendar size={11} /> Week of {mounted ? new Date(detail.battlecard.generated_at).toLocaleDateString() : ''}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={copyBattlecardToClipboard}
+                        title="Copy to clipboard"
+                      >
+                        {copied ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Copy size={14} />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={shareBattlecard}
+                        title="Share Card"
+                      >
+                        {shared ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Share2 size={14} />}
+                      </Button>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={copyBattlecardToClipboard}
-                      className="rs-btn-ghost !p-2 cursor-pointer"
-                      title="Copy to clipboard"
+
+                  {/* Content Accordions */}
+                  <div className="space-y-2">
+                    {/* Accordion 1: Recent Changes */}
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => toggleSection('changes')}
+                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Zap size={13} className="text-primary" /> Recent Changes
+                        </span>
+                        {cardOpenSections.changes
+                          ? <ChevronUp size={12} className="text-muted-foreground" />
+                          : <ChevronDown size={12} className="text-muted-foreground" />}
+                      </button>
+                      <AnimatePresence>
+                        {cardOpenSections.changes && (
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
+                            className="overflow-hidden border-t border-border"
+                          >
+                            <div className="p-4 text-xs space-y-2 bg-card">
+                              {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
+                                <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
+                                  {detail.battlecard.what_changed
+                                    .map((c: unknown) => battleCardItemText(c))
+                                    .filter(Boolean)
+                                    .map((text: string, idx: number) => (
+                                      <li key={idx}>{text}</li>
+                                    ))}
+                                </ul>
+                              ) : (
+                                <p className="italic text-muted-foreground">
+                                  Your competitor has been quiet this week &mdash; no pricing or feature changes detected.
+                                </p>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Accordion 2: Their Weaknesses */}
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => toggleSection('weaknesses')}
+                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <AlertTriangle size={13} className="text-[var(--tone-danger)]" /> Their Weaknesses
+                        </span>
+                        {cardOpenSections.weaknesses
+                          ? <ChevronUp size={12} className="text-muted-foreground" />
+                          : <ChevronDown size={12} className="text-muted-foreground" />}
+                      </button>
+                      <AnimatePresence>
+                        {cardOpenSections.weaknesses && (
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
+                            className="overflow-hidden border-t border-border"
+                          >
+                            <div className="p-4 text-xs space-y-2 bg-card">
+                              {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
+                                <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
+                                  {detail.battlecard.weaknesses.map((w: unknown, idx: number) => (
+                                    <li key={idx}>{battleCardItemText(w)}</li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="italic text-muted-foreground">No complaints found in reviews.</p>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Accordion 3: Talking Points */}
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => toggleSection('talkingPoints')}
+                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <MessageSquare size={13} className="text-[var(--tone-positive)]" /> Talking Points
+                        </span>
+                        {cardOpenSections.talkingPoints
+                          ? <ChevronUp size={12} className="text-muted-foreground" />
+                          : <ChevronDown size={12} className="text-muted-foreground" />}
+                      </button>
+                      <AnimatePresence>
+                        {cardOpenSections.talkingPoints && (
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
+                            className="overflow-hidden border-t border-border"
+                          >
+                            <div className="p-4 text-xs space-y-2 bg-card">
+                              {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
+                                <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-foreground">
+                                  {detail.battlecard.talking_points.map((tp: unknown, idx: number) => (
+                                    <li key={idx}>{battleCardItemText(tp)}</li>
+                                  ))}
+                                </ol>
+                              ) : (
+                                <p className="italic text-muted-foreground">No talking points generated.</p>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Accordion 4: Win Conditions */}
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => toggleSection('winConditions')}
+                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Trophy size={13} className="text-[var(--tone-warning)]" /> Win Conditions
+                        </span>
+                        {cardOpenSections.winConditions
+                          ? <ChevronUp size={12} className="text-muted-foreground" />
+                          : <ChevronDown size={12} className="text-muted-foreground" />}
+                      </button>
+                      <AnimatePresence>
+                        {cardOpenSections.winConditions && (
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
+                            className="overflow-hidden border-t border-border"
+                          >
+                            <div className="p-4 text-xs space-y-2 bg-card">
+                              {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
+                                <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
+                                  {detail.battlecard.win_conditions.map((wc: unknown, idx: number) => (
+                                    <li key={idx}>{battleCardItemText(wc)}</li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="italic text-muted-foreground">No win conditions generated.</p>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
+                  <div className="pt-1 text-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleRegenerateBattlecard}
+                      disabled={regenerating}
                     >
-                      {copied ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Copy size={14} />}
-                    </button>
-                    <button
-                      onClick={shareBattlecard}
-                      className="rs-btn-ghost !p-2 cursor-pointer"
-                      title="Share Card"
-                    >
-                      {shared ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Share2 size={14} />}
-                    </button>
+                      {regenerating ? (
+                        <>
+                          <RefreshCw size={12} className="animate-spin text-primary" />
+                          Regenerating…
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw size={12} />
+                          Regenerate Card
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </div>
-
-                {/* Content Accordions */}
-                <div className="space-y-3">
-                  {/* Accordion 1: Recent Changes */}
-                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
-                    <button
-                      onClick={() => toggleSection('changes')}
-                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
-                    >
-                      <span className="flex items-center gap-2">
-                        <Zap size={14} style={{ color: 'var(--accent-primary)' }} /> Recent Changes
-                      </span>
-                      {cardOpenSections.changes ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                    </button>
-                    <AnimatePresence>
-                      {cardOpenSections.changes && (
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: 'auto' }}
-                          exit={{ height: 0 }}
-                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
-                        >
-                          <div className="p-4 text-xs space-y-2">
-                            {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
-                                {detail.battlecard.what_changed.map((c: string | { text: string }, idx: number) => (
-                                  <li key={idx}>{typeof c === 'string' ? c : c.text}</li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p className="italic text-[var(--text-muted)]">
-                                Your competitor has been quiet this week &mdash; no pricing or feature changes detected.
-                              </p>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Accordion 2: Their Weaknesses */}
-                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
-                    <button
-                      onClick={() => toggleSection('weaknesses')}
-                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
-                    >
-                      <span className="flex items-center gap-2">
-                        <AlertTriangle size={14} className="text-[var(--tone-danger)]" /> Their Weaknesses
-                      </span>
-                      {cardOpenSections.weaknesses ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                    </button>
-                    <AnimatePresence>
-                      {cardOpenSections.weaknesses && (
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: 'auto' }}
-                          exit={{ height: 0 }}
-                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
-                        >
-                          <div className="p-4 text-xs space-y-2">
-                            {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
-                                {detail.battlecard.weaknesses.map((w: string, idx: number) => (
-                                  <li key={idx}>{w}</li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p className="italic text-[var(--text-muted)]">No complaints found in reviews.</p>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Accordion 3: Talking Points */}
-                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
-                    <button
-                      onClick={() => toggleSection('talkingPoints')}
-                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
-                    >
-                      <span className="flex items-center gap-2">
-                        <MessageSquare size={14} className="text-[var(--tone-positive)]" /> Talking Points
-                      </span>
-                      {cardOpenSections.talkingPoints ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                    </button>
-                    <AnimatePresence>
-                      {cardOpenSections.talkingPoints && (
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: 'auto' }}
-                          exit={{ height: 0 }}
-                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
-                        >
-                          <div className="p-4 text-xs space-y-2">
-                            {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
-                              <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
-                                {detail.battlecard.talking_points.map((tp: string, idx: number) => (
-                                  <li key={idx}>{tp}</li>
-                                ))}
-                              </ol>
-                            ) : (
-                              <p className="italic text-[var(--text-muted)]">No talking points generated.</p>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Accordion 4: Win Conditions */}
-                  <div className="border border-[var(--border-subtle)] rounded overflow-hidden">
-                    <button
-                      onClick={() => toggleSection('winConditions')}
-                      className="w-full px-4 py-3 bg-[var(--fill-subtle)] hover:bg-[var(--fill-subtle-hover)] flex items-center justify-between text-xs font-bold text-[var(--text-primary)] transition-colors"
-                    >
-                      <span className="flex items-center gap-2">
-                        <Trophy size={14} className="text-[var(--tone-warning)]" /> Win Conditions
-                      </span>
-                      {cardOpenSections.winConditions ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                    </button>
-                    <AnimatePresence>
-                      {cardOpenSections.winConditions && (
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: 'auto' }}
-                          exit={{ height: 0 }}
-                          className="overflow-hidden bg-[var(--fill-subtle)] text-[var(--text-secondary)] border-t border-[var(--border-subtle)]"
-                        >
-                          <div className="p-4 text-xs space-y-2">
-                            {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
-                              <ul className="list-disc pl-4 space-y-2 leading-relaxed text-[var(--text-primary)]">
-                                {detail.battlecard.win_conditions.map((wc: string, idx: number) => (
-                                  <li key={idx}>{wc}</li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p className="italic text-[var(--text-muted)]">No win conditions generated.</p>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
-                <div className="pt-2 text-center">
-                  <button
+              ) : (
+                <div className="text-center py-12 space-y-4">
+                  <Zap size={32} className="mx-auto text-muted-foreground animate-pulse" />
+                  <h3 className="text-sm font-semibold text-foreground">No Battle Card Generated</h3>
+                  <p className="text-xs text-muted-foreground max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
+                  <Button
                     onClick={handleRegenerateBattlecard}
                     disabled={regenerating}
-                    className="rs-btn-ghost text-xs !py-2 !px-3 cursor-pointer"
+                    size="sm"
                   >
-                    {regenerating ? (
-                      <>
-                        <RefreshCw size={12} className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
-                        Regenerating…
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw size={12} />
-                        Regenerate Card
-                      </>
-                    )}
-                  </button>
+                    {regenerating ? <RefreshCw size={12} className="animate-spin" /> : null}
+                    Generate Battle Card
+                  </Button>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-12 space-y-4">
-                <Zap size={32} className="mx-auto text-[var(--text-muted)] animate-pulse" />
-                <h3 className="text-sm font-semibold text-[var(--text-primary)]">No Battle Card Generated</h3>
-                <p className="text-xs text-[var(--text-secondary)] max-w-[200px] mx-auto">Generate one to see recent changes, weaknesses, and talking points.</p>
-                <button
-                  onClick={handleRegenerateBattlecard}
-                  disabled={regenerating}
-                  className="rs-btn-primary cursor-pointer text-xs"
-                >
-                  {regenerating ? <RefreshCw size={12} className="animate-spin" /> : null}
-                  Generate Battle Card
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* D) RATING TREND CHART */}
-          <div className="rs-card p-5 space-y-4">
+          <div className="bg-card border border-border rounded-xl p-5 space-y-4">
             <div>
-              <h2 className="text-sm font-bold text-[var(--text-primary)]">Rating Trend</h2>
-              <p className="text-xs text-[var(--text-secondary)]">Avg score progression over time</p>
+              <h2 className="text-sm font-semibold text-foreground">Rating Trend</h2>
+              <p className="text-xs text-muted-foreground">Avg score progression over time</p>
             </div>
-            
+
             {ratingData.length > 0 ? (
               <div className="h-[120px] w-full">
                 <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 600, height: 120 }}>
@@ -718,7 +773,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                           return (
                             <div
                               className="text-[10px] px-2 py-1 rounded shadow border"
-                              style={{ background: chart.tooltipBg, borderColor: chart.tooltipBorder, color: 'var(--text-primary)' }}
+                              style={{ background: chart.tooltipBg, borderColor: chart.tooltipBorder, color: 'var(--foreground)' }}
                             >
                               {payload[0].value} average
                             </div>
@@ -739,7 +794,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="text-center py-6 text-xs text-[var(--text-muted)] italic">
+              <div className="text-center py-6 text-xs text-muted-foreground italic">
                 No ratings history available yet.
               </div>
             )}
