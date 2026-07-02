@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ interface LocalScanButtonProps {
 export default function LocalScanButton({ competitorId, userId }: LocalScanButtonProps) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
 
   const handleScan = async () => {
     setLoading(true);
@@ -24,6 +26,12 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
           Authorization: `Bearer ${userId}`,
         },
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 5000);

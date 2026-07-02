@@ -6,6 +6,19 @@ from app.db import Base
 from app.models import User, Competitor, Snapshot, ChangeEvent, ApprovedAction
 from app.pipeline.scanner import scan_competitor, scan_user_competitors, get_week_label
 
+# Wordy fixtures: the differ's monolithic-token guard collapses any run of 40+
+# non-space chars to one placeholder, so "A" * 250 vs "A" * 400 now normalizes
+# to the same placeholder and no longer registers as a change. A meaningful
+# change must be expressed in real words (each <40 chars).
+_WORDY_PAGE = (
+    "Acme helps revenue teams monitor competitor pricing pages and messaging "
+    "shifts in real time across their entire market every business day here. "
+) * 2
+_WORDY_PAGE_CHANGED = _WORDY_PAGE + (
+    "This quarter the team shipped new security certifications, single sign on, "
+    "detailed audit logs, and a brand new analytics workspace for enterprises. "
+)
+
 
 class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
@@ -110,11 +123,11 @@ class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
         self, mock_fetch, mock_classify, mock_synth, mock_actions, mock_profile
     ):
         mock_profile.return_value = "Now tracking Competitor 1."
-        mock_fetch.return_value = ("A" * 250, None)
+        mock_fetch.return_value = (_WORDY_PAGE, None)
         await scan_competitor(str(self.competitor.id), self.db)
 
         # Meaningful char diff, but classifier says no_change.
-        mock_fetch.return_value = ("A" * 400, None)
+        mock_fetch.return_value = (_WORDY_PAGE_CHANGED, None)
         mock_classify.return_value = "no_change"
 
         res = await scan_competitor(str(self.competitor.id), self.db)
@@ -139,10 +152,10 @@ class TestScannerEdges(unittest.IsolatedAsyncioTestCase):
         self, mock_fetch, mock_classify, mock_synth, mock_actions, mock_profile
     ):
         mock_profile.return_value = "Now tracking Competitor 1."
-        mock_fetch.return_value = ("A" * 250, None)
+        mock_fetch.return_value = (_WORDY_PAGE, None)
         await scan_competitor(str(self.competitor.id), self.db)
 
-        mock_fetch.return_value = ("A" * 400, None)
+        mock_fetch.return_value = (_WORDY_PAGE_CHANGED, None)
         mock_classify.return_value = "feature_add"
         mock_synth.return_value = ""  # synthesizer produced nothing
 

@@ -14,6 +14,8 @@ Return ONLY one of these exact strings:
 - minor_copy — small wording tweaks, grammar, punctuation, minor rewording
 - no_change — no meaningful difference
 
+Rotating promotional discounts, coupons, or save-$X banners are minor_copy, NOT pricing_change.
+
 Return only the category string. No explanation."""
 
 async def classify_change(text_before: str, text_after: str) -> str:

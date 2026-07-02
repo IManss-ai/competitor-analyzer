@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from datetime import datetime, timezone
 from app.models import Competitor, Snapshot, ChangeEvent, ApprovedAction
@@ -102,8 +103,10 @@ async def scan_competitor(competitor_id: str, db) -> dict:
         .scalar_one_or_none()
     )
 
+    # is_meaningful_change runs a CPU-bound difflib pass; a pathological page
+    # (LLM run-on) could block the event loop for seconds, so offload it.
     changed, delta = (
-        is_meaningful_change(prev_snapshot.raw_text, main_content)
+        await asyncio.to_thread(is_meaningful_change, prev_snapshot.raw_text, main_content)
         if prev_snapshot else (False, char_count)
     )
 

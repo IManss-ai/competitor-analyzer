@@ -448,6 +448,12 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           Authorization: `Bearer ${userId}`
         }
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         setScanDoneCompId(competitorId);
         setTimeout(() => {

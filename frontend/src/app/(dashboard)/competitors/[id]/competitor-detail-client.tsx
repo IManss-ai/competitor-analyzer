@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -62,6 +63,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const comp = detail.competitor;
   const chart = useChartPalette();
+  const router = useRouter();
 
   const toggleSection = (section: string) => {
     setCardOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -80,6 +82,12 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
           Authorization: `Bearer ${userId}`
         }
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         // Reload detail data
         const reloadRes = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}/detail`, {
@@ -103,6 +111,12 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
       const res = await fetch(`${apiUrl}/api/v1/battlecards/generate/${comp.id}?force=true`, {
         headers: { Authorization: `Bearer ${userId}` }
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         const freshCard = await res.json();
         setDetail((prev: any) => ({ ...prev, battlecard: freshCard }));
@@ -191,7 +205,7 @@ Generated at: ${new Date(card.generated_at).toLocaleDateString()}
 
 RECENT CHANGES:
 ${card.what_changed && card.what_changed.length > 0
-  ? card.what_changed.map((c: string | { text: string }) => `- ${typeof c === 'string' ? c : c.text}`).join('\n')
+  ? card.what_changed.map((c: unknown) => `- ${battleCardItemText(c)}`).join('\n')
   : 'No pricing or feature changes detected.'}
 
 THEIR WEAKNESSES:
@@ -569,9 +583,12 @@ ${card.win_conditions && card.win_conditions.length > 0
                             <div className="p-4 text-xs space-y-2 bg-card">
                               {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.what_changed.map((c: string | { text: string }, idx: number) => (
-                                    <li key={idx}>{typeof c === 'string' ? c : c.text}</li>
-                                  ))}
+                                  {detail.battlecard.what_changed
+                                    .map((c: unknown) => battleCardItemText(c))
+                                    .filter(Boolean)
+                                    .map((text: string, idx: number) => (
+                                      <li key={idx}>{text}</li>
+                                    ))}
                                 </ul>
                               ) : (
                                 <p className="italic text-muted-foreground">

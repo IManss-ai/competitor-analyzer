@@ -35,11 +35,17 @@ export function battleCardItemText(item: unknown): string {
       const val = obj[key];
       if (typeof val === 'string' && val.trim()) return val;
     }
+    // Salvage an unknown-key object by its longest non-empty string value rather
+    // than dropping real content (mirrors the backend _item_text fallback).
+    const vals = Object.values(obj).filter(
+      (v): v is string => typeof v === 'string' && v.trim().length > 0
+    );
+    if (vals.length) return vals.reduce((a, b) => (b.length > a.length ? b : a));
   }
   return '';
 }
 
-function toStringList(raw: unknown): string[] {
+export function toStringList(raw: unknown): string[] {
   return Array.isArray(raw) ? raw.map(battleCardItemText).filter(Boolean) : [];
 }
 
@@ -49,11 +55,13 @@ function toStringList(raw: unknown): string[] {
 // the exact same report shape.
 export function normalizeBattleCard(raw: any): BattleCardData {
   const whatChanged: { type: string; text: string }[] = Array.isArray(raw.what_changed)
-    ? raw.what_changed.map((item: any) =>
-        typeof item === 'string'
-          ? { type: 'change', text: item }
-          : { type: typeof item?.type === 'string' ? item.type : 'change', text: battleCardItemText(item) }
-      )
+    ? raw.what_changed
+        .map((item: any) =>
+          typeof item === 'string'
+            ? { type: 'change', text: item }
+            : { type: typeof item?.type === 'string' ? item.type : 'change', text: battleCardItemText(item) }
+        )
+        .filter((c: { text: string }) => c.text)
     : [];
   return {
     title: raw.title || '',

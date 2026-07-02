@@ -102,11 +102,14 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
-              {card.what_changed.map((bullet, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {typeof bullet === 'string' ? bullet : bullet.text}
-                </li>
-              ))}
+              {card.what_changed
+                .map((bullet) => battleCardItemText(bullet))
+                .filter(Boolean)
+                .map((text, i) => (
+                  <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+                    {text}
+                  </li>
+                ))}
             </ul>
           )}
         </section>
@@ -125,11 +128,14 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
-              {card.weaknesses.map((bullet, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {battleCardItemText(bullet)}
-                </li>
-              ))}
+              {card.weaknesses
+                .map((bullet) => battleCardItemText(bullet))
+                .filter(Boolean)
+                .map((text, i) => (
+                  <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+                    {text}
+                  </li>
+                ))}
             </ul>
           )}
         </section>
@@ -148,11 +154,14 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             </p>
           ) : (
             <ol className="space-y-2 list-decimal ml-4">
-              {card.talking_points.map((point, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {battleCardItemText(point)}
-                </li>
-              ))}
+              {card.talking_points
+                .map((point) => battleCardItemText(point))
+                .filter(Boolean)
+                .map((text, i) => (
+                  <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+                    {text}
+                  </li>
+                ))}
             </ol>
           )}
         </section>
@@ -171,11 +180,14 @@ export default function SharePage({ card }: { card: BattleCardData }) {
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
-              {card.win_conditions.map((bullet, i) => (
-                <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                  {battleCardItemText(bullet)}
-                </li>
-              ))}
+              {card.win_conditions
+                .map((bullet) => battleCardItemText(bullet))
+                .filter(Boolean)
+                .map((text, i) => (
+                  <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+                    {text}
+                  </li>
+                ))}
             </ul>
           )}
         </section>

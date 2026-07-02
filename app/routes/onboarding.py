@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.db import get_session
 from app.models import User
+from app.access import require_write_access
 from app.routes.api_v1 import require_api_user
 from app.onboarding.profiler import profile_business
 from app.onboarding.discovery import discover_competitors
@@ -53,7 +54,7 @@ def _normalize_url(raw: str) -> str:
 @router.post("/profile")
 async def profile_my_business(
     payload: dict,
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
     db: Session = Depends(get_session),
 ):
     """Magic onboarding step 1 — scrape the user's OWN site and store an honest
@@ -78,7 +79,7 @@ async def profile_my_business(
 
 @router.post("/discover")
 async def discover_my_competitors(
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
     db: Session = Depends(get_session),
 ):
     """Magic onboarding step 2 — auto-discover the user's top real competitors

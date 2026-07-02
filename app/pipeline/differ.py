@@ -16,19 +16,32 @@ _PRICE = re.compile(
     r"|\d[\d.]*(?:,\d+)?\s?[$€£]"
     r"|\b(?:usd|eur|gbp)\s?\d[\d,]*(?:[.,]\d+)?[kmb]?\b"
 )
+# A single unbroken run this long is never real prose — it's a URL, a signed
+# CDN token, a base64 blob, or an LLM run-on. Collapsing every such run to one
+# fixed placeholder means a rotating signature (or a tiny edit buried inside a
+# 200-char token) reads as noise, not a phantom "meaningful change". Currency
+# amounts are far under 40 chars, so _PRICE is unaffected.
+_MONOLITHIC = re.compile(r"\S{40,}")
+_MONOLITHIC_PLACEHOLDER = "￼"  # OBJECT REPLACEMENT CHARACTER (single, non-space)
 # Above this many words in a changed chunk, skip word-level refinement and
 # count the whole chunk coarsely — bounds SequenceMatcher on pathological
 # inputs (e.g. a single 100KB line from the direct-HTTP fallback).
-_REFINE_CAP_WORDS = 20_000
+_REFINE_CAP_WORDS = 2_000
+# Above this many lines on either side, skip the O(n^2) line-level
+# SequenceMatcher and fall back to an order-insensitive multiset diff — a
+# 4,000-line LLM-repetition page otherwise froze the event loop ~3.75s.
+_MAX_DIFF_LINES = 3_000
 
 
 def _normalize(text: str) -> str:
-    """Lowercase + collapse all whitespace runs to a single space + strip.
+    """Lowercase + neutralize monolithic tokens + collapse whitespace + strip.
 
-    Absorbs LLM/markdown formatting jitter (whitespace, casing) so the
+    Absorbs LLM/markdown formatting jitter (whitespace, casing) and rotating
+    monolithic tokens (URLs, signed CDN params, base64 blobs) so the
     character-level differ only reacts to real content changes.
     """
-    return _WS.sub(" ", (text or "").lower()).strip()
+    lowered = _MONOLITHIC.sub(_MONOLITHIC_PLACEHOLDER, (text or "").lower())
+    return _WS.sub(" ", lowered).strip()
 
 
 def _normalize_lines(text: str) -> list[str]:
@@ -39,6 +52,7 @@ def _normalize_lines(text: str) -> list[str]:
     """
     lines = []
     for line in (text or "").lower().splitlines():
+        line = _MONOLITHIC.sub(_MONOLITHIC_PLACEHOLDER, line)
         line = _LINE_WS.sub(" ", line).strip()
         if line:
             lines.append(line)
@@ -87,6 +101,13 @@ def compute_chars_changed(text_before: str, text_after: str) -> int:
 
     a_lines = _normalize_lines(text_before)
     b_lines = _normalize_lines(text_after)
+    # Pathological page (LLM run-on, giant feed): the O(n^2) line matcher would
+    # freeze the event loop. Fall back to an order-insensitive multiset diff —
+    # a moved line nets to zero, a changed/added/removed line costs its length.
+    if max(len(a_lines), len(b_lines)) > _MAX_DIFF_LINES:
+        ca = Counter(a_lines)
+        cb = Counter(b_lines)
+        return sum(abs(ca[ln] - cb[ln]) * len(ln) for ln in (ca.keys() | cb.keys()))
     # autojunk must stay False: with repetitive page vocab it junks popular
     # words/lines and inflates the cost to the whole page.
     line_sm = difflib.SequenceMatcher(None, a_lines, b_lines, autojunk=False)
@@ -135,6 +156,29 @@ def compute_chars_changed(text_before: str, text_after: str) -> int:
     return changed
 
 
+def _pricing_section(text: str) -> str | None:
+    """Body of the '## Pricing' section (heading to the next '## ' or EOF), or
+    None when the page has no such heading.
+
+    Runs on the per-line normalized form, which lowercases and keeps the
+    markdown '## ' markers that _normalize would otherwise flatten into one line.
+    """
+    collected: list[str] = []
+    found = False
+    in_section = False
+    for line in _normalize_lines(text):
+        if line.startswith("## "):
+            if in_section:
+                break  # next level-2 heading ends the pricing section
+            if "pricing" in line:
+                found = True
+                in_section = True
+            continue
+        if in_section:
+            collected.append(line)
+    return "\n".join(collected) if found else None
+
+
 def is_meaningful_change(text_before: str, text_after: str) -> tuple[bool, int]:
     """Returns (is_meaningful, chars_changed).
 
@@ -147,6 +191,18 @@ def is_meaningful_change(text_before: str, text_after: str) -> tuple[bool, int]:
         return False, 0
     if chars > CHANGE_THRESHOLD:
         return True, chars
-    if _price_tokens(_normalize(text_before)) != _price_tokens(_normalize(text_after)):
+    # Price-swap gate. When BOTH versions carry a '## Pricing' section, compare
+    # currency amounts only inside it — a rotating "Save $200" promo banner
+    # elsewhere is marketing churn, not a plan-price change. Otherwise fall back
+    # to the whole page (backward compatible for pages without the heading).
+    section_before = _pricing_section(text_before)
+    section_after = _pricing_section(text_after)
+    if section_before is not None and section_after is not None:
+        prices_before = _price_tokens(section_before)
+        prices_after = _price_tokens(section_after)
+    else:
+        prices_before = _price_tokens(_normalize(text_before))
+        prices_after = _price_tokens(_normalize(text_after))
+    if prices_before != prices_after:
         return True, chars
     return False, chars

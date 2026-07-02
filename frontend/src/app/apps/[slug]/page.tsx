@@ -10,13 +10,13 @@ interface PageProps {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const fetchApp = cache(async function fetchApp(slug: string) {
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/apps/${slug}`, { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
+  // Only a genuine 404 maps to null (-> notFound()). Any other non-ok status or a
+  // network error must throw so a transient backend blip surfaces the error boundary
+  // and background revalidation keeps the last good page, never an ISR-cached hard 404.
+  const res = await fetch(`${API_BASE}/api/v1/apps/${slug}`, { next: { revalidate: 3600 } });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`Failed to load app "${slug}": upstream responded ${res.status}`);
+  return res.json();
 });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

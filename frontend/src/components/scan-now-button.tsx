@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button';
 export default function ScanNowButton({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
 
   const handleScan = async () => {
     setLoading(true);
@@ -17,6 +19,12 @@ export default function ScanNowButton({ userId }: { userId: string }) {
         method: 'POST',
         headers: { Authorization: `Bearer ${userId}` },
       });
+      if (res.status === 402) {
+        // Free test consumed → re-run the server layout so the paywall surfaces
+        // (soft nav won't otherwise re-render the gated server components).
+        router.refresh();
+        return;
+      }
       if (res.ok) {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 5000);

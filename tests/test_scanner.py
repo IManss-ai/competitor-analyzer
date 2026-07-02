@@ -6,6 +6,20 @@ from app.db import Base
 from app.models import User, Competitor, Snapshot, ChangeEvent, ApprovedAction
 from app.pipeline.scanner import scan_competitor, scan_user_competitors
 
+# Wordy fixtures: the differ's monolithic-token guard collapses any run of 40+
+# non-space chars to one placeholder, so a meaningful change must be expressed
+# in real words (each <40 chars). A bare "A" * 250 vs "A" * 360 now normalizes
+# to the same placeholder and no longer registers as a change.
+_WORDY_PAGE = (
+    "Acme helps revenue teams monitor competitor pricing pages and messaging "
+    "shifts in real time across their entire market every business day here. "
+) * 2
+_WORDY_PAGE_CHANGED = _WORDY_PAGE + (
+    "This quarter the team shipped new security certifications, single sign on, "
+    "detailed audit logs, and a brand new analytics workspace for enterprises. "
+)
+
+
 class TestScanner(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         # Use an in-memory SQLite database for testing the scanner
@@ -67,16 +81,16 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
     async def test_scan_competitor_subsequent_scans(self, mock_fetch, mock_classify, mock_synthesize, mock_actions, mock_profile):
         mock_profile.return_value = "Now tracking Competitor 1."
         # First scan
-        mock_fetch.return_value = ("A" * 250, None)
+        mock_fetch.return_value = (_WORDY_PAGE, None)
         await scan_competitor(str(self.competitor.id), self.db)
         
-        # Second scan (no meaningful change, same length)
-        mock_fetch.return_value = ("A" * 250, None)
+        # Second scan (identical content, no meaningful change)
+        mock_fetch.return_value = (_WORDY_PAGE, None)
         res = await scan_competitor(str(self.competitor.id), self.db)
         self.assertFalse(res.get("change_detected"))
         
-        # Third scan (meaningful: the single 250-char token is rewritten to 360 chars)
-        mock_fetch.return_value = ("A" * 360, None)
+        # Third scan (meaningful: a real content rewrite adds well over 100 chars)
+        mock_fetch.return_value = (_WORDY_PAGE_CHANGED, None)
         mock_classify.return_value = "pricing_change"
         mock_synthesize.return_value = "Competitor updated pricing terms."
         mock_actions.return_value = [
@@ -86,12 +100,12 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
         
         res = await scan_competitor(str(self.competitor.id), self.db)
         self.assertTrue(res.get("change_detected"))
-        self.assertEqual(res.get("net_delta"), 361)
-        
+        self.assertGreater(res.get("net_delta"), 100)
+
         # Check change event is created (excluding the first-scan initial_scan event)
         events = self.db.query(ChangeEvent).filter(ChangeEvent.change_type != "initial_scan").all()
         self.assertEqual(len(events), 1)
-        self.assertEqual(events[0].net_char_delta, 361)
+        self.assertEqual(events[0].net_char_delta, res.get("net_delta"))
         self.assertEqual(events[0].change_type, "pricing_change")
         self.assertEqual(events[0].brief_text, "Competitor updated pricing terms.")
         
@@ -120,11 +134,11 @@ class TestScanner(unittest.IsolatedAsyncioTestCase):
     async def test_scan_competitor_minor_copy(self, mock_fetch, mock_classify, mock_synthesize, mock_actions, mock_profile):
         mock_profile.return_value = "Now tracking Competitor 1."
         # First scan
-        mock_fetch.return_value = ("A" * 250, None)
+        mock_fetch.return_value = (_WORDY_PAGE, None)
         await scan_competitor(str(self.competitor.id), self.db)
 
         # Second scan (meaningful change > 100 chars, but classified as minor_copy)
-        mock_fetch.return_value = ("A" * 360, None)
+        mock_fetch.return_value = (_WORDY_PAGE_CHANGED, None)
         mock_classify.return_value = "minor_copy"
 
         res = await scan_competitor(str(self.competitor.id), self.db)

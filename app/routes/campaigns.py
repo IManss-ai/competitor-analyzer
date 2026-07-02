@@ -9,6 +9,7 @@ from app.db import get_session
 from app.models import ActionPlan, ActionPlanItem, Campaign, ChangeEvent, Competitor
 from app.planner.engine import get_or_generate_plan
 from app.geo.visibility import get_or_check_visibility
+from app.access import require_write_access
 from app.routes.api_v1 import require_api_user
 from app.serialization import iso_utc
 
@@ -34,7 +35,7 @@ def _own_campaign(campaign_id: str, user_id: str, db: Session) -> Campaign:
 def create_campaign(
     payload: dict = Body(...),
     db: Session = Depends(get_session),
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
 ):
     try:
         comp_uuid = _uuid.UUID(str(payload.get("competitor_id", "")))
@@ -163,7 +164,7 @@ def get_war_room(
 def regenerate_plan(
     campaign_id: str,
     db: Session = Depends(get_session),
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
 ):
     campaign = _own_campaign(campaign_id, user_id, db)
     plan = get_or_generate_plan(campaign, db, force=True)

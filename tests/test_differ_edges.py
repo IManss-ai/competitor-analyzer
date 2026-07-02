@@ -8,6 +8,18 @@ from app.pipeline.differ import (
 )
 
 
+def _filler(n: int) -> str:
+    """A string whose NORMALIZED length is exactly n, built from short words so
+    the differ's monolithic-token guard (any run of 40+ non-space chars is
+    collapsed to a single placeholder) leaves it intact. A raw 'a' * n would
+    collapse to one char and defeat these length-boundary fixtures."""
+    s = ("x" * 20 + " ") * (n // 21 + 2)
+    s = s[:n]
+    if s.endswith(" "):
+        s = s[:-1] + "x"
+    return s
+
+
 class TestDifferEdges(unittest.TestCase):
     # --- None / empty handling (the `text or ""` branch) ---
     def test_normalize_none_returns_empty_string(self):
@@ -40,7 +52,7 @@ class TestDifferEdges(unittest.TestCase):
         self.assertGreater(grow, 0)
 
     def test_large_deletion_is_meaningful(self):
-        before = "a" * 500
+        before = _filler(500)
         after = ""
         changed, delta = is_meaningful_change(before, after)
         self.assertTrue(changed)
@@ -49,14 +61,14 @@ class TestDifferEdges(unittest.TestCase):
     # --- boundary: strictly greater-than threshold ---
     def test_delta_exactly_at_threshold_not_meaningful(self):
         before = ""
-        after = "a" * CHANGE_THRESHOLD  # delta == 100
+        after = _filler(CHANGE_THRESHOLD)  # delta == 100
         changed, delta = is_meaningful_change(before, after)
         self.assertEqual(delta, CHANGE_THRESHOLD)
         self.assertFalse(changed)
 
     def test_delta_one_over_threshold_is_meaningful(self):
         before = ""
-        after = "a" * (CHANGE_THRESHOLD + 1)
+        after = _filler(CHANGE_THRESHOLD + 1)
         changed, delta = is_meaningful_change(before, after)
         self.assertEqual(delta, CHANGE_THRESHOLD + 1)
         self.assertTrue(changed)
