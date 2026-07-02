@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         <div className="mb-12">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             <ArrowLeft size={14} /> Back to home
           </Link>
@@ -21,8 +21,8 @@ export default function PrivacyPage() {
         {/* Header */}
         <header className="mb-10 pb-8 border-b border-border">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-7 h-7 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded">
-              <RivalscopeLogo size={13} className="text-sky-400" />
+            <div className="w-7 h-7 bg-primary/10 border border-primary/25 flex items-center justify-center rounded">
+              <RivalscopeLogo size={13} className="text-primary" />
             </div>
             <span className="text-sm font-semibold text-foreground font-mono tracking-tight">RIVALSCOPE</span>
           </div>
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             <h2 className="text-base font-semibold text-foreground">5. Contact Support</h2>
             <p>
               If you have any questions regarding this privacy policy or want to request account deletion, contact our support desk at{' '}
-              <a href="mailto:support@rivalscope.dev" className="text-sky-400 hover:underline">
+              <a href="mailto:support@rivalscope.dev" className="text-primary hover:underline">
                 support@rivalscope.dev
               </a>.
             </p>

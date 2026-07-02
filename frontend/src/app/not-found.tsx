@@ -8,14 +8,14 @@ export default function NotFound() {
       <div className="max-w-md mx-auto w-full">
         {/* Brand mark */}
         <div className="flex items-center gap-3 mb-10">
-          <div className="w-7 h-7 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded">
-            <RivalscopeLogo size={13} className="text-sky-400" />
+          <div className="w-7 h-7 bg-primary/10 border border-primary/25 flex items-center justify-center rounded">
+            <RivalscopeLogo size={13} className="text-primary" />
           </div>
           <span className="text-sm font-semibold text-foreground font-mono tracking-tight">RIVALSCOPE</span>
         </div>
 
         {/* 404 */}
-        <p className="text-xs font-mono uppercase tracking-widest text-sky-400 mb-3">Error 404</p>
+        <p className="text-xs font-mono uppercase tracking-widest text-primary mb-3">Error 404</p>
         <h1 className="text-3xl font-bold text-foreground tracking-tight leading-tight mb-3">
           This page slipped off the radar.
         </h1>

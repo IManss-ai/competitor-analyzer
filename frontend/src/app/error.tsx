@@ -26,8 +26,8 @@ export default function RootError({
       <div className="max-w-md mx-auto w-full">
         {/* Brand mark */}
         <div className="flex items-center gap-3 mb-10">
-          <div className="w-7 h-7 bg-sky-500/10 border border-sky-500/25 flex items-center justify-center rounded">
-            <RivalscopeLogo size={13} className="text-sky-400" />
+          <div className="w-7 h-7 bg-primary/10 border border-primary/25 flex items-center justify-center rounded">
+            <RivalscopeLogo size={13} className="text-primary" />
           </div>
           <span className="text-sm font-semibold text-foreground font-mono tracking-tight">RIVALSCOPE</span>
         </div>

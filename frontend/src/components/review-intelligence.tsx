@@ -11,7 +11,7 @@ interface ReviewIntelligenceProps {
 const PLATFORM_STYLES: Record<string, { label: string; badge: string }> = {
   g2:         { label: 'G2',         badge: 'tag-orange' },
   trustpilot: { label: 'Trustpilot', badge: 'tag-green' },
-  capterra:   { label: 'Capterra',   badge: 'bg-sky-500/10 text-sky-400 border-sky-500/20' },
+  capterra:   { label: 'Capterra',   badge: 'bg-primary/10 text-primary border-primary/20' },
 };
 
 function StarRating({ rating }: { rating: number | null }) {

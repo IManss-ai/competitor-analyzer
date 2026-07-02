@@ -87,7 +87,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
         {/* WHAT CHANGED */}
         <section className="rs-card p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <Zap size={16} className="text-sky-400" />
+            <Zap size={16} className="text-primary" />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
               What Changed
             </h2>
@@ -199,7 +199,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
           </p>
           <p className="text-sm mt-2" style={{ color: 'var(--muted-foreground)' }}>
             Track your competitors 24/7.{' '}
-            <a href="/auth/login" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">
+            <a href="/auth/login" className="text-primary hover:text-primary/80 font-medium transition-colors">
               Sign up free
             </a>
           </p>
