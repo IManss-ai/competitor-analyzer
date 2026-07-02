@@ -118,3 +118,13 @@ STEP 5 — CONFIRMATION GATE: Show screenshot(s) + draft reply. Ask "Send to [re
 ## Out of scope today
 
 Reddit/IH (hold until LinkedIn maxed), paid amplification, wiring server-side attribution (worth doing before Wave 3 so we stop flying blind).
+
+## Update 2026-07-03 — attribution is no longer blind
+
+Server-side first-touch UTM capture shipped to production (main `818b838`):
+signups now persist `utm_source` / `utm_medium` / `utm_campaign` /
+`signup_referrer` on the users table. For Wave 3, tag every link:
+`https://rivalscope.dev?utm_source=linkedin&utm_medium=social&utm_campaign=wave3`
+and read results with:
+`SELECT email, created_at, utm_source, utm_campaign, signup_referrer FROM users WHERE utm_source IS NOT NULL ORDER BY created_at DESC;`
+(via `railway ssh`). External referrers are captured even without utm params.
