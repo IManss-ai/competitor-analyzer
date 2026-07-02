@@ -17,6 +17,11 @@ def _play_to_text(play) -> str | None:
             val = play.get(key)
             if isinstance(val, str) and val.strip():
                 return val.strip()
+        # Salvage an unknown-key dict by its longest non-empty string value rather
+        # than rendering a blank talking point (mirrors battlecard._item_text).
+        vals = [v.strip() for v in play.values() if isinstance(v, str) and v.strip()]
+        if vals:
+            return max(vals, key=len)
     return None
 
 async def send_weekly_brief(

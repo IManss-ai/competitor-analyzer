@@ -238,6 +238,150 @@ class TestBattleCardCoercion(unittest.TestCase):
         self.assertIn("Losing returning customers", data["strategic_signals"])
         self.assertIn("Slow lunch service", data["weaknesses"])
 
+    # ── Case 5: salvage unknown-key items instead of silently dropping them ──
+    def test_unknown_key_playbook_items_salvaged_not_dropped(self):
+        """An all-unknown-key playbook used to coerce to [] → ai_generated False →
+        a fabricated heuristic card served (burning the user's one free test with
+        no provenance). Salvage keeps the model's real content instead."""
+        self._seed_real_change()
+        mock_client = self._mock_ai({
+            "executive_summary": "s",
+            "what_changed": [{"type": "pricing_change", "text": "raised prices"}],
+            "weaknesses": ["w1"],
+            "strategic_signals": ["s1"],
+            # Non-standard keys carrying real AI content (no text/detail/title).
+            "playbook": [
+                {"step": "Run comparison ads targeting their churned buyers"},
+                {"recommendation": "Publish a transparent pricing calculator page"},
+            ],
+        })
+        with patch("app.llm.ai_available", return_value=True), \
+             patch("app.llm.get_sync_client", return_value=mock_client):
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.comp.id}", headers=self.auth)
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self._assert_all_string_lists(data)
+        # Salvaged the longest string from each unknown-key dict, not dropped.
+        self.assertIn("Run comparison ads targeting their churned buyers", data["playbook"])
+        self.assertIn("Publish a transparent pricing calculator page", data["playbook"])
+        # The heuristic pricing card was NOT served (its signature phrase absent).
+        self.assertNotIn("adjusting pricing structure", json.dumps(data).lower())
+        # And the card is marked ai_generated — the free test wasn't wasted.
+        db = self.SessionLocal()
+        try:
+            cached = db.execute(
+                select(BattleCardCache).where(BattleCardCache.competitor_id == self.comp.id)
+            ).scalar_one_or_none()
+            self.assertIsNotNone(cached)
+            self.assertTrue(cached.ai_generated, "salvaged AI playbook must mark the card ai_generated")
+        finally:
+            db.close()
+
+    # ── Case 6: truly unsalvageable list fires a provenance signal ──────────
+    def test_unrecognizable_playbook_fires_degraded_signal(self):
+        """A playbook of string-less dicts can't be salvaged → coerces to []. The
+        fix fires note_degraded so the fabricated fallback is never silent. Baseline
+        competitor → the honesty chokepoint keeps what_changed empty (no fabrication)."""
+        mock_client = self._mock_ai({
+            "executive_summary": "s",
+            "what_changed": [],
+            "weaknesses": ["w1"],
+            "strategic_signals": ["s1"],
+            "playbook": [{"rank": 1}, {"weight": 2.5}, {"nested": {}}],
+        })
+        with patch("app.llm.ai_available", return_value=True), \
+             patch("app.llm.get_sync_client", return_value=mock_client), \
+             patch("app.routes.battlecard.note_degraded") as spy:
+            resp = self.client.get(f"/api/v1/battlecards/generate/{self.comp.id}", headers=self.auth)
+        self.assertEqual(resp.status_code, 200)
+        reasons = [c.args[2] for c in spy.call_args_list if len(c.args) >= 3]
+        self.assertIn(
+            "playbook_coerced_empty", reasons,
+            f"expected a playbook_coerced_empty degradation signal, got: {spy.call_args_list}",
+        )
+        data = resp.json()
+        self.assertTrue(data.get("is_baseline"))
+        self.assertEqual(data["what_changed"], [])
+
+    # ── Case 7: cache reads self-heal poisoned (pre-fix) rows ───────────────
+    def test_read_cached_payload_coerces_poisoned_row(self):
+        from app.routes.battlecard import _read_cached_payload
+        poisoned = {
+            "title": "Poisoned",
+            "executive_summary": "e",
+            "what_changed": [
+                {"type": "pricing_change", "text": "raised prices"},
+                {},  # no salvageable content → dropped
+                "plain string change",
+            ],
+            "weaknesses": [{"text": "Slow support"}, "Plain weakness"],
+            "strategic_signals": [{"type": "signal", "text": "Moving upmarket"}],
+            "playbook": [{"type": "action", "text": "Target churned users"}, "Plain play"],
+            "talking_points": [{"text": "tp1"}],
+            "win_conditions": [{"text": "wc1"}],
+            "actions": [{"text": "a1"}],
+            "head_to_head": {
+                "verdict": "we win on price",
+                "you_win": [{"point": "p", "basis": "b", "confidence": "inferred"}],
+            },
+        }
+        cached = BattleCardCache(
+            competitor_id=self.comp.id,
+            payload=json.dumps(poisoned),
+            ai_generated=True,
+        )
+        result = _read_cached_payload(cached)
+        self._assert_all_string_lists(result)
+        # what_changed coerced to {type,text} strings; the empty item dropped.
+        self.assertEqual(len(result["what_changed"]), 2)
+        for item in result["what_changed"]:
+            self.assertIsInstance(item["type"], str)
+            self.assertIsInstance(item["text"], str)
+            self.assertTrue(item["text"])
+        texts = [c["text"] for c in result["what_changed"]]
+        self.assertIn("raised prices", texts)
+        self.assertIn("plain string change", texts)
+        # head_to_head (and everything non-list) is left completely untouched.
+        self.assertEqual(result["head_to_head"], poisoned["head_to_head"])
+
+    # ── Case 8: _has_new_intel ignores classifier-suppressed events ─────────
+    def test_has_new_intel_ignores_suppressed_and_counts_real(self):
+        from app.routes.battlecard import _has_new_intel
+        since = datetime.utcnow() - timedelta(hours=1)
+        before = self._add_snapshot(text="a")
+        after = self._add_snapshot(text="bb")
+        # A classifier-suppressed minor_copy event AFTER `since` must NOT count —
+        # it would otherwise invalidate the cache and trigger a paid regen.
+        self.db.add(ChangeEvent(
+            competitor_id=self.comp.id,
+            snapshot_before_id=before.id,
+            snapshot_after_id=after.id,
+            net_char_delta=5,
+            change_type="minor_copy",
+            brief_text="tiny copy tweak",
+            detected_at=datetime.utcnow(),
+        ))
+        self.db.commit()
+        self.assertFalse(
+            _has_new_intel(self.comp, since, self.db),
+            "minor_copy churn must not invalidate the cache",
+        )
+        # A real pricing_change DOES count as new intel.
+        self.db.add(ChangeEvent(
+            competitor_id=self.comp.id,
+            snapshot_before_id=before.id,
+            snapshot_after_id=after.id,
+            net_char_delta=120,
+            change_type="pricing_change",
+            brief_text="real move",
+            detected_at=datetime.utcnow(),
+        ))
+        self.db.commit()
+        self.assertTrue(
+            _has_new_intel(self.comp, since, self.db),
+            "a real pricing_change must invalidate the cache",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

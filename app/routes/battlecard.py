@@ -41,8 +41,18 @@ def _has_new_intel(comp: Competitor, since: datetime, db: Session) -> bool:
             select(SocialPost.id).where(SocialPost.competitor_id == comp.id, SocialPost.fetched_at > since).limit(1)
         ).scalar_one_or_none()
         return new_post is not None
+    # Only real, classified changes count as new intel. Classifier-suppressed
+    # events (minor_copy / no_change) and baseline initial_scan events must NOT
+    # invalidate the cache — with the edit-magnitude differ, rotating page content
+    # emits minor_copy events every scan, which would otherwise trigger a paid
+    # regen on the next authenticated /generate.
     new_event = db.execute(
-        select(ChangeEvent.id).where(ChangeEvent.competitor_id == comp.id, ChangeEvent.detected_at > since).limit(1)
+        select(ChangeEvent.id).where(
+            ChangeEvent.competitor_id == comp.id,
+            ChangeEvent.detected_at > since,
+            ChangeEvent.change_type.isnot(None),
+            ChangeEvent.change_type.notin_(("minor_copy", "no_change", "initial_scan")),
+        ).limit(1)
     ).scalar_one_or_none()
     return new_event is not None
 
@@ -79,6 +89,13 @@ def _item_text(item) -> str | None:
             val = item.get(key)
             if isinstance(val, str) and val.strip():
                 return val.strip()
+        # Salvage an unknown-key dict by its longest non-empty string value rather
+        # than silently dropping real AI content. A dropped item flips
+        # ai_generated to False → a fabricated heuristic card is served, burning a
+        # free user's one test with no provenance.
+        vals = [v.strip() for v in item.values() if isinstance(v, str) and v.strip()]
+        if vals:
+            return max(vals, key=len)
     return None
 
 
@@ -89,6 +106,43 @@ def _coerce_str_list(items) -> list:
     if not isinstance(items, list):
         return []
     return [t for t in (_item_text(i) for i in items) if t]
+
+
+# Every payload field that must render as flat strings. what_changed is
+# object-shaped ({type,text}) by design and handled separately below.
+_CACHED_STR_LIST_FIELDS = (
+    "weaknesses", "strategic_signals", "playbook",
+    "talking_points", "win_conditions", "actions",
+)
+
+
+def _read_cached_payload(cached: BattleCardCache) -> dict:
+    """Load a cached battle-card payload, re-coercing its list fields on read.
+
+    Rows written before the coercion fix can carry object-shaped items that crash
+    every render surface (React #31). Re-coercing here lets a poisoned row
+    self-heal instead of serving broken data for up to CACHE_MAX_AGE days.
+    head_to_head and every other field are left untouched."""
+    payload = json.loads(cached.payload)
+    if not isinstance(payload, dict):
+        return payload
+    for key in _CACHED_STR_LIST_FIELDS:
+        if key in payload:
+            payload[key] = _coerce_str_list(payload[key])
+    raw_changes = payload.get("what_changed")
+    if isinstance(raw_changes, list):
+        coerced = []
+        for item in raw_changes:
+            text = _item_text(item)
+            if not text:
+                continue
+            type_val = item.get("type") if isinstance(item, dict) else None
+            coerced.append({
+                "type": type_val if isinstance(type_val, str) and type_val else "change",
+                "text": text,
+            })
+        payload["what_changed"] = coerced
+    return payload
 
 
 LOCAL_SYSTEM_PROMPT = """You are a senior local business strategist advising an independent operator (restaurant, salon, gym, retail shop, etc.) on how to win against a nearby competitor.
@@ -232,7 +286,12 @@ Known customer complaints:
             # Coerce string lists — what_changed stays object-shaped by design.
             weaknesses = _coerce_str_list(parsed.get("weaknesses")) or weaknesses
             strategic_signals = _coerce_str_list(parsed.get("strategic_signals"))
-            playbook = _coerce_str_list(parsed.get("playbook"))
+            raw_playbook = parsed.get("playbook")
+            playbook = _coerce_str_list(raw_playbook)
+            # Plays returned but none salvageable — signal before the heuristic
+            # fallback fabricates a card, so the degradation is never silent.
+            if isinstance(raw_playbook, list) and raw_playbook and not playbook:
+                note_degraded("battlecard.local", "heuristic", "playbook_coerced_empty")
         except Exception as e:
             note_degraded("battlecard.local", "heuristic", "api_error", e)
     elif allow_ai:
@@ -627,7 +686,13 @@ Known customer complaints/weaknesses:
             # Coerce string lists — what_changed stays object-shaped by design.
             weaknesses = _coerce_str_list(parsed.get("weaknesses")) or weaknesses
             strategic_signals = _coerce_str_list(parsed.get("strategic_signals"))
-            playbook = _coerce_str_list(parsed.get("playbook"))
+            raw_playbook = parsed.get("playbook")
+            playbook = _coerce_str_list(raw_playbook)
+            # The model returned plays but none survived coercion (nothing
+            # salvageable) — signal the degradation before the heuristic fallback
+            # fabricates a card, so it's never silent.
+            if isinstance(raw_playbook, list) and raw_playbook and not playbook:
+                note_degraded("battlecard", "heuristic", "playbook_coerced_empty")
             # Only trust head_to_head when we actually asked for it (profile present).
             if business_profile:
                 head_to_head = _normalize_head_to_head(parsed.get("head_to_head"))
@@ -695,7 +760,7 @@ Known customer complaints/weaknesses:
                 playbook = [
                     f"Position our platform as the fastest developer-first alternative with zero setup friction.",
                     "Send target email playbooks focusing on our 24/7 dedicated engineering support lines.",
-                    "Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
+                    f"Run Google Ads targeting {comp.name or comp.url} brand search queries with uptime stats.",
                     "Highlight our high-touch onboarding experience for non-technical team managers.",
                     "Build comparison landing page detailing our direct integration performance."
                 ]
@@ -782,11 +847,11 @@ def get_or_generate_battlecard(
     the `/generate` 402 without breaking the page render."""
     cached = _load_cache(comp.id, db)
     if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
-        return json.loads(cached.payload)
+        return _read_cached_payload(cached)
 
     if not allow_ai:
         if cached:
-            return json.loads(cached.payload)
+            return _read_cached_payload(cached)
         payload, _ = _generate(comp, db, allow_ai=False, business_profile=business_profile)
         return payload
 
@@ -851,7 +916,7 @@ def generate_public_battlecard(competitor_id: str, db: Session = Depends(get_ses
 
     cached = _load_cache(comp.id, db)
     if cached:
-        res = json.loads(cached.payload)
+        res = _read_cached_payload(cached)
     else:
         # No card generated yet: build the free heuristic variant. Don't cache
         # it, so the owner's first real (AI) generation isn't masked.
