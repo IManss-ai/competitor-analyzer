@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useMounted } from '@/lib/use-mounted';
+import { getAttribution } from '@/lib/attribution';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { RivalscopeLogo } from '@/components/ui/rivalscope-logo';
@@ -84,7 +85,7 @@ export default function LoginPage() {
       const res = await fetch(`${apiUrl}/api/v1/auth/direct-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailVal, password: passwordVal }),
+        body: JSON.stringify({ email: emailVal, password: passwordVal, attribution: getAttribution() }),
       });
       const data = await res.json();
 

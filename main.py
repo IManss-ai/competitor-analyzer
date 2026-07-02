@@ -44,6 +44,10 @@ def _apply_column_guards():
             ("scan_schedule", "VARCHAR", "'weekly'"),
             ("email_notifications", "BOOLEAN", "TRUE"),
             ("digest_email", "VARCHAR", None),
+            ("utm_source", "VARCHAR", None),
+            ("utm_medium", "VARCHAR", None),
+            ("utm_campaign", "VARCHAR", None),
+            ("signup_referrer", "VARCHAR", None),
         ],
         "competitors": [
             ("business_type", "VARCHAR", "'saas'"),

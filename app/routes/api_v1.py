@@ -39,7 +39,7 @@ async def api_login(payload: dict, db: Session = Depends(get_session)):
     email = payload.get("email", "").strip().lower()
     if not email:
         raise HTTPException(status_code=422, detail="Email required")
-    user = get_or_create_user(email, db)
+    user = get_or_create_user(email, db, attribution=payload.get("attribution"))
     token = generate_magic_link_token(str(user.id), db)
     link = f"{APP_BASE_URL}/auth/verify?token={token}"
     try:
@@ -66,7 +66,9 @@ async def api_direct_login(payload: dict, db: Session = Depends(get_session)):
     
     if not user:
         # Automatically create user (Instant Sign Up)
+        from app.auth import apply_signup_attribution
         user = User(email=email, password_hash=hash_password(password))
+        apply_signup_attribution(user, payload.get("attribution"))
         db.add(user)
         db.commit()
         db.refresh(user)

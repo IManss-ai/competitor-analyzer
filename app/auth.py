@@ -41,10 +41,37 @@ def verify_magic_link_token(token: str, db: Session) -> str | None:
     return user_id
 
 
-def get_or_create_user(email: str, db: Session) -> User:
+# First-touch attribution: only these keys, values must be strings, capped so a
+# hostile payload can't stuff the row.
+_ATTRIBUTION_FIELDS = {
+    "utm_source": "utm_source",
+    "utm_medium": "utm_medium",
+    "utm_campaign": "utm_campaign",
+    "referrer": "signup_referrer",
+}
+_ATTRIBUTION_MAX_LEN = 200
+
+
+def apply_signup_attribution(user: User, attribution) -> None:
+    """Copy sanitized utm_*/referrer values onto a JUST-CREATED user.
+
+    Call only on the creation path — attribution is first-touch and must never
+    be overwritten by a later login. Non-dict payloads, unknown keys, and
+    non-string values are ignored; strings are truncated. Never raises.
+    """
+    if not isinstance(attribution, dict):
+        return
+    for key, column in _ATTRIBUTION_FIELDS.items():
+        value = attribution.get(key)
+        if isinstance(value, str) and value.strip():
+            setattr(user, column, value.strip()[:_ATTRIBUTION_MAX_LEN])
+
+
+def get_or_create_user(email: str, db: Session, attribution=None) -> User:
     user = db.query(User).filter(User.email == email).first()
     if not user:
         user = User(email=email)
+        apply_signup_attribution(user, attribution)
         db.add(user)
         db.commit()
         db.refresh(user)

@@ -28,6 +28,12 @@ class User(Base):
     business_name = Column(String, nullable=True)
     business_profile = Column(Text, nullable=True)     # JSON string (see app/onboarding/profiler.py)
     onboarded_at = Column(DateTime, nullable=True)     # set when magic onboarding completes
+    # First-touch marketing attribution, set once at signup and never overwritten
+    # (see app/auth.py apply_signup_attribution).
+    utm_source = Column(String, nullable=True)
+    utm_medium = Column(String, nullable=True)
+    utm_campaign = Column(String, nullable=True)
+    signup_referrer = Column(String, nullable=True)
 
 
 class Competitor(Base):
