@@ -72,7 +72,7 @@ export default function BeatPage() {
             Not a dashboard. Not a report. A plan.
           </p>
           <div className="flex items-center justify-center gap-3 pt-2">
-            <a href={CHECKOUT_URL} className="rs-btn-primary text-sm px-6 py-3">
+            <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
               Get my plan — $29
             </a>
           </div>
@@ -130,7 +130,7 @@ export default function BeatPage() {
 
         {/* CTA repeat */}
         <section className="text-center space-y-3">
-          <a href={CHECKOUT_URL} className="rs-btn-primary text-sm px-6 py-3 inline-block">
+          <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
             Get my plan — $29
           </a>
           <p className="text-xs leading-relaxed max-w-md mx-auto" style={{ color: 'var(--muted-foreground)' }}>
