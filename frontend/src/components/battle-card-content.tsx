@@ -23,25 +23,45 @@ export interface BattleCardData {
   is_baseline?: boolean;
 }
 
+// Coerce a battle-card list item to a display string. The API usually returns
+// plain strings, but LLM/cached payloads can carry {type,text} / {title,detail}
+// objects — rendering those raw throws React error #31. Key priority mirrors
+// the backend's _item_text (app/routes/battlecard.py) and mailer._play_to_text.
+export function battleCardItemText(item: unknown): string {
+  if (typeof item === 'string') return item;
+  if (item && typeof item === 'object') {
+    const obj = item as Record<string, unknown>;
+    for (const key of ['text', 'detail', 'title', 'action', 'description']) {
+      const val = obj[key];
+      if (typeof val === 'string' && val.trim()) return val;
+    }
+  }
+  return '';
+}
+
+function toStringList(raw: unknown): string[] {
+  return Array.isArray(raw) ? raw.map(battleCardItemText).filter(Boolean) : [];
+}
+
 // Normalize old API format (strings in what_changed, talking_points,
 // win_conditions) vs new format (objects in what_changed, playbook,
 // strategic_signals). Shared so the modal and the onboarding finale render
 // the exact same report shape.
 export function normalizeBattleCard(raw: any): BattleCardData {
   const whatChanged: { type: string; text: string }[] = Array.isArray(raw.what_changed)
-    ? raw.what_changed.map((item: unknown) =>
+    ? raw.what_changed.map((item: any) =>
         typeof item === 'string'
           ? { type: 'change', text: item }
-          : (item as { type: string; text: string })
+          : { type: typeof item?.type === 'string' ? item.type : 'change', text: battleCardItemText(item) }
       )
     : [];
   return {
     title: raw.title || '',
     executive_summary: raw.executive_summary || '',
     what_changed: whatChanged,
-    weaknesses: raw.weaknesses || [],
-    strategic_signals: raw.strategic_signals || raw.win_conditions || [],
-    playbook: raw.playbook || raw.talking_points || raw.actions || [],
+    weaknesses: toStringList(raw.weaknesses),
+    strategic_signals: toStringList(raw.strategic_signals ?? raw.win_conditions),
+    playbook: toStringList(raw.playbook ?? raw.talking_points ?? raw.actions),
     generated_at: raw.generated_at || new Date().toISOString(),
     variant: raw.variant === 'local' ? 'local' : 'saas',
     is_baseline: raw.is_baseline === true,

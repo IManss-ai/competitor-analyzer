@@ -66,6 +66,31 @@ def _store_cache(comp_id, payload: dict, ai_generated: bool, db: Session) -> Non
     db.commit()
 
 
+def _item_text(item) -> str | None:
+    """Coerce a battle-card list item to a display string.
+
+    The model usually returns plain strings but can emit `{type,text}` /
+    `{title,detail}` objects. Key priority mirrors mailer._play_to_text so the
+    email and the UI extract the same string from the same payload."""
+    if isinstance(item, str):
+        return item.strip() or None
+    if isinstance(item, dict):
+        for key in ("text", "detail", "title", "action", "description"):
+            val = item.get(key)
+            if isinstance(val, str) and val.strip():
+                return val.strip()
+    return None
+
+
+def _coerce_str_list(items) -> list:
+    """Coerce a parsed LLM list to plain strings, dropping non-coercible items.
+    Object-shaped items must never reach battlecard_cache — every render surface
+    (modal, onboarding, detail page, public share) renders these as raw text."""
+    if not isinstance(items, list):
+        return []
+    return [t for t in (_item_text(i) for i in items) if t]
+
+
 LOCAL_SYSTEM_PROMPT = """You are a senior local business strategist advising an independent operator (restaurant, salon, gym, retail shop, etc.) on how to win against a nearby competitor.
 Your tone is direct, practical, specific to local foot traffic and reputation. Do not write as a helpful AI assistant.
 Do not use generic fluff, placeholder text, or B2B sales jargon (no "leverage", "delve", "synergy", "enterprise", "SaaS").
@@ -204,9 +229,10 @@ Known customer complaints:
             parsed = json.loads(content)
             executive_summary = parsed.get("executive_summary", "")
             what_changed = parsed.get("what_changed", [])
-            weaknesses = parsed.get("weaknesses", weaknesses)
-            strategic_signals = parsed.get("strategic_signals", [])
-            playbook = parsed.get("playbook", [])
+            # Coerce string lists — what_changed stays object-shaped by design.
+            weaknesses = _coerce_str_list(parsed.get("weaknesses")) or weaknesses
+            strategic_signals = _coerce_str_list(parsed.get("strategic_signals"))
+            playbook = _coerce_str_list(parsed.get("playbook"))
         except Exception as e:
             note_degraded("battlecard.local", "heuristic", "api_error", e)
     elif allow_ai:
@@ -598,9 +624,10 @@ Known customer complaints/weaknesses:
             parsed = json.loads(content)
             executive_summary = parsed.get("executive_summary", "")
             what_changed = parsed.get("what_changed", [])
-            weaknesses = parsed.get("weaknesses", weaknesses)
-            strategic_signals = parsed.get("strategic_signals", [])
-            playbook = parsed.get("playbook", [])
+            # Coerce string lists — what_changed stays object-shaped by design.
+            weaknesses = _coerce_str_list(parsed.get("weaknesses")) or weaknesses
+            strategic_signals = _coerce_str_list(parsed.get("strategic_signals"))
+            playbook = _coerce_str_list(parsed.get("playbook"))
             # Only trust head_to_head when we actually asked for it (profile present).
             if business_profile:
                 head_to_head = _normalize_head_to_head(parsed.get("head_to_head"))

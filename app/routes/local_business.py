@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.db import get_session, SessionLocal
 from app.models import Competitor, SocialPost
+from app.access import require_write_access
 from app.routes.api_v1 import require_api_user
 from app.serialization import iso_utc
 import uuid
@@ -134,7 +135,7 @@ async def _run_local_scan_background(competitor_id: str):
 @router.post("/scan/{competitor_id}")
 async def trigger_local_scan(
     competitor_id: str,
-    user_id: str = Depends(require_api_user),
+    user_id: str = Depends(require_write_access),
     db: Session = Depends(get_session),
 ):
     """Trigger an immediate Google Reviews + social scrape for one competitor."""
