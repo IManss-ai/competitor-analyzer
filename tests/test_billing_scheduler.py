@@ -241,6 +241,80 @@ class TestBillingScheduler(unittest.IsolatedAsyncioTestCase):
         mock_send.assert_called_once()
         self.assertEqual(mock_send.call_args[1]["user_email"], "other@user.com")
 
+    def _seed_change_event(self, db, detected_at, week_label):
+        """One competitor + one snapshot reused for both NOT NULL snapshot FKs
+        (same trick as scanner._make_initial_event) + one change event."""
+        comp = Competitor(user_id=self.user.id, url="https://rival.example.com", name="Rival", active=True)
+        db.add(comp)
+        db.commit()
+        snap = Snapshot(competitor_id=comp.id, raw_text="x", char_count=1)
+        db.add(snap)
+        db.commit()
+        db.add(ChangeEvent(
+            competitor_id=comp.id,
+            snapshot_before_id=snap.id,
+            snapshot_after_id=snap.id,
+            detected_at=detected_at,
+            week_label=week_label,
+            change_type="pricing_change",
+            brief_text="Rival cut prices",
+            net_char_delta=150,
+        ))
+        db.commit()
+
+    @patch("app.scheduler.SessionLocal")
+    @patch("app.scheduler.send_weekly_brief")
+    @patch("app.scheduler.scan_user_competitors")
+    @patch("app.scheduler.scrape_competitor_reviews")
+    async def test_weekly_brief_includes_midweek_events_with_stale_week_label(
+        self, mock_reviews, mock_scan, mock_send, mock_session_factory
+    ):
+        mock_db = self.SessionLocal()
+        mock_session_factory.return_value = mock_db
+
+        # An on-demand scan detected this mid-week: by the Monday 8am send the
+        # event carries the PREVIOUS ISO week's label, but it is inside the
+        # 7-day window the email claims and must appear in the brief.
+        now = datetime.utcnow()  # naive UTC, matching func.now() storage
+        stale_iso = (now - timedelta(days=7)).isocalendar()
+        self._seed_change_event(
+            mock_db,
+            detected_at=now - timedelta(days=3),
+            week_label=f"{stale_iso.year}-W{stale_iso.week:02d}",
+        )
+
+        await run_weekly_scan_and_brief()
+
+        mock_send.assert_called_once()
+        summaries = mock_send.call_args[1]["change_summaries"]
+        self.assertTrue(
+            any(s["brief_text"] == "Rival cut prices" for s in summaries),
+            f"mid-week event missing from brief: {summaries}",
+        )
+
+    @patch("app.scheduler.SessionLocal")
+    @patch("app.scheduler.send_weekly_brief")
+    @patch("app.scheduler.scan_user_competitors")
+    @patch("app.scheduler.scrape_competitor_reviews")
+    async def test_weekly_brief_excludes_events_older_than_seven_days(
+        self, mock_reviews, mock_scan, mock_send, mock_session_factory
+    ):
+        mock_db = self.SessionLocal()
+        mock_session_factory.return_value = mock_db
+
+        now = datetime.utcnow()
+        old_iso = (now - timedelta(days=10)).isocalendar()
+        self._seed_change_event(
+            mock_db,
+            detected_at=now - timedelta(days=10),
+            week_label=f"{old_iso.year}-W{old_iso.week:02d}",
+        )
+
+        await run_weekly_scan_and_brief()
+
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args[1]["change_summaries"], [])
+
     @patch("app.routes.scan.SessionLocal")
     @patch("app.routes.scan.scan_user_competitors")
     async def test_run_scan_background_invokes_scanner(self, mock_scan, mock_session_factory):

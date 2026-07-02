@@ -10,7 +10,7 @@ from app.pipeline.google_reviews_scraper import scrape_google_reviews
 from app.pipeline.social_tracker import scrape_social_posts
 from app.pipeline.job_tracker import scrape_job_postings
 from app.mailer import send_weekly_brief
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -51,13 +51,16 @@ async def _scan_and_brief_user(user, db):
                 except Exception as e:
                     logger.warning("scheduler: social scrape failed for competitor %s: %s", comp.id, e)
 
-    # 2. Gather this week's change events
-    week_label = datetime.now(timezone.utc).strftime("%Y-W%V")
+    # 2. Gather the last 7 days of change events — matches the date range the
+    # email claims (mailer computes now-7d). week_label equality dropped
+    # Tue-Sun on-demand scans: by Monday 8am they carry the previous ISO
+    # week's label.
+    since = datetime.now(timezone.utc) - timedelta(days=7)
     events = db.execute(
         select(ChangeEvent, Competitor)
         .join(Competitor, ChangeEvent.competitor_id == Competitor.id)
         .where(Competitor.user_id == user.id)
-        .where(ChangeEvent.week_label == week_label)
+        .where(ChangeEvent.detected_at >= since)
     ).all()
 
     change_summaries = [
