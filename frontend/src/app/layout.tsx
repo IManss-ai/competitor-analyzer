@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Space_Grotesk } from 'next/font/google';
 import { InlineScript } from '@/components/inline-script';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
@@ -11,15 +10,7 @@ import AttributionCapture from '@/components/attribution-capture';
 
 // shadcn neutral-modern: Geist Sans (UI/display) + Geist Mono (numerals/code).
 // The geist package exposes --font-geist-sans / --font-geist-mono, which the
-// --font-sans / --font-mono tokens in globals.css resolve to.
-
-// AppKittie-in-blue: Space Grotesk display face (bold headlines).
-// Exposes --font-space-grotesk, which the --font-display token resolves to.
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-});
+// --font-sans / --font-mono / --font-display tokens in globals.css resolve to.
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://rivalscope.dev'),
@@ -54,7 +45,7 @@ export default function RootLayout({
       lang="en"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={cn("dark", "h-full", "antialiased", "font-sans", GeistSans.variable, GeistMono.variable, spaceGrotesk.variable)}
+      className={cn("dark", "h-full", "antialiased", "font-sans", GeistSans.variable, GeistMono.variable)}
     >
       <body className="font-sans antialiased min-h-full text-foreground selection:bg-sky-500/20 selection:text-sky-50" style={{ backgroundColor: 'var(--background)' }}>
         {/* No-JS / crawler / OG-snapshot fallback: Framer Motion SSRs scroll-reveal
