@@ -18,12 +18,18 @@ interface AppResult {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const PAGE_SIZE = 20;
 
-export const metadata: Metadata = {
-  title: 'SaaS app database — pricing, tech stacks & signals | Rivalscope',
-  description:
-    'Browse the Rivalscope database of SaaS apps: live pricing, tech stacks, review signals, and shipping velocity for every profile.',
-  alternates: { canonical: '/apps' },
-};
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const { page: rawPage } = await searchParams;
+  const page = Math.max(1, parseInt(rawPage ?? '1', 10) || 1);
+  return {
+    title: 'SaaS app database — pricing, tech stacks & signals | Rivalscope',
+    description:
+      'Browse the Rivalscope database of SaaS apps: live pricing, tech stacks, review signals, and shipping velocity for every profile.',
+    // Each results page is its own canonical URL — pointing pages 2+ at
+    // '/apps' marks them as duplicates of page 1 and deindexes their apps.
+    alternates: { canonical: page > 1 ? `/apps?page=${page}` : '/apps' },
+  };
+}
 
 async function fetchApps(page: number): Promise<{ results: AppResult[]; total: number }> {
   try {

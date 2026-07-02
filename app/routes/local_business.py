@@ -141,10 +141,15 @@ async def trigger_local_scan(
     """Trigger an immediate Google Reviews + social scrape for one competitor."""
     user_uuid = uuid.UUID(user_id)
 
-    # Verify competitor belongs to user
+    # Verify competitor belongs to user. A malformed id is a client error
+    # (404), not a ValueError-500.
+    try:
+        comp_uuid = uuid.UUID(competitor_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Not found")
     comp = db.execute(
         select(Competitor).where(
-            Competitor.id == uuid.UUID(competitor_id),
+            Competitor.id == comp_uuid,
             Competitor.user_id == user_uuid,
         )
     ).scalar_one_or_none()
