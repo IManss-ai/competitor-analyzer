@@ -69,8 +69,13 @@ def search_apps(
 
     if sort == "newest":
         stmt = stmt.order_by(App.created_at.desc())
-    else:  # relevance/default: most-recently-refreshed first
-        stmt = stmt.order_by(App.last_scanned_at.desc().nullslast(), App.created_at.desc())
+    else:
+        # relevance/default: enriched profiles (tagline/category present) first —
+        # bare rows auto-created by users tracking arbitrary URLs would otherwise
+        # lead the public index purely because they were scanned most recently —
+        # then most-recently-refreshed.
+        enriched = or_(App.tagline.isnot(None), App.category.isnot(None))
+        stmt = stmt.order_by(enriched.desc(), App.last_scanned_at.desc().nullslast(), App.created_at.desc())
 
     apps = db.execute(stmt.offset((page - 1) * page_size).limit(page_size)).scalars().all()
     if not apps:

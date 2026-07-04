@@ -94,6 +94,21 @@ class TestSearchApps(unittest.TestCase):
         self.assertEqual(r["price_from"], 29.0)
         self.assertIn("stripe", r["tech"])
 
+    def test_default_sort_ranks_enriched_profiles_first(self):
+        # Bare profiles (no tagline, no category) are auto-created when a user
+        # tracks an arbitrary URL; they must sink below enriched profiles on the
+        # public index even when they were scanned more recently.
+        from datetime import datetime, timedelta
+        recent = datetime.utcnow()
+        self.db.add(App(slug="junk", url="junk.io", name="junk", scan_status="ok",
+                        last_scanned_at=recent))
+        self.a1.last_scanned_at = recent - timedelta(days=3)
+        self.a2.last_scanned_at = recent - timedelta(days=5)
+        self.db.commit()
+        slugs, _ = self._result_slugs()
+        self.assertEqual(slugs[-1], "junk")
+        self.assertEqual(slugs[:2], ["acme", "metrics"])
+
 
 if __name__ == "__main__":
     unittest.main()

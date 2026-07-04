@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { cache } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { AppsNav } from '@/components/apps-nav';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -61,6 +62,7 @@ export default async function AppProfilePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
+      <AppsNav />
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="rs-card p-6 space-y-3">
           <div className="flex items-center justify-between gap-4">

@@ -9,6 +9,7 @@ import { LogoCloud } from '@/components/landing/logo-cloud';
 import { CtaCloser } from '@/components/landing/cta-closer';
 import { SiteFooter } from '@/components/landing/site-footer';
 import { MotionProvider } from '@/components/landing/motion-provider';
+import { MockDate } from '@/components/landing/mock-date';
 import { RevealGroup, RevealItem } from '@/components/reveal';
 import { CountUp } from '@/components/ui/count-up';
 
@@ -69,7 +70,7 @@ function ProductPanel() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <div className="font-display text-[19px] font-semibold">Dashboard</div>
-              <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Fri 26 Jun 2026 · Intel HQ</p>
+              <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground"><MockDate /></p>
             </div>
             <span className="rounded-md border border-border px-3 py-1.5 text-[12px] font-medium text-muted-foreground">Scan now</span>
           </div>

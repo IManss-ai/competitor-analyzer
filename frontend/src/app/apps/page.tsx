@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { AppsNav } from '@/components/apps-nav';
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
@@ -49,6 +50,7 @@ export default async function AppsIndexPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
+      <AppsNav />
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="space-y-2">
           <h1 className="text-2xl font-semibold" style={{ color: 'var(--foreground)' }}>SaaS app database</h1>
