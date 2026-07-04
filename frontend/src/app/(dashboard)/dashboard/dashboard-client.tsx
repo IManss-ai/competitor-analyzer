@@ -13,6 +13,7 @@ import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
 import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
 import HeadToHead from '@/components/head-to-head';
+import LatestReport from '@/components/latest-report';
 import CountUp from '@/components/count-up';
 import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
@@ -1098,6 +1099,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
   return (
     <div className="space-y-5">
+      {/* The report the user already earned — persists across returns, and stays
+          visible for read_only users (pure cache read, no paid call). */}
+      <LatestReport userId={userId} />
       {/* THE BRIEF — leads with the single most important real signal */}
       <motion.section
         initial={{ opacity: 0, y: 10 }}

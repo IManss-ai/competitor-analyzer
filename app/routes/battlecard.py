@@ -878,6 +878,35 @@ def _load_business_profile(user_id: str, db: Session) -> dict | None:
     return profile if isinstance(profile, dict) and profile else None
 
 
+@router.get("/latest")
+def latest_battlecard(
+    db: Session = Depends(get_session),
+    user_id: str = Depends(require_api_user),
+):
+    """The user's most-recently-generated AI battle card, read straight from
+    cache. Pure read — NEVER generates (the returning-user dashboard calls this
+    on every load, so a model call here would be a per-page-view cost leak).
+    Returns {"card": null} when the user has no cached AI card. Serves full and
+    read_only users identically; a locked user keeps seeing the report they
+    earned. Heuristic (ai_generated=False) rows are ignored."""
+    user_uuid = _uuid.UUID(user_id)
+    row = db.execute(
+        select(BattleCardCache, Competitor)
+        .join(Competitor, BattleCardCache.competitor_id == Competitor.id)
+        .where(Competitor.user_id == user_uuid, BattleCardCache.ai_generated == True)  # noqa: E712
+        .order_by(BattleCardCache.generated_at.desc())
+        .limit(1)
+    ).first()
+    if row is None:
+        return {"card": None}
+    cached, comp = row
+    payload = _read_cached_payload(cached)
+    payload["competitor_id"] = str(comp.id)
+    payload["competitor_name"] = comp.name
+    payload["generated_at"] = iso_utc(cached.generated_at)
+    return {"card": payload}
+
+
 @router.get("/generate/{competitor_id}")
 def generate_battlecard(
     competitor_id: str,
