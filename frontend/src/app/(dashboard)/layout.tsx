@@ -7,7 +7,7 @@ import { createApiClient } from '@/lib/api';
 import { ApiTokenProvider } from '@/lib/use-api-token';
 import Sidebar from '@/components/sidebar';
 import MainContent from '@/components/main-content';
-import PaywallOverlay from '@/components/paywall-overlay';
+import PaywallGate from '@/components/paywall-gate';
 
 export default async function DashboardLayout({
   children,
@@ -42,9 +42,14 @@ export default async function DashboardLayout({
   return (
     <ApiTokenProvider token={session.user.api_token}>
       <div className="flex min-h-screen">
-        <Sidebar email={session.user.email} userId={session.user.user_id} pendingCount={pendingCount} />
+        <Sidebar
+          email={session.user.email}
+          userId={session.user.user_id}
+          pendingCount={pendingCount}
+          accessLevel={accessLevel as 'full' | 'read_only'}
+        />
         <MainContent>{children}</MainContent>
-        {accessLevel === 'read_only' && <PaywallOverlay userId={session.user.user_id} />}
+        {accessLevel === 'read_only' && <PaywallGate userId={session.user.user_id} />}
       </div>
     </ApiTokenProvider>
   );

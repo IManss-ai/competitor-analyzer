@@ -36,6 +36,7 @@ interface SidebarProps {
   email: string;
   userId: string;
   pendingCount?: number;
+  accessLevel?: 'full' | 'read_only';
 }
 
 const deskItems = [
@@ -190,7 +191,7 @@ function SidebarNav({
   );
 }
 
-export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
+export default function Sidebar({ email, userId, pendingCount, accessLevel }: SidebarProps) {
   const apiToken = useApiToken();
   const pathname = usePathname();
   const router = useRouter();
@@ -259,6 +260,12 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
           Authorization: `Bearer ${apiToken ?? userId}`,
         },
       });
+      if (res.status === 402) {
+        // Free test consumed — scans are paid. Route to the upgrade surface
+        // instead of flashing a misleading "Scan failed" state.
+        router.push('/settings?tab=billing');
+        return;
+      }
       if (!res.ok) throw new Error(`Scan request failed (${res.status})`);
       setScanDone(true);
       // The scan runs in the background; give it a moment, then refresh the
@@ -287,11 +294,15 @@ export default function Sidebar({ email, userId, pendingCount }: SidebarProps) {
 
   const planBadge = getPlanBadge();
   const isPaid = settings?.subscription_status === 'active';
-  const isLocked = settings?.access_level === 'read_only';
+  // The server layout re-fetches settings on every navigation, so the
+  // accessLevel prop is the fresh source of truth; the client-side settings
+  // fetch below only runs once on mount and goes stale the moment the free
+  // test is consumed mid-session (it still drives the plan badge).
+  const isLocked = accessLevel === 'read_only' || settings?.access_level === 'read_only';
   // Usage-based model: nudge any non-paying user to upgrade. Once their one free
   // test is spent the API reports access_level "read_only" (locked); before that
   // they still have their free test available.
-  const showUpgrade = !!settings && !isPaid;
+  const showUpgrade = (!!settings && !isPaid) || isLocked;
 
   // Close the drawer whenever navigation lands on a new page
   useEffect(() => {

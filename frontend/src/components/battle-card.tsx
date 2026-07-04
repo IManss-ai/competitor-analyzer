@@ -42,6 +42,12 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
         },
       });
 
+      if (res.status === 402) {
+        // Locked users keep cached cards (served upstream); a 402 here means no
+        // card was ever generated for this competitor — that's a paid action.
+        setError('Your free test is used — upgrade to Pro to generate new Battle Cards.');
+        return;
+      }
       if (!res.ok) {
         throw new Error('Failed to generate Battle Card');
       }

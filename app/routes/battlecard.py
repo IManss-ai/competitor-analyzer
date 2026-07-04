@@ -888,11 +888,16 @@ def generate_battlecard(
     comp = _resolve_competitor(competitor_id, db)
     if str(comp.user_id) != user_id:
         raise HTTPException(status_code=403, detail="Not your competitor")
-    # Paywall: an already-locked user can't generate new cards. The owner's
-    # FIRST generation still passes (free_test_used is set AFTER success below).
+    # Paywall: an already-locked user can't generate NEW cards, but keeps read
+    # access to the card they already earned — serve the cache as-is (force must
+    # not bust it for them) and 402 only on a cache miss. The owner's FIRST
+    # generation still passes (free_test_used is set AFTER success below).
     from app.access import is_read_only
     user = db.get(User, _uuid.UUID(user_id))
     if user is not None and is_read_only(user):
+        cached = _load_cache(comp.id, db)
+        if cached:
+            return _read_cached_payload(cached)
         raise HTTPException(status_code=402, detail="Your free test is done — upgrade to Pro to continue.")
     # Owner path: thread the owner's business profile so the card carries
     # head_to_head. The public/share path below passes no profile (and strips it).
