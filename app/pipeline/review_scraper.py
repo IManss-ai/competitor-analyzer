@@ -64,7 +64,7 @@ async def _extract_reviews_with_claude(text: str) -> dict:
     try:
         response = await client.chat.completions.create(
             model=llm.MODEL,
-            max_tokens=4096,
+            max_tokens=8192,
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that extracts structured review data from web page text."},
                 {"role": "user", "content": prompt},
