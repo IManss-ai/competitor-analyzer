@@ -14,20 +14,44 @@ import uuid as _uuid
 logger = logging.getLogger(__name__)
 
 def _get_platform_urls(competitor_url: str, overrides: dict | None = None) -> dict:
-    """Build review-platform URLs, preferring explicit overrides set on the Competitor."""
+    """Build review-platform URLs, preferring explicit overrides set on the Competitor.
+
+    G2 and Trustpilot key their review pages by the company/product's domain slug,
+    so a URL can be derived directly. Capterra keys pages by an opaque numeric
+    product ID (e.g. /p/19319/JIRA/) that can't be derived from the domain — it's
+    only present here when an explicit override or resolved URL is supplied via
+    `overrides` (see `_resolve_capterra_url`).
+    """
     domain = competitor_url.split("://")[-1].split("/")[0].replace("www.", "")
     slug = domain.split(".")[0]
 
     derived = {
         "g2": f"https://www.g2.com/products/{slug}/reviews",
         "trustpilot": f"https://www.trustpilot.com/review/{domain}",
-        "capterra": f"https://www.capterra.com/p/{slug}/",
     }
     if overrides:
         for platform, url in overrides.items():
             if url:
                 derived[platform] = url
     return derived
+
+_CAPTERRA_PRODUCT_RE = re.compile(r"https://www\.capterra\.com/p/\d+/[^/\s\)\]]+/")
+
+async def _resolve_capterra_url(domain: str) -> str | None:
+    """Find a competitor's real Capterra product URL via search.
+
+    Capterra has no domain-derivable URL scheme (unlike G2/Trustpilot), so a
+    guessed `/p/{slug}/` URL always 404s. Search instead and take the first
+    product link that matches Capterra's real `/p/{id}/{name}/` pattern.
+    """
+    query = domain.split(".")[0]
+    try:
+        page_text = await fetch_page_text(f"https://www.capterra.com/search/?query={query}")
+    except Exception as e:
+        note_degraded("review_scraper.capterra_resolve", "empty", "search_failed", e)
+        return None
+    match = _CAPTERRA_PRODUCT_RE.search(page_text)
+    return match.group(0) if match else None
 
 async def fetch_page_text(url: str) -> str:
     """Fetch a review page as deterministic markdown via the scraper sidecar.
@@ -136,6 +160,12 @@ async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db:
             overrides["trustpilot"] = comp.trustpilot_url
         if comp.capterra_url:
             overrides["capterra"] = comp.capterra_url
+
+    if "capterra" not in overrides:
+        domain = competitor_url.split("://")[-1].split("/")[0].replace("www.", "")
+        resolved = await _resolve_capterra_url(domain)
+        if resolved:
+            overrides["capterra"] = resolved
 
     urls = _get_platform_urls(competitor_url, overrides=overrides)
     results = {}

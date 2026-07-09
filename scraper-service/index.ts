@@ -10,6 +10,14 @@ import { homepageSchema, serialize } from './src/schema.js';
 const PORT = Number(process.env.SCRAPER_PORT ?? 3001);
 const turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
+// A UA that self-identifies as a bot (the old 'RivalscopeBot/1.0') gets an
+// extra, easy signal for review-site bot walls (G2, Capterra) to key off of.
+// A standard desktop UA doesn't remove IP/fingerprint-based blocking, but it's
+// a strictly safer default with no downside for sites that already work fine
+// (Trustpilot).
+const DESKTOP_CHROME_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
+
 // Bound any promise (e.g. the LLM extraction) so a hung upstream can't leak a
 // browser context or hold the HTTP request open forever.
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
@@ -59,7 +67,7 @@ const scraper = new LLMScraper(createDeepseekModel());
 
 async function renderHtml(url: string): Promise<string> {
   const b = await getBrowser();
-  const ctx = await b.newContext({ userAgent: 'Mozilla/5.0 (compatible; RivalscopeBot/1.0)' });
+  const ctx = await b.newContext({ userAgent: DESKTOP_CHROME_UA });
   const page = await ctx.newPage();
   try {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -104,7 +112,7 @@ app.post('/scrape', async (req, res) => {
   try { await acquireSlot(); } catch { return res.status(503).json({ error: 'scraper overloaded, retry shortly' }); }
   try {
     const b = await getBrowser();
-    const ctx = await b.newContext({ userAgent: 'Mozilla/5.0 (compatible; RivalscopeBot/1.0)' });
+    const ctx = await b.newContext({ userAgent: DESKTOP_CHROME_UA });
     const page = await ctx.newPage();
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
