@@ -184,7 +184,11 @@ async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db:
             
             complaints_data = await _analyze_complaints_with_claude(reviews)
             top_complaints = complaints_data.get("complaints", [])
-            complaint_review_ids = set(complaints_data.get("complaint_reviews", []))
+            # review_id is stored and compared as a string, but the model can
+            # return complaint_reviews as ints ([2]) — coerce to str so numeric
+            # ids still match. Without this every is_complaint is silently False
+            # whenever the ids come back numeric and the card shows no complaints.
+            complaint_review_ids = {str(x) for x in complaints_data.get("complaint_reviews", [])}
             
             complaint_count = len(complaint_review_ids)
             

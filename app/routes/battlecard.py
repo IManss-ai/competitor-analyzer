@@ -31,12 +31,19 @@ def _load_cache(comp_id, db: Session) -> BattleCardCache | None:
 def _has_new_intel(comp: Competitor, since: datetime, db: Session) -> bool:
     """True if any intel relevant to this competitor's card variant arrived
     after the cached card was generated."""
+    # A review scraped after the card was generated is new intel for EVERY
+    # variant. The SaaS branch used to check only ChangeEvent, so a card cached
+    # with empty weaknesses (reviews not yet scraped/classified) stayed
+    # "No complaints found in reviews" for up to CACHE_MAX_AGE days even after
+    # complaints landed — the live demo-day symptom. Only genuinely NEW reviews
+    # bump fetched_at (re-scrapes update existing rows in place), so this doesn't
+    # regenerate on every weekly scrape, only when new reviews actually arrive.
+    new_review = db.execute(
+        select(Review.id).where(Review.competitor_id == comp.id, Review.fetched_at > since).limit(1)
+    ).scalar_one_or_none()
+    if new_review:
+        return True
     if comp.business_type == "local":
-        new_review = db.execute(
-            select(Review.id).where(Review.competitor_id == comp.id, Review.fetched_at > since).limit(1)
-        ).scalar_one_or_none()
-        if new_review:
-            return True
         new_post = db.execute(
             select(SocialPost.id).where(SocialPost.competitor_id == comp.id, SocialPost.fetched_at > since).limit(1)
         ).scalar_one_or_none()
