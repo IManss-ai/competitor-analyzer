@@ -3,17 +3,28 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Clock, Circle, ChevronUp, ChevronDown } from 'lucide-react';
+import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Clock, Circle, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
 import HeadToHead from '@/components/head-to-head';
-import { battleCardItemText } from '@/components/battle-card-content';
+import { battleCardItemText, renderInlineMarkdown } from '@/components/battle-card-content';
 import { useChartPalette } from '@/lib/chart-theme';
 import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 
 const formatTimeAgo = (dateStr: string | null) => {
   if (!dateStr) return 'Never';
@@ -61,6 +72,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 
   // Collapse states for timeline events
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const comp = detail.competitor;
@@ -127,6 +139,28 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
       console.error(e);
     } finally {
       setRegenerating(false);
+    }
+  };
+
+  // Stop tracking = delete the competitor and all its scan history, then leave
+  // the (now-gone) detail page. Mirrors the Settings-page delete but surfaced
+  // where users actually manage a competitor.
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${apiToken ?? userId}` },
+      });
+      if (res.ok) {
+        router.push('/competitors');
+        router.refresh();
+      } else {
+        setDeleting(false);
+      }
+    } catch (e) {
+      console.error(e);
+      setDeleting(false);
     }
   };
 
@@ -348,6 +382,34 @@ ${card.win_conditions && card.win_conditions.length > 0
               <Pencil size={14} />
               Edit
             </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={deleting}
+                  className="text-muted-foreground hover:text-destructive hover:border-destructive/50"
+                >
+                  <Trash2 size={14} />
+                  {deleting ? 'Removing…' : 'Stop tracking'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Stop tracking this competitor?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This removes <strong>{comp.name || comp.url}</strong> and deletes all its
+                    scan history, reviews, and battle card. This cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive" onClick={handleDelete}>
+                    Remove
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>
@@ -589,7 +651,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                                     .map((c: unknown) => battleCardItemText(c))
                                     .filter(Boolean)
                                     .map((text: string, idx: number) => (
-                                      <li key={idx}>{text}</li>
+                                      <li key={idx}>{renderInlineMarkdown(text)}</li>
                                     ))}
                                 </ul>
                               ) : (
@@ -628,7 +690,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                               {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
                                   {detail.battlecard.weaknesses.map((w: unknown, idx: number) => (
-                                    <li key={idx}>{battleCardItemText(w)}</li>
+                                    <li key={idx}>{renderInlineMarkdown(w)}</li>
                                   ))}
                                 </ul>
                               ) : (
@@ -665,7 +727,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                               {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
                                 <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-foreground">
                                   {detail.battlecard.talking_points.map((tp: unknown, idx: number) => (
-                                    <li key={idx}>{battleCardItemText(tp)}</li>
+                                    <li key={idx}>{renderInlineMarkdown(tp)}</li>
                                   ))}
                                 </ol>
                               ) : (
@@ -702,7 +764,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                               {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
                                   {detail.battlecard.win_conditions.map((wc: unknown, idx: number) => (
-                                    <li key={idx}>{battleCardItemText(wc)}</li>
+                                    <li key={idx}>{renderInlineMarkdown(wc)}</li>
                                   ))}
                                 </ul>
                               ) : (

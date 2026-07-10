@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Loader2, X, Copy, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -47,6 +47,32 @@ export function battleCardItemText(item: unknown): string {
 
 export function toStringList(raw: unknown): string[] {
   return Array.isArray(raw) ? raw.map(battleCardItemText).filter(Boolean) : [];
+}
+
+// DeepSeek battle-card copy sometimes carries inline markdown emphasis
+// (**bold**, *italic*). The app has no markdown dependency (and this is not the
+// Next.js you know), so parse just that subset into React nodes — text/element
+// nodes only, never HTML, so it stays injection-safe. Before this, the card
+// rendered literal asterisks (e.g. "**Pricing** is opaque"). Accepts a raw list
+// item so callers can swap `battleCardItemText(x)` → `renderInlineMarkdown(x)`.
+const MD_INLINE_RE = /\*\*([^*]+?)\*\*|\*(?!\s)([^*]+?)(?<!\s)\*/g;
+export function renderInlineMarkdown(item: unknown): ReactNode {
+  const s = typeof item === 'string' ? item : battleCardItemText(item);
+  if (!s || !s.includes('*')) return s;
+  const nodes: ReactNode[] = [];
+  let last = 0;
+  let key = 0;
+  let m: RegExpExecArray | null;
+  MD_INLINE_RE.lastIndex = 0;
+  while ((m = MD_INLINE_RE.exec(s)) !== null) {
+    if (m.index > last) nodes.push(s.slice(last, m.index));
+    if (m[1] !== undefined) nodes.push(<strong key={key++}>{m[1]}</strong>);
+    else nodes.push(<em key={key++}>{m[2]}</em>);
+    last = MD_INLINE_RE.lastIndex;
+  }
+  if (last === 0) return s; // no emphasis actually matched
+  if (last < s.length) nodes.push(s.slice(last));
+  return nodes;
 }
 
 // Normalize old API format (strings in what_changed, talking_points,
@@ -167,7 +193,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           <CardContent className="pt-4 pb-4">
             <p className="text-[9px] font-mono font-semibold uppercase tracking-wider text-muted-foreground mb-2">Executive Summary</p>
             <p className="text-foreground text-sm leading-relaxed italic">
-              &quot;{cardData.executive_summary}&quot;
+              &quot;{renderInlineMarkdown(cardData.executive_summary)}&quot;
             </p>
           </CardContent>
         </Card>
@@ -210,7 +236,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
                           {getBadgeLabel(change.type)}
                         </span>
                       </div>
-                      <p className="text-xs text-foreground leading-normal">{change.text}</p>
+                      <p className="text-xs text-foreground leading-normal">{renderInlineMarkdown(change.text)}</p>
                     </div>
                   ))}
                 </div>
@@ -239,7 +265,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
                   {cardData.weaknesses.map((weakness, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <span className="select-none" style={{ color: 'var(--tone-danger)' }}>›</span>
-                      <span>{weakness}</span>
+                      <span>{renderInlineMarkdown(weakness)}</span>
                     </li>
                   ))}
                 </ul>
@@ -269,7 +295,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
                   {cardData.strategic_signals.map((signal, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <span className="select-none" style={{ color: 'var(--tone-warning)' }}>›</span>
-                      <span>{signal}</span>
+                      <span>{renderInlineMarkdown(signal)}</span>
                     </li>
                   ))}
                 </ul>
@@ -306,7 +332,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
                       >
                         <div className="flex items-start gap-3">
                           <span className="text-xs font-mono font-bold mt-0.5" style={{ color: 'var(--tone-positive)' }}>{rankStr}</span>
-                          <span className="text-xs text-foreground leading-relaxed">{play}</span>
+                          <span className="text-xs text-foreground leading-relaxed">{renderInlineMarkdown(play)}</span>
                         </div>
                         <Button
                           variant="ghost"
