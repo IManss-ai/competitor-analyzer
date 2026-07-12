@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMounted } from '@/lib/use-mounted';
 import { motion } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-react';
-import { battleCardItemText } from '@/components/battle-card-content';
+import { battleCardItemText, renderInlineMarkdown } from '@/components/battle-card-content';
 
 interface BattleCardData {
   title: string;
@@ -107,7 +107,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
                 .filter(Boolean)
                 .map((text, i) => (
                   <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                    {text}
+                    {renderInlineMarkdown(text)}
                   </li>
                 ))}
             </ul>
@@ -133,7 +133,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
                 .filter(Boolean)
                 .map((text, i) => (
                   <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                    {text}
+                    {renderInlineMarkdown(text)}
                   </li>
                 ))}
             </ul>
@@ -159,7 +159,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
                 .filter(Boolean)
                 .map((text, i) => (
                   <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                    {text}
+                    {renderInlineMarkdown(text)}
                   </li>
                 ))}
             </ol>
@@ -185,7 +185,7 @@ export default function SharePage({ card }: { card: BattleCardData }) {
                 .filter(Boolean)
                 .map((text, i) => (
                   <li key={i} className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-                    {text}
+                    {renderInlineMarkdown(text)}
                   </li>
                 ))}
             </ul>
