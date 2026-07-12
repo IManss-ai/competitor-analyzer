@@ -97,6 +97,37 @@ class TestScrapeCompetitorReviews(unittest.IsolatedAsyncioTestCase):
 
     @patch("app.pipeline.review_scraper._get_platform_urls",
            return_value={"g2": "https://www.g2.com/products/acme/reviews"})
+    @patch("app.pipeline.review_scraper._analyze_complaints_with_claude")
+    @patch("app.pipeline.review_scraper._extract_reviews_with_claude")
+    @patch("app.pipeline.review_scraper.fetch_page_text")
+    async def test_int_complaint_ids_still_flag_complaints(
+        self, mock_fetch, mock_extract, mock_analyze, mock_urls
+    ):
+        """The model can return review ids AND complaint_reviews as ints. review_id
+        is stored/compared as a string, so without coercion `is_complaint` is
+        silently always-False whenever the ids come back numeric — every complaint
+        is dropped and the card shows 'No complaints found'."""
+        mock_fetch.return_value = "x" * 200
+        mock_extract.return_value = {
+            "reviews": [
+                {"id": 1, "author": "A", "rating": 5, "body": "great"},
+                {"id": 2, "author": "B", "rating": 1, "body": "billing was broken"},
+            ],
+            "avg_rating": 3.0,
+            "total_reviews": 2,
+        }
+        # complaint_reviews returned as INTS, not strings.
+        mock_analyze.return_value = {"complaints": ["billing"], "complaint_reviews": [2]}
+
+        await scrape_competitor_reviews(str(self.competitor.id), self.competitor.url, self.db)
+
+        reviews = {r.review_id: r for r in self.db.execute(select(Review)).scalars().all()}
+        self.assertEqual(set(reviews), {"1", "2"})
+        self.assertTrue(reviews["2"].is_complaint, "int complaint id must still flag is_complaint")
+        self.assertFalse(reviews["1"].is_complaint)
+
+    @patch("app.pipeline.review_scraper._get_platform_urls",
+           return_value={"g2": "https://www.g2.com/products/acme/reviews"})
     @patch("app.pipeline.review_scraper.fetch_page_text")
     async def test_empty_page_yields_no_rows(self, mock_fetch, mock_urls):
         mock_fetch.return_value = ""  # below the 100-char guard -> platform skipped

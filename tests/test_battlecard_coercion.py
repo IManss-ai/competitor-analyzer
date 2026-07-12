@@ -382,6 +382,42 @@ class TestBattleCardCoercion(unittest.TestCase):
             "a real pricing_change must invalidate the cache",
         )
 
+    # ── Case 9: a new review is new intel for a SaaS card ───────────────────
+    def test_has_new_intel_counts_new_reviews_for_saas(self):
+        """A SaaS card cached before complaint data lands must refresh once reviews
+        arrive. Previously _has_new_intel only checked ChangeEvent for SaaS, so a
+        card generated with empty weaknesses stayed 'No complaints found in reviews'
+        for up to CACHE_MAX_AGE days even after reviews were scraped and classified
+        (the live demo-day symptom: 36 reviews stored, card showed no complaints)."""
+        from app.routes.battlecard import _has_new_intel
+        since = datetime.utcnow() - timedelta(hours=1)
+        # No events, no reviews yet → nothing new.
+        self.assertFalse(_has_new_intel(self.comp, since, self.db))
+        # A review scraped AFTER the card was generated IS new intel for SaaS.
+        self.db.add(Review(
+            competitor_id=self.comp.id,
+            platform="g2",
+            review_id="g2-1",
+            author="Dana",
+            rating=2,
+            body="Pricing gets expensive fast and support is slow.",
+            published_at=datetime.utcnow() - timedelta(days=1),
+            fetched_at=datetime.utcnow(),
+            sentiment="negative",
+            is_complaint=True,
+        ))
+        self.db.commit()
+        self.assertTrue(
+            _has_new_intel(self.comp, since, self.db),
+            "a new SaaS review must invalidate the cache so complaints surface",
+        )
+        # A review scraped BEFORE generation (fetched_at < since) is not new.
+        old_since = datetime.utcnow() + timedelta(hours=1)
+        self.assertFalse(
+            _has_new_intel(self.comp, old_since, self.db),
+            "a review older than the cached card is not new intel",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
