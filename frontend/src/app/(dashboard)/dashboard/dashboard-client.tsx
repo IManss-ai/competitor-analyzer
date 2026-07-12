@@ -11,7 +11,7 @@ import { createApiClient } from '@/lib/api';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
-import BattleCardContent, { BattleCardData, normalizeBattleCard } from '@/components/battle-card-content';
+import BattleCardContent, { BattleCardData, normalizeBattleCard, renderInlineMarkdown } from '@/components/battle-card-content';
 import HeadToHead from '@/components/head-to-head';
 import LatestReport from '@/components/latest-report';
 import CountUp from '@/components/count-up';
@@ -1126,7 +1126,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <span className="text-primary">{topEvent.competitor_name}</span>{' — '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl line-clamp-3 text-muted-foreground">
-              {topEvent.brief_text || 'Their homepage changed. Open the battle card for the full breakdown and the play to run.'}
+              {topEvent.brief_text ? renderInlineMarkdown(topEvent.brief_text) : 'Their homepage changed. Open the battle card for the full breakdown and the play to run.'}
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Button asChild>
@@ -1174,7 +1174,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             { k: 'Tracked', v: dashboardData.competitor_count, sub: 'competitors' },
             { k: 'Changes · 7d', v: dashboardData.changes_this_week || 0, sub: 'this week' },
             { k: 'Needs review', v: dashboardData.pending_count, sub: 'in queue', accent: dashboardData.pending_count > 0 },
-            { k: 'Avg review', v: dashboardData.avg_review_score, dec: 1, sub: 'all platforms' },
+            { k: 'Avg review', v: dashboardData.avg_review_score, dec: 1, sub: 'their reviews' },
           ].map((m) => (
             <div key={m.k} className="rounded-xl border border-border bg-card/60 p-4 shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-0.5">
               <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.1em] text-muted-foreground">{m.k}</p>
@@ -1239,7 +1239,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       {c.latest ? (
                         <>
                           <span className={`badge badge-${c.latest.change_type} flex-shrink-0`}>{c.latest.change_type === 'initial_scan' ? 'New' : (TYPE_LABEL[c.latest.change_type] || 'Change')}</span>
-                          <span className="truncate">{c.latest.brief_text || 'Update detected'}</span>
+                          <span className="truncate">{c.latest.brief_text ? renderInlineMarkdown(c.latest.brief_text) : 'Update detected'}</span>
                         </>
                       ) : (
                         <span className="text-muted-foreground">No changes yet</span>
@@ -1323,7 +1323,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
                           className={`text-[13px] leading-relaxed cursor-pointer text-muted-foreground transition-colors hover:text-foreground ${isExpanded ? '' : 'line-clamp-2'}`}
                         >
-                          {event.brief_text || 'Website copy updated.'}
+                          {event.brief_text ? renderInlineMarkdown(event.brief_text) : 'Website copy updated.'}
                         </p>
 
                         <div className="flex items-center gap-4 mt-3">
@@ -1418,7 +1418,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <span suppressHydrationWarning className="text-[12px] font-mono text-muted-foreground">{formatTimeAgo(comp.last_scanned)}</span>
                       </div>
                       <div>
-                        <span className="block mb-0.5 text-xs text-muted-foreground">Reviews Avg</span>
+                        <span className="block mb-0.5 text-xs text-muted-foreground">Trustpilot</span>
                         <span className="text-[12px] font-mono inline-flex items-center gap-1 text-muted-foreground">
                           {comp.avg_rating !== null ? (
                             <><Star size={11} style={{ color: 'var(--tone-warning)' }} />{comp.avg_rating.toFixed(1)}</>
