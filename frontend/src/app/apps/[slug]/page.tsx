@@ -60,6 +60,12 @@ export default async function AppProfilePage({ params }: PageProps) {
 
   if (!app) notFound(); // real 404 (not a soft-404 200) so crawlers drop dead slugs
 
+  // A catalog app only gets scanned once someone tracks it, so most public
+  // profiles have no reviews and 0 change history. Rather than render a bleak
+  // "No review data yet / 0 changes" grid that reads as broken, show a
+  // track-to-start invite until there is at least one real signal.
+  const hasIntel = !!app.review_summary || (app.change_velocity_90d ?? 0) > 0;
+
   return (
     <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
       <AppsNav />
@@ -100,22 +106,35 @@ export default async function AppProfilePage({ params }: PageProps) {
           </section>
         )}
 
-        <section className="rs-card p-6 grid grid-cols-2 gap-6">
-          <div>
-            <h2 className="rs-label mb-2">Reviews</h2>
-            <p className="font-mono text-xl" style={{ color: 'var(--foreground)' }}>
-              {app.review_summary ? `${app.review_summary.avg_rating}/5` : '—'}
+        {hasIntel ? (
+          <section className="rs-card p-6 grid grid-cols-2 gap-6">
+            <div>
+              <h2 className="rs-label mb-2">Reviews</h2>
+              <p className="font-mono text-xl" style={{ color: 'var(--foreground)' }}>
+                {app.review_summary ? `${app.review_summary.avg_rating}/5` : '—'}
+              </p>
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+                {app.review_summary ? `${app.review_summary.total_reviews} reviews (${app.review_summary.platform})` : 'No review data yet'}
+              </p>
+            </div>
+            <div>
+              <h2 className="rs-label mb-2">Shipping velocity</h2>
+              <p className="font-mono text-xl" style={{ color: 'var(--foreground)' }}>{app.change_velocity_90d}</p>
+              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>page changes in the last 90 days</p>
+            </div>
+          </section>
+        ) : (
+          <section className="rs-card p-6 text-center space-y-3">
+            <h2 className="rs-label">Not tracked yet</h2>
+            <p className="text-sm leading-relaxed mx-auto max-w-md" style={{ color: 'var(--muted-foreground)' }}>
+              Rivalscope isn’t actively monitoring {app.name} yet. Track it to start capturing pricing changes,
+              homepage edits, and customer complaints in your weekly competitive brief.
             </p>
-            <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-              {app.review_summary ? `${app.review_summary.total_reviews} reviews (${app.review_summary.platform})` : 'No review data yet'}
-            </p>
-          </div>
-          <div>
-            <h2 className="rs-label mb-2">Shipping velocity</h2>
-            <p className="font-mono text-xl" style={{ color: 'var(--foreground)' }}>{app.change_velocity_90d}</p>
-            <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>page changes in the last 90 days</p>
-          </div>
-        </section>
+            <Link href={`/auth/login?track=${app.slug}`} className="rs-btn-primary text-[13px] inline-flex">
+              Track {app.name}
+            </Link>
+          </section>
+        )}
 
         <footer className="text-center text-xs space-y-2" style={{ color: 'var(--muted-foreground)' }}>
           <p>
