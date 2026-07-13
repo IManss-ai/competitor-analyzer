@@ -38,16 +38,16 @@ const BATTLE_CARDS_DATA: Record<Comp, Card> = {
     mark: 'S',
     date: 'Updated today',
     changes: [
-      { tone: 'pricing', label: 'Pricing', text: 'Removed enterprise flat-rates — custom contract quote now required.' },
+      { tone: 'pricing', label: 'Pricing', text: 'Removed enterprise flat-rates. Custom contract quote now required.' },
       { tone: 'feature', label: 'Feature', text: 'Released Checkout v4.1 with optimized redirect latency.' },
       { tone: 'messaging', label: 'Messaging', text: 'Hero shifted from “Payments infrastructure” to “Financial operations for global companies”.' },
     ],
     complaints: [
       { text: '“Support responses took 4 days. Blocked our payment gateway migration.”', source: 'Trustpilot · 1 star · 2 days ago' },
-      { text: '“Completely opaque enterprise pricing after their recent site update.”', source: 'G2 · 2 stars · 5 days ago' },
+      { text: '“Completely opaque enterprise pricing after their recent site update.”', source: 'Trustpilot · 2 stars · 5 days ago' },
     ],
     signals: [
-      { bold: '4 enterprise sales roles', rest: ' posted in UK & EMEA — major market expansion incoming.' },
+      { bold: '4 enterprise sales roles', rest: ' posted in UK & EMEA, major market expansion incoming.' },
       { bold: 'VP of payments partnerships', rest: ' hired, preparing a channel partner program.' },
     ],
     moves: [
@@ -70,12 +70,12 @@ const BATTLE_CARDS_DATA: Record<Comp, Card> = {
       { text: '“Merchant fees rose unexpectedly with no clear email warning.”', source: 'Reddit · 1 day ago' },
     ],
     signals: [
-      { bold: 'Patent filed', rest: ' for a mobile biometric tokenization system — a mobile SDK focus.' },
+      { bold: 'Patent filed', rest: ' for a mobile biometric tokenization system, signaling a mobile SDK focus.' },
       { bold: 'Developer advocate', rest: ' hired in APAC, recruiting developer-portal testers.' },
     ],
     moves: [
       'Target their developers with a 99.9% sandbox uptime guarantee.',
-      'Highlight “No hidden percentage increases — simple flat rates” in checkout.',
+      'Highlight “No hidden percentage increases, just simple flat rates” in checkout.',
       'Publish “Why sandbox speed is critical for product launch”.',
     ],
   },

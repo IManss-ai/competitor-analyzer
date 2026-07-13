@@ -19,8 +19,8 @@ import { Badge } from '@/components/ui/badge';
 const LEDGER_ROWS = [
   { time: '09:41', tag: 'PRICING', tagClass: 'badge-pricing_change', text: 'Competitor raised Pro tier $29 → $39, annual plan buried' },
   { time: '09:12', tag: 'FEATURE', tagClass: 'badge-feature_add', text: 'New AI assistant shipped on competitor homepage' },
-  { time: '08:55', tag: 'REVIEWS', tagClass: 'badge-review_trend', text: '11 new G2 complaints clustered on onboarding time' },
-  { time: '08:30', tag: 'HIRING', tagClass: 'badge-minor_copy', text: '4 new sales roles opened — they are scaling outbound' },
+  { time: '08:55', tag: 'REVIEWS', tagClass: 'badge-review_trend', text: '11 new Trustpilot complaints clustered on onboarding time' },
+  { time: '08:30', tag: 'HIRING', tagClass: 'badge-minor_copy', text: '4 new sales roles opened, they are scaling outbound' },
   { time: '08:02', tag: 'POSITION', tagClass: 'badge-repositioning', text: 'Hero copy shifted from SMB to enterprise language' },
 ];
 
@@ -146,8 +146,8 @@ export default function LoginPage() {
             customers do.
           </h2>
           <p className="mt-5 text-[13px] leading-relaxed max-w-sm text-muted-foreground">
-            Rivalscope watches your competitors&apos; pages, pricing, reviews, and hiring —
-            and turns every move into a plan you can execute.
+            Rivalscope watches your competitors&apos; pages, pricing, reviews, and hiring,
+            then turns every move into a plan you can execute.
           </p>
 
           {/* Live ledger — staggered terminal feed */}
@@ -217,7 +217,7 @@ export default function LoginPage() {
             Sign in to your desk
           </h1>
           <p className="text-[13px] mt-2 mb-7 text-muted-foreground">
-            New here? Your account is created on first sign-in — no separate signup.
+            New here? Your account is created on first sign-in. No separate signup.
           </p>
 
           {plan && (
@@ -226,7 +226,7 @@ export default function LoginPage() {
                 Plan
               </Badge>
               <span className="text-[12px] font-medium text-foreground">
-                {plan === 'local' ? 'Local Business — $19/mo' : 'SaaS Starter — $49/mo'}
+                {plan === 'local' ? 'Local Business · $19/mo' : 'SaaS Starter · $49/mo'}
               </span>
               <span className="ml-auto text-[10px] font-mono text-muted-foreground">
                 checkout after sign-in

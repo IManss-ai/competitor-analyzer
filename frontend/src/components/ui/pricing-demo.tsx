@@ -34,7 +34,7 @@ const tiers: PricingTier[] = [
       "Website monitoring",
       "Pricing page tracking",
       "Battle Card with AI action plans",
-      "Review intelligence (G2, Trustpilot)",
+      "Customer review intelligence",
       "Weekly email report",
     ],
     cta: "Start free",

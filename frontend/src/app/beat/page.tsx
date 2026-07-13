@@ -32,7 +32,7 @@ const SAMPLE_PLAYS = [
     rank: 2,
     title: 'Attack the complaint cluster: onboarding',
     body:
-      '11 of their last 30 G2 reviews mention setup taking days. Record a 90-second "live in 5 minutes" onboarding video, pin it on your homepage, and reply (politely) under comparison threads.',
+      '11 of their last 30 Trustpilot reviews mention setup taking days. Record a 90-second "live in 5 minutes" onboarding video, pin it on your homepage, and reply (politely) under comparison threads.',
   },
   {
     rank: 3,
