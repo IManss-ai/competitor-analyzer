@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { cache } from 'react';
 import SharePage from './share-page';
+import { stripLlmMetaFromCard } from '@/lib/llm-meta';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -17,7 +18,10 @@ const fetchBattlecard = cache(async function fetchBattlecard(id: string) {
       next: { revalidate: 300 },
     });
     if (!res.ok) return null;
-    return res.json();
+    const card = await res.json();
+    // Filter LLM meta-filler server-side so it never reaches the serialized
+    // RSC payload (this page is public and crawled).
+    return card && typeof card === 'object' ? stripLlmMetaFromCard(card) : card;
   } catch (err) {
     console.error('Error fetching public battlecard:', err);
     return null;
