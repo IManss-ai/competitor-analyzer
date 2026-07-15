@@ -62,7 +62,7 @@ export default function HeadToHead({ data, competitorName }: HeadToHeadProps) {
       {(hh.you_win?.length || hh.you_exposed?.length) ? (
         <div className="grid gap-px bg-border sm:grid-cols-2">
           <div className="bg-card p-5 sm:p-6">
-            <h3 className="mb-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400">Where you win</h3>
+            <h3 className="mb-3 text-sm font-semibold text-emerald-700 dark:text-emerald-400">Where you win</h3>
             {hh.you_win?.length ? (
               <ul className="space-y-3">
                 {hh.you_win.map((p, i) => (
@@ -74,7 +74,7 @@ export default function HeadToHead({ data, competitorName }: HeadToHeadProps) {
             )}
           </div>
           <div className="bg-card p-5 sm:p-6">
-            <h3 className="mb-3 text-sm font-semibold text-rose-600 dark:text-rose-400">Where you&rsquo;re exposed</h3>
+            <h3 className="mb-3 text-sm font-semibold text-rose-700 dark:text-rose-400">Where you&rsquo;re exposed</h3>
             {hh.you_exposed?.length ? (
               <ul className="space-y-3">
                 {hh.you_exposed.map((p, i) => (
