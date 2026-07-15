@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, Variants } from 'motion/react';
+import { motion, MotionConfig, Variants } from 'motion/react';
 import Link from 'next/link';
 
 const containerVariants: Variants = {
@@ -19,13 +19,18 @@ export default function DashboardAnimator({
   children: React.ReactNode;
 }) {
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      {children}
-    </motion.div>
+    // Same reducedMotion="user" contract as the landing's MotionProvider —
+    // JS-driven transforms ignore the CSS kill-switch, so the config must
+    // wrap the app shell too.
+    <MotionConfig reducedMotion="user">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {children}
+      </motion.div>
+    </MotionConfig>
   );
 }
 
