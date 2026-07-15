@@ -84,9 +84,9 @@ export default function StatsCard({
             style={{
               borderRadius: 'var(--radius-sm)',
               ...(trend === 'up'
-                ? { color: p.positive, background: 'rgba(16,185,129,0.08)', borderColor: 'rgba(16,185,129,0.20)' }
+                ? { color: p.positive, background: 'color-mix(in oklch, var(--tone-positive) 8%, transparent)', borderColor: 'color-mix(in oklch, var(--tone-positive) 20%, transparent)' }
                 : trend === 'down'
-                ? { color: p.danger, background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.20)' }
+                ? { color: p.danger, background: 'color-mix(in oklch, var(--tone-danger) 8%, transparent)', borderColor: 'color-mix(in oklch, var(--tone-danger) 20%, transparent)' }
                 : { color: 'var(--muted-foreground)', background: 'var(--muted)', borderColor: 'var(--border)' })
             }}
           >
