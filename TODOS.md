@@ -15,4 +15,17 @@ Originally audited against DESIGN.md v3. **Re-verified by /design-review 2026-06
 
 ## Billing (found by /qa 2026-06-23, deferred)
 
-- [ ] **[high] Production checkout can't complete payment** — signup says "checkout after sign-in," but production Polar is misconfigured (sandbox token vs production-default server → 401 → graceful 503). Real trial users can't pay. Fix is built + held on `integration/polar-launch`, blocked on a verified production Polar account. Runbook: `docs/POLAR-GO-LIVE-RUNBOOK.md`. Not a frontend bug. (Not re-reproduced in the 2026-06-23 unauth QA run — flagged from prior investigation.)
+- [x] **[high] Production checkout can't complete payment** — RESOLVED 2026-06-25: production Polar creds live on Railway (SaaS $49 / Local $19), checkout verified against prod; re-verified end-to-end 2026-07-13. Note: Polar 422-rejects undeliverable emails — QA with a deliverable address.
+
+## Design — deferred by /design-review 2026-07-15 (full report: `~/.gstack/projects/IManss-ai-competitor-analyzer/designs/design-audit-20260715/`)
+
+Fixed same day on `main` (d9a04d1..496c14a, 11 commits): light-mode AA on status colors, exposed-column glyph, landing badge shades, focusable copy control + aria-labels, transition-all in ui primitives, dashboard reduced-motion, stats-card tone tokens, 44px nav hit areas, 12px footer labels, /apps row compaction. Deferred:
+
+- [ ] **[high, data] /apps index is hollow** — `/api/v1/apps/search` returns null tagline/price_from and empty tech for all 76 apps; frontend already renders these fields. Needs backend catalog enrichment to honor the "Pricing, tech stacks, and strategic signals" promise. Also: no search/filter on a 76-app database page.
+- [ ] **[medium, data] Public share cards leak LLM filler** — cached cards render lines like "No weaknesses explicitly listed in input" on the crawled `/share/[id]` surface. Fix by regenerating stale cards or filtering placeholder lines in the renderer. Founder call post-demo.
+- [ ] **[medium] Blue spent as a category color on landing** — TONE maps color the "feature" badge `text-primary` while in-app `feature_add` is green; in-file note documents amber/primary/emerald as deliberate. Decide: align with in-app semantics or keep the landing triad.
+- [ ] **[medium] height:auto expand/collapse animations ×7** — competitor-detail-client:491,643,685,722,759 + competitor-manager:160,223 animate a layout property (DESIGN.md: transform/opacity only). Swap for opacity/clip or measured transforms when touching these files.
+- [ ] **[medium] No h1 on main app pages** — dashboard/trends/queue/battlecards/competitor-manager start at h2/h3; landmark outline inconsistent.
+- [ ] **[medium] Touch targets in-app** — shadcn size variants (xs 24px, sm/icon-sm 28px, icon 32px) used across queue/competitors/battlecards; systemic fix = size-variant overhaul, deliberately not done 2 days before demo.
+- [ ] **[polish, systemic] Spacing scale fork (~190 off-scale utilities) + type scale fork (240+ arbitrary px sizes incl. 9/9.5px)** — tokens exist, nothing enforces them; consider a lint rule (see Octarin verified-pattern: automate color/token checks in CI).
+- [ ] **[polish] Motion durations ignore `--duration-*` tokens**; pricing section leaves right third empty; orphaned "New · battle cards" hero link; decorative blue rule in how-it-works; single `xl:` breakpoint use on login.
