@@ -79,7 +79,7 @@ async def scan_competitor(competitor_id: str, db) -> dict:
                 db, competitor, new_snapshot, net_char_delta=0,
                 brief=(
                     f"Now tracking {competitor.name or competitor.url}. We couldn't fully read "
-                    f"their page on the first pass — we'll keep retrying and surface pricing, "
+                    f"their page on the first pass. We'll keep retrying and surface pricing, "
                     f"feature, and review changes here as they appear."
                 ),
             )

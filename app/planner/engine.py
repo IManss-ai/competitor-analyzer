@@ -106,7 +106,7 @@ def _build_user_prompt(signals: dict) -> str:
     event_lines = "\n".join(
         f"- [{e.change_type or 'change'}] {e.brief_text or f'{e.net_char_delta} chars changed'}"
         for e in signals["events"]
-    ) or "No page changes detected in the last 30 days (they are quiet — that is itself a signal)."
+    ) or "No page changes detected in the last 30 days (they are quiet, and that is itself a signal)."
     complaint_lines = "\n".join(f"- {c}" for c in signals["complaints"]) or "No complaint data yet."
     pricing_lines = "\n".join(
         f"- {p['tier']}: {'custom' if p['price'] is None else '$' + str(p['price'])}/{p['period']}"
@@ -146,7 +146,7 @@ def _heuristic_plan(signals: dict) -> tuple[str, list[dict]]:
         plays.append({
             "title": f"Counter {name}'s pricing move this week",
             "body": f'They just made a pricing change ({detail}). Add a price-stability banner to your pricing page: '
-                    f'"Our price is our price — no surprise raises." Email your trial users contrasting your '
+                    f'"Our price is our price. No surprise raises." Email your trial users contrasting your '
                     f'predictability with their move.',
             "category": "pricing",
         })
@@ -168,20 +168,20 @@ def _heuristic_plan(signals: dict) -> tuple[str, list[dict]]:
         })
     plays.append({
         "title": "Win the AI-recommendation race",
-        "body": f'Ask ChatGPT and Perplexity "best tool for your category" — record who gets named. Publish two '
+        "body": f'Ask ChatGPT and Perplexity "best tool for your category" and record who gets named. Publish two '
                 f'comparison pages (you vs {name}) structured as direct answers; AI engines cite exactly these.',
         "category": "geo",
     })
     plays.append({
         "title": "Capture their churners at the exit",
-        "body": f'Target searches like "{name} cancel / export / alternative" with one narrow ad or SEO page — '
+        "body": f'Target searches like "{name} cancel / export / alternative" with one narrow ad or SEO page: '
                 f"the highest-intent traffic in your niche. Offer a migration path on the landing page.",
         "category": "content",
     })
     fillers = [
         {
             "title": f"Force the comparison with {name}",
-            "body": f"Ship a public 'you vs {name}' page this week — feature table, pricing honesty, migration path. "
+            "body": f"Ship a public 'you vs {name}' page this week: feature table, pricing honesty, migration path. "
                     f"Comparison pages convert the highest-intent visitors in any niche and feed the AI engines.",
             "category": "content",
         },
@@ -205,9 +205,9 @@ def _heuristic_plan(signals: dict) -> tuple[str, list[dict]]:
     plays = plays[:5]
 
     if pricing_events:
-        read = f"{name} is adjusting pricing — windows like this convert their fence-sitters if you move within days."
+        read = f"{name} is adjusting pricing. Windows like this convert their fence-sitters if you move within days."
     elif complaints:
-        read = f"{name}'s users are documenting pain publicly — their reputation is the soft flank to attack."
+        read = f"{name}'s users are documenting pain publicly. Their reputation is the soft flank to attack."
     else:
         read = f"{name} is coasting. Out-ship and out-rank them while they sleep."
     return read, plays

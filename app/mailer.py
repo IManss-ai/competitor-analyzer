@@ -114,7 +114,7 @@ async def send_weekly_brief(
                 
         # Subject line
         changes_detected = len(change_summaries)
-        subject = f"🎯 {changes_detected} competitor changes this week — your battle cards are ready"
+        subject = f"🎯 {changes_detected} competitor changes this week: your battle cards are ready"
         
         # Fallback text email body
         text_body_lines = [
@@ -124,7 +124,7 @@ async def send_weekly_brief(
             ""
         ]
         if not competitor_updates:
-            text_body_lines.append("All quiet this week — your competitors made no significant changes. We'll keep watching.")
+            text_body_lines.append("All quiet this week. Your competitors made no significant changes. We'll keep watching.")
         else:
             for up in competitor_updates:
                 text_body_lines.append(f"## {up['name']}")

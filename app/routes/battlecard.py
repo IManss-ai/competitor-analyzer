@@ -362,7 +362,7 @@ Known customer complaints:
     )
 
     return {
-        "title": f"{comp.name or comp.url} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
+        "title": f"{comp.name or comp.url} Battle Card · Week of {datetime.now().strftime('%b %d, %Y')}",
         "executive_summary": executive_summary,
         "what_changed": what_changed,
         "is_baseline": is_baseline,
@@ -423,7 +423,7 @@ def _baseline_saas_payload(comp: Competitor, weaknesses: list, hiring_signal_tex
         "Line up 2-3 fresh customer proof points to deploy the moment they change.",
     ]
     return {
-        "title": f"{name} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
+        "title": f"{name} Battle Card · Week of {datetime.now().strftime('%b %d, %Y')}",
         "executive_summary": executive_summary,
         "what_changed": [],
         "is_baseline": is_baseline,
@@ -788,7 +788,7 @@ Known customer complaints/weaknesses:
 
     # Return rich battle card payload, actions maps to playbook for backwards compatibility
     payload = {
-        "title": f"{comp.name or comp.url} Battle Card — Week of {datetime.now().strftime('%b %d, %Y')}",
+        "title": f"{comp.name or comp.url} Battle Card · Week of {datetime.now().strftime('%b %d, %Y')}",
         "executive_summary": executive_summary,
         "what_changed": what_changed,
         "is_baseline": is_baseline,

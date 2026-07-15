@@ -96,7 +96,7 @@ def _extract_json(content: str) -> dict:
 
 def _fallback_profile(url: str, text: str, socials: list[str]) -> dict:
     name = _domain_name(url)
-    one_liner = (text[:160].strip() + "…") if text else f"{name} — we couldn't read your site automatically."
+    one_liner = (text[:160].strip() + "…") if text else f"{name}: we couldn't read your site automatically."
     return {
         "name": name,
         "one_liner": one_liner,

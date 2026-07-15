@@ -51,7 +51,7 @@ def _raise_if_locked(user: User | None) -> None:
     if user is not None and is_read_only(user):
         raise HTTPException(
             status_code=402,
-            detail="Your free test is done — upgrade to Pro to continue.",
+            detail="Your free test is done. Upgrade to Pro to continue.",
         )
 
 
