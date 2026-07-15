@@ -69,7 +69,7 @@ export default async function AppsIndexPage({ searchParams }: PageProps) {
         ) : (
           <div className="space-y-3">
             {results.map((app) => (
-              <Link key={app.slug} href={`/apps/${app.slug}`} className="rs-card block p-5 space-y-2">
+              <Link key={app.slug} href={`/apps/${app.slug}`} className="rs-card block p-4 space-y-1.5">
                 <div className="flex items-baseline justify-between gap-4">
                   <h2 className="text-base font-semibold" style={{ color: 'var(--foreground)' }}>{app.name}</h2>
                   {app.price_from !== null && (
