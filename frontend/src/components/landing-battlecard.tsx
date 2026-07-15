@@ -15,9 +15,9 @@ import { fadeUpVariants, staggerContainerVariants } from '@/lib/animations';
 type Tone = 'pricing' | 'feature' | 'messaging';
 
 const TONE: Record<Tone, string> = {
-  pricing: 'text-amber-500 border-amber-500/30 bg-amber-500/10',
+  pricing: 'text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10',
   feature: 'text-primary border-primary/30 bg-primary/10',
-  messaging: 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10',
+  messaging: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
 };
 
 type Comp = 'stripe' | 'paypal' | 'square';

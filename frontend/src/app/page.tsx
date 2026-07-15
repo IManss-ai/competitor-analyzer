@@ -22,9 +22,9 @@ const AUTH = '/auth/login';
 type Tone = 'pricing' | 'feature' | 'hiring';
 
 const TONE: Record<Tone, string> = {
-  pricing: 'text-amber-500 border-amber-500/30 bg-amber-500/10',
+  pricing: 'text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10',
   feature: 'text-primary border-primary/30 bg-primary/10',
-  hiring: 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10',
+  hiring: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
 };
 
 const FEED: { mark: string; bg: string; name: string; tone: Tone; label: string; desc: string; t: string }[] = [
