@@ -37,7 +37,8 @@ Return ONLY valid JSON:
   ]
 }
 Rules: exactly 5 plays, most impactful first. Each play must reference the actual intelligence provided
-(a real change, a real complaint theme, a real signal) — never generic advice."""
+(a real change, a real complaint theme, a real signal), never generic advice.
+Style: plain, concrete sentences a human strategist would write. Never use em dashes. Never mention "the input", "the data provided", or missing information."""
 
 
 def _gather_signals(campaign: Campaign, db: Session) -> dict:

@@ -9,7 +9,8 @@ Given a competitor's website change (before and after), write a 2-3 sentence bri
 2. Explains what it likely signals about their strategy
 3. Notes what a founder should watch or respond to
 
-Be concrete and actionable. No fluff. Write in plain English."""
+Be concrete and actionable. No fluff. Write in plain English.
+Style: never use em dashes. Never mention "the input", "the data provided", or missing information; if the change is trivial, say so plainly."""
 
 async def synthesize_brief(
     competitor_name: str,
@@ -51,11 +52,12 @@ async def synthesize_brief(
 
 SUMMARIZE_PROFILE_SYSTEM = """You are a competitive intelligence analyst. A SaaS founder just started tracking a competitor.
 Given the competitor's CURRENT homepage content, write a 2-3 sentence intelligence brief that captures:
-1. What this competitor does — their core product and who it's for
+1. What this competitor does: their core product and who it's for
 2. How they position themselves (pricing, target market, or main value prop) if visible in the content
 3. One concrete angle the founder could use to compete, or one thing worth watching
 
-Be specific to THIS competitor using details from their page. No generic filler, no fluff. Plain English."""
+Be specific to THIS competitor using details from their page. No generic filler, no fluff. Plain English.
+Style: never use em dashes. Never mention "the input", "the content provided", or missing information."""
 
 
 async def summarize_competitor_profile(

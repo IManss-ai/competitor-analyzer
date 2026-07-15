@@ -155,6 +155,7 @@ def _read_cached_payload(cached: BattleCardCache) -> dict:
 LOCAL_SYSTEM_PROMPT = """You are a senior local business strategist advising an independent operator (restaurant, salon, gym, retail shop, etc.) on how to win against a nearby competitor.
 Your tone is direct, practical, specific to local foot traffic and reputation. Do not write as a helpful AI assistant.
 Do not use generic fluff, placeholder text, or B2B sales jargon (no "leverage", "delve", "synergy", "enterprise", "SaaS").
+Style: plain, concrete sentences a human strategist would write. Never use em dashes. Never mention "the input", "the data provided", or missing information; when a section has no data, state the practical takeaway instead (e.g. "No public complaints surfaced this week").
 
 Return ONLY valid JSON in the exact format below, with no other text:
 {
@@ -633,6 +634,7 @@ def _generate_saas_battlecard(
 Your tone is professional, strategic, specific, and actionable. Do not write as a helpful AI assistant.
 Do not use generic fluff or placeholder text.
 Do not use the words "leverage" or "delve".
+Style: plain, concrete sentences a human strategist would write. Never use em dashes. Never mention "the input", "the data provided", or missing information; when a section has no data, state the practical takeaway instead (e.g. "No public complaints surfaced this week").
 
 Return ONLY valid JSON in the exact format below, with no other text:
 {
@@ -645,7 +647,7 @@ Return ONLY valid JSON in the exact format below, with no other text:
     "Interpretation of what the changes MEAN strategically (e.g. 'Removing flat enterprise pricing signals they are moving upmarket and abandoning SMB')"
   ],
   "playbook": [
-    "Specific ranked action the user should take this week — under 25 words, starts with a verb"
+    "Specific ranked action the user should take this week, under 25 words, starts with a verb"
   ]
 }
 
@@ -741,8 +743,8 @@ Known customer complaints/weaknesses:
                 playbook = [
                     f"Highlight our simple, transparent pricing structure compared to {comp.name or comp.url}'s updates.",
                     "Deploy dedicated target ads focusing on our flat-rate billing model with no seat limits.",
-                    "Offer mid-market customers a free migration path to showcase immediate cost stability.",
-                    "Empower sales reps to lead EMEA pitch calls focusing on simple, contract-free pricing.",
+                    "Offer mid-market customers a free migration path that proves immediate cost stability.",
+                    "Have reps open EMEA pitch calls with our simple, contract-free pricing.",
                     "Publish a budget comparison calculator demonstrating 40% savings over enterprise tiers."
                 ]
             elif has_feature:
@@ -752,7 +754,7 @@ Known customer complaints/weaknesses:
                     "Increased focus on developer experience suggests target competitor is capturing technical decision-makers."
                 ]
                 playbook = [
-                    f"Showcase our production-ready reliability versus {comp.name or comp.url}'s recently released features.",
+                    f"Pitch our production reliability against {comp.name or comp.url}'s just-shipped features.",
                     "Target developer teams with sandbox uptime guarantees and clean API documentation.",
                     "Add 'works out-of-the-box' templates directly to our getting started guides.",
                     "Run competitive comparison campaigns highlighting our simpler API schema.",
