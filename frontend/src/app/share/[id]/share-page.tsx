@@ -94,11 +94,11 @@ export default function SharePage({ card }: { card: BattleCardData }) {
           </div>
           {card.is_baseline ? (
             <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
-              Baseline captured — no changes recorded yet. New changes appear here after the next scan.
+              Baseline captured. No changes recorded yet; new changes appear here after the next scan.
             </p>
           ) : card.what_changed.length === 0 ? (
             <p className="text-sm italic" style={{ color: 'var(--muted-foreground)' }}>
-              Your competitor has been quiet — no pricing or feature changes detected this week.
+              Your competitor has been quiet: no pricing or feature changes detected this week.
             </p>
           ) : (
             <ul className="list-disc ml-4 space-y-2">
