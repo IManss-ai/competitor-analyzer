@@ -69,7 +69,7 @@ export default function BeatPage() {
           <p className="text-base leading-relaxed max-w-xl mx-auto" style={{ color: 'var(--muted-foreground)' }}>
             Give us your site and your biggest competitor. We scan their pages, reviews, hiring, and what AI engines
             say about you both, then a real strategist turns it into 5 ranked moves you can execute this week.
-            Not a dashboard. Not a report. A plan.
+            You get a plan you can run, not another dashboard to check.
           </p>
           <div className="flex items-center justify-center gap-3 pt-2">
             <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
