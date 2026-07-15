@@ -1252,7 +1252,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     <span className="font-mono text-[10px] text-right text-muted-foreground">{formatTimeAgo(c.last_scanned)}</span>
                     <div className="flex items-center justify-end gap-2">
                       <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" className="p-2 cursor-pointer transition-colors flex-shrink-0 rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground">
-                        {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin text-primary" /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} className="text-emerald-500" /> : <RefreshCw size={13} />}
+                        {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin text-primary" /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" /> : <RefreshCw size={13} />}
                       </button>
                       <Link href={`/competitors/${c.id}`} className={`font-mono text-[10.5px] whitespace-nowrap transition-colors ${hot ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>Card →</Link>
                     </div>
@@ -1442,7 +1442,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           {scanningCompId === comp.id ? (
                             <Loader2 size={13} className="animate-spin text-primary" />
                           ) : scanDoneCompId === comp.id ? (
-                            <CheckCircle2 size={13} className="text-emerald-500" />
+                            <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" />
                           ) : (
                             <RefreshCw size={13} />
                           )}
