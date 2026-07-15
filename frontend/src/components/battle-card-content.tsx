@@ -45,8 +45,20 @@ export function battleCardItemText(item: unknown): string {
   return '';
 }
 
+// DeepSeek sometimes writes disclaimers about its own prompt into card lists
+// ("No weaknesses explicitly listed in input", "No recent complaints available")
+// which read as raw AI output on user-facing and publicly crawled surfaces.
+// Drop those lines and let each section's honest empty state render instead.
+const LLM_META_RE =
+  /\b(?:listed|provided|available|mentioned|specified)\s+in\s+(?:the\s+)?(?:input|prompt|context|data)\b|\bdata\s+provided\b|\bbased\s+on\s+(?:the\s+)?(?:available|provided)\s+(?:data|information)\b|\bas\s+an?\s+AI\b|^no\s+(?:recent\s+|new\s+|known\s+)?[\w\s,-]*?\b(?:complaints?|weaknesses?|changes?|signals?|data)\b[\w\s,-]*?\b(?:available|detected|listed|found|reported)\b/i;
+export function isLlmMetaLine(item: unknown): boolean {
+  return LLM_META_RE.test(battleCardItemText(item));
+}
+
 export function toStringList(raw: unknown): string[] {
-  return Array.isArray(raw) ? raw.map(battleCardItemText).filter(Boolean) : [];
+  return Array.isArray(raw)
+    ? raw.map(battleCardItemText).filter(Boolean).filter((s) => !LLM_META_RE.test(s))
+    : [];
 }
 
 // DeepSeek battle-card copy sometimes carries inline markdown emphasis
@@ -87,7 +99,7 @@ export function normalizeBattleCard(raw: any): BattleCardData {
             ? { type: 'change', text: item }
             : { type: typeof item?.type === 'string' ? item.type : 'change', text: battleCardItemText(item) }
         )
-        .filter((c: { text: string }) => c.text)
+        .filter((c: { text: string }) => c.text && !LLM_META_RE.test(c.text))
     : [];
   return {
     title: raw.title || '',

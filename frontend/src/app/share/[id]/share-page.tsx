@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMounted } from '@/lib/use-mounted';
 import { motion } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-react';
-import { battleCardItemText, renderInlineMarkdown } from '@/components/battle-card-content';
+import { battleCardItemText, isLlmMetaLine, renderInlineMarkdown } from '@/components/battle-card-content';
 
 interface BattleCardData {
   title: string;
@@ -19,7 +19,17 @@ interface BattleCardData {
   is_baseline?: boolean;
 }
 
-export default function SharePage({ card }: { card: BattleCardData }) {
+export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
+  // Strip LLM meta-filler ("No weaknesses explicitly listed in input") before
+  // the length checks so pure-filler sections fall through to their honest
+  // empty states instead of rendering an empty list.
+  const card: BattleCardData = {
+    ...rawCard,
+    what_changed: rawCard.what_changed.filter((c) => !isLlmMetaLine(c)),
+    weaknesses: rawCard.weaknesses.filter((w) => !isLlmMetaLine(w)),
+    talking_points: rawCard.talking_points.filter((t) => !isLlmMetaLine(t)),
+    win_conditions: rawCard.win_conditions.filter((w) => !isLlmMetaLine(w)),
+  };
   const [copied, setCopied] = useState(false);
   // Gate the locale-formatted date so SSR matches first client render (#418).
   const mounted = useMounted();
