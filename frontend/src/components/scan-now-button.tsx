@@ -64,7 +64,7 @@ export default function ScanNowButton({ userId }: { userId: string }) {
             }}
           >
             <span className="status-dot-active" />
-            Scan started — results ready in a few minutes
+            Scan started, results ready in a few minutes
           </motion.div>
         )}
       </AnimatePresence>

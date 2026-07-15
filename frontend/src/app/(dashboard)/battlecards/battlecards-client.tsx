@@ -26,7 +26,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
             No competitors to analyze yet
           </h3>
           <p className="text-sm mb-5 max-w-sm text-muted-foreground">
-            Add a competitor and run a scan — then generate an AI battle card that aggregates
+            Add a competitor and run a scan, then generate an AI battle card that aggregates
             page changes, customer complaints, and strategic signals.
           </p>
           <Button asChild>

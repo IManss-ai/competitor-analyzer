@@ -75,7 +75,7 @@ export function ProductShowcase() {
           Every rival, on one battle card.
         </h2>
         <p className="mt-5 max-w-[460px] text-[15px] leading-relaxed text-muted-foreground">
-          Every change, complaint and signal — compiled into one card your reps can act on.
+          Every change, complaint and signal, compiled into one card your reps can act on.
         </p>
       </Reveal>
 

@@ -125,7 +125,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
         </div>
       ) : (
         <p className="text-xs italic text-muted-foreground">
-          No strategic pattern detected this week — hiring is flat or stable.
+          No strategic pattern detected this week. Hiring is flat or stable.
         </p>
       )}
     </div>

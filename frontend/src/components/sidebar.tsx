@@ -377,7 +377,7 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
           {scanning
             ? 'Scanning…'
             : scanError
-            ? 'Scan failed — retry'
+            ? 'Scan failed · retry'
             : scanDone
             ? 'Queued!'
             : 'Scan all now'}

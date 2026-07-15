@@ -69,7 +69,7 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
             }}
           >
             <span className="status-dot-active" />
-            Local scan started — results ready in a few minutes
+            Local scan started, results ready in a few minutes
           </motion.div>
         )}
       </AnimatePresence>

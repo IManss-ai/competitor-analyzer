@@ -149,7 +149,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       setOnboardingHeadToHead(raw.head_to_head ?? null);
     } catch (e) {
       if (isAbortError(e)) return;
-      setOnboardingCardError('We could not build the report right now — you can open the Battle Card from your dashboard.');
+      setOnboardingCardError('We could not build the report right now. You can open the Battle Card from your dashboard.');
     } finally {
       setOnboardingCardLoading(false);
     }
@@ -652,11 +652,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     <p className="mt-0.5 text-sm text-foreground">{profile.positioning || '—'}</p>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground">We read this from your site — edit anything that&apos;s off.</p>
+                <p className="text-xs text-muted-foreground">We read this from your site. Edit anything that&apos;s off.</p>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">
-                We couldn&apos;t read your site automatically — no problem. Add a competitor below and we&apos;ll take it from there.
+                We couldn&apos;t read your site automatically, no problem. Add a competitor below and we&apos;ll take it from there.
               </p>
             )}
           </div>
@@ -1021,7 +1021,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </h2>
           <p className="text-sm max-w-md mx-auto text-muted-foreground">
             {isError
-              ? "We added your competitor but couldn't scan their page. Check the URL or try again — we'll keep monitoring."
+              ? "We added your competitor but couldn't scan their page. Check the URL or try again. We'll keep monitoring."
               : 'We scanned their site and compiled the intelligence below. We re-check automatically every week.'}
           </p>
         </div>
@@ -1123,7 +1123,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         {topIsReal ? (
           <>
             <h2 className="font-display tracking-tight leading-[1.15] max-w-2xl text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>
-              <span className="text-primary">{topEvent.competitor_name}</span>{' — '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.
+              <span className="text-primary">{topEvent.competitor_name}</span>{': '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl line-clamp-3 text-muted-foreground">
               {topEvent.brief_text ? renderInlineMarkdown(topEvent.brief_text) : 'Their homepage changed. Open the battle card for the full breakdown and the play to run.'}
@@ -1145,7 +1145,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               Watching <span className="text-primary">{dashboardData.competitor_count}</span> {dashboardData.competitor_count === 1 ? 'competitor' : 'competitors'}. No moves yet.
             </h2>
             <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">
-              We&apos;re watching their homepages, pricing, reviews and hiring. The first real change surfaces here the moment it lands — we re-scan every week.
+              We&apos;re watching their homepages, pricing, reviews and hiring. The first real change surfaces here the moment it lands. We re-scan every week.
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Button asChild>
@@ -1159,7 +1159,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         ) : (
           <>
             <h2 className="font-display tracking-tight text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>Add your first competitor.</h2>
-            <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">Point Rivalscope at a competitor and we&apos;ll capture their homepage, reviews and hiring — then flag every move before it costs you a deal.</p>
+            <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">Point Rivalscope at a competitor and we&apos;ll capture their homepage, reviews and hiring, then flag every move before it costs you a deal.</p>
             <div className="mt-5">
               <Button asChild>
                 <Link href="/competitors"><Plus size={14} /> Add a competitor</Link>

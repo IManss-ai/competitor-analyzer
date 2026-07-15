@@ -23,8 +23,8 @@ const fetchApp = cache(async function fetchApp(slug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const app = await fetchApp(slug);
-  if (!app) return { title: 'App Not Found — Rivalscope' };
-  const title = `${app.name} — pricing, tech stack & signals | Rivalscope`;
+  if (!app) return { title: 'App Not Found | Rivalscope' };
+  const title = `${app.name}: pricing, tech stack & signals | Rivalscope`;
   const description = app.tagline || app.description || `Intelligence profile for ${app.name}.`;
   return {
     title,

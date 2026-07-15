@@ -23,7 +23,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const { page: rawPage } = await searchParams;
   const page = Math.max(1, parseInt(rawPage ?? '1', 10) || 1);
   return {
-    title: 'SaaS app database — pricing, tech stacks & signals | Rivalscope',
+    title: 'SaaS app database: pricing, tech stacks & signals | Rivalscope',
     description:
       'Browse the Rivalscope database of SaaS apps: live pricing, tech stacks, review signals, and shipping velocity for every profile.',
     // Each results page is its own canonical URL — pointing pages 2+ at

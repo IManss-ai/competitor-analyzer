@@ -3,7 +3,7 @@ import Topbar from '@/components/topbar';
 import DiscoverClient from './discover-client';
 
 export const metadata: Metadata = {
-  title: 'Discover web apps — Rivalscope',
+  title: 'Discover web apps | Rivalscope',
   description: 'Search a database of web apps and SaaS by category, pricing, tech stack, and shipping velocity.',
 };
 

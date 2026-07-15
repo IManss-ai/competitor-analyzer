@@ -18,7 +18,7 @@ const STEPS = [
   {
     label: 'Connect',
     title: 'Add your rivals',
-    desc: 'Paste URLs — we map the rest.',
+    desc: 'Paste URLs. We map the rest.',
     fragment: (
       <div className="flex flex-wrap gap-1.5">
         <Chip>stripe.com</Chip>

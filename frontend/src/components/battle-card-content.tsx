@@ -218,13 +218,13 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
               {cardData.is_baseline ? (
                 <p className="text-xs text-muted-foreground italic">
                   {cardData.variant === 'local'
-                    ? 'No activity yet — baseline captured. New reviews and posts appear after the next scan.'
-                    : 'No changes detected yet — baseline captured. New changes appear after the next scan.'}
+                    ? 'No activity yet. Baseline captured. New reviews and posts appear after the next scan.'
+                    : 'No changes detected yet. Baseline captured. New changes appear after the next scan.'}
                 </p>
               ) : (!cardData.what_changed || cardData.what_changed.length === 0) ? (
                 <p className="text-xs text-muted-foreground italic">
                   {cardData.variant === 'local'
-                    ? 'Quiet week — no new reviews or social posts'
+                    ? 'Quiet week: no new reviews or social posts'
                     : 'No significant changes detected this week'}
                 </p>
               ) : (
@@ -314,7 +314,7 @@ export default function BattleCardContent({ cardData, loading, error, loadingLab
           <Card className="bg-card border-border">
             <CardHeader className="pb-3 pt-4 px-5">
               <p className="text-[10px] font-mono font-semibold uppercase tracking-wider" style={{ color: 'var(--tone-positive)' }}>
-                Playbook — This Week
+                Playbook · This Week
               </p>
             </CardHeader>
             <CardContent className="px-5 pb-5">

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   const card = await fetchBattlecard(id);
   if (!card) {
-    const title = 'Battle Card Not Found — Rivalscope';
+    const title = 'Battle Card Not Found | Rivalscope';
     const description = 'This competitor battle card could not be found or is inactive.';
     return {
       title,
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
   const changesCount = card.what_changed?.length || 0;
-  const title = `${card.competitor_name} Battle Card — Rivalscope`;
+  const title = `${card.competitor_name} Battle Card | Rivalscope`;
   const description = `Competitive intelligence on ${card.competitor_name}: ${changesCount} changes tracked, customer complaints, and a ranked sales playbook.`;
   return {
     title,

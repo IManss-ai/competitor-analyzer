@@ -165,7 +165,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
           <TabsContent value="plan" className="space-y-3 mt-4">
             <div className="flex items-baseline justify-between">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                The plan — {doneCount}/{room.plan.items.length} executed
+                The plan · {doneCount}/{room.plan.items.length} executed
               </p>
             </div>
             {room.plan.items.map((item) => (
@@ -270,7 +270,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                     <Sparkles size={14} /> Who does the AI recommend?
                   </CardTitle>
                   <Badge variant="outline" className="text-[10px] font-mono uppercase tracking-wider">
-                    {room.geo.source === 'live' ? `LIVE · ${room.geo.engine.toUpperCase()}` : 'ESTIMATED — goes live with AI credits'}
+                    {room.geo.source === 'live' ? `LIVE · ${room.geo.engine.toUpperCase()}` : 'ESTIMATED · goes live with AI credits'}
                   </Badge>
                 </div>
               </CardHeader>
@@ -303,7 +303,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
               <CardContent>
                 {room.events.length === 0 ? (
                   <p className="text-xs text-muted-foreground">
-                    No detected changes yet — first scan establishes the baseline; every change after that lands here and refreshes the plan.
+                    No detected changes yet. First scan establishes the baseline; every change after that lands here and refreshes the plan.
                   </p>
                 ) : (
                   <div className="space-y-2">

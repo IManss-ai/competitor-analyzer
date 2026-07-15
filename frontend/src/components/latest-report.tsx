@@ -65,7 +65,7 @@ export default function LatestReport({ userId }: { userId: string }) {
             <span className="block text-[14px] font-semibold text-foreground">
               Your latest report{name ? ` on ${name}` : ''}
             </span>
-            <span className="block text-[11px] text-muted-foreground">Saved from your battle card — re-checked weekly.</span>
+            <span className="block text-[11px] text-muted-foreground">Saved from your battle card, re-checked weekly.</span>
           </span>
         </span>
         <ChevronDown

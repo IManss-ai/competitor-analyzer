@@ -43,14 +43,14 @@ export default function PaywallOverlay({ userId }: { userId: string }) {
           Your free test is done
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Upgrade to Pro for full, ongoing competitive intelligence — billed today, full access instantly.
+          Upgrade to Pro for full, ongoing competitive intelligence. Billed today, full access instantly.
         </p>
         {error && <p className="mt-3 text-xs font-medium text-destructive">{error}</p>}
         <Button onClick={upgrade} disabled={loading} size="lg" variant="cta" className="mt-6 w-full">
           {loading ? (
             <><Loader2 size={16} className="animate-spin" /> Starting checkout…</>
           ) : (
-            <>Upgrade to Pro — billed today <ArrowRight size={14} /></>
+            <>Upgrade to Pro · billed today <ArrowRight size={14} /></>
           )}
         </Button>
       </div>

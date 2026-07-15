@@ -11,7 +11,7 @@ export default async function CampaignsPage() {
 
   return (
     <div>
-      <Topbar title="Campaigns" subtitle="Your standing fights — one war room per competitor" />
+      <Topbar title="Campaigns" subtitle="Your standing fights: one war room per competitor" />
       <CampaignsClient userId={session.user!.user_id} />
     </div>
   );

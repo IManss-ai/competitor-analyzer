@@ -68,7 +68,7 @@ export default async function TrendsPage() {
             {/* A) Change Frequency Chart */}
             <Card>
               <CardHeader>
-                <CardTitle>Change frequency (Past 12 Weeks — Top 5)</CardTitle>
+                <CardTitle>Change frequency (Past 12 Weeks · Top 5)</CardTitle>
               </CardHeader>
               <CardContent>
                 <TrendsChart data={changeFrequencyChartData} competitors={metricsData.weekly_changes} />
