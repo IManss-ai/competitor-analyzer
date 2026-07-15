@@ -127,13 +127,13 @@ export default function Landing() {
             <span className="font-display text-[17px] font-semibold tracking-tight">Rivalscope</span>
           </Link>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-            <a className="transition-colors hover:text-foreground" href="#how-it-works">How it works</a>
-            <a className="transition-colors hover:text-foreground" href="#product">Product</a>
-            <a className="transition-colors hover:text-foreground" href="#pricing">Pricing</a>
+            <a className="py-3 transition-colors hover:text-foreground" href="#how-it-works">How it works</a>
+            <a className="py-3 transition-colors hover:text-foreground" href="#product">Product</a>
+            <a className="py-3 transition-colors hover:text-foreground" href="#pricing">Pricing</a>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <ThemeToggle />
-            <Link className="hidden px-2 text-muted-foreground transition-colors hover:text-foreground sm:inline" href={AUTH}>Sign in</Link>
+            <Link className="hidden px-2 py-3 text-muted-foreground transition-colors hover:text-foreground sm:inline-block" href={AUTH}>Sign in</Link>
             <Link href={AUTH} className="hidden rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background transition-opacity hover:opacity-90 md:inline-flex">Start free</Link>
             <MobileMenu />
           </div>
