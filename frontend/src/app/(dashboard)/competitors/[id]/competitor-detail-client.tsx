@@ -607,6 +607,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         size="icon-sm"
                         onClick={copyBattlecardToClipboard}
                         title="Copy to clipboard"
+                        aria-label="Copy to clipboard"
                       >
                         {copied ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Copy size={14} />}
                       </Button>
@@ -615,6 +616,7 @@ ${card.win_conditions && card.win_conditions.length > 0
                         size="icon-sm"
                         onClick={shareBattlecard}
                         title="Share Card"
+                        aria-label="Share card"
                       >
                         {shared ? <CheckCircle2 size={14} className="text-[var(--tone-positive)]" /> : <Share2 size={14} />}
                       </Button>

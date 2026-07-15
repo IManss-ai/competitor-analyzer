@@ -178,8 +178,9 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                       onClick={() =>
                         handleCopy(action.id, action.edited_text || action.original_draft)
                       }
-                      className="absolute top-3 right-3 p-2 text-muted-foreground hover:text-foreground bg-card hover:bg-muted rounded-md transition-colors opacity-0 group-hover/code:opacity-100 cursor-pointer border border-border"
+                      className="absolute top-3 right-3 p-2 text-muted-foreground hover:text-foreground bg-card hover:bg-muted rounded-md transition-colors opacity-0 group-hover/code:opacity-100 focus-visible:opacity-100 group-focus-within/code:opacity-100 [@media(hover:none)]:opacity-100 cursor-pointer border border-border"
                       title="Copy to clipboard"
+                      aria-label="Copy to clipboard"
                     >
                       {copiedId === action.id ? (
                         <Check size={14} style={{ color: 'var(--tone-positive)' }} />
