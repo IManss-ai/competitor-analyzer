@@ -52,7 +52,7 @@ export function SiteFooter() {
         </div>
         {COLUMNS.map((col) => (
           <div key={col.heading}>
-            <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">{col.heading}</h4>
+            <h4 className="mb-3 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground">{col.heading}</h4>
             {col.links.map((l) => (
               <FooterLink key={l.label} label={l.label} href={l.href} />
             ))}
