@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check, TriangleAlert } from 'lucide-react';
 import type { HeadToHead as HeadToHeadData, HeadToHeadPoint } from '@/lib/types';
 
 interface HeadToHeadProps {
@@ -18,9 +18,10 @@ function isEmpty(data?: HeadToHeadData | null): boolean {
 
 function PointRow({ point, tone }: { point: HeadToHeadPoint; tone: 'win' | 'exposed' }) {
   const accent = tone === 'win' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+  const Icon = tone === 'win' ? Check : TriangleAlert;
   return (
     <li className="flex gap-2.5">
-      <Check size={15} className={`mt-0.5 flex-none ${accent}`} />
+      <Icon size={15} className={`mt-0.5 flex-none ${accent}`} />
       <div className="min-w-0 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm leading-snug text-card-foreground">{point.point}</span>
