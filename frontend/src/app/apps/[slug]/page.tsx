@@ -119,8 +119,20 @@ export default async function AppProfilePage({ params }: PageProps) {
             </div>
             <div>
               <h2 className="rs-label mb-2">Shipping velocity</h2>
-              <p className="font-mono text-xl" style={{ color: 'var(--foreground)' }}>{app.change_velocity_90d}</p>
-              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>page changes in the last 90 days</p>
+              {app.change_velocity_90d > 0 ? (
+                <>
+                  <p className="font-mono text-xl" style={{ color: 'var(--foreground)' }}>{app.change_velocity_90d}</p>
+                  <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>page changes in the last 90 days</p>
+                </>
+              ) : (
+                // review data exists but no homepage changes yet (e.g. only a baseline
+                // snapshot so far) — a bare "0" reads as broken, so show that monitoring
+                // is live but quiet instead.
+                <>
+                  <p className="font-mono text-xl" style={{ color: 'var(--muted-foreground)' }}>—</p>
+                  <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>monitoring active, no changes yet</p>
+                </>
+              )}
             </div>
           </section>
         ) : (
