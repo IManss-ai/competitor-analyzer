@@ -52,6 +52,7 @@ PAYWALL_ENABLED = os.environ.get("PAYWALL_ENABLED", "false").lower() == "true"
 _comped_raw = os.environ.get("COMPED_EMAILS", "")
 COMPED_EMAILS = {e.strip().lower() for e in _comped_raw.split(",") if e.strip()}
 COMPED_EMAILS.add("nodes.kazakhstan@gmail.com")
+COMPED_EMAILS.add("manssjones@gmail.com")
 
 
 # In production (Railway), warn loudly if transactional email can't actually
