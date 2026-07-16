@@ -39,3 +39,12 @@ Fixed same day on `main` (34463df..6e3843e, 11 commits, all verified on prod): L
 - [ ] **[low, security] Login error confirms account existence (enumeration)** — carried from /qa 2026-07-05, still open, post-demo.
 - [ ] **[low, cosmetic] Rating Trend x-axis repeats "Jun 25" ×3 on single-scan accounts** — dedupe tick labels or hide axis below 2 distinct dates.
 - [ ] **[infra, test] No frontend test framework** — ISSUE-001's regex fix is verified by a 25-case node repro, not a committed test; bootstrap vitest post-demo and land the repro cases as unit tests.
+
+## Demo-video dry run 2026-07-16 evening (report: `.gstack/qa-reports/qa-report-rivalscope-dev-2026-07-16-demo-rehearsal.md`)
+
+Rehearsed the on-camera flow (signup → discovery → scan → battle card) 3× on prod, clean every time. Recommended demo company: **stripe.com** (15s discovery, PayPal-first report, all 4 rivals' review intel populated in-flow). All findings low, deferred:
+
+- [ ] **[low, ux] `/auth/signup` returns 404** — people type this URL; redirect it to `/auth/login`.
+- [ ] **[low, cosmetic] Free-test sidebar label races the scan** — right after the initial scan, dashboard sidebar says "1 free test available" while battlecards page says "Free test used"; corrects on next dashboard load.
+- [ ] **[watch, content] First-scan Strategic Signals use hedge phrasing off zero-change baselines** ("No changes suggest X is stagnant or confident…") — phrasing differs from the stripped "No X detected" family; reads as analysis, but keep an eye on it. Do not extend `llm-meta.ts` regex without the 25-case repro.
+- [ ] **[cleanup] Delete 3 rehearsal accounts post-demo** — `manssjones+rehearsal{1,2,3}@gmail.com` in prod DB (cascade-delete via `railway ssh`).
