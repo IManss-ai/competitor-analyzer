@@ -28,8 +28,14 @@ export function battleCardItemText(item: unknown): string {
 // ("No weaknesses explicitly listed in input", "No recent complaints
 // available") which read as raw AI output on user-facing and publicly crawled
 // surfaces. Drop those lines and let each section's empty state render instead.
+//
+// Every alternative must describe a WHOLE filler line, not a phrase that can
+// occur inside real intel: "as an AI" alone matches "an AI-first platform",
+// bare "data provided" matches "the data provided by their export API", and an
+// unanchored "no ... detected" matches "No pricing changes detected since
+// March, but reviews keep worsening". Real competitor copy is the product.
 export const LLM_META_RE =
-  /\b(?:listed|provided|available|mentioned|specified)\s+in\s+(?:the\s+)?(?:input|prompt|context|data)\b|\bdata\s+provided\b|\bbased\s+on\s+(?:the\s+)?(?:available|provided)\s+(?:data|information)\b|\bas\s+an?\s+AI\b|^no\s+(?:recent\s+|new\s+|known\s+)?[\w\s,-]*?\b(?:complaints?|weaknesses?|changes?|signals?|data)\b[\w\s,-]*?\b(?:available|detected|listed|found|reported)\b/i;
+  /\b(?:listed|provided|available|mentioned|specified)\s+in\s+(?:the\s+)?(?:provided\s+|available\s+|given\s+)?(?:input|prompt|context|data)\b|\b(?:in|from|based\s+on)\s+the\s+data\s+provided\b|\bbased\s+on\s+(?:the\s+)?(?:available|provided)\s+(?:data|information)\b|\bas\s+an\s+AI\s+language\s+model\b|\bas\s+an\s+AI(?:\s+(?:language\s+)?model|\s+assistant)?\s*,\s*I\b|^no\s+(?:recent\s+|new\s+|known\s+)?[\w\s-]*?\b(?:complaints?|weaknesses?|changes?|signals?|data)\b[\w\s-]*?\b(?:available|detected|listed|found|reported)\b\W{0,2}$/i;
 
 export function isLlmMetaLine(item: unknown): boolean {
   return LLM_META_RE.test(battleCardItemText(item));
