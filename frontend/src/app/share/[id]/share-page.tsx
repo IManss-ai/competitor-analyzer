@@ -22,13 +22,17 @@ interface BattleCardData {
 export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
   // Strip LLM meta-filler ("No weaknesses explicitly listed in input") before
   // the length checks so pure-filler sections fall through to their honest
-  // empty states instead of rendering an empty list.
+  // empty states instead of rendering an empty list. Array.isArray guards a
+  // malformed/legacy cache payload (what_changed comes raw from parsed LLM
+  // JSON) from throwing on this public, crawled page.
+  const cleanList = <T,>(raw: T[] | undefined | null): T[] =>
+    Array.isArray(raw) ? raw.filter((item) => !isLlmMetaLine(item)) : [];
   const card: BattleCardData = {
     ...rawCard,
-    what_changed: rawCard.what_changed.filter((c) => !isLlmMetaLine(c)),
-    weaknesses: rawCard.weaknesses.filter((w) => !isLlmMetaLine(w)),
-    talking_points: rawCard.talking_points.filter((t) => !isLlmMetaLine(t)),
-    win_conditions: rawCard.win_conditions.filter((w) => !isLlmMetaLine(w)),
+    what_changed: cleanList(rawCard.what_changed),
+    weaknesses: cleanList(rawCard.weaknesses),
+    talking_points: cleanList(rawCard.talking_points),
+    win_conditions: cleanList(rawCard.win_conditions),
   };
   const [copied, setCopied] = useState(false);
   // Gate the locale-formatted date so SSR matches first client render (#418).
