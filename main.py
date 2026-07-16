@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes import auth, competitors, dashboard, queue, settings, billing, scan, trends, api_v1, battlecard, onboarding, local_business, discovery, campaigns
 from contextlib import asynccontextmanager
 import asyncio
+import os
 from app.scheduler import start_scheduler
 from app.db import engine
 from app.models import Base
@@ -107,7 +108,17 @@ async def lifespan(app: FastAPI):
     start_scheduler()
     yield
 
-app = FastAPI(title="Competitor Analyzer", lifespan=lifespan)
+# Interactive API docs stay available for local dev but are disabled on prod
+# (RAILWAY_ENVIRONMENT set, same signal app/config.py uses): the schema maps
+# the full attack surface for anyone who finds the backend URL.
+_IS_PROD = bool(os.environ.get("RAILWAY_ENVIRONMENT"))
+app = FastAPI(
+    title="Competitor Analyzer",
+    lifespan=lifespan,
+    docs_url=None if _IS_PROD else "/docs",
+    redoc_url=None if _IS_PROD else "/redoc",
+    openapi_url=None if _IS_PROD else "/openapi.json",
+)
 
 # Add CORS middleware
 app.add_middleware(
