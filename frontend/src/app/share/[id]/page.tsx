@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import SharePage from './share-page';
 import { stripLlmMetaFromCard } from '@/lib/llm-meta';
@@ -37,6 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title,
       description,
+      robots: { index: false },
       openGraph: { title, description, siteName: 'Rivalscope', images: ['/og-image.png'] },
     };
   }
@@ -55,24 +57,9 @@ export default async function PublicSharePage({ params }: PageProps) {
   const { id } = await params;
   const card = await fetchBattlecard(id);
 
-  if (!card) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 font-sans" style={{ background: 'var(--background)' }}>
-        <div className="rs-card p-8 max-w-md w-full text-center space-y-4">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto text-lg font-bold bg-[var(--tone-danger)]/10 text-[var(--tone-danger)] border border-[var(--tone-danger)]/20">
-            !
-          </div>
-          <h1 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>Battle Card Not Found</h1>
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
-            The competitor battle card you are looking for does not exist, has been deleted, or is currently inactive.
-          </p>
-          <a href="/auth/login" className="rs-btn-primary text-[13px]">
-            Go to Rivalscope
-          </a>
-        </div>
-      </div>
-    );
-  }
+  // Renders ./not-found.tsx with a real 404 status; the previous inline
+  // branch returned the same UI as a 200, so crawlers indexed junk share URLs.
+  if (!card) notFound();
 
   return <SharePage card={card} />;
 }
