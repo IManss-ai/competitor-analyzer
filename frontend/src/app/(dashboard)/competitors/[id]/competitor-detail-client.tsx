@@ -9,7 +9,7 @@ import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
 import HeadToHead from '@/components/head-to-head';
-import { battleCardItemText, renderInlineMarkdown } from '@/components/battle-card-content';
+import { battleCardItemText, isLlmMetaLine, renderInlineMarkdown } from '@/components/battle-card-content';
 import { useChartPalette } from '@/lib/chart-theme';
 import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
@@ -231,6 +231,20 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     );
   };
 
+  // Cached cards can still carry LLM meta-filler lines (e.g. "No weaknesses
+  // explicitly listed in input"); this surface reads the raw cache payload, so
+  // drop them here like every other card surface does.
+  const cleanCardList = (raw: unknown): unknown[] =>
+    Array.isArray(raw)
+      ? raw.filter((item) => battleCardItemText(item).trim() && !isLlmMetaLine(item))
+      : [];
+  const cardLists = {
+    what_changed: cleanCardList(detail.battlecard?.what_changed),
+    weaknesses: cleanCardList(detail.battlecard?.weaknesses),
+    talking_points: cleanCardList(detail.battlecard?.talking_points),
+    win_conditions: cleanCardList(detail.battlecard?.win_conditions),
+  };
+
   // Text formatter for Copy
   const copyBattlecardToClipboard = () => {
     const card = detail.battlecard;
@@ -240,23 +254,23 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 Generated at: ${new Date(card.generated_at).toLocaleDateString()}
 
 RECENT CHANGES:
-${card.what_changed && card.what_changed.length > 0
-  ? card.what_changed.map((c: unknown) => `- ${battleCardItemText(c)}`).join('\n')
+${cardLists.what_changed.length > 0
+  ? cardLists.what_changed.map((c: unknown) => `- ${battleCardItemText(c)}`).join('\n')
   : 'No pricing or feature changes detected.'}
 
 THEIR WEAKNESSES:
-${card.weaknesses && card.weaknesses.length > 0
-  ? card.weaknesses.map((w: unknown) => `- ${battleCardItemText(w)}`).join('\n')
+${cardLists.weaknesses.length > 0
+  ? cardLists.weaknesses.map((w: unknown) => `- ${battleCardItemText(w)}`).join('\n')
   : 'None identified.'}
 
 TALKING POINTS:
-${card.talking_points && card.talking_points.length > 0
-  ? card.talking_points.map((tp: unknown, i: number) => `${i + 1}. ${battleCardItemText(tp)}`).join('\n')
+${cardLists.talking_points.length > 0
+  ? cardLists.talking_points.map((tp: unknown, i: number) => `${i + 1}. ${battleCardItemText(tp)}`).join('\n')
   : 'None generated.'}
 
 WIN CONDITIONS:
-${card.win_conditions && card.win_conditions.length > 0
-  ? card.win_conditions.map((wc: unknown) => `- ${battleCardItemText(wc)}`).join('\n')
+${cardLists.win_conditions.length > 0
+  ? cardLists.win_conditions.map((wc: unknown) => `- ${battleCardItemText(wc)}`).join('\n')
   : 'None generated.'}`;
 
     navigator.clipboard.writeText(text);
@@ -647,14 +661,11 @@ ${card.win_conditions && card.win_conditions.length > 0
                             className="overflow-hidden border-t border-border"
                           >
                             <div className="p-4 text-xs space-y-2 bg-card">
-                              {detail.battlecard.what_changed && detail.battlecard.what_changed.length > 0 ? (
+                              {cardLists.what_changed.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.what_changed
-                                    .map((c: unknown) => battleCardItemText(c))
-                                    .filter(Boolean)
-                                    .map((text: string, idx: number) => (
-                                      <li key={idx}>{renderInlineMarkdown(text)}</li>
-                                    ))}
+                                  {cardLists.what_changed.map((c: unknown, idx: number) => (
+                                    <li key={idx}>{renderInlineMarkdown(c)}</li>
+                                  ))}
                                 </ul>
                               ) : (
                                 <p className="italic text-muted-foreground">
@@ -689,9 +700,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                             className="overflow-hidden border-t border-border"
                           >
                             <div className="p-4 text-xs space-y-2 bg-card">
-                              {detail.battlecard.weaknesses && detail.battlecard.weaknesses.length > 0 ? (
+                              {cardLists.weaknesses.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.weaknesses.map((w: unknown, idx: number) => (
+                                  {cardLists.weaknesses.map((w: unknown, idx: number) => (
                                     <li key={idx}>{renderInlineMarkdown(w)}</li>
                                   ))}
                                 </ul>
@@ -726,9 +737,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                             className="overflow-hidden border-t border-border"
                           >
                             <div className="p-4 text-xs space-y-2 bg-card">
-                              {detail.battlecard.talking_points && detail.battlecard.talking_points.length > 0 ? (
+                              {cardLists.talking_points.length > 0 ? (
                                 <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.talking_points.map((tp: unknown, idx: number) => (
+                                  {cardLists.talking_points.map((tp: unknown, idx: number) => (
                                     <li key={idx}>{renderInlineMarkdown(tp)}</li>
                                   ))}
                                 </ol>
@@ -763,9 +774,9 @@ ${card.win_conditions && card.win_conditions.length > 0
                             className="overflow-hidden border-t border-border"
                           >
                             <div className="p-4 text-xs space-y-2 bg-card">
-                              {detail.battlecard.win_conditions && detail.battlecard.win_conditions.length > 0 ? (
+                              {cardLists.win_conditions.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
-                                  {detail.battlecard.win_conditions.map((wc: unknown, idx: number) => (
+                                  {cardLists.win_conditions.map((wc: unknown, idx: number) => (
                                     <li key={idx}>{renderInlineMarkdown(wc)}</li>
                                   ))}
                                 </ul>
