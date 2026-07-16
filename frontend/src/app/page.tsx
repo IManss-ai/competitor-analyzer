@@ -90,7 +90,7 @@ function ProductPanel() {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />Live
               </span>
             </div>
-            <RevealGroup>
+            <RevealGroup viewport={{ once: true }}>
               {FEED.map((r) => (
                 <RevealItem key={r.name} className="flex items-center gap-3 border-b border-border px-4 py-2.5 last:border-0">
                   <span className="grid h-[26px] w-[26px] flex-none place-items-center rounded-[7px] text-[11px] font-semibold text-white" style={{ background: r.bg }}>{r.mark}</span>

@@ -35,14 +35,24 @@ export function Reveal({
   );
 }
 
-export function RevealGroup({ children, className }: { children: ReactNode; className?: string }) {
+export function RevealGroup({
+  children,
+  className,
+  viewport,
+}: {
+  children: ReactNode;
+  className?: string;
+  // Above-the-fold groups (hero intel feed) must fire as soon as any pixel is
+  // visible; the default -80px band leaves them hidden on small viewports.
+  viewport?: { once?: boolean; margin?: string; amount?: 'some' | 'all' | number };
+}) {
   return (
     <motion.div
       className={className}
       variants={staggerContainerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={VIEWPORT}
+      viewport={viewport ?? VIEWPORT}
     >
       {children}
     </motion.div>
