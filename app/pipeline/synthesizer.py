@@ -102,7 +102,7 @@ def _summarize_profile_heuristically(name: str, content: str) -> str:
     if body:
         snippet = body[:240].rstrip()
         return (
-            f"Now tracking {name}. We captured a baseline of their site — here's what's on their page right now: "
+            f"Now tracking {name}. We captured a baseline of their site; here's what's on their page right now: "
             f"“{snippet}…” Pricing, feature, and messaging changes will surface here automatically as they happen."
         )
     return (
@@ -135,7 +135,7 @@ def _synthesize_heuristically(name: str, change_type: str) -> str:
     elif change_type == "repositioning":
         return (
             f"{name} shifted how they position themselves on their homepage. Compare their new "
-            f"messaging against yours to spot where their story now lands stronger — or weaker."
+            f"messaging against yours to spot where their story now lands stronger, or weaker."
         )
     else:
         return (

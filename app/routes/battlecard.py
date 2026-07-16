@@ -168,7 +168,7 @@ Return ONLY valid JSON in the exact format below, with no other text:
     "Interpretation of what their activity MEANS strategically (e.g. 'Three discount posts in a row signal slowing weekday foot traffic')"
   ],
   "playbook": [
-    "Specific ranked action the user should take this week — under 25 words, starts with a verb, concrete and local"
+    "Specific ranked action the user should take this week: under 25 words, starts with a verb, concrete and local"
   ]
 }
 
@@ -177,7 +177,7 @@ Rules for sections:
 - what_changed: 1-4 items reflecting real social posts or review trends. Use the type values shown.
 - weaknesses: 2-4 items pulled from actual review complaints.
 - strategic_signals: 2-3 items interpreting what their behavior means (e.g. they are losing returning customers, they are pushing a new product line).
-- playbook: Exactly 5 ranked actions for a local operator, most impactful first. Each under 25 words, starts with a verb (e.g., 'Run', 'Target', 'Reply', 'Offer', 'Capture'). Must be concrete and locally executable (Google Local Ads, in-store signage, Instagram reply campaigns, Yelp response, neighborhood flyering, etc.) — NOT abstract B2B sales plays."""
+- playbook: Exactly 5 ranked actions for a local operator, most impactful first. Each under 25 words, starts with a verb (e.g., 'Run', 'Target', 'Reply', 'Offer', 'Capture'). Must be concrete and locally executable (Google Local Ads, in-store signage, Instagram reply campaigns, Yelp response, neighborhood flyering, etc.), NOT abstract B2B sales plays."""
 
 
 def _generate_local_battlecard(comp: Competitor, db: Session, allow_ai: bool = True) -> tuple[dict, bool]:
@@ -312,10 +312,10 @@ Known customer complaints:
         active_social = len(recent_posts) >= 3
 
         if has_complaints:
-            executive_summary = f"{name} is accumulating customer complaints this week — an opening to capture defectors."
+            executive_summary = f"{name} is accumulating customer complaints this week: an opening to capture defectors."
             what_changed = [{"type": "reputation_shift", "text": f"{latest_snapshot.complaint_count if latest_snapshot else 'Multiple'} new complaints flagged in recent reviews."}]
             strategic_signals = [
-                f"{name}'s reputation is softening — unhappy customers are documenting issues publicly.",
+                f"{name}'s reputation is softening: unhappy customers are documenting issues publicly.",
                 "Operational pain points are concentrated and recurring, not one-off incidents.",
             ]
             playbook = [
@@ -326,7 +326,7 @@ Known customer complaints:
                 "Post a quiet testimonial video addressing the exact complaint themes without naming the competitor.",
             ]
         elif active_social:
-            executive_summary = f"{name} is running an active social push this week — likely chasing slowing weekday traffic."
+            executive_summary = f"{name} is running an active social push this week, likely chasing slowing weekday traffic."
             what_changed = [{"type": "social_campaign", "text": f"{len(recent_posts)} posts across Instagram/Facebook in the last 7 days."}]
             strategic_signals = [
                 f"{name} is investing in top-of-funnel social reach, not retention.",
@@ -340,10 +340,10 @@ Known customer complaints:
                 "Capture their followers with a free-sample collab post with a complementary local business.",
             ]
         else:
-            executive_summary = f"{name} is quiet this week — a stable competitor with no obvious openings or threats."
+            executive_summary = f"{name} is quiet this week: a stable competitor with no obvious openings or threats."
             what_changed = [{"type": "review_trend", "text": "No notable social or review activity in the last 7 days."}]
             strategic_signals = [
-                f"{name} appears to be coasting — no visible offensive moves or distress signals.",
+                f"{name} appears to be coasting: no visible offensive moves or distress signals.",
                 "Quiet weeks are the right time to invest in your own moat rather than react to them.",
             ]
             playbook = [
@@ -351,7 +351,7 @@ Known customer complaints:
                 "Run a referral promo: existing customers get a free item for bringing a friend.",
                 "Audit your own Google Business profile for stale photos, hours, or menu items.",
                 f"Run one Local Service Ad geo-targeted to {name}'s zip code to siphon search intent.",
-                "Send a thank-you note campaign to your top 20 repeat customers — they are your moat.",
+                "Send a thank-you note campaign to your top 20 repeat customers. They are your moat.",
             ]
         weaknesses = weaknesses[:3]
 
@@ -401,14 +401,14 @@ def _baseline_saas_payload(comp: Competitor, weaknesses: list, hiring_signal_tex
     name = comp.name or comp.url
     if is_baseline:
         executive_summary = (
-            f"Now tracking {name}. This is the baseline scan — no page changes to "
+            f"Now tracking {name}. This is the baseline scan; no page changes to "
             f"report yet. Pricing, feature, and positioning shifts will surface here "
             f"as they happen."
         )
         signal = "Baseline captured. Strategic signals will appear as their public surfaces change."
     else:
         executive_summary = f"No homepage changes detected for {name} in the past week."
-        signal = "A quiet week — no new moves on their public surfaces to react to."
+        signal = "A quiet week: no new moves on their public surfaces to react to."
 
     strategic_signals = []
     if hiring_signal_text:
@@ -522,7 +522,7 @@ Head-to-head rules:
 - Use "confidence":"observed" ONLY when the point is backed by a real complaint,
   page change, or hiring fact in the data above. Otherwise "inferred".
 - 2-4 items per column, up to 3 plays. If competitor data is thin, return FEWER
-  points — NEVER pad or fabricate. Honesty over completeness."""
+  points. NEVER pad or fabricate. Honesty over completeness."""
 
 
 def _generate_saas_battlecard(

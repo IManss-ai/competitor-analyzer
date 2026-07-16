@@ -16,7 +16,7 @@ PROMPTS = {
 Write a short retention email (150-200 words) that:
 1. Subtly reinforces the founder's product value without mentioning the competitor by name
 2. Reminds customers why they chose this product
-3. Has a clear, warm tone — not panicked or defensive
+3. Has a clear, warm tone, not panicked or defensive
 Write ONLY the email body (no subject line). Start with the greeting.""",
         "user_template": "Our competitor ({competitor}) just made this change:\n{brief}\n\nOur product positioning: we serve {user_description}.\n\nWrite the retention email.",
     },
@@ -42,7 +42,7 @@ Be confident, not defensive. Don't name the competitor.""",
 The post should:
 1. Show market awareness without naming competitors
 2. Reinforce the founder's unique angle
-3. Sound like a confident, opinionated founder — not a press release
+3. Sound like a confident, opinionated founder, not a press release
 Write ONLY the post text. No hashtags unless they add value.""",
         "user_template": "Competitor ({competitor}) made this move:\n{brief}\n\nWrite a social post for the founder.",
     },
@@ -109,7 +109,7 @@ Warm regards,
 That is why we are focusing our upcoming product updates on hardware-accelerated automation and direct Git/Figma pipelines to eliminate administrative friction entirely. Let us build tools that do the work for you. Stay tuned!"""
 
     elif action_type == "social_draft":
-        return f"Competitors are launching AI assistants to summarize text. But teams do not need more AI noise — they need automated integrations that execute tasks. We are keeping our focus on deep, hardware-accelerated workflows. Back to building."
+        return f"Competitors are launching AI assistants to summarize text. But teams do not need more AI noise; they need automated integrations that execute tasks. We are keeping our focus on deep, hardware-accelerated workflows. Back to building."
 
     return None
 
