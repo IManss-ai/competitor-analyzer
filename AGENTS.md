@@ -1,75 +1,77 @@
 <claude-mem-context>
 # Memory Context
 
-# [competitor-analyzer] recent context, 2026-06-11 11:40pm GMT+5
+# [competitor-analyzer] recent context, 2026-07-15 10:35am GMT+5
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (18,478t read) | 352,756t work | 95% savings
+Stats: 50 obs (22,048t read) | 726,567t work | 97% savings
 
-### Jun 11, 2026
-3007 8:20p 🟣 War Room Client Component Implemented — Complete Campaign Intelligence Dashboard
-3008 " 🔵 Frontend Build Successful — Campaigns Pages Compiled
-3009 8:21p 🟣 War Room Frontend Committed to Version Control
-3010 " 🟣 MVP Deployed to Production — Full Test Suite Passing, Code Pushed to Main
-3011 " 🔵 MVP Deployment Verification in Progress — Railway Auto-Deploy Triggered
-3013 8:23p 🔵 Frontend Campaigns Route Live — Auth Redirect Working, Direct-Login QA Endpoint Active
-S510 Build complete competitive intelligence MVP in 24 hours with production deployment, verification, and demo readiness for pitch tomorrow (Jun 11, 8:27 PM)
-S511 Diagnose login issues and verify both production and local development environments are fully operational and correctly integrated (Jun 11, 8:27 PM)
-S512 User asked if product is ready to pitch and expressed dissatisfaction with frontend design—specifically the login page and dashboard, which they describe as dated and lacking modern enterprise aesthetic. Proposed combining design inspiration from competitors (AppKittie, TrustMRR) using Figma pro account. (Jun 11, 8:32 PM)
-S513 Front-end polish for Track A: redesign login page and dashboard to align with v3 "Intelligence Desk" design system; remove v2 aesthetic (glows, rounded corners, multi-color accents); implement institutional ledger-like appearance with theme variable migration. (Jun 11, 8:38 PM)
-3027 8:45p 🔵 Design System v3 Architecture & Dual-Theme Implementation
-3028 8:46p 🔵 Login Page Current Implementation & Theme Integration
-3029 " 🔵 Dashboard Onboarding Flow & Theme Variable Integration
-3030 8:47p 🔵 Dashboard Component Structure: Onboarding Flow & Main Render
-3031 " 🔵 Main Dashboard Layout: Stats, Activity Chart & Intel Feed
-3032 8:48p ✅ Login Page Redesign: Intelligence Feed Demo & Theme Variable Migration
-3033 8:49p ✅ Dashboard Stats Row Redesigned as Unified Ledger Strip
-3034 " ✅ Chart Styling: Removed Rounded Corners from Tooltip & Bar Bars
-3035 " ✅ Dashboard Modal & Button Styling: Removed Rounded Corners (v2→v3 Sweep)
-3036 " ✅ Dashboard Component: Complete Rounded Corner Removal (v2→v3 Finalized)
-3037 8:50p 🔵 Frontend Build Successful: Login & Dashboard Redesign Compiles
-3038 " ✅ Track A Front-End Polish: Committed & Pushed to Main
-S514 Front-end polish (Track A): redesign login page and dashboard to align with v3 "Intelligence Desk" design system; remove v2 aesthetics (aurora glows, hardcoded sky-blue, rounded corners, multi-accent fragmentation); implement institutional ledger-like appearance with proper theme variable integration; ship to production and verify. (Jun 11, 8:51 PM)
-3039 8:52p 🔵 Vercel Deployment In Progress: Login Redesign Not Yet Live
-3040 " 🔵 Login Redesign Deployed Successfully to Production
-S515 Track A front-end polish: redesign login page and dashboard to v3 "Intelligence Desk" design system; migrate from v2 soft aesthetic (aurora glows, sky-blue, rounded corners, multi-accent cards) to institutional authority (sharp corners, unified ledger strips, single accent, product demo); ship to production. (Jun 11, 8:52 PM)
-S516 Continue Rivalscope design work: complete and verify three pending fixes (F-001 sidebar, F-002 chart density, F-003 autofill form bug), generate comprehensive audit report, and push all changes. (Jun 11, 8:53 PM)
-3041 10:09p 🔵 Rivalscope Onboarding Flow: SaaS Setup with Competitor Addition
-3042 10:10p 🔵 Rivalscope Onboarding Completion: Dashboard Navigation
-3043 " 🔵 Rivalscope Dashboard Populated with Competitor Data
-3044 10:13p ✅ Sidebar branding redesigned for enhanced visual hierarchy
-3045 " ✅ Navigation active state redesigned with sharp left rule indicator
-3046 10:14p ✅ Sidebar redesign F-001 committed with passing TypeScript check
-3047 " ✅ Activity chart x-axis simplified with interval tick spacing
-3048 10:15p ✅ Activity chart x-axis committed as F-002 design refinement
-3049 " 🔴 Onboarding form now reads DOM values directly to handle autofill without onChange
-3050 " 🔴 Added name attributes to onboarding form inputs for FormData extraction
-3051 " 🔴 Onboarding form autofill fix committed as F-003 with zero build errors
-3052 10:16p 🔵 F-003 autofill fix verified working end-to-end with programmatic form submission
-S517 Ready to work on Rivalscope — status briefing and next work priorities (Jun 11, 10:17 PM)
-S518 Sync DESIGN.md design specification to match live globals.css implementation — close gap between documented v3 spec and shipped CSS tokens, color values, component specs, and layout dimensions. (Jun 11, 11:09 PM)
-3078 11:10p ✅ gstack CLI auto-upgraded to v1.57.10.0
-3079 " 🔵 Design System v3 "Intelligence Desk" fully documented in DESIGN.md
-3080 11:17p 🔵 Accent color discrepancy: design direction (oxblood) vs. live implementation (slate-blue)
-3081 " 🔵 Change-type badge colors diverge from DESIGN.md specification
-3082 11:18p ✅ DESIGN.md updated to clarify live implementation state and accent color history
-3083 11:19p ✅ DESIGN.md comprehensively updated to document live implementation state and known gaps
-3084 " ✅ DESIGN.md updated with correct radius token names and Tailwind class guardrails
-3085 " ✅ DESIGN.md layout section updated with live token names and actual dimensions
-3086 " ✅ DESIGN.md components section updated to live token names and implementation guidance
-3087 11:20p ✅ DESIGN.md motion section updated with live duration and easing token names and values
-3088 " ✅ DESIGN.md creative decisions section reframed to emphasize accent discipline over specific color
-3089 " ✅ DESIGN.md decisions log expanded with implementation milestones (2026-06-08 through 2026-06-11)
-3090 " ✅ DESIGN.md comprehensive sync committed and shipped to main branch
-S519 Sync DESIGN.md documentation to live implementation and assess for gaps — determine if spec-reality divergence introduced any visual or accessibility issues on the live site. (Jun 11, 11:24 PM)
-3091 11:29p 🔵 Local SQLite test database contains rivalscope test users
-3092 " 🔵 Test user credentials and authentication patterns found in test suite
-3093 " 🔵 Direct-login authentication endpoint discovered in API routes
-3094 " 🔵 Hybrid magic-link and password-based authentication with instant sign-up
-3095 " 🔵 Direct-login endpoint successfully authenticates QA users and creates sessions
+### Jul 13, 2026
+S1315 Verify Peerlist Launchpad access and prepare for Rivalscope 2.0 relaunch posting; navigate founder through manual Launchpad workflow (Jul 13, 2:43 PM)
+S1316 Rivalscope multi-platform product launch coordination (Jul 13-14, 2026) — automate social posting and verify product messaging across LinkedIn, X, Product Hunt, and Peerlist (Jul 13, 2:45 PM)
+S1317 Unblock Telegram Web authentication for personalized incubator network outreach during Rivalscope launch — identify login method and prepare contact messaging strategy (Jul 13, 7:37 PM)
+S1318 Execute Rivalscope v2 relaunch across social channels (Peerlist, X, LinkedIn, Product Hunt) on 2026-07-13 (Jul 13, 7:44 PM)
+S1319 Launch readiness check for RivalScope: Product Hunt goes live tomorrow (July 14). User asking what to focus on for final preparations. (Jul 13, 8:03 PM)
+S1320 Launch production deployment of competitor-analyzer with four changes; verify new build is live (Jul 13, 10:18 PM)
+### Jul 14, 2026
+8440 2:24a 🔵 Frontend typecheck passes with zero errors
+8441 " 🔵 hasIntel logic verified against production API data
+8442 2:25a 🔵 Frontend dev server running on port 3009 with production API integration
+8443 " 🔵 Visual verification: apps detail page conditional rendering working
+8445 2:27a ✅ Scrubbed G2 marketing claims from public surfaces
+8446 " 🟣 Apps profile invite state for untracked catalog entries
+8447 3:47a ✅ Deployed to production via main branch push
+8448 " 🔵 Deployment verification polling initiated
+S1321 Launch-day prod QA and fixes — verify stability, ship approved copy/UX changes for Jul 14 PH launch (Jul 14, 3:47 AM)
+8449 3:48a 🟣 Launch complete: Four coordinated changes verified live on production
+8451 3:49a ⚖️ Launch-day QA sweep and three targeted fixes shipped to production
+S1322 Ready to continue work on Product Hunt launch (Jul 14) — assess product status, prioritize remaining work (Jul 14, 3:57 AM)
+S1323 Session initialization and status briefing — checking readiness and reviewing project state before work begins (Jul 14, 4:11 PM)
+8452 4:12p 🔵 Production Status Check: Pricing Page Returns 404
+8453 " 🔵 Landing Page Links to Non-Existent /pricing Route
+8454 4:13p 🔵 Pricing Implemented as Anchor Link on Landing Page, Not Separate Route
+8455 " 🔵 Located "90-Day Changes" Metric in Apps Detail Page
+8456 " 🔵 Apps Detail Page Conditionally Renders Metrics Based on hasIntel Flag
+8457 4:14p 🔵 Backend Computes change_velocity_90d from ChangeEvent Count per Tracked Competitors
+8458 " 🔵 Data Model: ChangeEvent Records Detected Changes Between Snapshots per Competitor
+8459 4:18p 🔵 Root Cause: Stripe App Not Tracked, Never Scanned
+8460 " 🔵 No "Presentation Hole" Found: All Tracked Apps Show Real Metrics
+8461 4:19p 🟣 Improved Shipping Velocity Display for Monitored Apps with No Changes Yet
+### Jul 15, 2026
+8465 10:10a 🔵 Uncommitted em-dash and punctuation cleanup across beat, apps, and share pages
+8466 10:12a 🔵 Em-dash cleanup is widespread across 54 frontend files; scope much larger than deferred /beat and /apps fixes
+8467 " ⚖️ Structured workflow established: gate uncommitted fixes with next build, commit in phases, verify deploy, then broader em-dash pass
+8468 " 🔵 Next.js production build gate initiated in background; demo-day prep triage task created as blocker-vs-nice-to-have framework
+8469 10:13a 🔵 Em-dash usage patterns in dashboard-client.tsx: mix of prose, code comments, and data placeholders requires careful categorization
+8470 " 🟣 Build gate passed; three logical commits created for deferred fixes and relaunch documentation
+8471 10:14a ✅ Three commits pushed to main; Vercel auto-deploy triggered
+8472 " 🔵 Em-dash audit complete: 50+ remaining instances across 25 files; mixed categories require case-by-case review
+8473 10:15a 🟣 Em-dash scrub script executed successfully: 37 replacements across 22 files
+8474 10:17a 🔵 Em-dash scrub verified complete: all user-facing prose cleaned; only legitimate em-dashes (comments, placeholders) remain
+8475 " 🔵 Task 3 verification complete: /beat page live on prod with new CTA copy; remaining em-dash is in page metadata (to be fixed by in-app scrub commit)
+8476 " ✅ In-app em-dash scrub committed and pushed to main; Vercel auto-deploy triggered for 22-file prose cleanup
+8477 10:18a 🔵 Task 5 initiated: demo-day prep triage; demo script documented and ready; backend health verified
+8478 " 🔵 Demo account verified: pre-warmed demo credentials functional on prod backend; login endpoint responding
+8479 10:19a 🔵 Backend auth flow verified: POST /auth/login supports password + magic-link; returns session_token for authenticated users
+8480 " 🔵 Demo account data state confirmed: Klue and Crayon competitors tracked; last_scan timestamps show no recent data
+8481 " 🔵 BLOCKER: Demo account head-to-head data NOT cached; PATH B fallback missing critical cached data
+8482 10:20a 🔵 CORRECTION: Demo account head-to-head data IS cached and complete; nested in battlecard structure, not top-level
+8483 " 🔵 Backend battle card generation still uses em-dashes in titles; frontend em-dash removal incomplete (backend not updated)
+8484 10:21a 🔵 Em-dash cleanup was frontend-only; backend code retains em-dashes in comments, emails, and error messages
+8485 " 🔵 Backend user-facing copy: 12 em-dashes in generated messages (emails, errors, onboarding); not visible in frontend demo but violate house rule
+8486 10:22a 🔵 Backend em-dash scrub script created (deferred post-demo); 14 replacement groups scoped across 6 backend files
+8487 " 🟣 Backend em-dash scrub executed and validated: 14 replacements applied; all 652 unit tests pass
+8488 10:23a ✅ Backend em-dash scrub committed and pushed to main; complete codebase cleanup now in flight
+S1324 Clear deferred queue from Product Hunt launch before demo day (Friday, Jul 17). Complete em-dash cleanup across frontend and backend, verify demo-day readiness, and ship all uncommitted work. (Jul 15, 10:23 AM)
+8489 10:33a 🔵 Rivalscope Frontend Design System: shadcn-based systematic tokens with oklch color space
+8490 10:35a 🔵 Empty alt attributes on favicon images across dashboard surfaces
+8491 " 🔵 Minimal XL/2XL responsive breakpoint coverage in app surfaces
+8492 " 🔵 Button size distribution: 21 sm + 6 icon-sm + 4 icon in dashboard
+8493 " 🔵 9px uppercase labels used extensively in dashboard metadata and status badges
+8494 " 🔵 Numeric cells in dashboard metric grid lack tabular-nums; use text-[12px] font-mono only
 
-Access 353k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 727k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
