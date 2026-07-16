@@ -29,3 +29,13 @@ Fixed same day on `main` (d9a04d1..496c14a, 11 commits): light-mode AA on status
 - [ ] **[medium] Touch targets in-app** — shadcn size variants (xs 24px, sm/icon-sm 28px, icon 32px) used across queue/competitors/battlecards; systemic fix = size-variant overhaul, deliberately not done 2 days before demo.
 - [ ] **[polish, systemic] Spacing scale fork (~190 off-scale utilities) + type scale fork (240+ arbitrary px sizes incl. 9/9.5px)** — tokens exist, nothing enforces them; consider a lint rule (see Octarin verified-pattern: automate color/token checks in CI).
 - [ ] **[polish] Motion durations ignore `--duration-*` tokens**; pricing section leaves right third empty; orphaned "New · battle cards" hero link; decorative blue rule in how-it-works; single `xl:` breakpoint use on login.
+
+## /qa 2026-07-16 (pre-demo full sweep; report: `.gstack/qa-reports/qa-report-rivalscope-dev-2026-07-16.md`)
+
+Fixed same day on `main` (34463df..6e3843e, 11 commits, all verified on prod): LLM filler regex over-stripping real intel (+ hedge-tail follow-up), competitor-detail card missing the meta-filler pass, hero counter dead-zone on mobile, 0.0-star zero-signal review rows, share-page array guards, route titles for login/terms/privacy, share soft-404 to real 404, baseline security headers, backend em-dash scrub, prod /docs gating. Deferred/flagged:
+
+- [ ] **[flag, brand] /beat "$29" CTA mails dzakpelov@gmail.com** — deliberate since the feature commit (`b51ba87`), but a personal Gmail on a paid CTA reads off-brand; swap to support@rivalscope.dev (or confirm intake inbox) post-demo.
+- [ ] **[low, ux] Read-only upsell toast has no dismiss button** — fixed bottom-center on every authed page of a read-only account (visible during the demo); add an X post-demo if wanted.
+- [ ] **[low, security] Login error confirms account existence (enumeration)** — carried from /qa 2026-07-05, still open, post-demo.
+- [ ] **[low, cosmetic] Rating Trend x-axis repeats "Jun 25" ×3 on single-scan accounts** — dedupe tick labels or hide axis below 2 distinct dates.
+- [ ] **[infra, test] No frontend test framework** — ISSUE-001's regex fix is verified by a 25-case node repro, not a committed test; bootstrap vitest post-demo and land the repro cases as unit tests.
