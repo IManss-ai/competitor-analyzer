@@ -38,6 +38,18 @@ function StarRating({ rating }: { rating: number | null }) {
   );
 }
 
+// A snapshot row with no rating, no review count and no complaints carries no
+// signal; rendering it as "0.0 (5 hollow stars) 0 reviews" reads as a terrible
+// rating instead of "nothing collected yet".
+function hasSignal(snap: ReviewIntelligenceProps['reviewsData'][number]['snapshots'][number]) {
+  return (
+    (snap.avg_rating ?? 0) > 0 ||
+    (snap.total_reviews ?? 0) > 0 ||
+    snap.complaint_count > 0 ||
+    (snap.top_complaints?.length ?? 0) > 0
+  );
+}
+
 export default function ReviewIntelligence({ competitors, reviewsData }: ReviewIntelligenceProps) {
   const hasData = reviewsData.some(d => d.snapshots && d.snapshots.length > 0);
 
@@ -59,12 +71,18 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
           {competitors.map((comp, index) => {
             const data = reviewsData[index];
             if (!data || !data.snapshots || data.snapshots.length === 0) return null;
+            const snapshots = data.snapshots.filter(hasSignal);
 
             return (
               <div key={comp.id} className="px-5 py-4">
                 <p className="text-xs font-bold text-foreground mb-3 truncate">{comp.name || comp.url}</p>
+                {snapshots.length === 0 ? (
+                  <p className="text-[11px] text-muted-foreground italic">
+                    No public reviews collected yet. Sources are re-checked on every scan.
+                  </p>
+                ) : (
                 <div className="space-y-3">
-                  {data.snapshots.map((snap, sIdx) => {
+                  {snapshots.map((snap, sIdx) => {
                     const style = PLATFORM_STYLES[snap.platform] ?? {
                       label: snap.platform,
                       badge: 'bg-muted text-muted-foreground border-border',
@@ -105,6 +123,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                     );
                   })}
                 </div>
+                )}
               </div>
             );
           })}
