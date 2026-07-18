@@ -295,6 +295,15 @@ ${cardLists.win_conditions.length > 0
       rating: s.avg_rating,
     }));
 
+  // Backend emits one review snapshot PER PLATFORM per scan, so a single-scan
+  // account yields several same-day points ("Jun 25" x3 on the axis). Dedupe
+  // tick labels to distinct dates; with <2 distinct dates the axis says nothing
+  // useful, so hide it (tooltip still shows values on hover). Pre-mount every
+  // date is '' → 1 distinct → hidden, which keeps SSR/first paint consistent.
+  const distinctRatingDates: string[] = Array.from(
+    new Set<string>(ratingData.map((d: { date: string }) => d.date))
+  );
+
   const lastScannedText = !mounted
     ? ''
     : detail.scan_history && detail.scan_history.length > 0
@@ -840,7 +849,12 @@ ${cardLists.win_conditions.length > 0
               <div className="h-[120px] w-full">
                 <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 600, height: 120 }}>
                   <LineChart data={ratingData}>
-                    <XAxis dataKey="date" tick={{ fill: chart.tick, fontSize: 10 }} />
+                    <XAxis
+                      dataKey="date"
+                      ticks={distinctRatingDates}
+                      hide={distinctRatingDates.length < 2}
+                      tick={{ fill: chart.tick, fontSize: 10 }}
+                    />
                     <YAxis domain={[1, 5]} tick={{ fill: chart.tick, fontSize: 10 }} width={15} />
                     <Tooltip
                       content={({ active, payload }) => {

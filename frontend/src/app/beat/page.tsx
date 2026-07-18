@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 // dead end.
 const CHECKOUT_URL =
   process.env.NEXT_PUBLIC_BEAT_CHECKOUT_URL ||
-  'mailto:dzakpelov@gmail.com?subject=Beat%20my%20competitor%20(%2429%20plan)&body=My%20site%3A%0AMy%20top%20competitor%3A';
+  'mailto:support@rivalscope.dev?subject=Beat%20my%20competitor%20(%2429%20plan)&body=My%20site%3A%0AMy%20top%20competitor%3A';
 
 const SAMPLE_PLAYS = [
   {

@@ -92,6 +92,8 @@ class TestApiV1Endpoints(unittest.TestCase):
             json={"email": "known@example.com", "password": "wrongpass"},
         )
         self.assertEqual(resp.status_code, 401)
+        # Enumeration hardening: uniform copy that never confirms the account exists.
+        self.assertEqual(resp.json()["detail"], "Incorrect email or password.")
 
     def test_direct_login_missing_fields_422(self):
         resp = self.client.post("/api/v1/auth/direct-login", json={"email": "x@y.com"})

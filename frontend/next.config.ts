@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
     return [
       { source: '/battlecard', destination: '/battlecards', permanent: false },
       { source: '/login', destination: '/auth/login', permanent: false },
+      // Signup IS login (account created on first sign-in) — no signup route exists.
+      { source: '/auth/signup', destination: '/auth/login', permanent: false },
+      { source: '/signup', destination: '/auth/login', permanent: false },
     ];
   },
   // Baseline hardening headers; Vercel only sends HSTS by default. SAMEORIGIN

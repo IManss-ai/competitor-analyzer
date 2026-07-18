@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api/v1")
 # sites and the test import path.
 from app.serialization import iso_utc as _iso_utc
 from app.access import require_write_access, access_level
+from app.observability import note_degraded
 
 
 # ── Auth dependency ──────────────────────────────────────────────────────────
@@ -91,7 +92,9 @@ async def api_direct_login(payload: dict, db: Session = Depends(get_session)):
                 detail="This account uses email sign-in. We've emailed you a secure sign-in link — check your inbox.",
             )
         if not check_password(password, user.password_hash):
-            raise HTTPException(status_code=401, detail="Invalid password for this email address.")
+            # Uniform copy: never confirm that the email has an account
+            # (enumeration hardening). Keep in sync with the login page fallback.
+            raise HTTPException(status_code=401, detail="Incorrect email or password.")
 
     session_token = generate_session_token(str(user.id), user.email)
     return {"ok": True, "session_token": session_token}
@@ -538,6 +541,14 @@ def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id
         url = "https://" + url
     name = payload.get("name", "").strip() or None
     competitor = Competitor(user_id=user_uuid, url=url, name=name)
+    # Organic catalog growth: every tracked URL becomes (or links to) a public
+    # /apps entry. Best-effort — catalog failure must never block tracking.
+    try:
+        from app.discovery.backfill import get_or_create_app
+        app_row, _ = get_or_create_app(db, url, name=name, source="user_tracked", scan_tier="full")
+        competitor.app_id = app_row.id
+    except Exception as e:
+        note_degraded("discovery.backfill", "skipped", "get_or_create_app_failed", e)
     db.add(competitor)
     db.commit()
     db.refresh(competitor)

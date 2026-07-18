@@ -92,7 +92,7 @@ export default function LoginPage() {
       if (res.ok && data.session_token) {
         window.location.href = `${callbackBase}${data.session_token}`;
       } else {
-        setError(data.detail || 'Failed to authenticate. Please check your credentials.');
+        setError(data.detail || 'Incorrect email or password.');
       }
     } catch {
       setError('Could not reach the server. Please check your connection.');
