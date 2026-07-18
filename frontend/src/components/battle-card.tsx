@@ -98,13 +98,13 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                       {cardData?.variant === 'local' && (
                         <Badge
                           variant="outline"
-                          className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 h-auto rounded-sm"
+                          className="text-xs font-mono font-semibold uppercase tracking-wider px-2 py-0.5 h-auto rounded-sm"
                         >
                           Local intel
                         </Badge>
                       )}
                     </h3>
-                    <p className="text-[10px] text-muted-foreground mt-1 font-mono uppercase tracking-wider">
+                    <p className="text-xs text-muted-foreground mt-1 font-mono uppercase tracking-wider">
                       {cardData?.variant === 'local'
                         ? 'Reviews + social + reputation read'
                         : 'Page changes + reviews + hiring read'}
@@ -114,13 +114,14 @@ export default function BattleCard({ competitorId, competitorName, userId }: Bat
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsOpen(false)}
+                    aria-label="Close battle card"
                     className="h-8 w-8 text-muted-foreground"
                   >
                     <X size={15} />
                   </Button>
                 </div>
                 {cardData && (
-                  <div className="text-[9px] font-mono text-muted-foreground mt-3">
+                  <div className="text-xs font-mono text-muted-foreground mt-3">
                     GENERATED AT: {mounted ? new Date(cardData.generated_at).toLocaleString().toUpperCase() : ''}
                   </div>
                 )}

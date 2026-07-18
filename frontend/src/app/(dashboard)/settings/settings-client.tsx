@@ -219,13 +219,13 @@ export default function SettingsClient({
 
       {/* Left Navigation Sidebar */}
       <aside className="lg:w-56 flex-shrink-0">
-        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-border">
+        <nav aria-label="Settings sections" className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 sticky top-6 border-b lg:border-b-0 border-border">
           {NAV_TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={clsx(
-                'flex items-center gap-3 px-3 py-2.5 text-sm font-medium whitespace-nowrap rounded-lg transition-colors duration-150 cursor-pointer',
+                'relative flex items-center gap-3 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-colors duration-(--duration-base) ease-(--ease-out) cursor-pointer after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2 after:content-[""]',
                 activeTab === tab.id
                   ? 'bg-muted text-foreground border-b-2 lg:border-b-0 lg:border-l-2 border-primary'
                   : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
@@ -500,6 +500,7 @@ export default function SettingsClient({
                                 size="icon-sm"
                                 className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                 title="Delete"
+                                aria-label={`Remove ${comp.name || comp.url}`}
                               >
                                 <Trash2 size={16} />
                               </Button>

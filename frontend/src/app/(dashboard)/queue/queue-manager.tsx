@@ -82,9 +82,9 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                 <CheckCircle2 size={32} style={{ color: 'var(--tone-positive)' }} />
               </div>
             </div>
-            <h3 className="text-xl font-semibold tracking-tight mb-2 text-foreground">
+            <h2 className="text-xl font-semibold tracking-tight mb-2 text-foreground">
               Queue is clear
-            </h3>
+            </h2>
             <p className="text-sm max-w-sm mx-auto mb-8 text-muted-foreground">
               All action drafts have been reviewed. You&apos;re up to date with your competitors&apos; moves.
             </p>
@@ -117,7 +117,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <div
-                className={`bg-card border border-border rounded-xl p-5 flex flex-col border-l-[3px] ${
+                className={`bg-card border border-border rounded-xl p-6 flex flex-col border-l-[3px] ${
                   approvedId === action.id
                     ? 'bg-[var(--tone-positive)]/5 border-[var(--tone-positive)]/20'
                     : ''
@@ -128,19 +128,19 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                 }}
               >
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-5 flex-wrap">
+                <div className="flex items-center gap-3 mb-6 flex-wrap">
                   <span className="text-base font-semibold text-foreground">
                     {action.competitor.name}
                   </span>
                   <ChangeBadge type={action.change_event.change_type} />
                   <Badge
                     variant="secondary"
-                    className="ml-auto text-[9px] uppercase font-mono tracking-wider px-2.5 py-0.5 h-auto rounded-md"
+                    className="ml-auto text-xs uppercase font-mono tracking-wider px-2 py-0.5 h-auto rounded-md"
                   >
                     {action.action_type.replace(/_/g, ' ')}
                   </Badge>
                   {mounted && action.change_event.detected_at && (
-                    <span className="text-[10px] font-mono border border-border px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                    <span className="text-xs font-mono border border-border px-2 py-0.5 rounded bg-muted text-muted-foreground">
                       {new Date(action.change_event.detected_at).toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: '2-digit',
@@ -151,7 +151,7 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
 
                 {/* Trigger */}
                 <div className="bg-muted border border-border rounded-lg p-4 mb-4 relative">
-                  <span className="absolute -top-2.5 left-3 border border-border px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-wider bg-card text-muted-foreground">
+                  <span className="absolute -top-2.5 left-3 border border-border px-2 py-0.5 rounded text-xs font-mono uppercase tracking-wider bg-card text-muted-foreground">
                     triggered by
                   </span>
                   <p className="text-sm leading-relaxed mt-1 text-muted-foreground">
@@ -171,14 +171,14 @@ export default function QueueManager({ initialActions, userId }: QueueManagerPro
                   </div>
                 ) : (
                   <div className="bg-muted/50 border border-border rounded-lg p-4 mb-4 relative group/code">
-                    <p className="text-[13px] text-foreground whitespace-pre-wrap leading-relaxed font-mono selection:bg-primary/20 pr-10">
+                    <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed font-mono selection:bg-primary/20 pr-10">
                       {action.edited_text || action.original_draft}
                     </p>
                     <button
                       onClick={() =>
                         handleCopy(action.id, action.edited_text || action.original_draft)
                       }
-                      className="absolute top-3 right-3 p-2 text-muted-foreground hover:text-foreground bg-card hover:bg-muted rounded-md transition-colors opacity-0 group-hover/code:opacity-100 focus-visible:opacity-100 group-focus-within/code:opacity-100 [@media(hover:none)]:opacity-100 cursor-pointer border border-border"
+                      className="absolute top-3 right-3 p-2 text-muted-foreground hover:text-foreground bg-card hover:bg-muted rounded-md transition-colors opacity-0 group-hover/code:opacity-100 focus-visible:opacity-100 group-focus-within/code:opacity-100 [@media(hover:none)]:opacity-100 cursor-pointer border border-border after:absolute after:top-1/2 after:left-1/2 after:size-[max(100%,44px)] after:-translate-x-1/2 after:-translate-y-1/2 after:content-['']"
                       title="Copy to clipboard"
                       aria-label="Copy to clipboard"
                     >
