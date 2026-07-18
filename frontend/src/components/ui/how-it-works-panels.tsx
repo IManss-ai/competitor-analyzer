@@ -103,7 +103,7 @@ function PanelOneMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-muted border border-border rounded-lg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-6 bg-muted border border-border rounded-lg relative overflow-hidden">
       <div className="space-y-3 relative z-10">
         {/* Row 1 */}
         <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-3">
@@ -218,7 +218,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex items-center gap-5 p-5 bg-muted border border-border rounded-lg relative overflow-hidden">
+    <div className="w-full h-full flex items-center gap-6 p-6 bg-muted border border-border rounded-lg relative overflow-hidden">
       {/* Radar Section */}
       <div className="w-16 h-16 rounded-full border border-border relative flex items-center justify-center flex-shrink-0 bg-background">
         <svg className="absolute inset-0 w-full h-full -rotate-90">
@@ -263,7 +263,7 @@ function PanelTwoMockup({ isHovered }: { isHovered: boolean }) {
           return (
             <div
               key={url}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md border transition-colors duration-200 ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-md border transition-colors duration-(--duration-base) ease-(--ease-out) ${
                 isScanned
                   ? 'bg-card border-border text-foreground'
                   : 'bg-background border-border text-muted-foreground'
@@ -305,7 +305,7 @@ function PanelThreeMockup({ isHovered }: { isHovered: boolean }) {
   }, [isHovered]);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center p-5 bg-muted border border-border rounded-lg relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-center p-6 bg-muted border border-border rounded-lg relative overflow-hidden">
       <motion.div
         key={animKey}
         animate={isHovered ? { y: -4 } : { y: 0 }}
@@ -402,7 +402,7 @@ export default function HowItWorksPanels() {
         />
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-12">
         {steps.map((step, idx) => {
           const isHovered = hoveredIndex === idx;
 
@@ -416,7 +416,7 @@ export default function HowItWorksPanels() {
               whileInView="visible"
               viewport={{ once: true, amount: 0, margin: "0px 0px 400px 0px" }}
               custom={idx}
-              className="relative flex flex-col md:flex-row gap-6 md:gap-10 items-stretch"
+              className="relative flex flex-col md:flex-row gap-6 md:gap-12 items-stretch"
             >
               {/* Left Side: Node Circle (floating offset to vertical line) */}
               <div className="absolute left-[-15px] md:left-[-31px] -translate-x-1/2 top-4 z-20 flex items-center justify-center">
@@ -437,7 +437,7 @@ export default function HowItWorksPanels() {
                 variants={cardHoverVariants}
                 whileHover="hover"
                 initial="rest"
-                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-card border border-border rounded-lg p-6 md:p-8 gap-6 md:gap-8 hover:border-primary/30 transition-colors duration-300 cursor-pointer shadow-sm"
+                className="flex-1 grid md:grid-cols-[1.2fr_1fr] bg-card border border-border rounded-lg p-6 md:p-8 gap-6 md:gap-8 hover:border-primary/30 transition-colors duration-(--duration-slow) ease-(--ease-out) cursor-pointer shadow-sm"
               >
                 {/* Left card content */}
                 <div className="flex flex-col justify-between">

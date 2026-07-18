@@ -117,20 +117,20 @@ export default function LoginPage() {
 
       {/* ── Left: the briefing panel — the product demonstrating itself ── */}
       <div className="hidden lg:flex flex-col w-[46%] relative bg-card border-r border-border">
-        <div className="flex flex-col h-full p-12 xl:p-16">
+        <div className="flex flex-col h-full p-12">
 
           {/* Masthead */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity max-w-fit">
             <div className="w-7 h-7 flex items-center justify-center rounded bg-primary">
               <RivalscopeLogo size={13} className="text-primary-foreground" />
             </div>
-            <span className="text-[15px] font-bold tracking-tight text-foreground">
+            <span className="text-sm font-bold tracking-tight text-foreground">
               Rivalscope
             </span>
           </Link>
 
           {/* Dateline rule */}
-          <div className="flex items-baseline justify-between mt-10 pb-2 border-b-2 border-foreground">
+          <div className="flex items-baseline justify-between mt-12 pb-2 border-b-2 border-foreground">
             <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
               Competitive intelligence desk
             </span>
@@ -138,20 +138,20 @@ export default function LoginPage() {
           </div>
 
           {/* Headline */}
-          <h2 className="mt-8 text-[2.4rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-foreground">
+          <h2 className="mt-8 text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] text-foreground">
             Know what changed
             <br />
             before your
             <br />
             customers do.
           </h2>
-          <p className="mt-5 text-[13px] leading-relaxed max-w-sm text-muted-foreground">
+          <p className="mt-6 text-sm leading-relaxed max-w-sm text-muted-foreground">
             Rivalscope watches your competitors&apos; pages, pricing, reviews, and hiring,
             then turns every move into a plan you can execute.
           </p>
 
           {/* Live ledger — staggered terminal feed */}
-          <div className="mt-10 flex-1 min-h-0">
+          <div className="mt-12 flex-1 min-h-0">
             <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3 text-muted-foreground">
               Detected this morning
             </p>
@@ -183,14 +183,14 @@ export default function LoginPage() {
           </div>
 
           {/* Bottom stat strip */}
-          <div className="grid grid-cols-3 pt-5 mt-8 border-t border-border">
+          <div className="grid grid-cols-3 pt-6 mt-8 border-t border-border">
             {[
               ['24/7', 'monitoring'],
               ['76+', 'apps indexed'],
               ['<24h', 'to action plan'],
             ].map(([num, label]) => (
               <div key={label}>
-                <p className="text-[18px] font-mono font-semibold tabular-nums text-foreground">{num}</p>
+                <p className="text-lg font-mono font-semibold tabular-nums text-foreground">{num}</p>
                 <p className="text-[10px] font-mono uppercase tracking-wider mt-0.5 text-muted-foreground">{label}</p>
               </div>
             ))}
@@ -203,25 +203,25 @@ export default function LoginPage() {
         <div className="w-full max-w-[380px]">
 
           {/* Mobile masthead */}
-          <Link href="/" className="lg:hidden flex items-center gap-3 mb-10 hover:opacity-85 transition-opacity max-w-fit">
+          <Link href="/" className="lg:hidden flex items-center gap-3 mb-12 hover:opacity-85 transition-opacity max-w-fit">
             <div className="w-7 h-7 flex items-center justify-center rounded bg-primary">
               <RivalscopeLogo size={13} className="text-primary-foreground" />
             </div>
-            <span className="text-[15px] font-bold tracking-tight text-foreground">Rivalscope</span>
+            <span className="text-sm font-bold tracking-tight text-foreground">Rivalscope</span>
           </Link>
 
           <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3 text-muted-foreground">
             Access
           </p>
-          <h1 className="text-[26px] font-extrabold tracking-[-0.025em] leading-tight text-foreground">
+          <h1 className="text-2xl font-extrabold tracking-[-0.025em] leading-tight text-foreground">
             Sign in to your desk
           </h1>
-          <p className="text-[13px] mt-2 mb-7 text-muted-foreground">
+          <p className="text-sm mt-2 mb-8 text-muted-foreground">
             New here? Your account is created on first sign-in. No separate signup.
           </p>
 
           {plan && (
-            <div className="mb-5 px-4 py-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30">
+            <div className="mb-6 px-4 py-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30">
               <Badge variant="default" className="text-[9px] font-mono font-semibold uppercase tracking-wider px-2">
                 Plan
               </Badge>
@@ -235,7 +235,7 @@ export default function LoginPage() {
           )}
 
           {error && (
-            <div className="mb-5 px-4 py-3 text-[12px] font-medium rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
+            <div className="mb-6 px-4 py-3 text-[12px] font-medium rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
               {error}
             </div>
           )}
@@ -243,7 +243,7 @@ export default function LoginPage() {
           <Card>
             <CardContent className="pt-6">
               <form onSubmit={handleDirectLogin} className="space-y-4">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="email">Email address</Label>
                   <Input
                     id="email"
@@ -258,7 +258,7 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
@@ -277,7 +277,7 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-10 text-[13px] mt-1"
+                  className="w-full h-10 text-sm mt-1"
                   size="lg"
                 >
                   {loading ? 'Authenticating…' : 'Sign in'}
@@ -287,7 +287,7 @@ export default function LoginPage() {
             </CardContent>
           </Card>
 
-          <div className="mt-8 pt-5 flex items-center justify-between border-t border-border">
+          <div className="mt-8 pt-6 flex items-center justify-between border-t border-border">
             <Link
               href="/"
               className="text-[11px] font-mono inline-flex items-center gap-2 group text-muted-foreground hover:text-foreground transition-colors"

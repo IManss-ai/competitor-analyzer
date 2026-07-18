@@ -79,7 +79,7 @@ export function Pricing({
         </p>
       </div>
 
-      <div className="flex justify-center items-center gap-2 mb-10">
+      <div className="flex justify-center items-center gap-2 mb-12">
         <Switch
           id="billing-switch"
           ref={switchRef as any}
@@ -118,7 +118,7 @@ export function Pricing({
               `rounded-lg border-[1px] p-6 bg-card text-center lg:flex lg:flex-col lg:justify-center relative shadow-sm`,
               plan.isPopular ? "border-primary border-2" : "border-border",
               "flex flex-col",
-              !plan.isPopular && "mt-5",
+              !plan.isPopular && "mt-6",
               index === 0 || index === 2
                 ? "z-0 transform translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg]"
                 : "z-10",
@@ -169,7 +169,7 @@ export function Pricing({
                 {isMonthly ? "billed monthly" : "billed annually"}
               </p>
 
-              <ul className="mt-5 gap-2 flex flex-col">
+              <ul className="mt-6 gap-2 flex flex-col">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-foreground">
                     <Check className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
@@ -187,7 +187,7 @@ export function Pricing({
                     variant: "outline",
                   }),
                   "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-colors duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
+                  "transform-gpu ring-offset-current transition-colors duration-(--duration-slow) ease-(--ease-out) hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
                   plan.isPopular
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-card text-foreground border-input"

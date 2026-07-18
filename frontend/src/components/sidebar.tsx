@@ -20,7 +20,7 @@ import {
   ChevronRight,
   Menu,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { isAbortError } from '@/lib/fetch-utils';
 import { useApiToken } from '@/lib/use-api-token';
 import { Badge } from '@/components/ui/badge';
@@ -82,7 +82,7 @@ function NavItem({
       href={href}
       onClick={href.includes('#') && onHashNav ? (e) => onHashNav(e, href) : undefined}
       className={cn(
-        'group relative flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors duration-150',
+        'group relative flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-(--duration-base) ease-(--ease-out)',
         isActive
           ? 'bg-primary/10 text-primary'
           : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -107,7 +107,7 @@ function NavItem({
       {hasBadge && pendingCount && pendingCount > 0 && (
         <Badge
           variant="default"
-          className="text-[9px] font-bold px-1.5 py-0 h-4 rounded-sm leading-none tabular-nums"
+          className="text-xs font-bold px-2 py-0 h-4 rounded-sm leading-none tabular-nums"
         >
           {pendingCount}
         </Badge>
@@ -133,9 +133,9 @@ function SidebarNav({
   onHashNav: (e: React.MouseEvent, href: string) => void;
 }) {
   return (
-    <nav className="flex-1 py-3 px-3 space-y-4 overflow-y-auto">
+    <nav aria-label="Primary" className="flex-1 py-3 px-3 space-y-4 overflow-y-auto">
       <div>
-        <p className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase text-muted-foreground">
+        <p className="px-3 mb-2 text-xs font-mono tracking-[0.12em] uppercase text-muted-foreground">
           DESK
         </p>
         <div className="space-y-0.5">
@@ -163,7 +163,7 @@ function SidebarNav({
       <Separator className="mx-3 w-auto" />
 
       <div>
-        <p className="px-3 mb-1.5 text-[10px] font-mono tracking-[0.12em] uppercase text-muted-foreground">
+        <p className="px-3 mb-2 text-xs font-mono tracking-[0.12em] uppercase text-muted-foreground">
           SIGNAL
         </p>
         <div className="space-y-0.5">
@@ -203,28 +203,34 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+  const fetchSettings = useCallback(async (signal?: AbortSignal) => {
+    try {
+      const res = await fetch(`${apiUrl}/api/v1/settings`, {
+        headers: {
+          Authorization: `Bearer ${apiToken ?? userId}`,
+        },
+        signal,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSettings(data);
+      }
+    } catch (e) {
+      if (isAbortError(e)) return;
+      console.error(e);
+    }
+  }, [userId, apiUrl, apiToken]);
+
+  // Refetch on every route change, not just on mount: the free-test label below
+  // ("1 free test available" vs "Free test used") must track the same backend
+  // source (settings.access_level) that pages and the paywall gate read fresh.
+  // A mount-only fetch goes stale the moment the initial scan consumes the free
+  // test, letting the sidebar disagree with the battlecards page (TODOS #48).
   useEffect(() => {
     const controller = new AbortController();
-    async function fetchSettings() {
-      try {
-        const res = await fetch(`${apiUrl}/api/v1/settings`, {
-          headers: {
-            Authorization: `Bearer ${apiToken ?? userId}`,
-          },
-          signal: controller.signal,
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setSettings(data);
-        }
-      } catch (e) {
-        if (isAbortError(e)) return;
-        console.error(e);
-      }
-    }
-    fetchSettings();
+    fetchSettings(controller.signal);
     return () => controller.abort();
-  }, [userId, apiUrl]);
+  }, [fetchSettings, pathname]);
 
   // In-page anchor links (e.g. Intel Feed -> /dashboard#feed) don't scroll via
   // Next's <Link> when the pathname already matches and only the hash changes
@@ -274,6 +280,9 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
       setTimeout(() => {
         setScanDone(false);
         router.refresh();
+        // A scan can consume the free test; re-read settings so the free-test
+        // label below flips in place instead of waiting for a navigation.
+        fetchSettings();
       }, 3000);
     } catch (e) {
       if (isAbortError(e)) return;
@@ -294,10 +303,11 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
 
   const planBadge = getPlanBadge();
   const isPaid = settings?.subscription_status === 'active';
-  // The server layout re-fetches settings on every navigation, so the
-  // accessLevel prop is the fresh source of truth; the client-side settings
-  // fetch below only runs once on mount and goes stale the moment the free
-  // test is consumed mid-session (it still drives the plan badge).
+  // Two sources, freshest wins: the accessLevel prop (server layout, fresh on
+  // hard loads / router.refresh) OR the client settings fetch (re-run on every
+  // route change + after scans). Either reporting read_only locks the label,
+  // so the sidebar can no longer trail the battlecards page after the initial
+  // scan consumes the free test.
   const isLocked = accessLevel === 'read_only' || settings?.access_level === 'read_only';
   // Usage-based model: nudge any non-paying user to upgrade. Once their one free
   // test is spent the API reports access_level "read_only" (locked); before that
@@ -312,17 +322,17 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
   const SidebarInner = (
     <div className="flex flex-col h-full bg-sidebar border-sidebar-border">
       {/* ── Brand ──────────────────────────────────────────────────── */}
-      <div className="px-5 pt-5 pb-4 border-b border-sidebar-border">
+      <div className="px-6 pt-6 pb-4 border-b border-sidebar-border">
         {/* Logo + wordmark */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 rounded-md [background-image:var(--gradient-primary)] shadow-[0_4px_14px_-4px_color-mix(in_oklab,var(--primary)_60%,transparent)]">
             <RivalscopeLogo size={14} className="text-primary-foreground" />
           </div>
           <div className="leading-none">
-            <span className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">
+            <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">
               Rivalscope
             </span>
-            <span className="mt-1.5 flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-[0.14em] text-muted-foreground">
+            <span className="mt-2 flex items-center gap-2 text-xs font-mono uppercase tracking-[0.14em] text-muted-foreground">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
@@ -335,14 +345,14 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
         {/* User profile pill */}
         <div className="flex items-center justify-between gap-2 rounded-md px-3 py-2 bg-muted border border-border">
           <p
-            className="text-[12px] font-medium truncate min-w-0 text-muted-foreground"
+            className="text-xs font-medium truncate min-w-0 text-muted-foreground"
             title={email}
           >
             {email}
           </p>
           <Badge
             variant={planBadge === 'Pro' ? 'default' : 'secondary'}
-            className="flex-shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0 h-4 rounded-sm"
+            className="flex-shrink-0 text-xs font-bold uppercase tracking-wide px-2 py-0 h-4 rounded-sm"
           >
             {planBadge}
           </Badge>
@@ -365,7 +375,7 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
           variant="default"
           size="sm"
           className={cn(
-            'w-full text-[12px]',
+            'w-full text-xs',
             scanDone && 'bg-emerald-600/10 border border-emerald-600/25 text-emerald-600 hover:bg-emerald-600/15',
             scanError && 'bg-destructive/10 border border-destructive/25 text-destructive hover:bg-destructive/15'
           )}
@@ -387,21 +397,21 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
         {showUpgrade && (
           <div className="rounded-md p-3 space-y-2 bg-muted border border-border">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-muted-foreground">
+              <span className="text-xs font-medium text-muted-foreground">
                 {isLocked ? 'Free test used' : '1 free test available'}
               </span>
-              <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground">
+              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 Free
               </span>
             </div>
-            <p className="text-[10px] leading-snug text-muted-foreground">
+            <p className="text-xs leading-snug text-muted-foreground">
               {isLocked
                 ? 'Upgrade to Pro to keep generating battle cards.'
                 : 'Upgrade any time for unlimited battle cards.'}
             </p>
             <Link
               href="/settings?tab=billing"
-              className="block w-full py-2 rounded-full text-[11px] font-semibold text-center [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"
+              className="block w-full py-2 rounded-full text-xs font-semibold text-center [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"
             >
               Upgrade to Pro
             </Link>
@@ -412,7 +422,7 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
         <form action="/api/auth/logout" method="POST">
           <button
             type="submit"
-            className="flex items-center gap-2 w-full px-2 py-2 rounded-md text-[12px] cursor-pointer transition-colors text-muted-foreground hover:text-foreground hover:bg-muted"
+            className="flex items-center gap-2 w-full px-2 py-2 rounded-md text-xs cursor-pointer transition-colors text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             <LogOut size={13} />
             <span>Sign out</span>
@@ -430,7 +440,7 @@ export default function Sidebar({ email, userId, pendingCount, accessLevel }: Si
           <div className="w-7 h-7 flex items-center justify-center rounded-md [background-image:var(--gradient-primary)]">
             <RivalscopeLogo size={12} className="text-primary-foreground" />
           </div>
-          <span className="text-[14px] font-semibold tracking-tight text-foreground">
+          <span className="text-sm font-semibold tracking-tight text-foreground">
             Rivalscope
           </span>
         </div>

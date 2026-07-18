@@ -112,7 +112,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
   if (loading) {
     return (
       <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
+        <CardContent className="py-12 text-center text-sm text-muted-foreground">
           Opening war room…
         </CardContent>
       </Card>
@@ -121,7 +121,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
   if (!room) {
     return (
       <Card>
-        <CardContent className="py-10 text-center space-y-3">
+        <CardContent className="py-12 text-center space-y-3">
           <p className="text-sm text-foreground">Campaign not found.</p>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/campaigns">← Back to campaigns</Link>
@@ -194,7 +194,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                       {item.title}
                     </p>
                     {item.category && (
-                      <Badge variant="secondary" className="text-[10px] font-mono uppercase">
+                      <Badge variant="secondary" className="text-xs font-mono uppercase">
                         {CATEGORY_LABELS[item.category] || item.category.toUpperCase()}
                       </Badge>
                     )}
@@ -245,7 +245,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Competitive read</CardTitle>
-                  <Badge variant="secondary" className="text-[10px] font-mono uppercase tracking-wider">
+                  <Badge variant="secondary" className="text-xs font-mono uppercase tracking-wider">
                     {room.plan.ai_generated ? 'AI ANALYSIS' : 'SIGNAL-BASED'}
                   </Badge>
                 </div>
@@ -254,7 +254,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                 <p className="text-sm leading-relaxed text-foreground">
                   {room.plan.executive_read}
                 </p>
-                <p className="text-[11px] font-mono text-muted-foreground">
+                <p className="text-xs font-mono text-muted-foreground">
                   Trigger: {room.plan.trigger_summary} · {mounted && room.plan.generated_at ? new Date(room.plan.generated_at).toLocaleString() : ''}
                 </p>
               </CardContent>
@@ -266,10 +266,10 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-1.5">
+                  <CardTitle className="flex items-center gap-2">
                     <Sparkles size={14} /> Who does the AI recommend?
                   </CardTitle>
-                  <Badge variant="outline" className="text-[10px] font-mono uppercase tracking-wider">
+                  <Badge variant="outline" className="text-xs font-mono uppercase tracking-wider">
                     {room.geo.source === 'live' ? `LIVE · ${room.geo.engine.toUpperCase()}` : 'ESTIMATED · goes live with AI credits'}
                   </Badge>
                 </div>
@@ -283,7 +283,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                     <span className="text-xs w-32 truncate font-mono text-muted-foreground">{label}</span>
                     <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
                       <div
-                        className={`h-2.5 rounded-full transition-[width] duration-500 ease-out ${accent ? 'bg-primary' : 'bg-muted-foreground/40'}`}
+                        className={`h-2.5 rounded-full transition-[width] duration-(--duration-slow) ease-(--ease-out) ${accent ? 'bg-primary' : 'bg-muted-foreground/40'}`}
                         style={{ width: `${share * 10}%` }}
                       />
                     </div>
@@ -309,11 +309,11 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                   <div className="space-y-2">
                     {room.events.map((e, idx) => (
                       <div key={idx} className="flex gap-3 items-baseline">
-                        <span className="text-[10px] font-mono shrink-0 w-20 text-muted-foreground">
+                        <span className="text-xs font-mono shrink-0 w-20 text-muted-foreground">
                           {mounted && e.detected_at ? new Date(e.detected_at).toLocaleDateString() : ''}
                         </span>
                         {e.change_type && (
-                          <span className={`text-[10px] font-mono badge badge-${e.change_type}`}>
+                          <span className={`text-xs font-mono badge badge-${e.change_type}`}>
                             {e.change_type}
                           </span>
                         )}
