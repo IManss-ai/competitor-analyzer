@@ -13,7 +13,16 @@ def _text_predicate(db: Session, q: str):
     """Postgres: full-text via the generated search_vector column.
     SQLite (dev/tests): LIKE fallback over the same fields."""
     if db.get_bind().dialect.name == "postgresql":
-        return text("apps.search_vector @@ plainto_tsquery('english', :q)").bindparams(q=q)
+        # Full-text (ranked, stemmed) OR a substring match on name/tagline so
+        # mid-word type-ahead works: plainto_tsquery matches whole lexemes only,
+        # so "head" would miss "Headspace". ILIKE covers the prefix/substring
+        # case without feeding raw user syntax into to_tsquery (injection-safe).
+        like = f"%{q.lower()}%"
+        return or_(
+            text("apps.search_vector @@ plainto_tsquery('english', :q)").bindparams(q=q),
+            func.lower(App.name).like(like),
+            func.lower(func.coalesce(App.tagline, "")).like(like),
+        )
     like = f"%{q.lower()}%"
     return or_(
         func.lower(App.name).like(like),
