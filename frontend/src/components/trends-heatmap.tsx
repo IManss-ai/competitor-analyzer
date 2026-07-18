@@ -59,7 +59,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
       <CardHeader className="border-b border-border flex-row items-center justify-between">
         <CardTitle>Activity density heatmap</CardTitle>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Less</span>
+          <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Less</span>
           {([0, 1, 2, 3] as const).map((level) => (
             <div
               key={level}
@@ -67,7 +67,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
               style={{ backgroundColor: heatStyle(level).backgroundColor, border: heatStyle(level).border }}
             />
           ))}
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">More</span>
+          <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">More</span>
         </div>
       </CardHeader>
 
@@ -76,7 +76,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
           <thead>
             <tr className="border-b border-border bg-muted">
               <th
-                className="text-left text-[10px] font-mono uppercase tracking-wider px-6 py-4 sticky left-0 w-[180px] z-10 text-muted-foreground"
+                className="text-left text-xs font-mono uppercase tracking-wider px-6 py-4 sticky left-0 w-[180px] z-10 text-muted-foreground"
                 style={{ backgroundColor: 'var(--card)', borderRight: '1px solid var(--border)' }}
               >
                 Competitor
@@ -84,12 +84,12 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
               {weeks.map((week) => (
                 <th
                   key={week}
-                  className="text-center text-[10px] font-mono px-2 py-4 whitespace-nowrap text-muted-foreground"
+                  className="text-center text-xs font-mono px-2 py-4 whitespace-nowrap text-muted-foreground"
                 >
                   {week.replace(/^\d{4}-/, '')}
                 </th>
               ))}
-              <th className="text-right text-[10px] font-mono uppercase tracking-wider px-6 py-4 text-muted-foreground">
+              <th className="text-right text-xs font-mono uppercase tracking-wider px-6 py-4 text-muted-foreground">
                 Total
               </th>
             </tr>
@@ -114,7 +114,7 @@ export default function TrendsHeatmap({ competitors, weeks, maxCount }: TrendsHe
                     <td key={i} className="px-2 py-4 text-center">
                       <div
                         title={`${count} change${count !== 1 ? 's' : ''} in week of ${weeks[i]}`}
-                        className="w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-[10px] font-semibold font-mono cursor-pointer"
+                        className="w-7 h-7 rounded-[6px] mx-auto flex items-center justify-center text-xs font-semibold font-mono cursor-pointer"
                         style={heatStyle(heatLevel(count))}
                       >
                         {count > 0 ? count : ''}

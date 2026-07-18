@@ -44,12 +44,12 @@ export default function PaywallGate({ userId }: { userId: string }) {
         <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md border border-primary/20 bg-primary/10 text-primary">
           <Lock size={14} />
         </span>
-        <p className="min-w-0 flex-1 text-[12px] leading-snug text-muted-foreground">
+        <p className="min-w-0 flex-1 text-xs leading-snug text-muted-foreground">
           Free test used. Your report is saved. Upgrade to keep tracking rivals.
         </p>
         <Link
           href="/settings?tab=billing"
-          className="flex flex-shrink-0 items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-semibold [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"
+          className="flex flex-shrink-0 items-center gap-1 rounded-full px-3 py-2 text-xs font-semibold [background-image:var(--gradient-primary)] text-primary-foreground shadow-[0_8px_22px_-10px_color-mix(in_oklab,var(--primary)_70%,transparent)] transition-[filter] hover:brightness-105"
         >
           Upgrade <ArrowRight size={11} />
         </Link>

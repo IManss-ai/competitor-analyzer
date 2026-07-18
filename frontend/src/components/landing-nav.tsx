@@ -40,7 +40,7 @@ export default function MobileMenu() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="flex min-h-11 items-center border-b border-border text-[15px] text-muted-foreground transition-colors hover:text-foreground"
+                className="flex min-h-11 items-center border-b border-border text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 {l.label}
               </a>
@@ -48,7 +48,7 @@ export default function MobileMenu() {
             <Link
               href={AUTH}
               onClick={() => setOpen(false)}
-              className="flex min-h-11 items-center border-b border-border text-[15px] text-muted-foreground transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center border-b border-border text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               Sign in
             </Link>

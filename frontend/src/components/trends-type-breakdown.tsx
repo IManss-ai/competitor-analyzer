@@ -26,7 +26,7 @@ export default function TrendsTypeBreakdown({ data }: { data: TypeBreakdownPoint
   if (!hasAnyChanges) {
     return (
       <div className="h-[220px] w-full flex items-center justify-center">
-        <p className="text-[12px] font-mono text-muted-foreground">
+        <p className="text-xs font-mono text-muted-foreground">
           No changes classified yet. The breakdown fills in as scans detect them.
         </p>
       </div>

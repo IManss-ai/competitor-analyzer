@@ -12,7 +12,7 @@ export default function ShareNotFound() {
         <p className="text-sm leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
           The competitor battle card you are looking for does not exist, has been deleted, or is currently inactive.
         </p>
-        <a href="/auth/login" className="rs-btn-primary text-[13px]">
+        <a href="/auth/login" className="rs-btn-primary text-sm">
           Go to Rivalscope
         </a>
       </div>

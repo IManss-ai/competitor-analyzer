@@ -57,7 +57,7 @@ const SAMPLE_PLAYS = [
 export default function BeatPage() {
   return (
     <div className="min-h-screen px-4 py-12" style={{ background: 'var(--background)' }}>
-      <div className="max-w-2xl mx-auto space-y-10">
+      <div className="max-w-2xl mx-auto space-y-12">
         {/* Hero */}
         <header className="space-y-4 text-center">
           <p className="rs-label">Rivalscope · Action Plan</p>
@@ -72,7 +72,7 @@ export default function BeatPage() {
             You get a plan you can run, not another dashboard to check.
           </p>
           <div className="flex items-center justify-center gap-3 pt-2">
-            <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
+            <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
               Get my plan · $29
             </a>
           </div>
@@ -103,7 +103,7 @@ export default function BeatPage() {
               Anonymized from a real analysis. Yours is researched fresh for your matchup.
             </p>
           </div>
-          <div className="rs-card p-6 space-y-5">
+          <div className="rs-card p-6 space-y-6">
             <div className="border-b pb-3" style={{ borderColor: 'var(--border)' }}>
               <p className="text-xs font-mono mb-1" style={{ color: 'var(--muted-foreground)' }}>COMPETITIVE READ</p>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--foreground)' }}>
@@ -130,7 +130,7 @@ export default function BeatPage() {
 
         {/* CTA repeat */}
         <section className="text-center space-y-3">
-          <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
+          <a href={CHECKOUT_URL} className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90">
             Get my plan · $29
           </a>
           <p className="text-xs leading-relaxed max-w-md mx-auto" style={{ color: 'var(--muted-foreground)' }}>

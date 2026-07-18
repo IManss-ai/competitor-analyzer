@@ -67,7 +67,7 @@ export default async function AppProfilePage({ params }: PageProps) {
   const hasIntel = !!app.review_summary || (app.change_velocity_90d ?? 0) > 0;
 
   return (
-    <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
+    <div className="min-h-screen px-4 py-12" style={{ background: 'var(--background)' }}>
       <AppsNav />
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="rs-card p-6 space-y-3">
@@ -78,7 +78,7 @@ export default async function AppProfilePage({ params }: PageProps) {
               <h1 className="text-2xl font-semibold break-words" style={{ color: 'var(--foreground)' }}>{app.name}</h1>
               {app.tagline && <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>{app.tagline}</p>}
             </div>
-            <Link href={`/auth/login?track=${app.slug}`} className="rs-btn-primary text-[13px] whitespace-nowrap">
+            <Link href={`/auth/login?track=${app.slug}`} className="rs-btn-primary text-sm whitespace-nowrap">
               Track this app
             </Link>
           </div>
@@ -144,7 +144,7 @@ export default async function AppProfilePage({ params }: PageProps) {
               Rivalscope isn’t actively monitoring {app.name} yet. Track it to start capturing pricing changes,
               homepage edits, and customer complaints in your weekly competitive brief.
             </p>
-            <Link href={`/auth/login?track=${app.slug}`} className="rs-btn-primary text-[13px] inline-flex">
+            <Link href={`/auth/login?track=${app.slug}`} className="rs-btn-primary text-sm inline-flex">
               Track {app.name}
             </Link>
           </section>

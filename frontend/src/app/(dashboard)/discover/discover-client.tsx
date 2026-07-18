@@ -131,7 +131,7 @@ export default function DiscoverClient() {
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     {r.category && (
-                      <Badge variant="secondary" className="capitalize text-[11px] font-mono">
+                      <Badge variant="secondary" className="capitalize text-xs font-mono">
                         {r.category}
                       </Badge>
                     )}

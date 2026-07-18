@@ -15,13 +15,13 @@ export function CtaCloser() {
         <h2 className="mx-auto max-w-[20ch] text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
           Stop guessing what your competitors are doing.
         </h2>
-        <p className="mx-auto mt-5 max-w-[460px] text-[16px] leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-6 max-w-[460px] text-base leading-relaxed text-muted-foreground">
           Add a competitor and get your first battle card in minutes.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href={AUTH}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-[15px] font-medium text-background transition-opacity hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition-opacity hover:opacity-90"
           >
             Start free <ArrowRight size={16} />
           </Link>

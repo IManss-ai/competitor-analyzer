@@ -14,7 +14,7 @@ export default function MiniActivityChart({ data }: { data: Array<{ value: numbe
         </Bar>
         <Tooltip
           content={({ active, payload }) => active && payload?.length ? (
-            <div className="text-[10px] px-2 py-1 rounded font-mono"
+            <div className="text-xs px-2 py-1 rounded font-mono"
               style={{ background: 'var(--popover)', border: '1px solid var(--border)', color: 'var(--foreground)' }}>
               {payload[0].value} changes
             </div>

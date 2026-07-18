@@ -27,7 +27,7 @@ export default function DashboardError({
         <h1 className="text-3xl font-bold text-foreground tracking-tight leading-tight mb-3">
           We couldn&rsquo;t load this view.
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground mb-10">
+        <p className="text-sm leading-relaxed text-muted-foreground mb-12">
           The Rivalscope API didn&rsquo;t respond &mdash; usually a deploy finishing up (about 30
           seconds). Your competitor tracking is still running and nothing was lost.
         </p>

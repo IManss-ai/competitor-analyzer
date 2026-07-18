@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 // list) so the swap-in is layout-stable. Skeleton pulses opacity only.
 export default function Loading() {
   return (
-    <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
+    <div className="min-h-screen px-4 py-12" style={{ background: 'var(--background)' }}>
       <AppsNav />
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="space-y-2">

@@ -47,7 +47,7 @@ export default function StatsCard({
 
   return (
     <motion.div
-      className="group relative overflow-hidden p-5 rounded-xl border border-border bg-card transition-colors hover:border-input"
+      className="group relative overflow-hidden p-6 rounded-xl border border-border bg-card transition-colors hover:border-input"
     >
       {/* Accent top border — replaces bottom sweep */}
       <div
@@ -67,7 +67,7 @@ export default function StatsCard({
       {/* Value + trend */}
       <div className="flex items-end justify-between">
         <p
-          className="text-[28px] font-semibold leading-none tracking-tight text-foreground"
+          className="text-3xl font-semibold leading-none tracking-tight text-foreground"
           style={{
             fontFamily: 'var(--font-mono)',
             letterSpacing: '-0.03em',
@@ -79,7 +79,7 @@ export default function StatsCard({
         {trend && (
           <div
             className={clsx(
-              'flex items-center gap-1 text-[10px] font-mono px-2 py-1 border',
+              'flex items-center gap-1 text-xs font-mono px-2 py-1 border',
             )}
             style={{
               borderRadius: 'var(--radius-sm)',
@@ -100,7 +100,7 @@ export default function StatsCard({
 
       {subtitle && (
         <p
-          className="text-[11px] mt-2 font-mono text-muted-foreground"
+          className="text-xs mt-2 font-mono text-muted-foreground"
         >
           {subtitle}
         </p>

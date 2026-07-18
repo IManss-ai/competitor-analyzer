@@ -36,10 +36,10 @@ export default function PaywallOverlay({ userId }: { userId: string }) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-md" />
       <div className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-(--shadow-modal)">
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+        <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
           <Lock size={22} />
         </div>
-        <h2 className="font-display text-[26px] leading-[1.1] tracking-[-0.01em] text-foreground">
+        <h2 className="font-display text-2xl leading-[1.1] tracking-[-0.01em] text-foreground">
           Your free test is done
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

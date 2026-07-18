@@ -30,7 +30,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
 ];
 
 function FooterLink({ label, href }: { label: string; href: string }) {
-  const cls = 'flex min-h-11 items-center text-[13px] text-muted-foreground transition-colors hover:text-foreground';
+  const cls = 'flex min-h-11 items-center text-sm text-muted-foreground transition-colors hover:text-foreground';
   if (href.startsWith('#') || href.startsWith('mailto:')) {
     return <a href={href} className={cls}>{label}</a>;
   }
@@ -39,14 +39,14 @@ function FooterLink({ label, href }: { label: string; href: string }) {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border py-14">
-      <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr]">
+    <footer className="border-t border-border py-16">
+      <div className="grid gap-12 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr]">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <span className="h-7 w-7 rounded-md" style={{ backgroundImage: 'var(--gradient-primary)' }} />
-            <span className="font-display text-[16px] font-semibold tracking-tight text-foreground">Rivalscope</span>
+            <span className="font-display text-base font-semibold tracking-tight text-foreground">Rivalscope</span>
           </div>
-          <p className="mt-3 max-w-[28ch] text-[13px] leading-relaxed text-muted-foreground">
+          <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-muted-foreground">
             Competitive intelligence for modern sales teams.
           </p>
         </div>
@@ -59,7 +59,7 @@ export function SiteFooter() {
           </div>
         ))}
       </div>
-      <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-[13px] text-muted-foreground sm:flex-row">
+      <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row">
         <span>© 2026 Rivalscope</span>
         <div className="flex items-center gap-6">
           <Link href="/privacy" className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">Privacy</Link>

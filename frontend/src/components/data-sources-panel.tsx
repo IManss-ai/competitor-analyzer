@@ -146,14 +146,14 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
 
   return (
     <Card>
-      <CardContent className="pt-5 pb-5">
+      <CardContent className="pt-6 pb-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
             <Database size={16} className="text-primary" />
             <h3 className="text-sm font-semibold text-foreground">
               Data Sources
             </h3>
-            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md border border-border text-muted-foreground">
+            <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded-md border border-border text-muted-foreground">
               {connectedCount}/{SAAS_FIELDS.length} connected
             </span>
           </div>
@@ -182,7 +182,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
             return (
               <div key={field.key}>
                 {index > 0 && <Separator className="mb-4" />}
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-medium text-muted-foreground">
                       {field.label}
@@ -192,14 +192,14 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
                         <button
                           onClick={detectCareers}
                           disabled={probingCareers}
-                          className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline disabled:opacity-50 cursor-pointer text-primary"
+                          className="text-xs font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline disabled:opacity-50 cursor-pointer text-primary"
                         >
                           {probingCareers ? <Loader2 size={9} className="animate-spin" /> : <Wand2 size={9} />}
                           {probingCareers ? 'Detecting' : 'Detect'}
                         </button>
                       )}
                       {isCareers && probeResult === 'not-found' && (
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--tone-warning)]">
+                        <span className="text-xs font-mono uppercase tracking-wider text-[var(--tone-warning)]">
                           No common path matched
                         </span>
                       )}
@@ -208,7 +208,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
                           href={currentValue}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline text-primary"
+                          className="text-xs font-mono uppercase tracking-wider inline-flex items-center gap-1 hover:underline text-primary"
                         >
                           Open <ExternalLink size={9} />
                         </a>
@@ -235,7 +235,7 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
                     </p>
                   )}
                   {editing && (
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {field.helpText}
                     </p>
                   )}
@@ -246,11 +246,11 @@ export default function DataSourcesPanel({ competitorId, userId, initialValues, 
         </div>
 
         {editing && (
-          <div className="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-border">
+          <div className="flex items-center justify-between gap-3 mt-6 pt-4 border-t border-border">
             {error ? (
               <span className="text-xs text-destructive">{error}</span>
             ) : (
-              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
                 Empty fields clear the override
               </span>
             )}

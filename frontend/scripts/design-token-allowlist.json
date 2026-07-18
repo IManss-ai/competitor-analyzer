@@ -1,0 +1,14 @@
+{
+  "src/app/(auth)/auth/login/page.tsx": 14,
+  "src/app/(dashboard)/competitors/competitor-manager.tsx": 1,
+  "src/app/(dashboard)/discover/discover-client.tsx": 1,
+  "src/app/(dashboard)/queue/queue-manager.tsx": 1,
+  "src/app/page.tsx": 16,
+  "src/components/landing-battlecard.tsx": 2,
+  "src/components/landing/cta-closer.tsx": 1,
+  "src/components/landing/how-it-works.tsx": 11,
+  "src/components/landing/product-showcase.tsx": 10,
+  "src/components/ui/how-it-works-panels.tsx": 8,
+  "src/components/ui/pricing-demo.tsx": 13,
+  "src/components/ui/product-demo.tsx": 2
+}

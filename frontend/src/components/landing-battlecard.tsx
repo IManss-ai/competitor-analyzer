@@ -108,7 +108,7 @@ const COMPS: Comp[] = ['stripe', 'paypal', 'square'];
 
 function TagBadge({ tone, children }: { tone: Tone; children: React.ReactNode }) {
   return (
-    <span className={`rounded-md border px-1.5 py-0.5 font-mono text-[10px] leading-none tracking-wide ${TONE[tone]}`}>
+    <span className={`rounded-md border px-2 py-0.5 font-mono text-[10px] leading-none tracking-wide ${TONE[tone]}`}>
       {children}
     </span>
   );
@@ -117,7 +117,7 @@ function TagBadge({ tone, children }: { tone: Tone; children: React.ReactNode })
 function Quadrant({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-lg border border-border bg-background/40 p-4">
-      <div className="mb-2.5 text-xs font-medium text-card-foreground">{title}</div>
+      <div className="mb-2 text-xs font-medium text-card-foreground">{title}</div>
       {children}
     </div>
   );
@@ -130,8 +130,8 @@ export default function LandingBattleCard() {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       {/* Header: competitor identity + tab switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3.5">
-        <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
+        <div className="flex items-center gap-2">
           <span className="grid h-7 w-7 flex-none place-items-center rounded-md border border-border bg-secondary text-xs font-semibold text-secondary-foreground">
             {card.mark}
           </span>
@@ -146,7 +146,7 @@ export default function LandingBattleCard() {
                 type="button"
                 onClick={() => setActive(comp)}
                 aria-pressed={isActive}
-                className={`inline-flex min-h-11 items-center justify-center rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors md:min-h-0 ${
+                className={`inline-flex min-h-11 items-center justify-center rounded-md px-2 py-1 text-xs font-medium capitalize transition-colors md:min-h-0 ${
                   isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
@@ -173,11 +173,11 @@ export default function LandingBattleCard() {
         <motion.div variants={fadeUpVariants}>
         <div key={active} className="[animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
         <Quadrant title="Detected changes">
-          <ul className="space-y-2.5">
+          <ul className="space-y-2">
             {card.changes.map((c, i) => (
-              <li key={i} className="flex items-start gap-2.5">
+              <li key={i} className="flex items-start gap-2">
                 <TagBadge tone={c.tone}>{c.label}</TagBadge>
-                <span className="text-[13px] leading-snug text-muted-foreground">{c.text}</span>
+                <span className="text-sm leading-snug text-muted-foreground">{c.text}</span>
               </li>
             ))}
           </ul>
@@ -189,10 +189,10 @@ export default function LandingBattleCard() {
         <motion.div variants={fadeUpVariants}>
         <div key={active} className="grid gap-3 sm:grid-cols-2 [animation:fadeIn_var(--duration-base,160ms)_var(--ease-out,ease-out)]">
           <Quadrant title="User complaints">
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               {card.complaints.map((c, i) => (
                 <li key={i}>
-                  <p className="text-[13px] leading-relaxed text-muted-foreground">{c.text}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{c.text}</p>
                   <span className="mt-1 block font-mono text-[10px] text-muted-foreground/70">{c.source}</span>
                 </li>
               ))}
@@ -200,7 +200,7 @@ export default function LandingBattleCard() {
           </Quadrant>
 
           <Quadrant title="Strategic signals">
-            <ul className="space-y-2.5 text-[13px] text-muted-foreground">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               {card.signals.map((s, i) => (
                 <li key={i} className="flex gap-2">
                   <span className="text-primary">›</span>
@@ -221,7 +221,7 @@ export default function LandingBattleCard() {
         <Quadrant title="Top plays">
           <ol className="space-y-2">
             {card.moves.map((move, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-[13px] leading-snug text-card-foreground">
+              <li key={i} className="flex items-start gap-2 text-sm leading-snug text-card-foreground">
                 <span className="mt-0.5 grid h-[18px] w-[18px] flex-none place-items-center rounded-md border border-primary/30 bg-primary/10">
                   <Check size={11} strokeWidth={3} className="text-primary" />
                 </span>

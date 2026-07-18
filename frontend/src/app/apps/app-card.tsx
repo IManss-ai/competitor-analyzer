@@ -15,7 +15,7 @@ export interface AppResult {
 // results) so both render pixel-identically. Server-safe: no hooks, no state.
 export function AppCard({ app }: { app: AppResult }) {
   return (
-    <Link href={`/apps/${app.slug}`} className="rs-card block p-4 space-y-1.5">
+    <Link href={`/apps/${app.slug}`} className="rs-card block p-4 space-y-2">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-base font-semibold min-w-0 break-words" style={{ color: 'var(--foreground)' }}>
           {app.name}

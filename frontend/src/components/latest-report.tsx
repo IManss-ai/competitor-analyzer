@@ -57,15 +57,15 @@ export default function LatestReport({ userId }: { userId: string }) {
         className="flex w-full items-center justify-between gap-3 border-b border-border bg-muted px-6 py-4 text-left"
         aria-expanded={open}
       >
-        <span className="flex items-center gap-2.5">
+        <span className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-md border border-primary/20 bg-primary/10 text-primary">
             <FileText size={15} />
           </span>
           <span>
-            <span className="block text-[14px] font-semibold text-foreground">
+            <span className="block text-sm font-semibold text-foreground">
               Your latest report{name ? ` on ${name}` : ''}
             </span>
-            <span className="block text-[11px] text-muted-foreground">Saved from your battle card, re-checked weekly.</span>
+            <span className="block text-xs text-muted-foreground">Saved from your battle card, re-checked weekly.</span>
           </span>
         </span>
         <ChevronDown

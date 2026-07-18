@@ -59,17 +59,17 @@ export default function LocalBusinessSection({
 
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {hasGoogleMaps && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-[var(--tone-positive)]/10 text-[var(--tone-positive)] border border-[var(--tone-positive)]/20 px-2 py-0.5 rounded-md">
+                    <span className="inline-flex items-center text-xs font-medium uppercase tracking-wider bg-[var(--tone-positive)]/10 text-[var(--tone-positive)] border border-[var(--tone-positive)]/20 px-2 py-0.5 rounded-md">
                       Google Reviews
                     </span>
                   )}
                   {hasInstagram && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-accent border border-border text-muted-foreground px-2 py-0.5 rounded-md">
+                    <span className="inline-flex items-center text-xs font-medium uppercase tracking-wider bg-accent border border-border text-muted-foreground px-2 py-0.5 rounded-md">
                       Instagram
                     </span>
                   )}
                   {hasFacebook && (
-                    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-md">
+                    <span className="inline-flex items-center text-xs font-medium uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-md">
                       Facebook
                     </span>
                   )}

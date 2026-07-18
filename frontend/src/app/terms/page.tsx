@@ -19,7 +19,7 @@ export default function TermsPage() {
         </div>
 
         {/* Header */}
-        <header className="mb-10 pb-8 border-b border-border">
+        <header className="mb-12 pb-8 border-b border-border">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-7 h-7 bg-primary/10 border border-primary/25 flex items-center justify-center rounded">
               <RivalscopeLogo size={13} className="text-primary" />

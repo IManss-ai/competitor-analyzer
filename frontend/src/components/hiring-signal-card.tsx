@@ -35,7 +35,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
 
   if (!careersUrl && !signal) {
     return (
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-2 mb-3">
           <Briefcase size={16} className="text-muted-foreground" />
           <h3 className="text-sm font-semibold text-foreground">
@@ -51,13 +51,13 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
 
   if (!signal) {
     return (
-      <div className="rounded-xl border border-border bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-2 mb-3">
           <Briefcase size={16} className="text-primary" />
           <h3 className="text-sm font-semibold text-foreground">
             Hiring Signals
           </h3>
-          <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border tag-amber">
+          <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded-[2px] border tag-amber">
             Pending first scan
           </span>
         </div>
@@ -71,7 +71,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
   const lastUpdated = mounted ? formatTimeAgo(signal.snapshot_at) : null;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-card p-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
           <Briefcase size={16} className="text-primary" />
@@ -80,7 +80,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
           </h3>
         </div>
         {lastUpdated && (
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+          <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
             Updated {lastUpdated}
           </span>
         )}
@@ -88,7 +88,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
 
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="rounded border border-border bg-muted px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider mb-1 text-muted-foreground">
+          <div className="text-xs font-mono uppercase tracking-wider mb-1 text-muted-foreground">
             Open roles
           </div>
           <div className="text-2xl font-bold font-mono text-foreground">
@@ -96,7 +96,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
           </div>
         </div>
         <div className="rounded border border-[var(--tone-positive)]/20 bg-[var(--tone-positive)]/5 px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-[var(--tone-positive)] mb-1 flex items-center gap-1">
+          <div className="text-xs font-mono uppercase tracking-wider text-[var(--tone-positive)] mb-1 flex items-center gap-1">
             <TrendingUp size={9} /> New
           </div>
           <div className="text-2xl font-bold font-mono text-[var(--tone-positive)]">
@@ -104,7 +104,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
           </div>
         </div>
         <div className="rounded border border-border bg-muted px-3 py-3">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
+          <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-1">
             <MinusCircle size={9} /> Closed
           </div>
           <div className="text-2xl font-bold font-mono text-foreground">
@@ -115,7 +115,7 @@ export default function HiringSignalCard({ signal, careersUrl }: HiringSignalCar
 
       {signal.strategic_signal ? (
         <div className="rounded border border-primary/20 bg-primary/[0.04] p-4">
-          <div className="text-[10px] font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2 text-primary">
+          <div className="text-xs font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2 text-primary">
             <AlertCircle size={11} />
             Pattern read
           </div>

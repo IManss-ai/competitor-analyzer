@@ -33,7 +33,7 @@ export default function GlobalError({
             <h1 className="text-3xl font-bold text-foreground tracking-tight leading-tight mb-3">
               Something went wrong on our end.
             </h1>
-            <p className="text-sm leading-relaxed text-muted-foreground mb-10">
+            <p className="text-sm leading-relaxed text-muted-foreground mb-12">
               An unexpected error kept this page from loading. It&rsquo;s been logged &mdash; trying
               again usually clears it right up.
             </p>

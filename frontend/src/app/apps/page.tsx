@@ -121,7 +121,7 @@ export default async function AppsIndexPage({ searchParams }: PageProps) {
   const grandTotal = unfiltered ? unfiltered.total : total;
 
   return (
-    <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
+    <div className="min-h-screen px-4 py-12" style={{ background: 'var(--background)' }}>
       <AppsNav />
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="space-y-2">
@@ -144,7 +144,7 @@ export default async function AppsIndexPage({ searchParams }: PageProps) {
               <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
                 Try a different search or clear the filters to browse the full database.
               </p>
-              <Link href="/apps" className="rs-btn-primary text-[13px] inline-flex">
+              <Link href="/apps" className="rs-btn-primary text-sm inline-flex">
                 Clear filters
               </Link>
             </div>

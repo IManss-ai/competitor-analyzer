@@ -33,7 +33,7 @@ function StarRating({ rating }: { rating: number | null }) {
           }
         />
       ))}
-      <span className="ml-1 text-[11px] font-mono text-foreground">{rating.toFixed(1)}</span>
+      <span className="ml-1 text-xs font-mono text-foreground">{rating.toFixed(1)}</span>
     </span>
   );
 }
@@ -55,14 +55,14 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
-      <div className="px-5 py-4 border-b border-border flex items-center gap-2">
+      <div className="px-6 py-4 border-b border-border flex items-center gap-2">
         <Star size={15} className="text-[var(--tone-warning)]" />
-        <h2 className="text-[17px] font-semibold text-foreground">Review Intelligence</h2>
-        <span className="ml-auto text-[10px] text-muted-foreground font-mono">G2 · Trustpilot · Capterra</span>
+        <h2 className="text-lg font-semibold text-foreground">Review Intelligence</h2>
+        <span className="ml-auto text-xs text-muted-foreground font-mono">G2 · Trustpilot · Capterra</span>
       </div>
 
       {!hasData ? (
-        <div className="px-6 py-10 text-center">
+        <div className="px-6 py-12 text-center">
           <AlertCircle size={20} className="text-muted-foreground mx-auto mb-3" />
           <p className="text-sm text-muted-foreground">Run a scan to populate review intelligence</p>
         </div>
@@ -74,10 +74,10 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
             const snapshots = data.snapshots.filter(hasSignal);
 
             return (
-              <div key={comp.id} className="px-5 py-4">
+              <div key={comp.id} className="px-6 py-4">
                 <p className="text-xs font-bold text-foreground mb-3 truncate">{comp.name || comp.url}</p>
                 {snapshots.length === 0 ? (
-                  <p className="text-[11px] text-muted-foreground italic">
+                  <p className="text-xs text-muted-foreground italic">
                     No public reviews collected yet. Sources are re-checked on every scan.
                   </p>
                 ) : (
@@ -91,17 +91,17 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                     return (
                       <div key={sIdx} className="flex flex-col gap-2">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border ${style.badge}`}>
+                          <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded-md border ${style.badge}`}>
                             {style.label}
                           </span>
                           <StarRating rating={snap.avg_rating} />
                           {snap.total_reviews !== null && (
-                            <span className="text-[11px] text-muted-foreground font-mono">
+                            <span className="text-xs text-muted-foreground font-mono">
                               {snap.total_reviews.toLocaleString('en-US')} reviews
                             </span>
                           )}
                           {snap.complaint_count > 0 && (
-                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm border tag-red">
+                            <span className="text-xs font-bold uppercase px-2 py-0.5 rounded-sm border tag-red">
                               {snap.complaint_count} complaints
                             </span>
                           )}
@@ -112,7 +112,7 @@ export default function ReviewIntelligence({ competitors, reviewsData }: ReviewI
                             {snap.top_complaints.map((c, cIdx) => (
                               <span
                                 key={cIdx}
-                                className="text-[11px] text-muted-foreground bg-muted border border-border px-3 py-1 rounded"
+                                className="text-xs text-muted-foreground bg-muted border border-border px-3 py-1 rounded"
                               >
                                 {c}
                               </span>

@@ -7,7 +7,7 @@ export default function ThemeToggle() {
     <div
       role="group"
       aria-label="Theme"
-      className="inline-flex items-center font-mono text-[10px] tracking-[0.12em] uppercase select-none"
+      className="inline-flex items-center font-mono text-xs tracking-[0.12em] uppercase select-none"
       style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}
     >
       {(['light', 'dark'] as const).map((t) => {

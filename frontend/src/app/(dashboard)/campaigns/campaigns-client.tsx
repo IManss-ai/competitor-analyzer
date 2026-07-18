@@ -127,7 +127,7 @@ export default function CampaignsClient({ userId }: { userId: string }) {
         </Card>
       ) : campaigns.length === 0 ? (
         <Card>
-          <CardContent className="py-10 text-center space-y-2">
+          <CardContent className="py-12 text-center space-y-2">
             <p className="text-sm font-semibold text-foreground">No campaigns yet</p>
             <p className="text-xs max-w-sm mx-auto text-muted-foreground">
               A campaign is your war room against one competitor: a live action plan, their every move, and the

@@ -63,7 +63,7 @@ export default function LocalScanButton({ competitorId, userId }: LocalScanButto
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 text-[13px] font-medium rounded-xl border border-border bg-card text-foreground"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl border border-border bg-card text-foreground"
             style={{
               boxShadow: 'var(--shadow-elevated)',
             }}

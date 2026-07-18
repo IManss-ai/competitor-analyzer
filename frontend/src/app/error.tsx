@@ -25,7 +25,7 @@ export default function RootError({
     <div className="min-h-screen bg-background text-foreground flex items-center px-6 font-sans">
       <div className="max-w-md mx-auto w-full">
         {/* Brand mark */}
-        <div className="flex items-center gap-3 mb-10">
+        <div className="flex items-center gap-3 mb-12">
           <div className="w-7 h-7 bg-primary/10 border border-primary/25 flex items-center justify-center rounded">
             <RivalscopeLogo size={13} className="text-primary" />
           </div>
@@ -36,7 +36,7 @@ export default function RootError({
         <h1 className="text-3xl font-bold text-foreground tracking-tight leading-tight mb-3">
           Something went wrong on our end.
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground mb-10">
+        <p className="text-sm leading-relaxed text-muted-foreground mb-12">
           An unexpected error kept this page from loading. It&rsquo;s been logged &mdash; trying
           again usually clears it right up.
         </p>

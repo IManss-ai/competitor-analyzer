@@ -7,7 +7,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-background text-foreground flex items-center px-6 font-sans">
       <div className="max-w-md mx-auto w-full">
         {/* Brand mark */}
-        <div className="flex items-center gap-3 mb-10">
+        <div className="flex items-center gap-3 mb-12">
           <div className="w-7 h-7 bg-primary/10 border border-primary/25 flex items-center justify-center rounded">
             <RivalscopeLogo size={13} className="text-primary" />
           </div>
@@ -19,7 +19,7 @@ export default function NotFound() {
         <h1 className="text-3xl font-bold text-foreground tracking-tight leading-tight mb-3">
           This page slipped off the radar.
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground mb-10">
+        <p className="text-sm leading-relaxed text-muted-foreground mb-12">
           The page you&rsquo;re looking for doesn&rsquo;t exist or may have moved. Head back to a known signal.
         </p>
 
