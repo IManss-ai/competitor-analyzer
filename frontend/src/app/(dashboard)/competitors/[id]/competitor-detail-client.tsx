@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Share2, RefreshCw, Pencil, Globe, Calendar, CheckCircle2, Clock, Circle, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
 import DataSourcesPanel from '@/components/data-sources-panel';
 import HiringSignalCard from '@/components/hiring-signal-card';
 import HeadToHead from '@/components/head-to-head';
-import { battleCardItemText, isLlmMetaLine, renderInlineMarkdown } from '@/components/battle-card-content';
+import { battleCardItemText, isLlmMetaLine } from '@/lib/llm-meta';
+import { renderInlineMarkdown } from '@/lib/markdown';
 import { useChartPalette } from '@/lib/chart-theme';
 import { useApiToken } from '@/lib/use-api-token';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,25 @@ const formatTimeAgo = (dateStr: string | null) => {
   if (diffHours < 24) return `${diffHours}h ago`;
   return `${diffDays}d ago`;
 };
+
+// Expand/collapse without animating height:auto (a layout property): the outer
+// grid transitions grid-template-rows 0fr→1fr + opacity on design tokens only.
+// Content stays mounted; `inert` + aria-hidden pull it out of the tab order and
+// a11y tree while collapsed. Pair with aria-expanded/aria-controls on triggers.
+function Collapse({ open, id, children }: { open: boolean; id?: string; children: ReactNode }) {
+  return (
+    <div
+      id={id}
+      inert={!open}
+      aria-hidden={!open}
+      className={`grid transition-[grid-template-rows,opacity] duration-(--duration-base) ease-(--ease-smooth) ${
+        open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+      }`}
+    >
+      <div className="min-h-0 overflow-hidden">{children}</div>
+    </div>
+  );
+}
 
 interface CompetitorDetailClientProps {
   userId: string;
@@ -220,11 +239,11 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
         <div className="p-3 bg-[var(--tone-danger)]/5 border border-[var(--tone-danger)]/15 rounded">
-          <span className="text-[10px] uppercase font-bold text-[var(--tone-danger)] tracking-wider block mb-1">Before</span>
+          <span className="text-xs uppercase font-bold text-[var(--tone-danger)] tracking-wider block mb-1">Before</span>
           <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto text-muted-foreground">{beforeRender}</div>
         </div>
         <div className="p-3 bg-[var(--tone-positive)]/5 border border-[var(--tone-positive)]/15 rounded">
-          <span className="text-[10px] uppercase font-bold text-[var(--tone-positive)] tracking-wider block mb-1">After</span>
+          <span className="text-xs uppercase font-bold text-[var(--tone-positive)] tracking-wider block mb-1">After</span>
           <div className="text-xs leading-relaxed max-h-[150px] overflow-y-auto text-foreground">{afterRender}</div>
         </div>
       </div>
@@ -319,7 +338,7 @@ ${cardLists.win_conditions.length > 0
       />
 
       {/* A) HEADER ROW */}
-      <div className="bg-card border border-border rounded-xl p-5">
+      <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
             <img
@@ -361,7 +380,8 @@ ${cardLists.win_conditions.length > 0
                 </div>
               ) : (
                 <>
-                  <h1 className="text-xl font-bold text-foreground">{comp.name || comp.url}</h1>
+                  {/* Page h1 lives in Topbar — this heading must stay h2. */}
+                  <h2 className="text-xl font-bold text-foreground">{comp.name || comp.url}</h2>
                   <a
                     href={comp.url}
                     target="_blank"
@@ -442,12 +462,12 @@ ${cardLists.win_conditions.length > 0
         <div className="lg:col-span-2 space-y-6">
           {/* B) CHANGE TIMELINE */}
           <div className="bg-card border border-border rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-border">
+            <div className="px-6 py-4 border-b border-border">
               <h2 className="text-sm font-semibold text-foreground">Change History</h2>
               <p className="text-xs text-muted-foreground">Archived snapshots and diff analyzer</p>
             </div>
 
-            <div className="p-5">
+            <div className="p-6">
               {detail.change_events.length === 0 ? (
                 <div className="text-center py-8 text-sm text-muted-foreground">
                   No changes detected yet for this competitor.
@@ -482,18 +502,22 @@ ${cardLists.win_conditions.length > 0
 
                         <div className="bg-muted/40 border border-border rounded-lg overflow-hidden transition-colors duration-300">
                           {/* Event Header */}
-                          <div
+                          <button
+                            type="button"
                             onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                            className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-muted/70 transition-colors"
+                            aria-expanded={isExpanded}
+                            aria-controls={`event-diff-${event.id}`}
+                            className="w-full text-left p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-muted/70 transition-colors duration-(--duration-base) ease-(--ease-out)"
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="text-xs font-semibold text-foreground">{dateFormatted}</span>
-                                <span className="text-[10px] text-muted-foreground font-mono">({event.week_label})</span>
+                                <span className="text-xs text-muted-foreground font-mono">({event.week_label})</span>
                               </div>
-                              <p className="text-xs mt-0.5 truncate max-w-[280px] md:max-w-[400px] text-muted-foreground">
+                              {/* span, not p: this now sits inside a <button> (phrasing content only) */}
+                              <span className="block text-xs mt-0.5 truncate max-w-[280px] md:max-w-[400px] text-muted-foreground">
                                 {event.brief_text || "Copy differences scanned."}
-                              </p>
+                              </span>
                             </div>
 
                             <div className="flex items-center gap-2 flex-shrink-0">
@@ -504,36 +528,27 @@ ${cardLists.win_conditions.length > 0
                                 ? <ChevronUp size={16} className="text-muted-foreground" />
                                 : <ChevronDown size={16} className="text-muted-foreground" />}
                             </div>
-                          </div>
+                          </button>
 
                           {/* Event Diff Body */}
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div
-                                initial={{ height: 0 }}
-                                animate={{ height: 'auto' }}
-                                exit={{ height: 0 }}
-                                className="border-t border-border overflow-hidden"
-                              >
-                                <div className="p-4 bg-muted/30">
+                          <Collapse open={isExpanded} id={`event-diff-${event.id}`}>
+                            <div className="p-4 bg-muted/30 border-t border-border">
                                   <p className="text-sm font-semibold text-foreground mb-2">Analysis Summary</p>
                                   <p className="text-xs text-muted-foreground leading-relaxed mb-4">{event.brief_text || "No AI explanation generated."}</p>
 
                                   <div className="flex items-center justify-between mb-2">
                                     <span className="text-xs font-semibold text-foreground">Text Diff Viewer</span>
                                     {event.net_char_delta !== 0 && (
-                                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                                      <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
                                         event.net_char_delta > 0 ? 'tag-green border' : 'tag-red border'
                                       }`}>
                                         {event.net_char_delta > 0 ? '+' : ''}{event.net_char_delta} chars
                                       </span>
                                     )}
                                   </div>
-                                  {renderDiff(event.before_text, event.after_text)}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                              {renderDiff(event.before_text, event.after_text)}
+                            </div>
+                          </Collapse>
                         </div>
                       </div>
                     );
@@ -545,7 +560,7 @@ ${cardLists.win_conditions.length > 0
 
           {/* E) SCAN HISTORY */}
           <div className="bg-card border border-border rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-border">
+            <div className="px-6 py-4 border-b border-border">
               <h2 className="text-sm font-semibold text-foreground">Scan Logs</h2>
               <p className="text-xs text-muted-foreground">Full database raw crawl history</p>
             </div>
@@ -554,17 +569,17 @@ ${cardLists.win_conditions.length > 0
               <table className="w-full text-left text-sm text-muted-foreground">
                 <thead>
                   <tr className="border-b border-border bg-muted/50">
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Date</th>
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">File Size</th>
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</th>
-                    <th className="px-5 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Changes</th>
+                    <th className="px-6 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Date</th>
+                    <th className="px-6 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">File Size</th>
+                    <th className="px-6 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Status</th>
+                    <th className="px-6 py-3 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Changes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {detail.scan_history && detail.scan_history.length > 0 ? (
                     detail.scan_history.map((scan: any) => (
                       <tr key={scan.id} className="hover:bg-muted/50 transition-colors">
-                        <td className="px-5 py-4 whitespace-nowrap text-xs">
+                        <td className="px-6 py-4 whitespace-nowrap text-xs">
                           {mounted
                             ? new Date(scan.fetched_at).toLocaleString('en-US', {
                                 month: 'short',
@@ -574,17 +589,17 @@ ${cardLists.win_conditions.length > 0
                               })
                             : ''}
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono text-xs">
+                        <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">
                           {scan.char_count.toLocaleString('en-US')} chars
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`badge ${
                             scan.status === 'success' ? 'badge-feature_add' : 'tag-red border'
                           }`}>
                             {scan.status}
                           </span>
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap text-xs font-semibold">
+                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
                           {scan.changes_detected > 0 ? (
                             <span className="inline-flex items-center gap-1 text-primary">
                               <Zap size={12} /> {scan.changes_detected} found
@@ -597,7 +612,7 @@ ${cardLists.win_conditions.length > 0
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="px-5 py-8 text-center text-sm text-muted-foreground">
+                      <td colSpan={4} className="px-6 py-8 text-center text-sm text-muted-foreground">
                         No scans recorded yet.
                       </td>
                     </tr>
@@ -612,14 +627,14 @@ ${cardLists.win_conditions.length > 0
         <div className="space-y-6">
           {/* C) BATTLE CARD */}
           <div className="bg-card border border-border rounded-xl overflow-hidden border-l-[3px] border-l-primary">
-            <div className="p-5">
+            <div className="p-6">
               {detail.battlecard ? (
-                <div className="space-y-5">
+                <div className="space-y-6">
                   {/* Header */}
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h2 className="text-base font-semibold text-foreground">{comp.name || comp.url} Battle Card</h2>
-                      <p className="text-[11px] mt-0.5 flex items-center gap-1 text-muted-foreground">
+                      <p className="text-xs mt-0.5 flex items-center gap-1 text-muted-foreground">
                         <Calendar size={11} /> Week of {mounted ? new Date(detail.battlecard.generated_at).toLocaleDateString() : ''}
                       </p>
                     </div>
@@ -651,8 +666,11 @@ ${cardLists.win_conditions.length > 0
                     {/* Accordion 1: Recent Changes */}
                     <div className="border border-border rounded-lg overflow-hidden">
                       <button
+                        type="button"
                         onClick={() => toggleSection('changes')}
-                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                        aria-expanded={cardOpenSections.changes}
+                        aria-controls="card-section-changes"
+                        className="relative w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors duration-(--duration-base) ease-(--ease-out) after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2 after:content-['']"
                       >
                         <span className="flex items-center gap-2">
                           <Zap size={13} className="text-primary" /> Recent Changes
@@ -661,15 +679,8 @@ ${cardLists.win_conditions.length > 0
                           ? <ChevronUp size={12} className="text-muted-foreground" />
                           : <ChevronDown size={12} className="text-muted-foreground" />}
                       </button>
-                      <AnimatePresence>
-                        {cardOpenSections.changes && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-border"
-                          >
-                            <div className="p-4 text-xs space-y-2 bg-card">
+                      <Collapse open={cardOpenSections.changes} id="card-section-changes">
+                        <div className="p-4 text-xs space-y-2 bg-card border-t border-border">
                               {cardLists.what_changed.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
                                   {cardLists.what_changed.map((c: unknown, idx: number) => (
@@ -681,17 +692,18 @@ ${cardLists.win_conditions.length > 0
                                   Your competitor has been quiet this week &mdash; no pricing or feature changes detected.
                                 </p>
                               )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                        </div>
+                      </Collapse>
                     </div>
 
                     {/* Accordion 2: Their Weaknesses */}
                     <div className="border border-border rounded-lg overflow-hidden">
                       <button
+                        type="button"
                         onClick={() => toggleSection('weaknesses')}
-                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                        aria-expanded={cardOpenSections.weaknesses}
+                        aria-controls="card-section-weaknesses"
+                        className="relative w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors duration-(--duration-base) ease-(--ease-out) after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2 after:content-['']"
                       >
                         <span className="flex items-center gap-2">
                           <AlertTriangle size={13} className="text-[var(--tone-danger)]" /> Their Weaknesses
@@ -700,15 +712,8 @@ ${cardLists.win_conditions.length > 0
                           ? <ChevronUp size={12} className="text-muted-foreground" />
                           : <ChevronDown size={12} className="text-muted-foreground" />}
                       </button>
-                      <AnimatePresence>
-                        {cardOpenSections.weaknesses && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-border"
-                          >
-                            <div className="p-4 text-xs space-y-2 bg-card">
+                      <Collapse open={cardOpenSections.weaknesses} id="card-section-weaknesses">
+                        <div className="p-4 text-xs space-y-2 bg-card border-t border-border">
                               {cardLists.weaknesses.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
                                   {cardLists.weaknesses.map((w: unknown, idx: number) => (
@@ -718,17 +723,18 @@ ${cardLists.win_conditions.length > 0
                               ) : (
                                 <p className="italic text-muted-foreground">No complaints found in reviews.</p>
                               )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                        </div>
+                      </Collapse>
                     </div>
 
                     {/* Accordion 3: Talking Points */}
                     <div className="border border-border rounded-lg overflow-hidden">
                       <button
+                        type="button"
                         onClick={() => toggleSection('talkingPoints')}
-                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                        aria-expanded={cardOpenSections.talkingPoints}
+                        aria-controls="card-section-talking-points"
+                        className="relative w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors duration-(--duration-base) ease-(--ease-out) after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2 after:content-['']"
                       >
                         <span className="flex items-center gap-2">
                           <MessageSquare size={13} className="text-[var(--tone-positive)]" /> Talking Points
@@ -737,15 +743,8 @@ ${cardLists.win_conditions.length > 0
                           ? <ChevronUp size={12} className="text-muted-foreground" />
                           : <ChevronDown size={12} className="text-muted-foreground" />}
                       </button>
-                      <AnimatePresence>
-                        {cardOpenSections.talkingPoints && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-border"
-                          >
-                            <div className="p-4 text-xs space-y-2 bg-card">
+                      <Collapse open={cardOpenSections.talkingPoints} id="card-section-talking-points">
+                        <div className="p-4 text-xs space-y-2 bg-card border-t border-border">
                               {cardLists.talking_points.length > 0 ? (
                                 <ol className="list-decimal pl-4 space-y-2 leading-relaxed text-foreground">
                                   {cardLists.talking_points.map((tp: unknown, idx: number) => (
@@ -755,17 +754,18 @@ ${cardLists.win_conditions.length > 0
                               ) : (
                                 <p className="italic text-muted-foreground">No talking points generated.</p>
                               )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                        </div>
+                      </Collapse>
                     </div>
 
                     {/* Accordion 4: Win Conditions */}
                     <div className="border border-border rounded-lg overflow-hidden">
                       <button
+                        type="button"
                         onClick={() => toggleSection('winConditions')}
-                        className="w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors"
+                        aria-expanded={cardOpenSections.winConditions}
+                        aria-controls="card-section-win-conditions"
+                        className="relative w-full px-4 py-3 bg-muted/50 hover:bg-muted/80 flex items-center justify-between text-xs font-semibold text-foreground transition-colors duration-(--duration-base) ease-(--ease-out) after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2 after:content-['']"
                       >
                         <span className="flex items-center gap-2">
                           <Trophy size={13} className="text-[var(--tone-warning)]" /> Win Conditions
@@ -774,15 +774,8 @@ ${cardLists.win_conditions.length > 0
                           ? <ChevronUp size={12} className="text-muted-foreground" />
                           : <ChevronDown size={12} className="text-muted-foreground" />}
                       </button>
-                      <AnimatePresence>
-                        {cardOpenSections.winConditions && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden border-t border-border"
-                          >
-                            <div className="p-4 text-xs space-y-2 bg-card">
+                      <Collapse open={cardOpenSections.winConditions} id="card-section-win-conditions">
+                        <div className="p-4 text-xs space-y-2 bg-card border-t border-border">
                               {cardLists.win_conditions.length > 0 ? (
                                 <ul className="list-disc pl-4 space-y-2 leading-relaxed text-foreground">
                                   {cardLists.win_conditions.map((wc: unknown, idx: number) => (
@@ -792,10 +785,8 @@ ${cardLists.win_conditions.length > 0
                               ) : (
                                 <p className="italic text-muted-foreground">No win conditions generated.</p>
                               )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                        </div>
+                      </Collapse>
                     </div>
                   </div>
 
@@ -839,7 +830,7 @@ ${cardLists.win_conditions.length > 0
           </div>
 
           {/* D) RATING TREND CHART */}
-          <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+          <div className="bg-card border border-border rounded-xl p-6 space-y-4">
             <div>
               <h2 className="text-sm font-semibold text-foreground">Rating Trend</h2>
               <p className="text-xs text-muted-foreground">Avg score progression over time</p>
@@ -861,7 +852,7 @@ ${cardLists.win_conditions.length > 0
                         if (active && payload && payload.length) {
                           return (
                             <div
-                              className="text-[10px] px-2 py-1 rounded shadow border"
+                              className="text-xs px-2 py-1 rounded shadow border"
                               style={{ background: chart.tooltipBg, borderColor: chart.tooltipBorder, color: 'var(--foreground)' }}
                             >
                               {payload[0].value} average

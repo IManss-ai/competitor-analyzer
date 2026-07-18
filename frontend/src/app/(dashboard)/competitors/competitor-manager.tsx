@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Trash2, Plus, ExternalLink, ChevronDown, Store } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import type { Competitor } from '@/lib/types';
 import { competitorDomain } from '@/lib/utils';
 import { useMounted } from '@/lib/use-mounted';
@@ -14,6 +14,25 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+
+// Expand/collapse without animating height:auto (a layout property): the outer
+// grid transitions grid-template-rows 0fr→1fr + opacity on design tokens only.
+// Content stays mounted; `inert` + aria-hidden pull it out of the tab order and
+// a11y tree while collapsed. Pair with aria-expanded/aria-controls on triggers.
+function Collapse({ open, id, children }: { open: boolean; id?: string; children: ReactNode }) {
+  return (
+    <div
+      id={id}
+      inert={!open}
+      aria-hidden={!open}
+      className={`grid transition-[grid-template-rows,opacity] duration-(--duration-base) ease-(--ease-smooth) ${
+        open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+      }`}
+    >
+      <div className="min-h-0 overflow-hidden">{children}</div>
+    </div>
+  );
+}
 
 interface CompetitorManagerProps {
   initialCompetitors: Competitor[];
@@ -145,6 +164,8 @@ export default function CompetitorManager({
         <Button
           onClick={() => setShowAdd(!showAdd)}
           disabled={atLimit}
+          aria-expanded={showAdd}
+          aria-controls="add-competitor-form"
           className="flex-shrink-0"
         >
           <Plus size={16} />
@@ -152,18 +173,13 @@ export default function CompetitorManager({
         </Button>
       </div>
 
-      {/* Add Form Panel */}
-      <AnimatePresence>
-        {showAdd && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden mb-8"
-          >
+      {/* Add Form Panel — bottom spacing lives inside the collapsing cell so it
+          vanishes with the panel (an outer margin would leave a 32px gap). */}
+      <Collapse open={showAdd} id="add-competitor-form">
+        <div className="pb-8">
             <Card>
               <CardContent className="pt-6">
-                <h3 className="text-sm font-semibold mb-4 text-foreground">Add new competitor</h3>
+                <h2 className="text-sm font-semibold mb-4 text-foreground">Add new competitor</h2>
                 <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-4 items-end">
                   <div className="w-full md:flex-1 space-y-2">
                     <Label htmlFor="url">Website URL</Label>
@@ -201,29 +217,24 @@ export default function CompetitorManager({
 
                 {/* Local Business Details (collapsible) */}
                 {isLocalBusiness && (
-                  <div className="mt-5 pt-5 border-t border-border">
+                  <div className="mt-6 pt-6 border-t border-border">
                     <button
                       type="button"
                       onClick={() => setShowLocalFields(!showLocalFields)}
-                      className="flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer mb-4 text-foreground hover:text-primary"
+                      aria-expanded={showLocalFields}
+                      aria-controls="local-business-fields"
+                      className="relative flex items-center gap-2 text-sm font-medium transition-colors duration-(--duration-base) ease-(--ease-out) cursor-pointer mb-4 text-foreground hover:text-primary after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2 after:content-['']"
                     >
                       <Store size={16} />
                       Local Business Details
                       <ChevronDown
                         size={14}
-                        className="transition-transform text-muted-foreground"
+                        className="transition-transform duration-(--duration-base) ease-(--ease-out) text-muted-foreground"
                         style={{ transform: showLocalFields ? 'rotate(180deg)' : 'none' }}
                       />
                     </button>
 
-                    <AnimatePresence>
-                      {showLocalFields && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="overflow-hidden"
-                        >
+                    <Collapse open={showLocalFields} id="local-business-fields">
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
                               <Label htmlFor="google-maps-url">Google Maps URL</Label>
@@ -260,16 +271,13 @@ export default function CompetitorManager({
                               />
                             </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    </Collapse>
                   </div>
                 )}
               </CardContent>
             </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      </Collapse>
 
       {/* Limit Indicator (Tactile Progress) */}
       <div className="bg-card border border-border rounded-xl mb-8 px-4 py-3 flex items-center justify-between">
@@ -285,7 +293,7 @@ export default function CompetitorManager({
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono text-muted-foreground">{competitors.length} / 7</span>
           {atLimit && (
-            <span className="inline-flex items-center gap-1 text-[9.5px] uppercase tracking-wider font-mono px-2 py-0.5 rounded border" style={{ color: 'var(--tone-warning)', backgroundColor: 'color-mix(in oklch, var(--tone-warning) 10%, transparent)', borderColor: 'color-mix(in oklch, var(--tone-warning) 20%, transparent)' }}>
+            <span className="inline-flex items-center gap-1 text-xs uppercase tracking-wider font-mono px-2 py-0.5 rounded border" style={{ color: 'var(--tone-warning)', backgroundColor: 'color-mix(in oklch, var(--tone-warning) 10%, transparent)', borderColor: 'color-mix(in oklch, var(--tone-warning) 20%, transparent)' }}>
               Limit reached
             </span>
           )}
@@ -342,7 +350,7 @@ export default function CompetitorManager({
           </Card>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {competitors.map((comp) => {
             const hostname = competitorDomain(comp.url);
 
@@ -351,7 +359,7 @@ export default function CompetitorManager({
                 key={comp.id}
                 className="group relative"
               >
-                <div className="bg-card border border-border rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-full">
+                <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between h-full">
                   <div>
                     {/* Top right status */}
                     <div className="absolute top-5 right-5 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -361,7 +369,7 @@ export default function CompetitorManager({
                       </span>
                       <Badge
                         variant="outline"
-                        className="text-[9px] uppercase tracking-wider font-mono rounded-sm px-2 py-0.5 h-auto"
+                        className="text-xs uppercase tracking-wider font-mono rounded-sm px-2 py-0.5 h-auto"
                         style={{ color: 'var(--tone-positive)', borderColor: 'color-mix(in oklch, var(--tone-positive) 30%, transparent)' }}
                       >
                         monitoring
@@ -369,7 +377,7 @@ export default function CompetitorManager({
                     </div>
 
                     {/* Top row */}
-                    <div className="flex items-start gap-4 mb-5 pr-16">
+                    <div className="flex items-start gap-4 mb-6 pr-16">
                       <div className="w-10 h-10 rounded-lg bg-muted border border-border flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -384,14 +392,14 @@ export default function CompetitorManager({
                         />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-base font-semibold leading-tight mb-1 truncate">
+                        <h2 className="text-base font-semibold leading-tight mb-1 truncate">
                           <Link
                             href={`/competitors/${comp.id}`}
                             className="transition-colors text-foreground hover:text-primary"
                           >
                             {comp.name || hostname}
                           </Link>
-                        </h3>
+                        </h2>
                         <a
                           href={comp.url}
                           target="_blank"
@@ -409,7 +417,7 @@ export default function CompetitorManager({
                   {/* Bottom row */}
                   <div className="flex items-end justify-between gap-4 mt-4 pt-4 border-t border-border">
                     <div className="min-w-0">
-                      <div className="text-[9px] uppercase tracking-wider font-mono mb-1 text-muted-foreground">Monitoring since</div>
+                      <div className="text-xs uppercase tracking-wider font-mono mb-1 text-muted-foreground">Monitoring since</div>
                       <div className="text-sm font-medium font-mono text-muted-foreground">
                         {mounted ? (comp.created_at ? new Date(comp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now') : ''}
                       </div>
@@ -427,6 +435,7 @@ export default function CompetitorManager({
                         onClick={() => handleDelete(comp.id)}
                         disabled={deleting === comp.id}
                         title="Remove competitor"
+                        aria-label={`Remove ${comp.name || hostname}`}
                         className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 disabled:opacity-40"
                       >
                         <Trash2 size={16} />

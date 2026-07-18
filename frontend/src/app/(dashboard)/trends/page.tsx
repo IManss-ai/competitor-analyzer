@@ -51,7 +51,7 @@ export default async function TrendsPage() {
                 <div className="w-2.5 h-[90%] bg-muted-foreground/60 rounded-sm"></div>
               </div>
 
-              <h3 className="text-xl font-semibold tracking-tight mb-2 text-foreground">No data to show yet</h3>
+              <h2 className="text-xl font-semibold tracking-tight mb-2 text-foreground">No data to show yet</h2>
               <p className="text-sm max-w-sm mx-auto mb-8 leading-relaxed text-muted-foreground">
                 Trends will appear here once you add competitors and we complete the first weekly scan.
               </p>

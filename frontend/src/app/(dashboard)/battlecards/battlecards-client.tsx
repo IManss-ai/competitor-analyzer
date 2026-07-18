@@ -22,10 +22,10 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
           <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
             <Shield size={22} className="text-primary" />
           </div>
-          <h3 className="text-base font-semibold mb-1 text-foreground">
+          <h2 className="text-base font-semibold mb-1 text-foreground">
             No competitors to analyze yet
-          </h3>
-          <p className="text-sm mb-5 max-w-sm text-muted-foreground">
+          </h2>
+          <p className="text-sm mb-6 max-w-sm text-muted-foreground">
             Add a competitor and run a scan, then generate an AI battle card that aggregates
             page changes, customer complaints, and strategic signals.
           </p>
@@ -41,7 +41,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {competitors.map((comp, index) => {
         const hostname = competitorDomain(comp.url);
 
@@ -54,9 +54,9 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
             transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="group relative"
           >
-            <div className="bg-card border border-border rounded-xl p-5 relative overflow-hidden flex flex-col justify-between h-full">
+            <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between h-full">
               {/* Top row */}
-              <div className="flex items-start gap-4 mb-5">
+              <div className="flex items-start gap-4 mb-6">
                 <div className="w-10 h-10 rounded-lg bg-muted border border-border flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -71,9 +71,9 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
                   />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-base font-semibold leading-tight mb-1 truncate text-foreground">
+                  <h2 className="text-base font-semibold leading-tight mb-1 truncate text-foreground">
                     {comp.name || hostname}
-                  </h3>
+                  </h2>
                   <a
                     href={comp.url}
                     target="_blank"
@@ -89,7 +89,7 @@ export default function BattlecardsClient({ competitors, userId }: BattlecardsCl
               {/* Bottom row */}
               <div className="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-border">
                 <div className="min-w-0">
-                  <div className="text-[9px] uppercase tracking-wider font-mono mb-1 text-muted-foreground">
+                  <div className="text-xs uppercase tracking-wider font-mono mb-1 text-muted-foreground">
                     Last 7 days
                   </div>
                   <div className="text-sm font-medium font-mono text-muted-foreground">
