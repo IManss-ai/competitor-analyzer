@@ -234,7 +234,10 @@ class App(Base):
     screenshot_url = Column(String, nullable=True)
     source = Column(String, default="seed")            # seed | user_tracked | submitted
     scan_tier = Column(String, default="cheap")        # cheap | full
-    scan_status = Column(String, default="pending")    # pending | ok | scan_failed
+    scan_status = Column(String, default="pending")    # pending | ok | scan_degraded | scan_failed
+    # scan_degraded = fetch worked but no profile AND no tech were learned; row
+    # stays publicly visible (search/sitemap hide only scan_failed) and stays
+    # selectable for re-enrichment.
     first_scanned_at = Column(DateTime, nullable=True)
     last_scanned_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())

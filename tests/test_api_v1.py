@@ -210,6 +210,38 @@ class TestApiV1(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["url"], "https://rival.com")
 
+    def test_add_competitor_links_public_catalog_app(self):
+        """Organic catalog growth: tracking a URL creates/links a public App row
+        (source=user_tracked, scan_tier=full) and sets Competitor.app_id."""
+        from app.models import App
+        resp = self.client.post(
+            "/api/v1/competitors",
+            json={"url": "https://rival.com", "name": "Rival Co"},
+            headers=self.auth_headers,
+        )
+        self.assertEqual(resp.status_code, 200)
+        comp = self.db.query(Competitor).filter(Competitor.url == "https://rival.com").one()
+        self.assertIsNotNone(comp.app_id)
+        app_row = self.db.get(App, comp.app_id)
+        self.assertEqual(app_row.source, "user_tracked")
+        self.assertEqual(app_row.scan_tier, "full")
+
+    def test_add_competitor_reuses_existing_catalog_app(self):
+        """Tracking a URL that already has a catalog App links, not duplicates."""
+        from app.models import App
+        existing = App(slug="rival", url="rival.com", name="Rival", source="seed", scan_tier="cheap")
+        self.db.add(existing)
+        self.db.commit()
+        resp = self.client.post(
+            "/api/v1/competitors",
+            json={"url": "https://rival.com"},
+            headers=self.auth_headers,
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(self.db.query(App).count(), 1)
+        comp = self.db.query(Competitor).filter(Competitor.url == "https://rival.com").one()
+        self.assertEqual(comp.app_id, existing.id)
+
     def test_add_competitor_enforces_limit(self):
         """Adding more than 7 competitors returns 400."""
         for i in range(7):

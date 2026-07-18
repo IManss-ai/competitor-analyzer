@@ -102,6 +102,50 @@ async def fetch_page_text(url: str, snapshot_count: int = 0) -> tuple[str, str |
         except Exception as e:
             return "", f"Scraper sidecar failed ({scraper_err}); direct fallback failed: {e}"
 
+async def fetch_raw_page(url: str) -> tuple[str, str, str | None]:
+    """
+    Fetch a page as (markdown, raw_html, error) via the sidecar's deterministic
+    POST /scrape-raw (no LLM cost). The raw HTML feeds regex tech detection,
+    whose signatures (script srcs, /_next/static, ...) don't survive
+    markdownification.
+
+    Unlike fetch_page_text there is deliberately NO mock branch: this path
+    writes to the public /apps catalog, and fabricated mock pricing must never
+    be persisted there. SCRAPER_URL unset/dummy -> hard error.
+
+    Direct-HTTP fallback (sidecar down) keeps the RAW response body as html and
+    returns the tag-stripped text as markdown.
+    """
+    is_dummy = (not SCRAPER_URL) or (SCRAPER_URL == "dummy")
+    if is_dummy:
+        note_degraded("fetcher", "refused", "scraper_url_unset_no_mock_for_enrichment")
+        return "", "", "SCRAPER_URL unset/dummy: refusing to fabricate page content for enrichment"
+
+    try:
+        # Same 90s budget rationale as fetch_page_text (30s render worst case).
+        async with httpx.AsyncClient(timeout=90.0) as client:
+            resp = await client.post(f"{SCRAPER_URL}/scrape-raw", json={"url": url})
+            resp.raise_for_status()
+            body = resp.json()
+            markdown = (body.get("text") or "").strip()
+            html = body.get("html") or ""
+            return markdown, html, None
+    except Exception as scraper_err:
+        note_degraded("fetcher", "direct_http", "sidecar_down", scraper_err)
+        try:
+            async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as d_client:
+                d_resp = await d_client.get(url)
+                d_resp.raise_for_status()
+                html_content = d_resp.text  # RAW — keep tags for tech detection
+                text_content = re.sub(r'<script.*?</script>', ' ', html_content, flags=re.DOTALL)
+                text_content = re.sub(r'<style.*?</style>', ' ', text_content, flags=re.DOTALL)
+                text_content = re.sub(r'<[^>]+>', ' ', text_content)
+                text_content = re.sub(r'\s+', ' ', text_content).strip()
+                return text_content[:10000], html_content[:500_000], None
+        except Exception as e:
+            return "", "", f"Scraper sidecar failed ({scraper_err}); direct fallback failed: {e}"
+
+
 def extract_main_content(raw_text: str) -> str:
     """
     Strip navigation, headers, footers from Jina-extracted text.

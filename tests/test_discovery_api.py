@@ -8,7 +8,7 @@ from sqlalchemy.pool import StaticPool
 
 from main import app as fastapi_app
 from app.db import Base, get_session
-from app.models import App, AppPricing, Competitor, User
+from app.models import App, AppPricing, AppTech, Competitor, User
 
 
 class TestDiscoveryApi(unittest.TestCase):
@@ -59,6 +59,49 @@ class TestDiscoveryApi(unittest.TestCase):
         self.assertEqual(resp.status_code, 401)
         resp = self.client.get("/api/v1/apps/search?sort=newest", headers=self.auth)
         self.assertEqual(resp.status_code, 200)
+
+    def test_search_page_size_respected(self):
+        self.db.add(App(slug="beta", url="beta.io", name="Beta", scan_status="ok"))
+        self.db.commit()
+        resp = self.client.get("/api/v1/apps/search?page_size=1")
+        self.assertEqual(resp.status_code, 200)
+        body = resp.json()
+        self.assertEqual(len(body["results"]), 1)
+        self.assertEqual(body["total"], 2)
+        self.assertEqual(body["page_size"], 1)
+
+    def test_search_page_size_clamped_to_max(self):
+        resp = self.client.get("/api/v1/apps/search?page_size=500")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()["page_size"], 50)  # search.MAX_PAGE_SIZE
+
+    def test_facets_public_returns_categories_and_tech(self):
+        self.db.add(AppTech(app_id=self.app_row.id, technology="stripe", tech_category="payments"))
+        self.db.commit()
+        resp = self.client.get("/api/v1/apps/facets")  # no auth header — public
+        self.assertEqual(resp.status_code, 200)
+        body = resp.json()
+        self.assertEqual(body["categories"], [{"value": "productivity", "count": 1}])
+        self.assertEqual(body["tech"], [{"value": "stripe", "count": 1}])
+
+    def test_facets_exclude_scan_failed_apps(self):
+        failed = App(slug="dead", url="dead.io", name="Dead",
+                     category="productivity", scan_status="scan_failed")
+        self.db.add(failed)
+        self.db.commit()
+        self.db.add(AppTech(app_id=failed.id, technology="react", tech_category="framework"))
+        self.db.commit()
+        body = self.client.get("/api/v1/apps/facets").json()
+        self.assertEqual(body["categories"], [{"value": "productivity", "count": 1}])
+        self.assertEqual(body["tech"], [])
+
+    @patch("app.llm.get_sync_client")
+    @patch("app.llm.ai_available", return_value=True)
+    def test_facets_make_zero_paid_model_calls(self, _mock_avail, mock_get_client):
+        mock_client = MagicMock()
+        mock_get_client.return_value = mock_client
+        self.client.get("/api/v1/apps/facets")
+        mock_client.chat.completions.create.assert_not_called()
 
     def test_profile_returns_pricing(self):
         resp = self.client.get("/api/v1/apps/acme")

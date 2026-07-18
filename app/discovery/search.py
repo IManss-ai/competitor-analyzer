@@ -23,6 +23,30 @@ def _text_predicate(db: Session, q: str):
     )
 
 
+def app_facets(db: Session) -> dict:
+    """Live facet counts for the /apps filter UI: category and technology
+    values with app counts. Same visibility rule as search (scan_failed rows
+    excluded). Cheap at catalog scale (<100 rows); computed live, no denorm."""
+    visible = App.scan_status != "scan_failed"
+    cat_rows = db.execute(
+        select(App.category, func.count(App.id))
+        .where(visible, App.category.isnot(None))
+        .group_by(App.category)
+        .order_by(func.count(App.id).desc(), App.category)
+    ).all()
+    tech_rows = db.execute(
+        select(AppTech.technology, func.count(AppTech.app_id))
+        .join(App, AppTech.app_id == App.id)
+        .where(visible)
+        .group_by(AppTech.technology)
+        .order_by(func.count(AppTech.app_id).desc(), AppTech.technology)
+    ).all()
+    return {
+        "categories": [{"value": r[0], "count": r[1]} for r in cat_rows],
+        "tech": [{"value": r[0], "count": r[1]} for r in tech_rows],
+    }
+
+
 def search_apps(
     db: Session,
     q: str | None = None,

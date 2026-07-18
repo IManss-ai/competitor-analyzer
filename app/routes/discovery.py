@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.db import get_session
 from app.models import App, AppPricing, AppTech, ChangeEvent, Competitor, ReviewSnapshot
-from app.discovery.search import search_apps
+from app.discovery.search import MAX_PAGE_SIZE, app_facets, search_apps
 from app.access import require_write_access
 from app.routes.api_v1 import require_api_user
 from app.auth import resolve_bearer_user_id
@@ -35,17 +35,27 @@ def api_search_apps(
     actively_shipping: bool = False,
     sort: str = "relevance",
     page: int = 1,
+    page_size: int = 20,
     db: Session = Depends(get_session),
     authorization: str | None = Header(default=None),
 ):
     # Advanced sorting is a paid-tier hook: public gets relevance only.
     if sort != "relevance" and _optional_user(authorization) is None:
         raise HTTPException(status_code=401, detail="Sign in to use sorting")
+    page_size = min(max(1, page_size), MAX_PAGE_SIZE)
     results, total = search_apps(
         db, q=q, category=category, max_price=max_price, tech=tech,
         actively_shipping=actively_shipping, sort=sort, page=page,
+        page_size=page_size,
     )
-    return {"results": results, "total": total, "page": page}
+    return {"results": results, "total": total, "page": page, "page_size": page_size}
+
+
+@router.get("/apps/facets")
+def api_app_facets(db: Session = Depends(get_session)):
+    """Public, read-only facet counts (categories + tech) for the /apps filter
+    UI. Must be declared before /apps/{slug} so 'facets' isn't swallowed."""
+    return app_facets(db)
 
 
 @router.get("/apps-sitemap")

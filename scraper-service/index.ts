@@ -97,7 +97,11 @@ app.post('/scrape-raw', async (req, res) => {
   const url = req.body?.url;
   if (!url || typeof url !== 'string') return res.status(400).json({ error: 'url required' });
   try { await acquireSlot(); } catch { return res.status(503).json({ error: 'scraper overloaded, retry shortly' }); }
-  try { const html = await renderHtml(url); res.json({ text: htmlToMarkdown(html, url) }); }
+  // Additive contract: existing callers (reviews, enrichment markdown path) read
+  // only .text; .html carries the rendered page for regex tech detection
+  // (raw-HTML script/src signatures don't survive markdownification). Truncated
+  // so a pathological page can't balloon the response.
+  try { const html = await renderHtml(url); res.json({ text: htmlToMarkdown(html, url), html: html.slice(0, 500_000) }); }
   catch (e) { res.status(502).json({ error: `scrape-raw failed: ${String(e)}` }); }
   finally { releaseSlot(); }
 });

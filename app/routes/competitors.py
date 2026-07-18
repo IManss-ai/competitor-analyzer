@@ -54,6 +54,15 @@ async def add_competitor(
         url = "https://" + url
         
     competitor = Competitor(user_id=user_uuid, url=url, name=name.strip() or None)
+    # Organic catalog growth: every tracked URL becomes (or links to) a public
+    # /apps entry. Best-effort — catalog failure must never block tracking.
+    try:
+        from app.discovery.backfill import get_or_create_app
+        app_row, _ = get_or_create_app(db, url, name=name.strip() or None,
+                                       source="user_tracked", scan_tier="full")
+        competitor.app_id = app_row.id
+    except Exception:
+        pass  # bare Competitor still works; backfill script can link later
     db.add(competitor)
     db.commit()
     
