@@ -71,9 +71,11 @@ export default async function AppProfilePage({ params }: PageProps) {
       <AppsNav />
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="rs-card p-6 space-y-3">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-semibold" style={{ color: 'var(--foreground)' }}>{app.name}</h1>
+          {/* flex-wrap + min-w-0/break-words: long unbroken app names must wrap
+              instead of pushing the nowrap CTA out of the card on mobile. */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-semibold break-words" style={{ color: 'var(--foreground)' }}>{app.name}</h1>
               {app.tagline && <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>{app.tagline}</p>}
             </div>
             <Link href={`/auth/login?track=${app.slug}`} className="rs-btn-primary text-[13px] whitespace-nowrap">

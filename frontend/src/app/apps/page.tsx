@@ -1,40 +1,62 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { AppsNav } from '@/components/apps-nav';
+import { AppCard, type AppResult } from './app-card';
+import { AppsSearchToolbar, type AppFacets } from './apps-search-client';
 
 interface PageProps {
-  searchParams: Promise<{ page?: string }>;
-}
-
-interface AppResult {
-  slug: string;
-  name: string;
-  tagline: string | null;
-  category: string | null;
-  price_from: number | null;
-  tech: string[];
-  tags: string[];
+  searchParams: Promise<{ page?: string; q?: string; category?: string; tech?: string }>;
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const PAGE_SIZE = 20;
 
+interface Filters {
+  q?: string;
+  category?: string;
+  tech?: string;
+}
+
+function hasAnyFilter(f: Filters): boolean {
+  return !!(f.q || f.category || f.tech);
+}
+
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const { page: rawPage } = await searchParams;
+  const { page: rawPage, q, category, tech } = await searchParams;
   const page = Math.max(1, parseInt(rawPage ?? '1', 10) || 1);
+  const filtered = hasAnyFilter({ q: q?.trim(), category: category?.trim(), tech: tech?.trim() });
   return {
     title: 'SaaS app database: pricing, tech stacks & signals | Rivalscope',
     description:
       'Browse the Rivalscope database of SaaS apps: live pricing, tech stacks, review signals, and shipping velocity for every profile.',
     // Each results page is its own canonical URL — pointing pages 2+ at
     // '/apps' marks them as duplicates of page 1 and deindexes their apps.
-    alternates: { canonical: page > 1 ? `/apps?page=${page}` : '/apps' },
+    // Filtered permutations (?q/?category/?tech) are noindexed so they never
+    // compete with the deliberate per-?page canonical scheme or the sitemap.
+    alternates: { canonical: filtered ? '/apps' : page > 1 ? `/apps?page=${page}` : '/apps' },
+    ...(filtered ? { robots: { index: false } } : {}),
   };
 }
 
-async function fetchApps(page: number): Promise<{ results: AppResult[]; total: number }> {
+async function fetchApps(
+  page: number,
+  filters: Filters = {},
+): Promise<{ results: AppResult[]; total: number }> {
+  const params = new URLSearchParams();
+  params.set('page', String(page));
+  if (filters.q) params.set('q', filters.q);
+  if (filters.category) params.set('category', filters.category);
+  if (filters.tech) params.set('tech', filters.tech);
+  // NEVER send `sort` — it 401s without a signed bearer (discovery.py).
+  const filtered = hasAnyFilter(filters);
   try {
-    const res = await fetch(`${API_BASE}/api/v1/apps/search?page=${page}`, { next: { revalidate: 3600 } });
+    const res = await fetch(
+      `${API_BASE}/api/v1/apps/search?${params.toString()}`,
+      // ISR only for the canonical paginated pages; filtered permutations are
+      // no-store so junk queries never accumulate ISR cache entries.
+      filtered ? { cache: 'no-store' } : { next: { revalidate: 3600 } },
+    );
     if (!res.ok) return { results: [], total: 0 };
     const body = await res.json();
     return { results: body.results ?? [], total: body.total ?? 0 };
@@ -43,10 +65,60 @@ async function fetchApps(page: number): Promise<{ results: AppResult[]; total: n
   }
 }
 
+// Facet options for the filter toolbar. Defensive by design: the endpoint may
+// not exist yet — any error/404/shape mismatch degrades to null, which hides
+// the category/tech filters and keeps the toolbar search-only.
+async function fetchFacets(): Promise<AppFacets | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/apps/facets`, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const body = await res.json();
+    const clean = (arr: unknown) =>
+      Array.isArray(arr)
+        ? arr.filter(
+            (o): o is { value: string; count: number } =>
+              !!o && typeof o === 'object' &&
+              typeof (o as { value?: unknown }).value === 'string' &&
+              typeof (o as { count?: unknown }).count === 'number',
+          )
+        : [];
+    const categories = clean(body?.categories);
+    const tech = clean(body?.tech);
+    if (categories.length === 0 && tech.length === 0) return null;
+    return { categories, tech };
+  } catch {
+    return null;
+  }
+}
+
+function pageHref(page: number, filters: Filters): string {
+  const params = new URLSearchParams();
+  if (filters.q) params.set('q', filters.q);
+  if (filters.category) params.set('category', filters.category);
+  if (filters.tech) params.set('tech', filters.tech);
+  if (page > 1) params.set('page', String(page));
+  const qs = params.toString();
+  return qs ? `/apps?${qs}` : '/apps';
+}
+
 export default async function AppsIndexPage({ searchParams }: PageProps) {
-  const { page: rawPage } = await searchParams;
+  const { page: rawPage, q, category, tech } = await searchParams;
   const page = Math.max(1, parseInt(rawPage ?? '1', 10) || 1);
-  const { results, total } = await fetchApps(page);
+  const filters: Filters = {
+    q: q?.trim() || undefined,
+    category: category?.trim() || undefined,
+    tech: tech?.trim() || undefined,
+  };
+  const filtered = hasAnyFilter(filters);
+
+  const [{ results, total }, facets, unfiltered] = await Promise.all([
+    fetchApps(page, filters),
+    fetchFacets(),
+    // Grand total for "N of M apps" — the unfiltered page-1 fetch is the same
+    // ISR-cached request the canonical page makes, so this is effectively free.
+    filtered ? fetchApps(1) : Promise.resolve(null),
+  ]);
+  const grandTotal = unfiltered ? unfiltered.total : total;
 
   return (
     <div className="min-h-screen px-4 py-10" style={{ background: 'var(--background)' }}>
@@ -55,37 +127,39 @@ export default async function AppsIndexPage({ searchParams }: PageProps) {
         <header className="space-y-2">
           <h1 className="text-2xl font-semibold" style={{ color: 'var(--foreground)' }}>SaaS app database</h1>
           <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-            Pricing, tech stacks, and strategic signals for {total > 0 ? total.toLocaleString('en-US') : 'the'} tracked apps.
+            Pricing, tech stacks, and strategic signals for {grandTotal > 0 ? grandTotal.toLocaleString('en-US') : 'the'} tracked apps.
           </p>
         </header>
 
+        <Suspense fallback={null}>
+          <AppsSearchToolbar facets={facets} total={total} grandTotal={grandTotal} />
+        </Suspense>
+
         {results.length === 0 ? (
-          <div className="rs-card p-8 text-center space-y-3">
-            <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>No apps to show yet</h2>
-            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-              The database is being populated. Check back soon.
-            </p>
-          </div>
+          filtered ? (
+            <div className="rs-card p-8 text-center space-y-3">
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
+                No apps match {filters.q ? `"${filters.q}"` : 'these filters'}
+              </h2>
+              <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                Try a different search or clear the filters to browse the full database.
+              </p>
+              <Link href="/apps" className="rs-btn-primary text-[13px] inline-flex">
+                Clear filters
+              </Link>
+            </div>
+          ) : (
+            <div className="rs-card p-8 text-center space-y-3">
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>No apps to show yet</h2>
+              <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                The database is being populated. Check back soon.
+              </p>
+            </div>
+          )
         ) : (
           <div className="space-y-3">
             {results.map((app) => (
-              <Link key={app.slug} href={`/apps/${app.slug}`} className="rs-card block p-4 space-y-1.5">
-                <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="text-base font-semibold" style={{ color: 'var(--foreground)' }}>{app.name}</h2>
-                  {app.price_from !== null && (
-                    <span className="font-mono text-sm whitespace-nowrap" style={{ color: 'var(--muted-foreground)' }}>
-                      from ${app.price_from}/mo
-                    </span>
-                  )}
-                </div>
-                {app.tagline && (
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>{app.tagline}</p>
-                )}
-                <div className="flex flex-wrap gap-2 text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>
-                  {app.category && <span className="badge">{app.category}</span>}
-                  {app.tech.map((t) => <span key={t} className="badge">{t}</span>)}
-                </div>
-              </Link>
+              <AppCard key={app.slug} app={app} />
             ))}
           </div>
         )}
@@ -93,13 +167,13 @@ export default async function AppsIndexPage({ searchParams }: PageProps) {
         {(page > 1 || page * PAGE_SIZE < total) && (
           <nav className="flex items-center justify-between text-sm" aria-label="Pagination">
             {page > 1 ? (
-              <Link href={page === 2 ? '/apps' : `/apps?page=${page - 1}`} className="underline" style={{ color: 'var(--primary)' }}>
+              <Link href={pageHref(page - 1, filters)} className="underline" style={{ color: 'var(--primary)' }}>
                 ← Previous
               </Link>
             ) : <span />}
             <span className="font-mono text-xs" style={{ color: 'var(--muted-foreground)' }}>Page {page}</span>
             {page * PAGE_SIZE < total ? (
-              <Link href={`/apps?page=${page + 1}`} className="underline" style={{ color: 'var(--primary)' }}>
+              <Link href={pageHref(page + 1, filters)} className="underline" style={{ color: 'var(--primary)' }}>
                 Next →
               </Link>
             ) : <span />}
