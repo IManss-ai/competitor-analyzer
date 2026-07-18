@@ -11,7 +11,9 @@ import { createApiClient } from '@/lib/api';
 import { useChartPalette } from '@/lib/chart-theme';
 import { isAbortError } from '@/lib/fetch-utils';
 import { competitorDomain } from '@/lib/utils';
-import BattleCardContent, { BattleCardData, normalizeBattleCard, renderInlineMarkdown } from '@/components/battle-card-content';
+import BattleCardContent from '@/components/battle-card-content';
+import { BattleCardData, normalizeBattleCard } from '@/lib/battle-card';
+import { renderInlineMarkdown } from '@/lib/markdown';
 import HeadToHead from '@/components/head-to-head';
 import LatestReport from '@/components/latest-report';
 import CountUp from '@/components/count-up';
@@ -520,20 +522,20 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           initial={{ opacity: 0, scale: 0.97, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-(--shadow-modal) md:p-8"
+          className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-(--shadow-modal) md:p-8"
         >
-          <div className="mb-7 text-center">
+          <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
               <Sparkles size={22} />
             </div>
-            <h2 className="font-display text-[26px] leading-[1.1] tracking-[-0.01em] text-foreground">Let&apos;s set up your competitive radar</h2>
+            <h2 className="font-display text-2xl leading-[1.1] tracking-[-0.01em] text-foreground">Let&apos;s set up your competitive radar</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Tell us your website and we&apos;ll read it, build your profile, and find who you&apos;re up against.
             </p>
           </div>
 
           <form onSubmit={analyzeMyBusiness} className="space-y-4">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="magic-url">Your website</Label>
               <Input
                 id="magic-url"
@@ -575,12 +577,12 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <Sparkles size={22} className="animate-pulse" />
           </div>
           <h2 className="text-lg font-semibold tracking-tight text-foreground">Setting up your radar</h2>
-          <div className="mx-auto mt-5 flex max-w-xs flex-col gap-2.5">
+          <div className="mx-auto mt-6 flex max-w-xs flex-col gap-2">
             {ANALYZING_LINES.map((line, i) => {
               const done = i < analyzingLine;
               const active = i === analyzingLine;
               return (
-                <div key={line} className="flex items-center gap-2.5 text-sm">
+                <div key={line} className="flex items-center gap-2 text-sm">
                   <span className="flex h-4 w-4 flex-none items-center justify-center">
                     {done ? (
                       <Check size={14} className="text-primary" />
@@ -610,19 +612,19 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           initial={{ opacity: 0, scale: 0.98, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-lg space-y-5"
+          className="relative z-10 w-full max-w-lg space-y-6"
         >
           <div className="text-center">
-            <h2 className="font-display text-[26px] leading-[1.1] tracking-[-0.01em] text-foreground">Here&apos;s what we found</h2>
-            <p className="mt-1.5 text-sm text-muted-foreground">Review it, edit anything that&apos;s off, then start tracking.</p>
+            <h2 className="font-display text-2xl leading-[1.1] tracking-[-0.01em] text-foreground">Here&apos;s what we found</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Review it, edit anything that&apos;s off, then start tracking.</p>
           </div>
 
           {/* Your business */}
-          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <span className="text-sm font-medium text-card-foreground">Your business</span>
               {profile?.source === 'fallback' && (
-                <span className="rounded-md border border-border bg-secondary px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                <span className="rounded-md border border-border bg-secondary px-2 py-0.5 font-mono text-xs text-muted-foreground">
                   Best guess
                 </span>
               )}
@@ -630,7 +632,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
             {profile ? (
               <div className="space-y-4">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="profile-name">Business name</Label>
                   <Input
                     id="profile-name"
@@ -662,7 +664,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </div>
 
           {/* Your top competitors */}
-          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <div className="mb-1 flex items-center justify-between">
               <span className="text-sm font-medium text-card-foreground">
                 {isLocal ? 'Your competitors' : 'Your top competitors'}
@@ -677,7 +679,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 We&apos;ll track competitors you add manually.
               </p>
             ) : discovered.length > 0 ? (
-              <div className="-mx-1.5 mb-4 mt-3 divide-y divide-border">
+              <div className="-mx-2 mb-4 mt-3 divide-y divide-border">
                 {discovered.map((c) => {
                   const checked = checkedUrls.has(c.url);
                   return (
@@ -685,7 +687,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       key={c.url}
                       type="button"
                       onClick={() => toggleChecked(c.url)}
-                      className="flex w-full items-start gap-3 rounded-lg px-1.5 py-3 text-left transition-colors hover:bg-muted"
+                      className="flex w-full items-start gap-3 rounded-lg px-2 py-3 text-left transition-colors hover:bg-muted"
                     >
                       <span
                         className="mt-0.5 flex h-4 w-4 flex-none items-center justify-center rounded border transition-colors"
@@ -701,7 +703,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                           <span className="text-sm font-medium text-foreground">{c.name}</span>
                           <span className="truncate font-mono text-xs text-muted-foreground">{competitorDomain(c.url)}</span>
                         </span>
-                        {c.why && <span className="mt-0.5 block text-[13px] leading-snug text-muted-foreground">{c.why}</span>}
+                        {c.why && <span className="mt-0.5 block text-sm leading-snug text-muted-foreground">{c.why}</span>}
                       </span>
                     </button>
                   );
@@ -714,7 +716,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             )}
 
             {/* Manual add — ALWAYS visible */}
-            <div className="space-y-1.5 border-t border-border pt-4">
+            <div className="space-y-2 border-t border-border pt-4">
               <Label htmlFor="manual-url">
                 {isLocal || discovered.length === 0 ? 'Add your first competitor' : 'Add another by URL'}
               </Label>
@@ -741,7 +743,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <button
               type="button"
               onClick={() => setOnboardingStep(3)}
-              className="mx-auto text-xs font-medium text-muted-foreground hover:text-foreground hover:underline"
+              className="relative mx-auto text-xs font-medium text-muted-foreground hover:text-foreground hover:underline after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2"
             >
               Skip for now
             </button>
@@ -761,7 +763,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           animate={{ opacity: 1, scale: 1, y: 0 }}
           className="relative z-10 bg-card border border-border shadow-lg rounded-xl p-6 md:p-8 max-w-md w-full"
         >
-          <div className="text-center mb-7">
+          <div className="text-center mb-8">
             <div className="w-12 h-12 flex items-center justify-center mx-auto mb-3 rounded-lg bg-primary/10 text-primary border border-primary/20">
               <Compass size={24} />
             </div>
@@ -798,8 +800,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 >
                   <span className={selected ? 'text-primary' : 'text-muted-foreground'}>{icon}</span>
                   <span className="flex-1 min-w-0">
-                    <span className="block text-[13px] font-semibold text-foreground">{title}</span>
-                    <span className="block text-[11px] leading-snug truncate text-muted-foreground">{desc}</span>
+                    <span className="block text-sm font-semibold text-foreground">{title}</span>
+                    <span className="block text-xs leading-snug truncate text-muted-foreground">{desc}</span>
                   </span>
                   {selected && (
                     <CheckCircle2 size={14} className="shrink-0 text-primary" />
@@ -854,7 +856,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
           </div>
 
           <form onSubmit={submitOnboardingCompetitor} className="space-y-4">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="onboarding-url">
                 {selectedBusinessType === 'local' ? 'Competitor Website URL *' : 'Competitor URL *'}
               </Label>
@@ -869,7 +871,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="onboarding-name">Business Name (Optional)</Label>
               <Input
                 id="onboarding-name"
@@ -883,7 +885,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
             {selectedBusinessType === 'local' ? (
               <>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="onboarding-maps">Google Maps URL (Optional)</Label>
                   <Input
                     id="onboarding-maps"
@@ -893,7 +895,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     onChange={(e) => setOnboardingMapsUrl(e.target.value)}
                   />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="onboarding-instagram">Instagram Handle (Optional)</Label>
                   <Input
                     id="onboarding-instagram"
@@ -905,7 +907,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 </div>
               </>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label htmlFor="onboarding-g2">G2 or Trustpilot URL (Optional)</Label>
                 <Input
                   id="onboarding-g2"
@@ -938,14 +940,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               <button
                 type="button"
                 onClick={() => setOnboardingStep(-1)}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
+                className="relative text-xs font-medium text-muted-foreground hover:text-foreground hover:underline cursor-pointer after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2"
               >
                 ← Change type
               </button>
               <button
                 type="button"
                 onClick={() => setOnboardingStep(3)}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
+                className="relative text-xs font-medium text-muted-foreground hover:text-foreground hover:underline cursor-pointer after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2"
               >
                 Skip & go to dashboard
               </button>
@@ -981,7 +983,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         </div>
 
         <div className="flex flex-col items-center gap-2 max-w-xs mx-auto bg-muted border border-border rounded-lg p-4">
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground">Live Status</span>
+          <span className="text-xs uppercase font-semibold tracking-wider text-muted-foreground">Live Status</span>
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Loader2 size={16} className="animate-spin text-primary" />
             {statusMessages[onboardingStatus] || statusMessages.fetching}
@@ -1009,7 +1011,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-card border border-border rounded-xl max-w-2xl mx-auto shadow-sm my-10 overflow-hidden"
+        className="bg-card border border-border rounded-xl max-w-2xl mx-auto shadow-sm my-12 overflow-hidden"
       >
         {/* Header */}
         <div className="p-6 border-b border-border bg-muted text-center space-y-2">
@@ -1098,7 +1100,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
   const dateLabel = mounted ? new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short' }) : '';
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* The report the user already earned — persists across returns, and stays
           visible for read_only users (pure cache read, no paid call). */}
       <LatestReport userId={userId} />
@@ -1107,9 +1109,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-card border border-border rounded-xl shadow-sm p-6 lg:p-7"
+        className="bg-card border border-border rounded-xl shadow-sm p-6 lg:p-8"
       >
-        <div className="flex items-center gap-3 mb-4 text-[12px] font-medium tracking-tight text-muted-foreground">
+        <div className="flex items-center gap-3 mb-4 text-xs font-medium tracking-tight text-muted-foreground">
           {topIsReal ? (
             <span className="inline-flex items-center gap-2 text-primary">
               <span className="sr-pulse" /> Top signal
@@ -1125,10 +1127,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <h2 className="font-display tracking-tight leading-[1.15] max-w-2xl text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>
               <span className="text-primary">{topEvent.competitor_name}</span>{': '}{(TYPE_LABEL[topEvent.change_type] || 'change').toLowerCase()} detected.
             </h2>
-            <p className="mt-3 text-[14px] leading-relaxed max-w-xl line-clamp-3 text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed max-w-xl line-clamp-3 text-muted-foreground">
               {topEvent.brief_text ? renderInlineMarkdown(topEvent.brief_text) : 'Their homepage changed. Open the battle card for the full breakdown and the play to run.'}
             </p>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button asChild>
                 <Link href={`/competitors/${topEvent.competitor_id}`}>
                   Open battle card <ArrowRight size={14} />
@@ -1144,10 +1146,10 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             <h2 className="font-display tracking-tight max-w-2xl text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>
               Watching <span className="text-primary">{dashboardData.competitor_count}</span> {dashboardData.competitor_count === 1 ? 'competitor' : 'competitors'}. No moves yet.
             </h2>
-            <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed max-w-xl text-muted-foreground">
               We&apos;re watching their homepages, pricing, reviews and hiring. The first real change surfaces here the moment it lands. We re-scan every week.
             </p>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button asChild>
                 <Link href="/competitors"><Plus size={14} /> Add more competitors</Link>
               </Button>
@@ -1159,8 +1161,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         ) : (
           <>
             <h2 className="font-display tracking-tight text-foreground" style={{ fontSize: 'clamp(24px, 2.6vw, 34px)', letterSpacing: '-0.015em' }}>Add your first competitor.</h2>
-            <p className="mt-3 text-[14px] leading-relaxed max-w-xl text-muted-foreground">Point Rivalscope at a competitor and we&apos;ll capture their homepage, reviews and hiring, then flag every move before it costs you a deal.</p>
-            <div className="mt-5">
+            <p className="mt-3 text-sm leading-relaxed max-w-xl text-muted-foreground">Point Rivalscope at a competitor and we&apos;ll capture their homepage, reviews and hiring, then flag every move before it costs you a deal.</p>
+            <div className="mt-6">
               <Button asChild>
                 <Link href="/competitors"><Plus size={14} /> Add a competitor</Link>
               </Button>
@@ -1176,14 +1178,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             { k: 'Needs review', v: dashboardData.pending_count, sub: 'in queue', accent: dashboardData.pending_count > 0 },
             { k: 'Avg review', v: dashboardData.avg_review_score, dec: 1, sub: 'their reviews' },
           ].map((m) => (
-            <div key={m.k} className="rounded-xl border border-border bg-card/60 p-4 shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-0.5">
-              <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.1em] text-muted-foreground">{m.k}</p>
-              <p className="mt-2.5 font-mono text-[28px] font-semibold leading-none tabular-nums tracking-[-0.03em]" style={{ color: m.accent ? 'var(--primary)' : undefined }}>
+            <div key={m.k} className="rounded-xl border border-border bg-card/60 p-4 shadow-[var(--shadow-card)] transition-transform duration-(--duration-base) ease-(--ease-out) hover:-translate-y-0.5">
+              <p className="font-mono text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">{m.k}</p>
+              <p className="mt-2 font-mono text-3xl font-semibold leading-none tabular-nums tracking-[-0.03em]" style={{ color: m.accent ? 'var(--primary)' : undefined }}>
                 <span className={m.accent ? 'text-primary' : 'text-foreground'}>
                   {typeof m.v === 'number' ? <CountUp value={m.v} decimals={m.dec || 0} /> : '—'}
                 </span>
               </p>
-              <p className="mt-2 text-[11px] text-muted-foreground">{m.sub}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{m.sub}</p>
             </div>
           ))}
         </div>
@@ -1196,19 +1198,19 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
         transition={{ duration: 0.3, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
         className="bg-card border border-border rounded-xl shadow-sm overflow-hidden"
       >
-        <div className="flex items-center justify-between px-5 py-4 gap-4 border-b border-border">
+        <div className="flex items-center justify-between px-6 py-4 gap-4 border-b border-border">
           <div className="flex items-center gap-3 min-w-0">
-            <h2 className="text-[17px] font-semibold text-foreground">Signal Board</h2>
-            <span className="font-mono text-[10px] truncate text-muted-foreground">{rankedComps.length} tracked · {anyRealSignal ? 'ranked by signal' : 'baselines captured'}</span>
+            <h2 className="text-lg font-semibold text-foreground">Signal Board</h2>
+            <span className="font-mono text-xs truncate text-muted-foreground">{rankedComps.length} tracked · {anyRealSignal ? 'ranked by signal' : 'baselines captured'}</span>
           </div>
           <div className="flex items-center gap-4 flex-shrink-0">
             {activityDays.length > 0 && (
               <div className="hidden sm:flex items-center gap-2">
-                <span className="text-[10px] font-mono tracking-[0.04em] text-muted-foreground">28d</span>
+                <span className="text-xs font-mono tracking-[0.04em] text-muted-foreground">28d</span>
                 {renderSparkline(activityDays.map((d: any) => d.change_count))}
               </div>
             )}
-            <Link href="/competitors" className="text-[12px] font-medium tracking-tight text-muted-foreground hover:text-foreground transition-colors">Manage →</Link>
+            <Link href="/competitors" className="text-xs font-medium tracking-tight text-muted-foreground hover:text-foreground transition-colors">Manage →</Link>
           </div>
         </div>
 
@@ -1221,21 +1223,21 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 return (
                   <div
                     key={c.id}
-                    className="relative grid items-center gap-4 px-5 py-4 transition-colors duration-150"
+                    className="relative grid items-center gap-4 px-6 py-4 transition-colors duration-(--duration-base) ease-(--ease-out)"
                     style={{ gridTemplateColumns: '24px 1.5fr 2fr 92px 64px auto', borderTop: idx ? '1px solid var(--border)' : 'none', background: hot ? hotBg : 'transparent' }}
                     onMouseEnter={e => (e.currentTarget.style.background = hot ? hotBg : 'var(--muted)')}
                     onMouseLeave={e => (e.currentTarget.style.background = hot ? hotBg : 'transparent')}
                   >
                     {hot && <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: 'var(--primary)' }} />}
-                    <span className={`font-mono tabular-nums text-[12px] ${hot ? 'text-primary' : 'text-muted-foreground'}`}>{String(idx + 1).padStart(2, '0')}</span>
+                    <span className={`font-mono tabular-nums text-xs ${hot ? 'text-primary' : 'text-muted-foreground'}`}>{String(idx + 1).padStart(2, '0')}</span>
                     <div className="flex items-center gap-3 min-w-0">
                       <img src={`https://www.google.com/s2/favicons?domain=${hostnameOf(c.url)}&sz=32`} alt="" className="w-6 h-6 rounded flex-shrink-0 bg-card border border-border p-0.5" />
                       <div className="min-w-0">
-                        <div className="text-[13px] font-medium truncate text-foreground">{c.name || hostnameOf(c.url)}</div>
-                        <div className="font-mono text-[9.5px] truncate text-muted-foreground">{hostnameOf(c.url)}</div>
+                        <div className="text-sm font-medium truncate text-foreground">{c.name || hostnameOf(c.url)}</div>
+                        <div className="font-mono text-xs truncate text-muted-foreground">{hostnameOf(c.url)}</div>
                       </div>
                     </div>
-                    <div className="text-[12px] flex items-center gap-2 min-w-0 text-muted-foreground">
+                    <div className="text-xs flex items-center gap-2 min-w-0 text-muted-foreground">
                       {c.latest ? (
                         <>
                           <span className={`badge badge-${c.latest.change_type} flex-shrink-0`}>{c.latest.change_type === 'initial_scan' ? 'New' : (TYPE_LABEL[c.latest.change_type] || 'Change')}</span>
@@ -1247,14 +1249,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     </div>
                     <div className="flex items-center gap-2 justify-end">
                       <span className="rounded-full overflow-hidden flex-shrink-0 bg-muted" style={{ width: 42, height: 4 }}><span style={{ display: 'block', height: '100%', width: `${c.signal}%`, background: hot ? 'var(--primary)' : 'var(--muted-foreground)' }} /></span>
-                      <span className={`font-mono tabular-nums text-[11px] w-6 text-right ${hot ? 'text-primary' : 'text-muted-foreground'}`}>{c.signal}</span>
+                      <span className={`font-mono tabular-nums text-xs w-6 text-right ${hot ? 'text-primary' : 'text-muted-foreground'}`}>{c.signal}</span>
                     </div>
-                    <span className="font-mono text-[10px] text-right text-muted-foreground">{formatTimeAgo(c.last_scanned)}</span>
+                    <span className="font-mono text-xs text-right text-muted-foreground">{formatTimeAgo(c.last_scanned)}</span>
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" aria-label={`Scan ${c.name} now`} className="p-2 cursor-pointer transition-colors flex-shrink-0 rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground">
+                      <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" aria-label={`Scan ${c.name} now`} className="relative p-2 cursor-pointer transition-colors flex-shrink-0 rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground after:absolute after:top-1/2 after:left-1/2 after:size-[max(100%,44px)] after:-translate-x-1/2 after:-translate-y-1/2">
                         {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin text-primary" /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" /> : <RefreshCw size={13} />}
                       </button>
-                      <Link href={`/competitors/${c.id}`} className={`font-mono text-[10.5px] whitespace-nowrap transition-colors ${hot ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>Card →</Link>
+                      <Link href={`/competitors/${c.id}`} className={`font-mono text-xs whitespace-nowrap transition-colors ${hot ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>Card →</Link>
                     </div>
                   </div>
                 );
@@ -1262,8 +1264,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
             </div>
           </div>
         ) : (
-          <div className="px-5 py-12 text-center flex flex-col items-center gap-3">
-            <p className="text-[13px] text-muted-foreground">No competitors tracked yet.</p>
+          <div className="px-6 py-12 text-center flex flex-col items-center gap-3">
+            <p className="text-sm text-muted-foreground">No competitors tracked yet.</p>
             <Button asChild>
               <Link href="/competitors"><Plus size={14} /> Add your first competitor</Link>
             </Button>
@@ -1274,14 +1276,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* C) INTEL FEED */}
         <div id="feed" className="bg-card border border-border rounded-xl shadow-sm lg:col-span-2 flex flex-col">
-          <div className="px-5 py-4 border-b border-border">
-            <h2 className="text-[17px] font-semibold text-foreground">Intel Feed</h2>
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">Intel Feed</h2>
             <p className="text-sm text-muted-foreground mt-0.5">Chronological timeline of competitor changes</p>
           </div>
 
           <div className="divide-y divide-border flex-1">
             {feedEvents.length === 0 ? (
-              <div className="p-10 text-center flex flex-col items-center gap-3">
+              <div className="p-12 text-center flex flex-col items-center gap-3">
                 <p className="text-sm font-medium text-muted-foreground">No change events yet</p>
                 <p className="text-xs max-w-xs leading-relaxed text-muted-foreground">Add a competitor and run your first scan to start tracking changes.</p>
                 <Button asChild size="sm" className="mt-1">
@@ -1299,7 +1301,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.22, delay: Math.min(idx, 8) * 0.04, ease: [0.16, 1, 0.3, 1] }}
-                    className="p-4 transition-colors duration-150 hover:bg-muted"
+                    className="p-4 transition-colors duration-(--duration-base) ease-(--ease-out) hover:bg-muted"
                   >
                     <div className="flex items-start gap-4">
                       <img
@@ -1309,8 +1311,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-2">
-                          <span className="text-[13px] font-semibold text-foreground">{event.competitor_name || hostname}</span>
-                          <time suppressHydrationWarning className="text-[11px] font-mono flex-shrink-0 text-muted-foreground">{formatTimeAgo(event.detected_at)}</time>
+                          <span className="text-sm font-semibold text-foreground">{event.competitor_name || hostname}</span>
+                          <time suppressHydrationWarning className="text-xs font-mono flex-shrink-0 text-muted-foreground">{formatTimeAgo(event.detected_at)}</time>
                         </div>
 
                         <div className="flex items-center gap-2 mb-2">
@@ -1321,7 +1323,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
                         <p
                           onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                          className={`text-[13px] leading-relaxed cursor-pointer text-muted-foreground transition-colors hover:text-foreground ${isExpanded ? '' : 'line-clamp-2'}`}
+                          className={`text-sm leading-relaxed cursor-pointer text-muted-foreground transition-colors hover:text-foreground ${isExpanded ? '' : 'line-clamp-2'}`}
                         >
                           {event.brief_text ? renderInlineMarkdown(event.brief_text) : 'Website copy updated.'}
                         </p>
@@ -1329,14 +1331,14 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <div className="flex items-center gap-4 mt-3">
                           <Link
                             href={`/competitors/${event.competitor_id}`}
-                            className="text-[12px] font-semibold inline-flex items-center gap-1 transition-colors text-primary hover:text-primary/80"
+                            className="text-xs font-semibold inline-flex items-center gap-1 transition-colors text-primary hover:text-primary/80"
                           >
                             Battle Card <ArrowRight size={11} />
                           </Link>
                           {event.brief_text && event.brief_text.length > 120 && (
                             <button
                               onClick={() => setExpandedEventId(isExpanded ? null : event.id)}
-                              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 py-2 -my-2 px-1 -mx-1 cursor-pointer"
+                              className="relative text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 py-2 -my-2 px-1 -mx-1 cursor-pointer after:absolute after:top-1/2 after:left-0 after:h-[max(100%,44px)] after:w-full after:-translate-y-1/2"
                             >
                               {isExpanded ? <>Collapse <ChevronUp size={12} /></> : <>Expand <ChevronDown size={12} /></>}
                             </button>
@@ -1373,8 +1375,8 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
         {/* D) COMPETITOR HEALTH TABLE */}
         <div className="bg-card border border-border rounded-xl shadow-sm flex flex-col">
-          <div className="px-5 py-4 border-b border-border">
-            <h2 className="text-[17px] font-semibold text-foreground">Tracked Competitors</h2>
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">Tracked Competitors</h2>
             <p className="text-sm text-muted-foreground mt-0.5">Health and review averages</p>
           </div>
 
@@ -1390,22 +1392,22 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                 return (
                   <div
                     key={comp.id}
-                    className="p-4 space-y-3 transition-colors duration-150 hover:bg-muted"
+                    className="p-4 space-y-3 transition-colors duration-(--duration-base) ease-(--ease-out) hover:bg-muted"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <h3 className="text-[13px] font-semibold truncate text-foreground">{comp.name || hostnameOf(comp.url)}</h3>
+                        <h3 className="text-sm font-semibold truncate text-foreground">{comp.name || hostnameOf(comp.url)}</h3>
                         <a
                           href={comp.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] font-mono truncate block transition-colors text-muted-foreground hover:text-foreground"
+                          className="text-xs font-mono truncate block transition-colors text-muted-foreground hover:text-foreground"
                         >
                           {comp.url}
                         </a>
                       </div>
                       <span
-                        className="flex-shrink-0 text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border"
+                        className="flex-shrink-0 text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border"
                         style={{ color: statusColor.color, background: statusColor.bg, borderColor: statusColor.border }}
                       >
                         {comp.status}
@@ -1415,11 +1417,11 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <span className="block mb-0.5 text-xs text-muted-foreground">Last Scanned</span>
-                        <span suppressHydrationWarning className="text-[12px] font-mono text-muted-foreground">{formatTimeAgo(comp.last_scanned)}</span>
+                        <span suppressHydrationWarning className="text-xs font-mono text-muted-foreground">{formatTimeAgo(comp.last_scanned)}</span>
                       </div>
                       <div>
                         <span className="block mb-0.5 text-xs text-muted-foreground">Trustpilot</span>
-                        <span className="text-[12px] font-mono inline-flex items-center gap-1 text-muted-foreground">
+                        <span className="text-xs font-mono inline-flex items-center gap-1 text-muted-foreground">
                           {comp.avg_rating !== null ? (
                             <><Star size={11} style={{ color: 'var(--tone-warning)' }} />{comp.avg_rating.toFixed(1)}</>
                           ) : '--'}
@@ -1436,7 +1438,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         <button
                           onClick={() => scanNow(comp.id)}
                           disabled={!!scanningCompId}
-                          className="inline-flex items-center justify-center p-2 cursor-pointer transition-colors rounded-lg border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                          className="relative inline-flex items-center justify-center p-2 cursor-pointer transition-colors rounded-lg border border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground after:absolute after:top-1/2 after:left-1/2 after:size-[max(100%,44px)] after:-translate-x-1/2 after:-translate-y-1/2"
                           title="Scan now"
                           aria-label={`Scan ${comp.name} now`}
                         >
@@ -1450,7 +1452,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                         </button>
                         <Link
                           href={`/competitors/${comp.id}`}
-                          className="text-[12px] font-semibold transition-colors text-primary hover:text-primary/80"
+                          className="text-xs font-semibold transition-colors text-primary hover:text-primary/80"
                         >
                           Details
                         </Link>
@@ -1461,7 +1463,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
               })
             ) : (
               <div className="p-8 text-center flex flex-col items-center gap-3">
-                <p className="text-[13px] font-medium text-muted-foreground">No competitors tracked</p>
+                <p className="text-sm font-medium text-muted-foreground">No competitors tracked</p>
                 <Button asChild size="sm">
                   <a href="/competitors">Add one</a>
                 </Button>

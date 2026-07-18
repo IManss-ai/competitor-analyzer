@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useMounted } from '@/lib/use-mounted';
 import { motion } from 'motion/react';
 import { Zap, AlertTriangle, MessageSquare, Trophy, Copy, Check } from 'lucide-react';
-import { battleCardItemText, isLlmMetaLine, renderInlineMarkdown } from '@/components/battle-card-content';
+import { battleCardItemText, isLlmMetaLine } from '@/lib/llm-meta';
+import { renderInlineMarkdown } from '@/lib/markdown';
 
 interface BattleCardData {
   title: string;
@@ -75,7 +76,7 @@ export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
             </p>
           </div>
 
-          <button onClick={handleCopyLink} className="rs-btn-ghost text-[13px]">
+          <button onClick={handleCopyLink} className="rs-btn-ghost text-sm">
             {copied ? (
               <>
                 <Check size={14} style={{ color: 'var(--tone-positive)' }} />
@@ -99,7 +100,7 @@ export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
         className="max-w-2xl mx-auto py-8 px-4"
       >
         {/* WHAT CHANGED */}
-        <section className="rs-card p-5 mb-4">
+        <section className="rs-card p-6 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <Zap size={16} className="text-primary" />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
@@ -129,7 +130,7 @@ export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
         </section>
 
         {/* THEIR WEAKNESSES */}
-        <section className="rs-card p-5 mb-4">
+        <section className="rs-card p-6 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={16} style={{ color: 'var(--tone-danger)' }} />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
@@ -155,7 +156,7 @@ export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
         </section>
 
         {/* TALKING POINTS */}
-        <section className="rs-card p-5 mb-4">
+        <section className="rs-card p-6 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <MessageSquare size={16} style={{ color: 'var(--tone-warning)' }} />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
@@ -181,7 +182,7 @@ export default function SharePage({ card: rawCard }: { card: BattleCardData }) {
         </section>
 
         {/* WIN CONDITIONS */}
-        <section className="rs-card p-5 mb-4">
+        <section className="rs-card p-6 mb-4">
           <div className="flex items-center gap-2 mb-3">
             <Trophy size={16} style={{ color: 'var(--tone-positive)' }} />
             <h2 className="text-xs font-semibold uppercase tracking-wide font-mono" style={{ color: 'var(--foreground)' }}>
