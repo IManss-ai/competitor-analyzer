@@ -60,17 +60,17 @@ const tiers: PricingTier[] = [
 function PricingBasic() {
   return (
     <div>
-      <motion.div {...reveal()}>
+      <motion.div {...reveal()} className="text-center">
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Pricing</p>
         <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.08] tracking-[-0.02em] text-foreground">
           Simple pricing. <span className="text-muted-foreground">No surprises.</span>
         </h2>
-        <p className="mt-5 max-w-[480px] text-[15px] leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-5 max-w-[480px] text-[15px] leading-relaxed text-muted-foreground">
           Run your first battle card free, no credit card. Upgrade anytime, billed instantly.
         </p>
       </motion.div>
 
-      <div className="mt-12 grid max-w-3xl gap-5 md:grid-cols-2">
+      <div className="mx-auto mt-12 grid max-w-3xl gap-5 md:grid-cols-2">
         {tiers.map((tier, i) => (
           <motion.div key={tier.name} {...reveal(i * 0.12)}>
             <Card
