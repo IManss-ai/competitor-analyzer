@@ -1,5 +1,11 @@
 # TODOS
 
+## /qa 2026-07-21 (full funnel audit; report: `.gstack/qa-reports/qa-report-rivalscope-dev-2026-07-21.md`)
+
+Zero new bugs found — landing, signup, onboarding, discovery, free-test scan, battle cards (cache + paywall), Polar checkout, competitor add/remove, /apps, /discover, mobile all verified working. Two investigated leads ruled out as tooling artifacts (discovery modal viewport crop, screenshot-vs-`position:fixed` overlay mismatch), documented in the report so future QA doesn't re-chase them.
+
+- [ ] **[ops, hygiene] 4 QA test accounts accumulated in prod, never cleaned up** — `manssjones+qacheck@gmail.com` (07-01), `+qa20260708` (07-08), `+qa0718` (07-18), `+qa1784630190` (07-21, this session). No self-serve account-deletion endpoint exists (only per-competitor delete) and no `ondelete=CASCADE` on the FKs, so a raw `DELETE FROM users` will fail on constraints. Needs either a reviewed dependency-ordered cascade-delete script or a real account-deletion endpoint — recurring cost every QA session otherwise. Founder call on which.
+
 ## Design — landing page (pre-existing, found by /design-review 2026-06-18)
 
 Originally audited against DESIGN.md v3. **Re-verified by /design-review 2026-06-23 against DESIGN.md v4 "Signal Desk" (live, ink-default) — this section is now substantially closed.** Latest report: `.gstack/design-reports/design-audit-rivalscope-dev-2026-06-23.md`.
