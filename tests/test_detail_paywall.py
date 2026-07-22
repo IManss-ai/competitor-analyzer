@@ -123,8 +123,12 @@ class TestDetailPaywall(unittest.TestCase):
         mock_client.chat.completions.create.assert_not_called()
 
     def test_full_user_detail_still_generates_with_ai(self):
-        # free_test_used=False → access_level "full" even with the paywall on.
+        # Detail-page AI now requires a real subscription (audit 2026-07-21 #7/#15:
+        # untested free users no longer trigger unmetered paid generation here —
+        # their one free test is consumed only via the explicit /generate flow).
         user = self._make_user("paying@example.com", free_test_used=False)
+        user.subscription_status = "active"
+        self.db.commit()
         comp = self._make_comp(user)
         auth = {"Authorization": f"Bearer {user.id}"}
         mock_client = _valid_card_client()

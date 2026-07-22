@@ -146,11 +146,41 @@ async def fetch_raw_page(url: str) -> tuple[str, str, str | None]:
             return "", "", f"Scraper sidecar failed ({scraper_err}); direct fallback failed: {e}"
 
 
+def is_structured_markdown(text: str | None) -> bool:
+    """True when ``text`` is the sidecar's structured-markdown serialization
+    (scraper-service/src/schema.ts serialize(): '# <headline>' then
+    '## Pricing' / '## Features' / '## CTA' / '## Content' sections).
+
+    An empty headline serializes to a bare '#' first line, so check the
+    section headings too. The direct-HTTP fallback collapses ALL whitespace
+    to single spaces (one line, no '#' prefix), so it can never match.
+    """
+    if not text:
+        return False
+    stripped = text.lstrip()
+    return (
+        stripped.startswith("# ")
+        or stripped.startswith("#\n")
+        or "\n## Pricing" in stripped
+        or "\n## Features" in stripped
+    )
+
+
 def extract_main_content(raw_text: str) -> str:
     """
     Strip navigation, headers, footers from Jina-extracted text.
     Heuristic: take the longest continuous block of text (>200 chars per paragraph).
     This suppresses nav link noise and A/B test header changes.
+
+    Sidecar output is exempt: its structured markdown has deliberately short
+    '# <headline>' and '## Pricing' sections which the >200-char paragraph
+    filter deleted from every snapshot — making headline repositioning and
+    price changes invisible to the differ (and leaving differ._pricing_section
+    with no '## Pricing' to find). The sidecar's deterministic serialization
+    already suppresses nav/jitter noise, so pass it through intact; the filter
+    only applies to unstructured (direct-HTTP fallback / legacy prose) text.
     """
+    if is_structured_markdown(raw_text):
+        return raw_text
     paragraphs = [p.strip() for p in raw_text.split("\n\n") if len(p.strip()) > 200]
     return "\n\n".join(paragraphs) if paragraphs else raw_text

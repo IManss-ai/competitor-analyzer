@@ -164,11 +164,38 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
     let intervalId: any = null;
     const controller = new AbortController();
 
+    // The backend keeps scan jobs in memory, so a redeploy loses the job id and
+    // the status endpoint answers 'unknown' forever. A just-enqueued job can
+    // also briefly report 'unknown', so only bail after a few in a row. Either
+    // way, cap total polling at ~3 minutes so the modal can never spin forever.
+    let unknownStreak = 0;
+    let pollCount = 0;
+    const MAX_POLLS = 60; // 60 polls at 3s each, about 3 minutes
+
+    const giveUp = () => {
+      clearInterval(intervalId);
+      setOnboardingStatus('stalled');
+      // The competitor row was created even if the scan job was lost; refresh
+      // so it appears once the user continues to the dashboard.
+      refreshDashboard();
+    };
+
     const checkStatus = async () => {
+      pollCount += 1;
+      if (pollCount > MAX_POLLS) {
+        giveUp();
+        return;
+      }
       try {
         const res = await fetch(`${apiUrl}/api/v1/scan/status/${onboardingJobId}`, { signal: controller.signal });
         if (res.ok) {
           const data = await res.json();
+          if (data.status === 'unknown') {
+            unknownStreak += 1;
+            if (unknownStreak >= 3) giveUp();
+            return;
+          }
+          unknownStreak = 0;
           setOnboardingStatus(data.status);
           if (data.status === 'done') {
             clearInterval(intervalId);
@@ -960,6 +987,7 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
 
   // ── ONBOARDING STEP 2: INLINE SCAN PROGRESS ──────────────────────────────
   if (onboardingStep === 1) {
+    const stalled = onboardingStatus === 'stalled';
     const statusMessages: Record<string, string> = {
       fetching: 'Fetching page…',
       analyzing: 'Analyzing changes…',
@@ -971,24 +999,34 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
       <div className="bg-card border border-border rounded-xl p-8 max-w-xl mx-auto shadow-sm text-center space-y-6 my-12">
         <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
           <div className="absolute inset-0 border-4 rounded-full border-border"></div>
-          <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>
+          {!stalled && <div className="absolute inset-0 border-4 border-t-primary rounded-full animate-spin"></div>}
           <Building2 size={36} className="text-primary" />
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">Running your initial scan...</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">
+            {stalled ? 'This scan is taking longer than expected' : 'Running your initial scan...'}
+          </h2>
           <p className="text-sm max-w-sm mx-auto text-muted-foreground">
-            We are analyzing the competitor homepage for copy structures, pricing, and reviews.
+            {stalled
+              ? 'Your competitor is saved and we will keep scanning in the background. You can keep going and check back in a bit.'
+              : 'We are analyzing the competitor homepage for copy structures, pricing, and reviews.'}
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-2 max-w-xs mx-auto bg-muted border border-border rounded-lg p-4">
-          <span className="text-xs uppercase font-semibold tracking-wider text-muted-foreground">Live Status</span>
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-            <Loader2 size={16} className="animate-spin text-primary" />
-            {statusMessages[onboardingStatus] || statusMessages.fetching}
+        {stalled ? (
+          <Button onClick={() => setOnboardingStep(3)}>
+            Continue to dashboard <ArrowRight size={14} />
+          </Button>
+        ) : (
+          <div className="flex flex-col items-center gap-2 max-w-xs mx-auto bg-muted border border-border rounded-lg p-4">
+            <span className="text-xs uppercase font-semibold tracking-wider text-muted-foreground">Live Status</span>
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Loader2 size={16} className="animate-spin text-primary" />
+              {statusMessages[onboardingStatus] || statusMessages.fetching}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }
@@ -1249,9 +1287,9 @@ export default function DashboardClient({ userId, initialData, competitors, isLo
                     </div>
                     <div className="flex items-center gap-2 justify-end">
                       <span className="rounded-full overflow-hidden flex-shrink-0 bg-muted" style={{ width: 42, height: 4 }}><span style={{ display: 'block', height: '100%', width: `${c.signal}%`, background: hot ? 'var(--primary)' : 'var(--muted-foreground)' }} /></span>
-                      <span className={`font-mono tabular-nums text-xs w-6 text-right ${hot ? 'text-primary' : 'text-muted-foreground'}`}>{c.signal}</span>
+                      <span suppressHydrationWarning className={`font-mono tabular-nums text-xs w-6 text-right ${hot ? 'text-primary' : 'text-muted-foreground'}`}>{c.signal}</span>
                     </div>
-                    <span className="font-mono text-xs text-right text-muted-foreground">{formatTimeAgo(c.last_scanned)}</span>
+                    <span suppressHydrationWarning className="font-mono text-xs text-right text-muted-foreground">{formatTimeAgo(c.last_scanned)}</span>
                     <div className="flex items-center justify-end gap-2">
                       <button onClick={() => scanNow(c.id)} disabled={!!scanningCompId} title="Scan now" aria-label={`Scan ${c.name} now`} className="relative p-2 cursor-pointer transition-colors flex-shrink-0 rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground after:absolute after:top-1/2 after:left-1/2 after:size-[max(100%,44px)] after:-translate-x-1/2 after:-translate-y-1/2">
                         {scanningCompId === c.id ? <Loader2 size={13} className="animate-spin text-primary" /> : scanDoneCompId === c.id ? <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" /> : <RefreshCw size={13} />}

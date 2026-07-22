@@ -23,6 +23,12 @@ async def synthesize_brief(
     Generate a 2-3 sentence competitive brief for one competitor's change.
     Returns the brief text. Falls back to a local heuristic brief on error or dummy key.
     """
+    # Dummy key: skip the doomed live HTTPS attempt (SDK retries included)
+    # and jump straight to the heuristic, like every other AI call site.
+    if not llm.ai_available():
+        note_degraded("synthesizer", "heuristic", "dummy_key")
+        return _synthesize_heuristically(competitor_name or competitor_url, change_type)
+
     before_trunc = text_before[:2500]
     after_trunc = text_after[:2500]
 
@@ -71,6 +77,11 @@ async def summarize_competitor_profile(
     is no prior snapshot to diff against, so the Intel Feed has real intel immediately.
     Falls back to a local heuristic brief on error or dummy key.
     """
+    # Same dummy-key short-circuit as synthesize_brief.
+    if not llm.ai_available():
+        note_degraded("synthesizer", "heuristic", "dummy_key")
+        return _summarize_profile_heuristically(competitor_name or competitor_url, content)
+
     content_trunc = (content or "")[:3500]
 
     try:

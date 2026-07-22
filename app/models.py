@@ -39,7 +39,7 @@ class User(Base):
 class Competitor(Base):
     __tablename__ = "competitors"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     url = Column(String, nullable=False)
     name = Column(String, nullable=True)  # optional display name
     active = Column(Boolean, default=True)
@@ -52,42 +52,50 @@ class Competitor(Base):
     trustpilot_url = Column(String, nullable=True)    # explicit Trustpilot review URL override
     capterra_url = Column(String, nullable=True)      # explicit Capterra reviews URL override
     careers_url = Column(String, nullable=True)       # explicit careers / jobs page URL for hiring signals
-    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id"), nullable=True, index=True)  # discovery App link
+    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id", ondelete="SET NULL"), nullable=True, index=True)  # discovery App link
 
 class Snapshot(Base):
     __tablename__ = "snapshots"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False)
     fetched_at = Column(DateTime, default=func.now())
     raw_text = Column(Text, nullable=False)  # full extracted text from Jina
     char_count = Column(Integer, nullable=False)
     fetch_error = Column(String, nullable=True)  # null = success
+    # Hot dashboard query: latest snapshot per competitor (GROUP BY competitor_id, MAX(fetched_at))
+    __table_args__ = (Index("ix_snapshots_competitor_id_fetched_at", "competitor_id", "fetched_at"),)
 
 class ChangeEvent(Base):
     __tablename__ = "change_events"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False)
     detected_at = Column(DateTime, default=func.now())
-    snapshot_before_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id"), nullable=False)
-    snapshot_after_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id"), nullable=False)
+    # snapshot FKs are NOT NULL, so SET NULL is impossible: deleting a snapshot
+    # cascades away the change events that reference it (they are meaningless
+    # without their before/after snapshots anyway).
+    snapshot_before_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id", ondelete="CASCADE"), nullable=False)
+    snapshot_after_id = Column(UUID(as_uuid=True), ForeignKey("snapshots.id", ondelete="CASCADE"), nullable=False)
     net_char_delta = Column(Integer, nullable=False)  # chars changed (edit magnitude), always >= 0
     change_type = Column(String, nullable=True)  # set by classifier in plan 01-02
     brief_text = Column(Text, nullable=True)      # set by synthesizer in plan 01-02
     week_label = Column(String, nullable=True)    # e.g. "2025-W23"
+    # Hot dashboard queries filter/group on competitor_id (change counts, weekly
+    # trend); detected_at is the secondary sort/range column on the feed.
+    __table_args__ = (Index("ix_change_events_competitor_id_detected_at", "competitor_id", "detected_at"),)
 
 class MagicLinkToken(Base):
     __tablename__ = "magic_link_tokens"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     token_hash = Column(String, unique=True, nullable=False, index=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     created_at = Column(DateTime, default=func.now())
 
 class ApprovedAction(Base):
     __tablename__ = "approved_actions"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    change_event_id = Column(UUID(as_uuid=True), ForeignKey("change_events.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    change_event_id = Column(UUID(as_uuid=True), ForeignKey("change_events.id", ondelete="CASCADE"), nullable=False, index=True)
     action_type = Column(String, nullable=False)  # retention_email/pricing_copy/feature_response/social_draft
     original_draft = Column(Text, nullable=False)  # LLM draft output
     edited_text = Column(Text, nullable=True)      # founder's edited version (null = approved as-is)
@@ -97,7 +105,7 @@ class ApprovedAction(Base):
 class Review(Base):
     __tablename__ = "reviews"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False, index=True)
     platform = Column(String, nullable=False)          # "g2" | "trustpilot" | "capterra"
     review_id = Column(String, nullable=False)         # platform's own ID (for dedup)
     author = Column(String, nullable=True)
@@ -112,9 +120,12 @@ class Review(Base):
 class ReviewSnapshot(Base):
     __tablename__ = "review_snapshots"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False)
     platform = Column(String, nullable=False)
     snapshot_at = Column(DateTime, default=func.now())
+    # Hot dashboard query: latest snapshot per (competitor, platform) —
+    # GROUP BY competitor_id, platform + MAX(snapshot_at).
+    __table_args__ = (Index("ix_review_snapshots_competitor_id_platform_snapshot_at", "competitor_id", "platform", "snapshot_at"),)
     avg_rating = Column(Float, nullable=True)          # Float from sqlalchemy
     total_reviews = Column(Integer, nullable=True)
     complaint_count = Column(Integer, default=0)
@@ -123,7 +134,7 @@ class ReviewSnapshot(Base):
 class SocialPost(Base):
     __tablename__ = "social_posts"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False, index=True)
     platform = Column(String, nullable=False)         # "instagram" | "facebook"
     post_id = Column(String, nullable=False)          # dedup key (url or hash)
     content = Column(Text, nullable=False)
@@ -136,7 +147,7 @@ class SocialPost(Base):
 class JobPosting(Base):
     __tablename__ = "job_postings"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False, index=True)
     posting_id = Column(String, nullable=False)        # stable dedup hash of title+location
     title = Column(String, nullable=False)
     location = Column(String, nullable=True)
@@ -154,7 +165,7 @@ class BattleCardCache(Base):
     page, which must never trigger a paid model call."""
     __tablename__ = "battlecard_cache"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False, unique=True, index=True)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
     payload = Column(Text, nullable=False)              # full JSON battle card response
     ai_generated = Column(Boolean, default=False)       # False = heuristic fallback (eligible for AI upgrade)
     generated_at = Column(DateTime, default=func.now())
@@ -163,7 +174,7 @@ class BattleCardCache(Base):
 class JobSnapshot(Base):
     __tablename__ = "job_snapshots"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False, index=True)
     snapshot_at = Column(DateTime, default=func.now())
     total_jobs = Column(Integer, default=0)
     new_postings = Column(Integer, default=0)              # jobs first seen in this scan
@@ -176,8 +187,8 @@ class Campaign(Base):
     Action plans regenerate inside a campaign when new intel arrives."""
     __tablename__ = "campaigns"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
-    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    competitor_id = Column(UUID(as_uuid=True), ForeignKey("competitors.id", ondelete="CASCADE"), nullable=False, index=True)
     name = Column(String, nullable=False)               # "Beat Acme"
     user_product = Column(String, nullable=True)         # the user's own product name (for GEO comparison)
     status = Column(String, default="active")            # active | archived
@@ -187,7 +198,7 @@ class Campaign(Base):
 class ActionPlan(Base):
     __tablename__ = "action_plans"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    campaign_id = Column(UUID(as_uuid=True), ForeignKey("campaigns.id"), nullable=False, index=True)
+    campaign_id = Column(UUID(as_uuid=True), ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False, index=True)
     executive_read = Column(Text, nullable=True)         # 1-2 sentence competitive read
     ai_generated = Column(Boolean, default=False)        # False = heuristic fallback
     generated_at = Column(DateTime, default=func.now())
@@ -197,7 +208,7 @@ class ActionPlan(Base):
 class ActionPlanItem(Base):
     __tablename__ = "action_plan_items"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    plan_id = Column(UUID(as_uuid=True), ForeignKey("action_plans.id"), nullable=False, index=True)
+    plan_id = Column(UUID(as_uuid=True), ForeignKey("action_plans.id", ondelete="CASCADE"), nullable=False, index=True)
     rank = Column(Integer, nullable=False)                # 1..5, most impactful first
     title = Column(String, nullable=False)
     body = Column(Text, nullable=True)                    # concrete first step + drafted copy
@@ -209,8 +220,8 @@ class GeoSnapshot(Base):
     """AI-engine visibility check: who does the AI recommend for this niche."""
     __tablename__ = "geo_snapshots"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    campaign_id = Column(UUID(as_uuid=True), ForeignKey("campaigns.id"), nullable=False, index=True)
-    engine = Column(String, nullable=False)               # perplexity | chatgpt | estimated
+    campaign_id = Column(UUID(as_uuid=True), ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False, index=True)
+    engine = Column(String, nullable=False)               # deepseek | estimated (legacy rows: chatgpt)
     user_share = Column(Integer, default=0)               # 0-10: times user recommended
     competitor_share = Column(Integer, default=0)         # 0-10: times competitor recommended
     source = Column(String, default="estimated")          # estimated | live
@@ -248,7 +259,7 @@ class App(Base):
 class AppPricing(Base):
     __tablename__ = "app_pricing"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id"), nullable=False, index=True)
+    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id", ondelete="CASCADE"), nullable=False, index=True)
     tier_name = Column(String, nullable=False)
     price = Column(Float, nullable=True)               # null = custom/contact-us
     currency = Column(String, default="USD")
@@ -260,7 +271,7 @@ class AppPricing(Base):
 class AppTech(Base):
     __tablename__ = "app_tech"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id"), nullable=False, index=True)
+    app_id = Column(UUID(as_uuid=True), ForeignKey("apps.id", ondelete="CASCADE"), nullable=False, index=True)
     technology = Column(String, nullable=False)        # canonical key: nextjs, stripe, intercom...
     tech_category = Column(String, nullable=True)      # framework | payments | analytics | support
     detected_at = Column(DateTime, default=func.now())

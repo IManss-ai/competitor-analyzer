@@ -2,7 +2,8 @@ import asyncio
 import uuid
 from datetime import datetime, timezone
 from app.models import Competitor, Snapshot, ChangeEvent, ApprovedAction
-from app.pipeline.fetcher import fetch_page_text, extract_main_content
+from app.observability import note_degraded
+from app.pipeline.fetcher import fetch_page_text, extract_main_content, is_structured_markdown
 from app.pipeline.differ import is_meaningful_change
 from app.pipeline.classifier import classify_change
 from app.pipeline.synthesizer import synthesize_brief, summarize_competitor_profile
@@ -91,12 +92,17 @@ async def scan_competitor(competitor_id: str, db) -> dict:
             "first_scan": existing_event_count == 0,
         }
 
-    # Get previous snapshot for diffing
+    # Get previous snapshot for diffing. Error/empty snapshots are NOT valid
+    # baselines: after a transient fetch failure the next good scan would diff
+    # the full page against '' and fabricate a full-page ChangeEvent (plus the
+    # paid classifier/synthesizer/action calls behind it).
     prev_snapshot = (
         db.execute(
             select(Snapshot)
             .where(Snapshot.competitor_id == competitor.id)
             .where(Snapshot.id != new_snapshot.id)
+            .where(Snapshot.fetch_error.is_(None))
+            .where(Snapshot.raw_text != "")
             .order_by(Snapshot.fetched_at.desc())
             .limit(1)
         )
@@ -105,10 +111,21 @@ async def scan_competitor(competitor_id: str, db) -> dict:
 
     # is_meaningful_change runs a CPU-bound difflib pass; a pathological page
     # (LLM run-on) could block the event loop for seconds, so offload it.
-    changed, delta = (
-        await asyncio.to_thread(is_meaningful_change, prev_snapshot.raw_text, main_content)
-        if prev_snapshot else (False, char_count)
-    )
+    if prev_snapshot and (
+        is_structured_markdown(prev_snapshot.raw_text) != is_structured_markdown(main_content)
+    ):
+        # Serialization flip: one side is sidecar structured markdown, the
+        # other is direct-HTTP prose (sidecar blip) — same page, different
+        # serializer. Diffing across the flip reads as a phantom full-page
+        # change, so treat this scan as a baseline reset instead.
+        note_degraded("scanner", "baseline_reset", "serialization_flip")
+        changed, delta = False, 0
+    elif prev_snapshot:
+        changed, delta = await asyncio.to_thread(
+            is_meaningful_change, prev_snapshot.raw_text, main_content
+        )
+    else:
+        changed, delta = False, char_count
 
     if prev_snapshot and changed:
         event = ChangeEvent(

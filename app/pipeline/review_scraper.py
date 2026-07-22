@@ -13,6 +13,32 @@ import uuid as _uuid
 
 logger = logging.getLogger(__name__)
 
+
+class ExtractionFailed(dict):
+    """Marks an LLM-extraction result as a FAILURE (dummy key / API error),
+    as opposed to "the page genuinely had nothing to extract".
+
+    Subclasses dict carrying the legacy empty payload, so value-equality
+    callers keep working unchanged; orchestration callers must isinstance-
+    check it and skip persisting snapshots — writing the zeroed payload as
+    ground truth fabricated data (e.g. "avg_rating 0", "they closed N roles")
+    whenever DeepSeek was down. Do not override __eq__.
+    """
+
+
+def _coerce_rating(value, default: float = 3.0) -> float:
+    """Rating as a float, tolerating the model's explicit nulls and strings.
+
+    Same bug class as the complaint_review_ids str-coercion below: the model
+    can emit "rating": null or "4", and a raw `None >= 4` comparison raised
+    TypeError, rolling back the WHOLE platform's reviews.
+    """
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def _get_platform_urls(competitor_url: str, overrides: dict | None = None) -> dict:
     """Build review-platform URLs, preferring explicit overrides set on the Competitor.
 
@@ -75,7 +101,7 @@ def _extract_json_from_response(content: str) -> dict:
 async def _extract_reviews_with_claude(text: str) -> dict:
     if not llm.ai_available():
         note_degraded("review_scraper.extract", "empty", "dummy_key")
-        return {"reviews": [], "avg_rating": 0, "total_reviews": 0}
+        return ExtractionFailed({"reviews": [], "avg_rating": 0, "total_reviews": 0})
 
     client = llm.get_async_client()
     prompt = """Extract reviews from this page text. Return JSON: {"reviews": [{"id": "str", "author": "str", "rating": int, "title": "str", "body": "str", "published_at": "ISO-8601 date str"}], "avg_rating": float, "total_reviews": int}.
@@ -100,7 +126,7 @@ async def _extract_reviews_with_claude(text: str) -> dict:
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("review_scraper.extract", "empty", "api_error", e)
-        return {"reviews": [], "avg_rating": 0, "total_reviews": 0}
+        return ExtractionFailed({"reviews": [], "avg_rating": 0, "total_reviews": 0})
 
 async def _analyze_complaints_with_claude(reviews: list) -> dict:
     if not llm.ai_available() or not reviews:
@@ -178,6 +204,12 @@ async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db:
                 continue
                 
             extracted = await _extract_reviews_with_claude(page_text)
+            if isinstance(extracted, ExtractionFailed):
+                # Extraction FAILED (not "no reviews found"): writing the
+                # zeroed snapshot would replace the last REAL rating in
+                # latest-snapshot consumers. Skip this platform for this run.
+                logger.warning("review extraction failed for %s on %s; skipping snapshot", platform, url)
+                continue
             reviews = extracted.get("reviews", [])
             avg_rating = extracted.get("avg_rating")
             total_reviews = extracted.get("total_reviews")
@@ -207,7 +239,7 @@ async def scrape_competitor_reviews(competitor_id: str, competitor_url: str, db:
                 ).scalar_one_or_none()
                 
                 is_complaint = rev_id in complaint_review_ids
-                sentiment = "negative" if is_complaint else ("positive" if rev.get("rating", 3) >= 4 else "neutral")
+                sentiment = "negative" if is_complaint else ("positive" if _coerce_rating(rev.get("rating")) >= 4 else "neutral")
                 
                 if not existing:
                     new_review = Review(

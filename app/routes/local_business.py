@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db import get_session, SessionLocal
 from app.models import Competitor, SocialPost
 from app.access import require_write_access
-from app.routes.api_v1 import require_api_user
+from app.routes.api_v1 import require_api_user, _parse_uuid_or_404
 from app.serialization import iso_utc
 import uuid
 import asyncio
@@ -23,7 +23,7 @@ def update_local_competitor(
     user_uuid = uuid.UUID(user_id)
     comp = db.execute(
         select(Competitor).where(
-            Competitor.id == uuid.UUID(competitor_id),
+            Competitor.id == _parse_uuid_or_404(competitor_id),
             Competitor.user_id == user_uuid,
         )
     ).scalar_one_or_none()
@@ -67,7 +67,7 @@ def get_social_posts(
     # Verify competitor belongs to user
     comp = db.execute(
         select(Competitor).where(
-            Competitor.id == uuid.UUID(competitor_id),
+            Competitor.id == _parse_uuid_or_404(competitor_id),
             Competitor.user_id == user_uuid,
         )
     ).scalar_one_or_none()

@@ -59,6 +59,7 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
   const [room, setRoom] = useState<WarRoom | null>(null);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
+  const [statusError, setStatusError] = useState('');
   // Gate clock/locale-derived dates so SSR matches first client render (#418).
   const mounted = useMounted();
 
@@ -84,19 +85,34 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
 
   const setStatus = async (itemId: string, status: string) => {
     if (!room) return;
-    // optimistic update
-    setRoom({
-      ...room,
-      plan: {
-        ...room.plan,
-        items: room.plan.items.map((i) => (i.id === itemId ? { ...i, status } : i)),
-      },
-    });
-    await fetch(`${API_BASE}/api/v1/plan-items/${itemId}/status`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ status }),
-    });
+    const prevStatus = room.plan.items.find((i) => i.id === itemId)?.status;
+    const applyStatus = (value: string) =>
+      setRoom((prev) =>
+        prev
+          ? {
+              ...prev,
+              plan: {
+                ...prev.plan,
+                items: prev.plan.items.map((i) => (i.id === itemId ? { ...i, status: value } : i)),
+              },
+            }
+          : prev
+      );
+    // optimistic update, reverted below if the save fails
+    applyStatus(status);
+    setStatusError('');
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/plan-items/${itemId}/status`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error(`plan-item status update failed (${res.status})`);
+    } catch (e) {
+      console.error(e);
+      if (prevStatus !== undefined) applyStatus(prevStatus);
+      setStatusError('Could not save that change. Please try again.');
+    }
   };
 
   const regenerate = async () => {
@@ -168,6 +184,9 @@ export default function WarRoomClient({ campaignId, userId }: { campaignId: stri
                 The plan · {doneCount}/{room.plan.items.length} executed
               </p>
             </div>
+            {statusError && (
+              <p className="text-xs font-medium" style={{ color: 'var(--tone-danger)' }}>{statusError}</p>
+            )}
             {room.plan.items.map((item) => (
               <div
                 key={item.id}

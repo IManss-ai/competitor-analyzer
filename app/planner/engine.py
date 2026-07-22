@@ -97,9 +97,31 @@ def _gather_signals(campaign: Campaign, db: Session) -> dict:
     }
 
 
-def _latest_intel_at(signals: dict) -> datetime | None:
-    times = [e.detected_at for e in signals["events"] if e.detected_at]
-    return max(times) if times else None
+# Change types that must NOT count as new intel for the regeneration trigger.
+# Mirrors the battlecard cache guard (battlecard._has_new_intel): with the
+# edit-magnitude differ, rotating page content emits minor_copy events every
+# scan — without this filter every war-room view after a scan fired a fresh
+# paid regeneration.
+NOISE_CHANGE_TYPES = ("minor_copy", "no_change", "initial_scan")
+
+
+def _has_new_intel(campaign: Campaign, since: datetime, db: Session) -> bool:
+    """True if a real, classified change event landed after the cached plan.
+
+    Queries directly rather than reusing signals["events"] so a burst of noise
+    events can't crowd real intel out of that limit(10) window. Only classified
+    non-noise changes count — classifier-suppressed events (minor_copy /
+    no_change), baseline initial_scan events, and unclassified NULL rows must
+    not invalidate the cache."""
+    row = db.execute(
+        select(ChangeEvent.id).where(
+            ChangeEvent.competitor_id == campaign.competitor_id,
+            ChangeEvent.detected_at > since,
+            ChangeEvent.change_type.isnot(None),
+            ChangeEvent.change_type.notin_(NOISE_CHANGE_TYPES),
+        ).limit(1)
+    ).scalar_one_or_none()
+    return row is not None
 
 
 def _build_user_prompt(signals: dict) -> str:
@@ -255,9 +277,17 @@ def _ai_plan(signals: dict) -> tuple[str, list[dict]] | None:
         return None
 
 
-def get_or_generate_plan(campaign: Campaign, db: Session, force: bool = False) -> ActionPlan:
-    """Cache-first plan access. Regenerates only on new intel or force=True."""
-    signals = _gather_signals(campaign, db)
+def get_or_generate_plan(
+    campaign: Campaign, db: Session, force: bool = False, allow_generate: bool = True
+) -> ActionPlan | None:
+    """Cache-first plan access. Regenerates only on new intel or force=True.
+
+    `allow_generate=False` is the read-only / paywalled path (a locked user
+    opening the war room): serve the latest cached plan — even if stale — or
+    None, and never fall through to generation. No paid model call, and no
+    heuristic fallback either (generation persists ActionPlan rows, a write a
+    locked user must not trigger). Mirrors battlecard's allow_ai=False
+    contract without breaking the page render."""
     latest = db.execute(
         select(ActionPlan)
         .where(ActionPlan.campaign_id == campaign.id)
@@ -265,11 +295,14 @@ def get_or_generate_plan(campaign: Campaign, db: Session, force: bool = False) -
         .limit(1)
     ).scalar_one_or_none()
 
+    if not allow_generate:
+        return latest
+
     if latest and not force:
-        newest_intel = _latest_intel_at(signals)
-        if newest_intel is None or (latest.generated_at and newest_intel <= latest.generated_at):
+        if not _has_new_intel(campaign, latest.generated_at or datetime.min, db):
             return latest
 
+    signals = _gather_signals(campaign, db)
     result = _ai_plan(signals)
     ai_generated = result is not None
     if result is None:

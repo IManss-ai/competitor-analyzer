@@ -1,4 +1,5 @@
 import app.llm as llm
+from app.observability import note_degraded
 
 client = llm.get_async_client()
 
@@ -64,6 +65,13 @@ async def generate_action(
         return None
 
     competitor_label = competitor_name or competitor_url
+
+    # Dummy key: skip the doomed live HTTPS attempt (SDK retries included)
+    # and jump straight to the heuristic, like every other AI call site.
+    if not llm.ai_available():
+        note_degraded("action_generator", "heuristic", "dummy_key")
+        return _generate_action_heuristically(action_type, competitor_label, brief_text, user_description)
+
     user_msg = prompt_config["user_template"].format(
         competitor=competitor_label,
         brief=brief_text,

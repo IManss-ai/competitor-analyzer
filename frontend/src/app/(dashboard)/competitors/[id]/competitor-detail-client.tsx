@@ -73,6 +73,7 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
   const [editName, setEditName] = useState(detail.competitor.name || '');
   const [editUrl, setEditUrl] = useState(detail.competitor.url || '');
   const [savingSettings, setSavingSettings] = useState(false);
+  const [settingsError, setSettingsError] = useState('');
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
 
@@ -185,8 +186,11 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
 
   const saveCompetitorSettings = async () => {
     setSavingSettings(true);
+    setSettingsError('');
     try {
-      const res = await fetch(`${apiUrl}/api/v1/local/competitors/${comp.id}`, {
+      // name/url live on the generic competitors PATCH; the /local/ endpoint
+      // only handles local-business fields and silently ignores these.
+      const res = await fetch(`${apiUrl}/api/v1/competitors/${comp.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -200,9 +204,13 @@ export default function CompetitorDetailClient({ userId, initialDetail }: Compet
           competitor: { ...prev.competitor, name: editName, url: editUrl }
         }));
         setEditing(false);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setSettingsError(errData.detail || 'Failed to save changes. Please try again.');
       }
     } catch (e) {
       console.error(e);
+      setSettingsError('Connection error. Please try again.');
     } finally {
       setSavingSettings(false);
     }
@@ -348,36 +356,41 @@ ${cardLists.win_conditions.length > 0
             />
             <div>
               {editing ? (
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <Input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="h-7 text-sm max-w-[150px]"
-                    placeholder="Name"
-                  />
-                  <Input
-                    type="text"
-                    value={editUrl}
-                    onChange={(e) => setEditUrl(e.target.value)}
-                    className="h-7 text-xs max-w-[200px]"
-                    placeholder="URL"
-                  />
-                  <Button
-                    size="sm"
-                    onClick={saveCompetitorSettings}
-                    disabled={savingSettings}
-                  >
-                    {savingSettings ? 'Saving…' : 'Save'}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setEditing(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
+                <>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <Input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="h-7 text-sm max-w-[150px]"
+                      placeholder="Name"
+                    />
+                    <Input
+                      type="text"
+                      value={editUrl}
+                      onChange={(e) => setEditUrl(e.target.value)}
+                      className="h-7 text-xs max-w-[200px]"
+                      placeholder="URL"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={saveCompetitorSettings}
+                      disabled={savingSettings}
+                    >
+                      {savingSettings ? 'Saving…' : 'Save'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setEditing(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                  {settingsError && (
+                    <p className="text-xs font-medium mt-2" style={{ color: 'var(--tone-danger)' }}>{settingsError}</p>
+                  )}
+                </>
               ) : (
                 <>
                   {/* Page h1 lives in Topbar — this heading must stay h2. */}

@@ -99,7 +99,11 @@ def get_or_check_visibility(campaign: Campaign, user_product: str, db: Session, 
     live = _live_check(user_product, competitor_name, comp.business_type)
     if live is not None:
         user_share, competitor_share = live
-        engine, source = "chatgpt", "live"
+        # Honest provenance: the live check runs on DeepSeek (llm.MODEL), not
+        # ChatGPT — never claim an engine we didn't ask. Older persisted
+        # snapshots may still say "chatgpt"; they are served unchanged (the UI
+        # just uppercases whatever engine string it gets).
+        engine, source = "deepseek", "live"
     else:
         user_share, competitor_share = _estimate(campaign, user_product, db)
         engine, source = "estimated", "estimated"

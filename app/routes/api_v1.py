@@ -33,6 +33,42 @@ def require_api_user(authorization: str = Header(default=None)) -> str:
     raise HTTPException(status_code=401, detail="Not authenticated")
 
 
+def _parse_uuid_or_404(value: str) -> uuid.UUID:
+    """Parse a path id; a malformed UUID is a client error (404 Not found, same
+    as a well-formed id that matches nothing), never a ValueError-500. Mirrors
+    the guard in local_business.trigger_local_scan."""
+    try:
+        return uuid.UUID(value)
+    except (ValueError, AttributeError, TypeError):
+        raise HTTPException(status_code=404, detail="Not found")
+
+
+def _is_paying_subscriber(user: User) -> bool:
+    """True only when "full" access comes from a billing relationship (or comp),
+    NOT from the not-yet-used free test.
+
+    Mirrors the subscriber clauses of app.access.access_level minus the
+    free-test clause: active sub, comped email, or Polar "trialing" with a
+    billing relationship (vestigial status — see access.py). Reads the paywall
+    flag/comps through the app.access module so the whole paywall stays
+    single-source and test-patchable in one place; fold this into
+    app.access.is_subscriber() when that file is next open (owned by another
+    lane).
+    """
+    from app import access
+    if not access.PAYWALL_ENABLED:
+        return True
+    if user.subscription_status == "active":
+        return True
+    if user.email and user.email.lower() in access.COMPED_EMAILS:
+        return True
+    if user.subscription_status == "trialing" and (
+        getattr(user, "polar_customer_id", None) or getattr(user, "polar_subscription_id", None)
+    ):
+        return True
+    return False
+
+
 # ── Auth endpoints ───────────────────────────────────────────────────────────
 
 @router.post("/auth/login")
@@ -431,7 +467,7 @@ def api_list_competitors(include_inactive: bool = False, user_id: str = Depends(
 def api_update_competitor(competitor_id: str, payload: dict, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     c = db.execute(
-        select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
+        select(Competitor).where(Competitor.id == _parse_uuid_or_404(competitor_id), Competitor.user_id == user_uuid)
     ).scalar_one_or_none()
     if not c:
         raise HTTPException(status_code=404, detail="Not found")
@@ -469,7 +505,7 @@ async def api_probe_careers(
 
     user_uuid = uuid.UUID(user_id)
     comp = db.execute(
-        select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
+        select(Competitor).where(Competitor.id == _parse_uuid_or_404(competitor_id), Competitor.user_id == user_uuid)
     ).scalar_one_or_none()
     if not comp:
         raise HTTPException(status_code=404, detail="Not found")
@@ -572,7 +608,7 @@ def api_add_competitor(payload: dict, background_tasks: BackgroundTasks, user_id
 def api_delete_competitor(competitor_id: str, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     c = db.execute(
-        select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
+        select(Competitor).where(Competitor.id == _parse_uuid_or_404(competitor_id), Competitor.user_id == user_uuid)
     ).scalar_one_or_none()
     if not c:
         raise HTTPException(status_code=404, detail="Not found")
@@ -665,15 +701,24 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
         for s in snapshots
     ]
     
-    # Latest battle card, cache-first. A paid model call only fires for a
-    # full-access user with no fresh AI card. Read-only (trial-used, non-paying)
-    # users get cache-or-heuristic and NEVER a paid call — consistent with the
-    # /battlecards/generate 402, but the detail page still renders.
+    # Latest battle card, cache-first: cache is served to EVERY viewer. A paid
+    # model call only fires for a paying subscriber (active sub / comped /
+    # Polar-trialing with billing) with no fresh AI card.
+    #
+    # DECISION (audit 2026-07-21, finding D — free-test metering bypass): the
+    # old gate was `allow_ai = not is_read_only(viewer)`, but an untested free
+    # user has access_level "full" (is_read_only False), so every detail view
+    # triggered a paid generation WITHOUT ever consuming free_test_used — that
+    # flag is only set in /battlecards/generate. Net: unlimited paid battlecards
+    # without spending the one free test. Fix: paid generation on this passive
+    # read path is reserved for subscribers; untested free users get
+    # cache-or-heuristic here and burn their one free test via the explicit
+    # /battlecards/generate flow (which meters free_test_used). The page always
+    # renders (200) — we degrade, never 402.
     from app.routes.battlecard import get_or_generate_battlecard
-    from app.access import is_read_only
     try:
         viewer = db.get(User, user_uuid)
-        allow_ai = not (viewer is not None and is_read_only(viewer))
+        allow_ai = viewer is not None and _is_paying_subscriber(viewer)
         battlecard_data = get_or_generate_battlecard(comp, db, allow_ai=allow_ai)
     except Exception:
         battlecard_data = None
@@ -722,11 +767,11 @@ def api_competitor_detail(competitor_id: str, user_id: str = Depends(require_api
 def api_competitor_reviews(competitor_id: str, user_id: str = Depends(require_api_user), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     comp = db.execute(
-        select(Competitor).where(Competitor.id == uuid.UUID(competitor_id), Competitor.user_id == user_uuid)
+        select(Competitor).where(Competitor.id == _parse_uuid_or_404(competitor_id), Competitor.user_id == user_uuid)
     ).scalar_one_or_none()
     if not comp:
         raise HTTPException(status_code=404, detail="Not found")
-        
+
     snapshots = db.execute(
         select(ReviewSnapshot)
         .where(ReviewSnapshot.competitor_id == comp.id)
@@ -804,7 +849,7 @@ def api_queue(user_id: str = Depends(require_api_user), db: Session = Depends(ge
 def api_approve_action(action_id: str, payload: dict = None, user_id: str = Depends(require_write_access), db: Session = Depends(get_session)):
     user_uuid = uuid.UUID(user_id)
     action = db.execute(
-        select(ApprovedAction).where(ApprovedAction.id == uuid.UUID(action_id), ApprovedAction.user_id == user_uuid)
+        select(ApprovedAction).where(ApprovedAction.id == _parse_uuid_or_404(action_id), ApprovedAction.user_id == user_uuid)
     ).scalar_one_or_none()
     if not action:
         raise HTTPException(status_code=404, detail="Not found")
@@ -899,6 +944,11 @@ def api_trends_metrics(user_id: str = Depends(require_api_user), db: Session = D
         iso = dt.isocalendar()
         weeks_8.append(f"{iso.year}-W{iso.week:02d}")
         
+    # NOTE: the classifier only ever writes {pricing_change, feature_add,
+    # repositioning, minor_copy, no_change} (app/pipeline/classifier.py
+    # VALID_CATEGORIES) — query those real values. The RESPONSE keys below stay
+    # "new_feature"/"positioning_shift" because the frontend chart
+    # (trends-type-breakdown.tsx) consumes those dataKeys.
     type_breakdown = []
     for week_label in weeks_8:
         pricing_count = db.execute(
@@ -913,14 +963,14 @@ def api_trends_metrics(user_id: str = Depends(require_api_user), db: Session = D
             .join(Competitor, ChangeEvent.competitor_id == Competitor.id)
             .where(Competitor.user_id == user_uuid)
             .where(ChangeEvent.week_label == week_label)
-            .where(ChangeEvent.change_type == "new_feature")
+            .where(ChangeEvent.change_type == "feature_add")
         ).scalar() or 0
         positioning_count = db.execute(
             select(func.count(ChangeEvent.id))
             .join(Competitor, ChangeEvent.competitor_id == Competitor.id)
             .where(Competitor.user_id == user_uuid)
             .where(ChangeEvent.week_label == week_label)
-            .where(ChangeEvent.change_type == "positioning_shift")
+            .where(ChangeEvent.change_type == "repositioning")
         ).scalar() or 0
         copy_count = db.execute(
             select(func.count(ChangeEvent.id))

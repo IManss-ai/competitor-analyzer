@@ -38,18 +38,11 @@ def _run_migrations():
 def _apply_column_guards():
     """Idempotent checks to add columns if they don't already exist, compatible with SQLite & PostgreSQL."""
     from sqlalchemy import inspect
+    # NOTE: users.* guards were removed 2026-07-23 — every users column now has a
+    # real Alembic migration (password_hash/scan_schedule/email_notifications/
+    # digest_email in revision 011; business_type in 004; utm_*/signup_referrer
+    # in 010). Migrations are the single source of truth for the users table.
     columns_to_add = {
-        "users": [
-            ("password_hash", "VARCHAR", None),
-            ("business_type", "VARCHAR", "'saas'"),
-            ("scan_schedule", "VARCHAR", "'weekly'"),
-            ("email_notifications", "BOOLEAN", "TRUE"),
-            ("digest_email", "VARCHAR", None),
-            ("utm_source", "VARCHAR", None),
-            ("utm_medium", "VARCHAR", None),
-            ("utm_campaign", "VARCHAR", None),
-            ("signup_referrer", "VARCHAR", None),
-        ],
         "competitors": [
             ("business_type", "VARCHAR", "'saas'"),
             ("google_maps_url", "VARCHAR", None),

@@ -6,10 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.models import ActionPlan, ActionPlanItem, Campaign, ChangeEvent, Competitor
+from app.models import ActionPlan, ActionPlanItem, Campaign, ChangeEvent, Competitor, GeoSnapshot, User
 from app.planner.engine import get_or_generate_plan
 from app.geo.visibility import get_or_check_visibility
-from app.access import require_write_access
+from app.access import is_read_only, require_write_access
 from app.routes.api_v1 import require_api_user
 from app.serialization import iso_utc
 
@@ -104,12 +104,31 @@ def get_war_room(
     campaign = _own_campaign(campaign_id, user_id, db)
     comp = db.execute(select(Competitor).where(Competitor.id == campaign.competitor_id)).scalar_one()
 
-    plan = get_or_generate_plan(campaign, db)
+    # The war room stays readable for locked users (a GET never 402s), but a
+    # paid model call only fires for a full-access viewer. Read-only
+    # (free-test-used, non-paying) users get cached plan/geo or nothing and
+    # NEVER trigger paid generation — same contract as the battlecard detail
+    # page (api_v1 competitor detail: allow_ai = not is_read_only), consistent
+    # with the 402 on the sibling /regenerate write.
+    viewer = db.get(User, _uuid.UUID(user_id))
+    allow_generate = not (viewer is not None and is_read_only(viewer))
+
+    plan = get_or_generate_plan(campaign, db, allow_generate=allow_generate)
     items = db.execute(
         select(ActionPlanItem).where(ActionPlanItem.plan_id == plan.id).order_by(ActionPlanItem.rank)
-    ).scalars().all()
+    ).scalars().all() if plan else []
 
-    geo = get_or_check_visibility(campaign, campaign.user_product or "your product", db)
+    if allow_generate:
+        geo = get_or_check_visibility(campaign, campaign.user_product or "your product", db)
+    else:
+        # Cached snapshot only (even past its 7-day window) — calling
+        # get_or_check_visibility would fire a paid refresh once stale.
+        geo = db.execute(
+            select(GeoSnapshot)
+            .where(GeoSnapshot.campaign_id == campaign.id)
+            .order_by(GeoSnapshot.checked_at.desc())
+            .limit(1)
+        ).scalar_one_or_none()
 
     ninety_days_ago = datetime.utcnow() - timedelta(days=90)
     events = db.execute(
@@ -141,14 +160,14 @@ def get_war_room(
                 }
                 for i in items
             ],
-        },
+        } if plan else None,
         "geo": {
             "engine": geo.engine,
             "user_share": geo.user_share,
             "competitor_share": geo.competitor_share,
             "source": geo.source,
             "checked_at": iso_utc(geo.checked_at),
-        },
+        } if geo else None,
         "events": [
             {
                 "detected_at": iso_utc(e.detected_at),

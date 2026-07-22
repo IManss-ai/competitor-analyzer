@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.models import JobPosting, JobSnapshot
 from app.observability import note_degraded
-from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response
+from app.pipeline.review_scraper import ExtractionFailed, fetch_page_text, _extract_json_from_response
 
 logger = logging.getLogger(__name__)
 
@@ -90,9 +90,15 @@ async def probe_careers_url(homepage_url: str) -> str | None:
 
 
 async def _extract_jobs_with_claude(text: str) -> dict:
-    """Pull job listings out of a careers-page text dump."""
+    """Pull job listings out of a careers-page text dump.
+
+    Failure paths (dummy key, API error) return ExtractionFailed — value-equal
+    to {"jobs": []} but distinguishable by the caller, because an extraction
+    FAILURE is not "they have zero open roles" (treating it as such closed
+    every posting and wrote a fabricated total_jobs=0 snapshot on every
+    DeepSeek outage)."""
     if not llm.ai_available():
-        return {"jobs": []}
+        return ExtractionFailed(jobs=[])
 
     client = llm.get_async_client()
     prompt = """Extract every distinct open job posting from this careers page. Return ONLY JSON:
@@ -128,7 +134,7 @@ Text:
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("job_tracker.extract", "empty", "api_error", e)
-        return {"jobs": []}
+        return ExtractionFailed(jobs=[])
 
 
 async def _interpret_hiring_pattern(competitor_name: str, new_jobs: list, total_jobs: int) -> str | None:
@@ -191,6 +197,12 @@ async def scrape_job_postings(competitor_id: str, careers_url: str, db: Session,
         return {}
 
     extracted = await _extract_jobs_with_claude(page_text)
+    if isinstance(extracted, ExtractionFailed):
+        # Extraction FAILED — we know nothing about their postings this run.
+        # Running the close-loop would mark every open posting closed and the
+        # snapshot would report "they closed N roles" off a DeepSeek outage.
+        logger.warning("job extraction failed for %s; skipping close-loop and snapshot", careers_url)
+        return {}
     jobs = extracted.get("jobs", []) or []
 
     now = datetime.utcnow()

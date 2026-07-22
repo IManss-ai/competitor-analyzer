@@ -3,7 +3,8 @@ import json
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 import app.llm as llm
 
 from app.db import get_session
@@ -80,7 +81,21 @@ def _store_cache(comp_id, payload: dict, ai_generated: bool, db: Session) -> Non
     cached.payload = json.dumps(payload)
     cached.ai_generated = ai_generated
     cached.generated_at = datetime.utcnow()
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # Concurrent generation won the insert race on the unique
+        # ix_battlecard_cache_competitor_id index AFTER our existence check.
+        # Retry once as an update — both payloads are real, last writer wins.
+        # Without this the loser 500s after its paid model call already ran.
+        db.rollback()
+        cached = _load_cache(comp_id, db)
+        if cached is None:
+            raise
+        cached.payload = json.dumps(payload)
+        cached.ai_generated = ai_generated
+        cached.generated_at = datetime.utcnow()
+        db.commit()
 
 
 def _item_text(item) -> str | None:
@@ -212,8 +227,9 @@ def _generate_local_battlecard(comp: Competitor, db: Session, allow_ai: bool = T
     if latest_snapshot and latest_snapshot.top_complaints:
         try:
             parsed_complaints = json.loads(latest_snapshot.top_complaints)
-            if isinstance(parsed_complaints, list):
-                weaknesses.extend(parsed_complaints)
+            # Coerce on the seed path too — object-shaped complaint themes must
+            # never reach the fresh payload (React #31, see _read_cached_payload).
+            weaknesses.extend(_coerce_str_list(parsed_complaints))
         except Exception:
             pass
 
@@ -226,12 +242,9 @@ def _generate_local_battlecard(comp: Competitor, db: Session, allow_ai: bool = T
         ).scalars().all()
         weaknesses = [c[:120] for c in complaint_bodies]
 
-    if not weaknesses:
-        weaknesses = [
-            "Slow service during peak hours mentioned in recent reviews.",
-            "Inconsistent quality flagged across multiple reviewers.",
-            "Limited weekend availability frustrates regulars.",
-        ]
+    # Still nothing → leave weaknesses EMPTY. Fabricated complaints asserted as
+    # review-derived are dishonest (same rule as the SaaS variant's guard below)
+    # and this card is served on the unauthenticated public /share endpoint.
 
     review_summary_lines = []
     for r in recent_reviews[:10]:
@@ -573,8 +586,10 @@ def _generate_saas_battlecard(
         if snap.top_complaints:
             try:
                 complaints = json.loads(snap.top_complaints)
-                if isinstance(complaints, list):
-                    weaknesses.extend(complaints)
+                # Coerce on the seed path too — object-shaped complaint themes
+                # must never reach the fresh payload (React #31 class, see
+                # _read_cached_payload).
+                weaknesses.extend(_coerce_str_list(complaints))
             except Exception:
                 pass
 
@@ -835,12 +850,43 @@ def _resolve_competitor(competitor_id: str, db: Session) -> Competitor:
     return comp
 
 
+def _needs_generation(comp: Competitor, db: Session, force: bool = False) -> bool:
+    """True when get_or_generate_battlecard would run a generation (no fresh AI
+    cache, or force). Single source of truth for the cache-vs-generate decision
+    so the endpoint's free-test pre-consume can't drift from what actually runs."""
+    cached = _load_cache(comp.id, db)
+    return not (cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db))
+
+
+def _consume_free_test(user_id, db: Session) -> bool:
+    """Atomically claim the user's one free test. The conditional UPDATE makes
+    exactly ONE concurrent request the winner (works on SQLite dev and Postgres
+    prod) — checking the ORM attribute then setting it after the multi-second
+    paid generation let N concurrent requests all pass the is_read_only gate."""
+    result = db.execute(
+        update(User)
+        .where(User.id == user_id, User.free_test_used == False)  # noqa: E712
+        .values(free_test_used=True)
+    )
+    db.commit()
+    return bool(result.rowcount)
+
+
+def _refund_free_test(user_id, db: Session) -> None:
+    """Give the free test back — generation failed (or turned out to be a cache
+    serve), so the user must not lose their one test to it."""
+    db.rollback()
+    db.execute(update(User).where(User.id == user_id).values(free_test_used=False))
+    db.commit()
+
+
 def get_or_generate_battlecard(
     comp: Competitor,
     db: Session,
     force: bool = False,
     business_profile: dict | None = None,
     allow_ai: bool = True,
+    return_generated: bool = False,
 ) -> dict:
     """Cache-first battle card access for authenticated owner paths. Generates
     (one paid call) only when there is no fresh AI card or force=True.
@@ -853,20 +899,30 @@ def get_or_generate_battlecard(
     a competitor detail page): serve any existing cached card — even if stale —
     else a free heuristic card, but NEVER a paid model call, and never cache the
     heuristic (so the owner's first real generation isn't masked). This mirrors
-    the `/generate` 402 without breaking the page render."""
-    cached = _load_cache(comp.id, db)
-    if cached and not force and cached.ai_generated and _cache_is_fresh(cached, comp, db):
-        return _read_cached_payload(cached)
+    the `/generate` 402 without breaking the page render.
+
+    `return_generated=True` returns (payload, generated) where `generated` is
+    True only when a paid AI generation actually produced the card — cache
+    serves, heuristic-only reads, AND heuristic fallbacks (dummy key / API
+    error) all report False, so the /generate endpoint never burns the user's
+    one free test on a card no paid call produced (the heuristic row caches
+    with ai_generated=False, so a retry can still generate for real). Default
+    False keeps every existing call site's dict return."""
+    if not _needs_generation(comp, db, force):
+        payload = _read_cached_payload(_load_cache(comp.id, db))
+        return (payload, False) if return_generated else payload
 
     if not allow_ai:
+        cached = _load_cache(comp.id, db)
         if cached:
-            return _read_cached_payload(cached)
-        payload, _ = _generate(comp, db, allow_ai=False, business_profile=business_profile)
-        return payload
+            payload = _read_cached_payload(cached)
+        else:
+            payload, _ = _generate(comp, db, allow_ai=False, business_profile=business_profile)
+        return (payload, False) if return_generated else payload
 
     payload, ai_generated = _generate(comp, db, allow_ai=True, business_profile=business_profile)
     _store_cache(comp.id, payload, ai_generated, db)
-    return payload
+    return (payload, ai_generated) if return_generated else payload
 
 
 def _load_business_profile(user_id: str, db: Session) -> dict | None:
@@ -929,7 +985,7 @@ def generate_battlecard(
     # Paywall: an already-locked user can't generate NEW cards, but keeps read
     # access to the card they already earned — serve the cache as-is (force must
     # not bust it for them) and 402 only on a cache miss. The owner's FIRST
-    # generation still passes (free_test_used is set AFTER success below).
+    # generation still passes (their free test is consumed atomically below).
     from app.access import is_read_only
     user = db.get(User, _uuid.UUID(user_id))
     if user is not None and is_read_only(user):
@@ -940,11 +996,36 @@ def generate_battlecard(
     # Owner path: thread the owner's business profile so the card carries
     # head_to_head. The public/share path below passes no profile (and strips it).
     business_profile = _load_business_profile(user_id, db)
-    result = get_or_generate_battlecard(comp, db, force=force, business_profile=business_profile)
-    # The first generated card is "the one test" — mark it used after success.
-    if user is not None and not user.free_test_used:
-        user.free_test_used = True
-        db.commit()
+    # "The one test": consume it ATOMICALLY before the multi-second paid call —
+    # setting the flag only after success let N concurrent requests all pass the
+    # is_read_only gate above and run N paid generations. A cache serve is not a
+    # test (no paid call), so only consume when a generation would actually run.
+    consumed = False
+    if user is not None and not user.free_test_used and _needs_generation(comp, db, force):
+        consumed = _consume_free_test(user.id, db)
+        if not consumed:
+            # Lost the race: a concurrent request already took the free test.
+            db.expire(user)
+            if is_read_only(user):
+                cached = _load_cache(comp.id, db)
+                if cached:
+                    return _read_cached_payload(cached)
+                raise HTTPException(status_code=402, detail="Your free test is done — upgrade to Pro to continue.")
+    try:
+        result, generated = get_or_generate_battlecard(
+            comp, db, force=force, business_profile=business_profile, return_generated=True
+        )
+    except Exception:
+        # Generation failed — the user must not lose their free test to an error.
+        if consumed:
+            _refund_free_test(user.id, db)
+        raise
+    if consumed and not generated:
+        # No paid generation produced this card — either a concurrent request
+        # cached a fresh card between the peek and the call, or the AI path
+        # degraded to the heuristic fallback (dummy key / API error). Give the
+        # test back: a free user's one shot must buy a real AI card.
+        _refund_free_test(user.id, db)
     return result
 
 
