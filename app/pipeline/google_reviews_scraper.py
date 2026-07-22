@@ -4,7 +4,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import Review, ReviewSnapshot
 from app.observability import note_degraded
-from app.pipeline.review_scraper import fetch_page_text, _extract_json_from_response, _parse_date
+from app.pipeline.review_scraper import (
+    fetch_page_text,
+    _extract_json_from_response,
+    _parse_date,
+    ExtractionFailed,
+)
 import app.llm as llm
 import uuid as _uuid
 
@@ -12,7 +17,8 @@ import uuid as _uuid
 async def _extract_google_reviews_with_claude(text: str) -> dict:
     """Extract Google Maps review data using LLM."""
     if not llm.ai_available():
-        return {"avg_rating": 0, "total_reviews": 0, "recent_reviews": [], "top_complaints": []}
+        note_degraded("google_reviews.extract", "empty", "dummy_key")
+        return ExtractionFailed({"avg_rating": 0, "total_reviews": 0, "recent_reviews": [], "top_complaints": []})
 
     client = llm.get_async_client()
     prompt = """Extract Google Maps review data from this page text. Return JSON:
@@ -46,7 +52,7 @@ Text:
         return _extract_json_from_response(response.choices[0].message.content)
     except Exception as e:
         note_degraded("google_reviews.extract", "empty", "api_error", e)
-        return {"avg_rating": 0, "total_reviews": 0, "recent_reviews": [], "top_complaints": []}
+        return ExtractionFailed({"avg_rating": 0, "total_reviews": 0, "recent_reviews": [], "top_complaints": []})
 
 
 async def scrape_google_reviews(competitor_id: str, google_maps_url: str, db: Session) -> dict:
@@ -59,10 +65,21 @@ async def scrape_google_reviews(competitor_id: str, google_maps_url: str, db: Se
             return {}
 
         extracted = await _extract_google_reviews_with_claude(page_text)
+        if isinstance(extracted, ExtractionFailed):
+            # Extraction FAILED (dummy key / API error), NOT "no reviews found":
+            # writing the zeroed snapshot would overwrite the last REAL rating in
+            # latest-snapshot consumers (dashboard shows "0.0 / 0 reviews"). Skip
+            # the snapshot + review upserts for this run.
+            print(f"Google review extraction failed for {google_maps_url}; skipping snapshot")
+            return {}
         avg_rating = extracted.get("avg_rating", 0)
         total_reviews = extracted.get("total_reviews", 0)
-        recent_reviews = extracted.get("recent_reviews", [])
-        top_complaints = extracted.get("top_complaints", [])
+        # `or []` (not just a missing-key default): the model can emit an explicit
+        # "recent_reviews": null / "top_complaints": null, and `for rev in None`
+        # or `len(None)` would raise, rolling back the fresh snapshot that carries
+        # the real avg_rating — defeating the ExtractionFailed guard above.
+        recent_reviews = extracted.get("recent_reviews") or []
+        top_complaints = extracted.get("top_complaints") or []
 
         # Upsert reviews into the Review table with platform = "google"
         for rev in recent_reviews:
@@ -83,7 +100,14 @@ async def scrape_google_reviews(competitor_id: str, google_maps_url: str, db: Se
                 )
             ).scalar_one_or_none()
 
-            rating = rev.get("rating")
+            # The model can emit rating as a string ("4", "N/A") or null; a raw
+            # `str <= 2` comparison raises TypeError, which the outer handler
+            # catches and rolls back the WHOLE competitor's scrape. Coerce to int,
+            # falling back to None (treated as "no rating") on failure.
+            try:
+                rating = int(rev.get("rating"))
+            except (TypeError, ValueError):
+                rating = None
             sentiment = "negative" if rating and rating <= 2 else ("positive" if rating and rating >= 4 else "neutral")
             is_complaint = rating is not None and rating <= 2
 

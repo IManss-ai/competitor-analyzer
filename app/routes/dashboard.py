@@ -20,6 +20,7 @@ async def dashboard_page(request: Request, db=Depends(get_session), user_id=Depe
         .join(Competitor, ChangeEvent.competitor_id == Competitor.id)
         .where(Competitor.user_id == user_uuid)
         .order_by(ChangeEvent.detected_at.desc())
+        .limit(100)
     ).all()
     
     events_data = []

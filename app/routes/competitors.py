@@ -6,6 +6,7 @@ from app.db import get_session
 from app.models import Competitor, User
 from app.session import require_current_user
 from app.access import require_write_access_session
+from app.routes.api_v1 import _parse_uuid_or_404
 import uuid
 
 router = APIRouter(prefix="/competitors")
@@ -36,16 +37,24 @@ async def add_competitor(
     user_id=Depends(require_write_access_session)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
+    # Serialize concurrent adds for this user so the 7-competitor cap can't be
+    # raced past: lock the user row (Postgres FOR UPDATE holds the lock until
+    # commit; on SQLite writes are globally serialized, so the count stays
+    # consistent either way). Also gives us `user` for the template context.
+    user = db.execute(
+        select(User).where(User.id == user_uuid).with_for_update()
+    ).scalar_one_or_none()
     existing = db.execute(
         select(Competitor).where(Competitor.user_id == user_uuid, Competitor.active == True)
     ).scalars().all()
-    
+
     if len(existing) >= MAX_COMPETITORS:
         return templates.TemplateResponse("competitors.html", {
             "request": request,
             "competitors": existing,
             "at_limit": True,
             "error": f"Maximum {MAX_COMPETITORS} competitors allowed.",
+            "user": user,
         })
         
     # URL normalization
@@ -74,6 +83,7 @@ async def add_competitor(
         "request": request,
         "competitors": competitors,
         "at_limit": len(competitors) >= MAX_COMPETITORS,
+        "user": user,
     })
 
 @router.post("/{competitor_id}/remove", response_class=HTMLResponse)
@@ -84,8 +94,9 @@ async def remove_competitor(
     user_id=Depends(require_current_user)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
-    comp_uuid = uuid.UUID(competitor_id) if isinstance(competitor_id, str) else competitor_id
-    
+    # A malformed/truncated path id is a client error → 404, never a raw 500.
+    comp_uuid = _parse_uuid_or_404(competitor_id) if isinstance(competitor_id, str) else competitor_id
+
     competitor = db.get(Competitor, comp_uuid)
     if competitor and competitor.user_id == user_uuid:
         competitor.active = False

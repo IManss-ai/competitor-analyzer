@@ -96,13 +96,18 @@ async def _scan_and_brief_user(user, db, lookback_days: int = 7):
         ApprovedAction.approved_at == None,
     ).count()
 
-    # 4. Send brief
-    await send_weekly_brief(
-        user_email=user.email,
+    # 4. Send brief. Prefer an explicit digest_email if the user set one,
+    # otherwise fall back to their login email.
+    sent = await send_weekly_brief(
+        user_email=user.digest_email or user.email,
         user_id=str(user.id),
         change_summaries=change_summaries,
         pending_action_count=pending_count,
     )
+    # send_weekly_brief returns False on a Resend outage / non-2xx. Surface it
+    # so a silently dropped brief leaves a trace instead of vanishing.
+    if sent is False:
+        logger.warning("scheduler: weekly brief send failed for user %s", user.id)
 
 
 async def _run_scan_and_brief(label, *extra_filters):
@@ -114,6 +119,10 @@ async def _run_scan_and_brief(label, *extra_filters):
         for f in extra_filters:
             stmt = stmt.where(f)
         for user in db.execute(stmt).scalars().all():
+            # Honor the user's email-notifications preference. Only an explicit
+            # opt-out (False) skips; NULL / unset rows stay opted-in.
+            if user.email_notifications is False:
+                continue
             # Paywall: ongoing weekly monitoring is a paid feature — only scan
             # full-access users (active / comped / not-yet-tested).
             from app.access import access_level
@@ -122,6 +131,10 @@ async def _run_scan_and_brief(label, *extra_filters):
             try:
                 await _scan_and_brief_user(user, db, lookback_days=_brief_window_days(label, user))
             except Exception as e:
+                # The shared session may be left in PendingRollbackError after a
+                # failed commit inside this user's scan; roll back so the next
+                # user in the loop starts clean and stays isolated (per docstring).
+                db.rollback()
                 logger.warning("scheduler: %s run failed for user %s: %s", label, user.id, e)
     finally:
         db.close()

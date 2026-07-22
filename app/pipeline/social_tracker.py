@@ -102,7 +102,11 @@ async def _scrape_platform(competitor_id: _uuid.UUID, platform: str, handle: str
         saved_posts = []
 
         for post in posts:
-            content = post.get("content", "").strip()
+            # The "" default only applies when the key is MISSING; the model can
+            # emit an explicit "content": null, and `None.strip()` raises
+            # AttributeError, which the outer handler catches and rolls back ALL
+            # posts for this platform. `(... or "")` coerces null to empty.
+            content = (post.get("content") or "").strip()
             if not content:
                 continue
 

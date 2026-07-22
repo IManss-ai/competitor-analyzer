@@ -53,7 +53,10 @@ class TestClassifierSynthesizer(unittest.IsolatedAsyncioTestCase):
         await classify_change(before_long, after_long)
         
         user_msg = mock_create.call_args[1]["messages"][1]["content"]
-        expected_user_msg = f"BEFORE:\n{'A' * 3000}\n\nAFTER:\n{'B' * 3000}"
+        # Page text is now fenced in untrusted-content delimiters (audit 2026-07-23
+        # S2: prompt-injection guard). Truncation-to-3000 is unchanged.
+        from app.pipeline.classifier import UNTRUSTED_DELIM as D
+        expected_user_msg = f"BEFORE {D}\n{'A' * 3000}\n{D}\n\nAFTER {D}\n{'B' * 3000}\n{D}"
         self.assertEqual(user_msg, expected_user_msg)
 
     @patch("app.pipeline.synthesizer.client.chat.completions.create", new_callable=AsyncMock)

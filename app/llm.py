@@ -13,6 +13,13 @@ MODEL_FLAGSHIP = "deepseek-v4-pro"  # defined for a future battlecard-only upgra
 # before content is emitted. Force direct content output on every call.
 THINKING_OFF = {"thinking": {"type": "disabled"}}
 
+# openai 2.x defaults to a 600s read timeout and 2 retries. A hung DeepSeek
+# endpoint would then block a scan coroutine for ~10 min/call. Cap it: a
+# classify/synth call that hasn't responded in 30s is not going to. One retry
+# is enough headroom for a transient blip without multiplying the stall.
+REQUEST_TIMEOUT = 30.0
+MAX_RETRIES = 1
+
 _DUMMY_KEYS = {"", "dummy", "dummy_key", "dummy_anthropic_key", "dummy_openai_key"}
 
 
@@ -22,8 +29,18 @@ def ai_available() -> bool:
 
 
 def get_async_client() -> AsyncOpenAI:
-    return AsyncOpenAI(api_key=DEEPSEEK_API_KEY or "dummy", base_url=DEEPSEEK_BASE_URL)
+    return AsyncOpenAI(
+        api_key=DEEPSEEK_API_KEY or "dummy",
+        base_url=DEEPSEEK_BASE_URL,
+        timeout=REQUEST_TIMEOUT,
+        max_retries=MAX_RETRIES,
+    )
 
 
 def get_sync_client() -> OpenAI:
-    return OpenAI(api_key=DEEPSEEK_API_KEY or "dummy", base_url=DEEPSEEK_BASE_URL)
+    return OpenAI(
+        api_key=DEEPSEEK_API_KEY or "dummy",
+        base_url=DEEPSEEK_BASE_URL,
+        timeout=REQUEST_TIMEOUT,
+        max_retries=MAX_RETRIES,
+    )

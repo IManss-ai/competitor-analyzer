@@ -112,9 +112,15 @@ async def send_weekly_brief(
                     "detail_url": f"{APP_BASE_URL}/competitors/{comp.id}"
                 })
                 
-        # Subject line
+        # Subject line. The zero-change case still ships an intentional "all quiet"
+        # brief (see the text-body branch below), so the subject must not claim
+        # changes exist. Also pluralize correctly for the single-change case.
         changes_detected = len(change_summaries)
-        subject = f"🎯 {changes_detected} competitor changes this week: your battle cards are ready"
+        if changes_detected == 0:
+            subject = "🎯 All quiet this week: your battle cards are ready"
+        else:
+            noun = "change" if changes_detected == 1 else "changes"
+            subject = f"🎯 {changes_detected} competitor {noun} this week: your battle cards are ready"
         
         # Fallback text email body
         text_body_lines = [

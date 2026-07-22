@@ -6,6 +6,7 @@ from app.db import get_session
 from app.models import ApprovedAction, ChangeEvent, Competitor, User
 from app.session import require_current_user
 from app.access import require_write_access_session
+from app.routes.api_v1 import _parse_uuid_or_404
 from datetime import datetime, timezone
 import uuid
 
@@ -52,8 +53,9 @@ async def approve_action(
     user_id=Depends(require_write_access_session)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
-    action_uuid = uuid.UUID(action_id) if isinstance(action_id, str) else action_id
-    
+    # A malformed/truncated path id is a client error → 404, never a raw 500.
+    action_uuid = _parse_uuid_or_404(action_id) if isinstance(action_id, str) else action_id
+
     action = db.get(ApprovedAction, action_uuid)
     if not action or action.user_id != user_uuid:
         return HTMLResponse("Not found", status_code=404)
@@ -80,8 +82,9 @@ async def dismiss_action(
     user_id=Depends(require_write_access_session)
 ):
     user_uuid = uuid.UUID(user_id) if isinstance(user_id, str) else user_id
-    action_uuid = uuid.UUID(action_id) if isinstance(action_id, str) else action_id
-    
+    # A malformed/truncated path id is a client error → 404, never a raw 500.
+    action_uuid = _parse_uuid_or_404(action_id) if isinstance(action_id, str) else action_id
+
     action = db.get(ApprovedAction, action_uuid)
     if action and action.user_id == user_uuid:
         action.approved_at = datetime.now(timezone.utc)
